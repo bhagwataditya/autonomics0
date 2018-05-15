@@ -1,0 +1,22 @@
+Package: autonomics.integrate
+Title: Functions to integrate omics data
+Version: 0.0.3
+Authors@R: person("Aditya", "Bhagwat", email = "adb2018@qatar-med.cornell.edu", role = c("aut", "cre"))
+Description: This package contains functions to integrate omics data.
+Depends: R (>= 3.4.0)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: 
+   assertive.base,
+   assertive.sets,
+   assertive.types,
+   autonomics.import,
+   autonomics.plot,
+   autonomics.support,
+   data.table,
+   ggplot2,
+   magrittr
+Suggests: 
+   subramanian.2016
+RoxygenNote: 6.0.1
