@@ -1,0 +1,46 @@
+Package: autonomics.explore
+Title: Explore Omics Data
+Version: 0.9.1
+Authors@R: c(person("Aditya",   "Bhagwat",    email = "bhagwataditya@gmail.com",         role = c("aut", "cre")), 
+             person("Laure",    "Cougnaud",   email = "laure.cougnaud@openanalytics.eu", role = "aut"),
+             person("Richard",  "Cotton",     email = 'richierocks@gmail.com',           role = "ctb"),
+             person("Johannes", "Graumann",   email = "Johannes.Graumann@mpi-bn.mpg.de", role = "ctb")
+           )
+Description: This package contains functions for exploratory analysis of omics
+             data. It is part of autonomics, the R suite for automated analysis of omics data.
+Depends:
+    R (>= 3.4.0)
+License: GPL-3
+LazyData: true
+RoxygenNote: 6.0.1
+Imports:
+    assertive.base,
+    assertive.numbers,
+    assertive.properties,
+    assertive.sets,
+    assertive.types,
+    autonomics.import,
+    autonomics.plot,
+    autonomics.preprocess,
+    autonomics.support,
+    data.table,
+    dplyr,
+    ggplot2,
+    ggrepel,
+    magrittr,
+    MASS,
+    matrixStats,
+    mixOmics,
+    mpm,
+    pcaMethods,
+    rlang,
+    ropls,
+    stringi,
+    tidyr
+Suggests:
+    atkin.2014,
+    autonomics.data,
+    billing.differentiation.data,
+    halama.2016,
+    subramanian.2016,
+    testthat
