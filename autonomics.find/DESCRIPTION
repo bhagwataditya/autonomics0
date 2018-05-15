@@ -1,0 +1,47 @@
+Package: autonomics.find
+Title: Find candidate targets from omics data
+Version: 1.5.1
+Authors@R: c(person("Aditya",   "Bhagwat",    email = "bhagwataditya@gmail.com",         role = c("aut", "cre")), 
+             person("Johannes", "Graumann",   email = 'jog2030@qatar-med.cornell.edu',   role = "aut"),
+             person("Richard",  "Cotton",     email = 'richierocks@gmail.com',           role = "ctb"), 
+             person("Anja",     "Billing",    email = "anb2061@qatar-med.cornell.edu",   role = "ctb")
+           )
+Description: This package contains functions to find candidate targets from omics data.
+Depends:
+    R (>= 3.4.0)
+License: GPL-3
+LazyData: true
+Imports:
+    apcluster,
+    assertive.base,
+    assertive.numbers, 
+    assertive.properties,
+    assertive.sets,
+    assertive.strings,
+    assertive.types,
+    autonomics.import,
+    autonomics.plot,
+    autonomics.preprocess,
+    autonomics.support,
+    Biobase,
+    data.table,
+    dplyr,
+    ggplot2,
+    lazyeval,
+    limma,
+    magrittr,
+    matrixStats,
+    plyr,
+    stats,
+    stringi,
+    tidyr
+Suggests: 
+   atkin.2014,
+   autonomics.data, 
+   billing.differentiation.data,
+   graumann.lfq,
+   halama.2016,
+   subramanian.2016,
+   statmod, 
+   testthat
+RoxygenNote: 6.0.1
