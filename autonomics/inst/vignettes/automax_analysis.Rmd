@@ -1,0 +1,571 @@
+---
+title:  "A sample data analysis with autonomics"
+author: "Aditya Bhagwat"
+date: "April 21, 2016"
+output: 
+  pdf_document:
+    toc: true
+    number_sections: true
+classoption: landscape
+header-includes:
+   - \usepackage{float}
+---
+
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{1. An example data analysis with automax}
+-->
+
+\clearpage
+
+```{r, message = FALSE, warning = FALSE}
+library(automax)                # automated analysis of Max Quant proteomics data
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(magrittr)               # use pipes for convenient scripting
+library(xtable)                 # print dataframes to latex
+options(xtable.comment = FALSE) # prevent comment creation when producing latex code.
+options(width = 190)
+```
+
+# Data
+
+## Example dataset
+
+We will use the shotgun proteomics data from [Billing et al (2016)](http://www.nature.com/articles/srep21507) to illustrate the use of automax. The aim of that study was to compare three types of stem cells to each other:
+
+* E: embryonic stem cells
+* BM: bone marrow derived mesenchymal stem cells
+* EM: embryonic stem cells which were differentiated into mesenchymal stem cells
+
+To achieve this goal, three different experiments were performed, with triple SILAC labeling in each experiment:
+
+```{r, echo = FALSE, results = 'asis'}
+data.frame(experiment = c(1, 2, 3), 
+           L          = c('E', 'BM', 'EM'), 
+           M          = c('EM', 'E', 'BM'), 
+           H          = c('BM', 'EM', 'E')) %>%
+xtable(display = c('s', 'd', 's', 's', 's'), align = c('c', 'c', 'c', 'c', 'c')) %>%
+print.xtable(include.rownames = FALSE)
+```
+
+These data were quantified by mass spectrometry, and subsequently processed by Max Quant (using the parameters described in [Billing et al (2016)](http://www.nature.com/articles/srep21507)). Max Quant summarizes the quantifications in terms of a 'proteinGroups.txt' table and this table forms the input of our analysis.
+The proteinGroups table is included in the automax package, we will have a look at it later.
+
+## Create analysis dir
+
+```{r}
+library(pathological)
+analysis_dir <- temp_dir('billing_2016_stem_cell_comparison')
+dir.create(analysis_dir)
+analysis_dir
+```
+
+## Create sample design file
+
+Create sample design file. Open it with Excel. Complete the columns L, M, and H (using the column 'Names' and your brain :-)). Save as a tab separated txt file.
+
+```{r, eval = FALSE}
+sample_design_file <- paste0(analysis_dir, '/sample_design.txt')
+create_sample_design_file(
+   infile  = system.file('extdata/billing_2016_stem_cell_comparison/experimentalDesignTemplate.txt', package = 'automax'), 
+   outfile = sample_design_file
+)
+sample_design_file
+```
+
+Check whether the sample file you created resembles the one we have included in the package:
+
+```{r}
+sample_design_file <- system.file('extdata/billing_2016_stem_cell_comparison/sample_design.txt', package = 'automax')
+sample_design_file
+```
+
+You will see that it looks like this:
+
+```{r, echo = FALSE, results = 'asis'}
+read.table(sample_design_file, header = TRUE) %>%
+xtable(align = c('c', 'c', 'c', 'c', 'c'))    %>%
+print.xtable(include.rownames = FALSE, table.placement = 'H')
+```
+
+## Load proteinGroups table
+
+First have a look at the proteinGroups.txt file for the sample dataset:
+
+```{r}
+protein_groups_file <- system.file('extdata/billing_2016_stem_cell_comparison/proteinGroups.txt', package = 'automax')
+protein_groups_file
+```
+
+Then load the protein_groups file:
+
+```{r}
+pset <- load_max_quant_table(max_quant_file = protein_groups_file, sample_file = sample_design_file)
+```
+
+# Representation
+
+## The ProtSet object
+
+The proteinGroups data was loaded into an object of class ProtSet, which was specifically developed to store data from a proteinGroups table in a smart and systematic fashion. At first look, the object can seem a bit overwhelming, but it is actually very systematic and organized. We will go through the different parts of the object in more detail. 
+
+```{r}
+pset
+```
+
+Let's first load the autonomics.eset package to efficiently work with ProtSet objects
+
+```{r}
+library(autonomics.eset)
+```
+
+## Ratios
+
+First of all, the object stores the matrix with normalized ratios (rows = features, columns = samples), which can be accessed (and set) as follows (results are not shown here):
+
+```{r, eval = FALSE}
+exprs(pset)            
+```
+
+As discussed earlier, this is a feature x sample matrix:
+
+```{r}
+dim(exprs(pset))       # show dimensions of the ratio matrix
+dim(pset)              # equivalent!
+```
+
+Let's have a look at some of the values:
+
+```{r}
+exprs(pset)[1:2, 1:3]  # have a look at the first 2 features and first 3 samples
+exprs(pset[1:2, 1:3])  # equivalent!
+```
+
+\clearpage 
+
+## Intensities
+
+The ProtSet object also stores the matrices with numerator and denominator intensities, which can be accessed by:
+
+```{r, eval = FALSE}
+intensities_num(pset)   # Get matrix with numerator intensities
+intensities_den(pset)   # Get matrix with denominator intensities
+```
+
+Also these matrices are feature x sample matrices:
+
+```{r}
+dim(intensities_num(pset))  # numerator   intensities
+dim(intensities_den(pset))  # denominator intensities
+```
+
+Let's also have a look at how the values in the matrix look like:
+```{r}
+intensities_num(pset)[1:2, 1:3]
+intensities_den(pset)[1:2, 1:3]
+```
+
+\clearpage
+
+## Features
+
+The object also stores feature data. We can get the feature names:
+
+```{r}
+fnames(pset)[1:2]  # feature names
+```
+
+For each feature, a number of variables is also recorded. We can get these feature variables with:
+
+```{r}
+fvars(pset)        # feature variables
+```
+
+Finally, we can get the feature data (which is a feature x fvar dataframe) with (results not shown):
+
+```{r, eval = FALSE}
+fdata(pset)
+```
+
+Let's have a look at the first two rows in this dataframe (but let's take out the fasta headers not to blur the output):
+
+```{r}
+fdata(pset)[1:2, -4]
+```
+
+\clearpage
+
+## Samples
+
+Similarly, the object also stores sample data.
+
+The sample names can be accessed with:
+
+```{r}
+snames(pset)  # sample names
+```
+
+The sample variables with:
+
+```{r}
+svars(pset)   # sample variables
+```
+
+Finally, the dataframe with sample data (samples x svars):
+
+```{r}
+sdata(pset)   # sample data (rows = samples, columns = sample variables)
+```
+
+\clearpage
+
+# Analysis
+
+## Prepare data for analysis
+
+Below you find the sample data from previous section printed once more. Due to the label swap, ratios between subgroups are present in both directions. For instance, both "EM_E" (i.e. EM/E) and "E_EM" (i.e. E/EM) are present. This hinders the analysis. 
+
+```{r, echo = FALSE, results = 'asis'}
+sdata(pset) %>%
+xtable() %>%
+print.xtable(table.placement = 'H')
+```
+
+We can fix this by inverting one direction of each ratio. Additionally, we also remove features that are NaN acros all features, and log2 transform:
+
+```{r, results = 'asis'}
+pset <- preprocess_protein_groups(pset, 
+                                  rm_na_ratios     = TRUE, 
+                                  invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'), 
+                                  log2_transform   = TRUE)
+```
+
+This gives us the following design:
+
+```{r}
+sdata(pset)
+```
+
+
+## Run automated analysis
+
+```{r, message = FALSE, warning = FALSE}
+pset <- analyze_protein_groups(pset, analysis_dir, organism = 'hsa') # 'hsa' = Homo sapiens
+```
+
+
+# Results
+
+## Overview
+
+The results were written to the analysis dir:
+```{r}
+analysis_dir
+```
+
+```{r}
+dir(analysis_dir)
+```
+
+As you can see, this directory contains three subdirectories ("BM_E", "BM_EM", "EM_E") and five files:
+
+* "eset_obj.rds": ProtSet (note: analysis results stored in the fdata)
+* "pca_samples.pdf":                 sample bioplot
+* "sample_design.txt":               sample design file which you produced in an earlier section.
+* "sample_distributions_orig":       distribution of log2 ratios (of all features) per sample.
+* "sample_distributions_normalized": distribution of quantile normalized log2 ratios (of all features) per sample.
+
+The subdirectories contain the differential expression analysis results for the subsequent ratios. Let's look at the results for the comparison between BM and E. 
+
+```{r}
+dir(paste0(analysis_dir, '/BM_E'))
+```
+
+As you can see, this directory contains fourteen files:
+
+* "features__BM_E__neg.txt": table of downregulated features (BM < E), ranked according to significance
+* "features__BM_E__pos.txt": table of upregulated features (BM > E), ranked according to significance
+
+* "ora_both_gobp.txt": ora (over representation analysis) on GOBP pathways for "BM != E" proteins
+* "ora_both_gocc.txt": ora on GOCC pathways for "BM != E" proteins
+* "ora_both_gomf.txt": ora on GOMF pathways for "BM != E" proteins
+* "ora_both_kegg.txt": ora on KEGG pathways for "BM != E" proteins
+
+* "ora_neg_gobp.txt": ora on GOBP pathways for "BM < E" proteins
+* "ora_neg_gocc.txt": ora on GOCC pathways for "BM < E" proteins
+* "ora_neg_gomf.txt": ora on GOMF pathways for "BM < E" proteins
+* "ora_neg_kegg.txt": ora on KEGG pathways for "BM < E" proteins
+
+* "ora_pos_gobp.txt": ora on GOBP pathways for "BM > E" proteins
+* "ora_pos_gocc.txt": ora on GOCC pathways for "BM > E" proteins
+* "ora_pos_gomf.txt": ora on GOMF pathways for "BM > E" proteins
+* "ora_pos_kegg.txt": ora on KEGG pathways for "BM > E" proteins
+
+Let's now look at each of these results in more detail.
+
+\clearpage 
+
+## Distributions of log2 ratios
+
+One of the plots contains the distributions of the log2 (normalized) ratios (of all features) per sample. One generally expects these to be similar, symmetric and centered around zero. In this particular case the distributions are more narrow for one of the comparisons (BM - EM). Biologically, this is to be expected, as these two celltypes are very similar.
+
+```{r, fig.align = 'center', out.width = '4in', echo = FALSE}
+   knitr::include_graphics(file.path(analysis_dir, 'sample_distributions_orig.pdf'))
+```
+
+\clearpage
+
+The data is quantile normalized prior to statistical analysis. After quantile normalization these look as follows:
+
+```{r, fig.align = 'center', out.width = '4in', echo = FALSE}
+   knitr::include_graphics(file.path(analysis_dir, 'sample_distributions_normalized.pdf'))
+```
+
+\clearpage
+
+## PCA sample biplot
+
+Let's now have a look at the PCA sample biplot. The three different comparisons are separated out (as we would expect).
+
+```{r, fig.align = 'center', out.width = '4in', echo = FALSE}
+   knitr::include_graphics(file.path(analysis_dir, 'pca_samples.pdf'))
+```
+
+\clearpage
+
+
+
+
+
+## Differential expression: BM - E
+
+### Proteins: BM < E
+
+```{r, echo = FALSE}
+   knitr::include_graphics(file.path(analysis_dir, 'BM_E/top_bars__BM_E__neg.pdf'))   
+```
+
+### Proteins: BM > E
+
+```{r, echo = FALSE}
+   knitr::include_graphics(file.path(analysis_dir, 'BM_E/top_bars__BM_E__pos.pdf'))   
+```
+
+### GO Biological Processes: BM < E
+
+```{r, echo = FALSE}
+   print_pathway_results <- function(analysis_dir, comparison, direction, collection){
+      sprintf('%s/%s/ora_%s_%s.txt', analysis_dir, comparison, direction, collection) %>% 
+      autonomics.support::cfread()                                      %>%
+      dplyr::select(-genes)                                         %>% 
+      dplyr::mutate(set = substr(set, 1, 50))                       %>% 
+      extract(1:10, )                                               %>% 
+      xtable(display = c('s', 'd', 'e', 's', 'd', 'd', 'd'))        %>% 
+      print.xtable(table.placement = 'H')
+   }
+```
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_E', 'neg', 'gobp')
+```
+
+
+### GO Biological Processes: BM > E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_E', 'pos', 'gobp')
+```
+
+### GO Biological Processes: BM != E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_E', 'both', 'gobp')
+```
+
+### GO Molecular functions: BM < E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_E', 'neg', 'gomf')
+```
+
+### GO Molecular functions: BM > E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_E', 'pos', 'gomf')
+```
+
+### GO Molecular functions: BM != E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_E', 'both', 'gomf')
+```
+
+### KEGG Pathways: BM < E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_E', 'neg', 'kegg')
+```
+
+### KEGG Pathways: BM > E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_E', 'pos', 'kegg')
+```
+
+### KEGG Pathways: BM != E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_E', 'both', 'kegg')
+```
+
+
+
+
+
+## Differential expression: BM - EM
+
+### Proteins: BM < EM
+
+```{r, echo = FALSE}
+   knitr::include_graphics(file.path(analysis_dir, 'BM_EM/top_bars__BM_EM__neg.pdf'))   
+```
+
+### Proteins: BM > EM
+
+```{r, echo = FALSE}
+   knitr::include_graphics(file.path(analysis_dir, 'BM_EM/top_bars__BM_EM__pos.pdf'))   
+```
+
+### GO Biological Processes: BM < EM
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_EM', 'neg', 'gobp')
+```
+
+
+### GO Biological Processes: BM > EM
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_EM', 'pos', 'gobp')
+```
+
+### GO Biological Processes: BM != EM
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_EM', 'both', 'gobp')
+```
+
+### GO Molecular Functions: BM < EM
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_EM', 'neg', 'gomf')
+```
+
+### GO Molecular Functions: BM > E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_EM', 'pos', 'gomf')
+```
+
+### GO Molecular Functions: BM != EM
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_EM', 'both', 'gomf')
+```
+
+### KEGG Pathways: BM < E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_EM', 'neg', 'kegg')
+```
+
+### KEGG Pathways: BM > EM
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_EM', 'pos', 'kegg')
+```
+
+### KEGG Pathways: BM != EM
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'BM_EM', 'both', 'kegg')
+```
+
+
+
+
+
+## Differential expression: EM - E
+
+### Proteins: EM < E
+
+```{r, echo = FALSE}
+   knitr::include_graphics(file.path(analysis_dir, 'EM_E/top_bars__EM_E__neg.pdf'))   
+```
+
+### Proteins: EM > E
+
+```{r, echo = FALSE}
+   knitr::include_graphics(file.path(analysis_dir, 'EM_E/top_bars__EM_E__pos.pdf'))   
+```
+
+### GO Biological Processes: EM < E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'EM_E', 'neg', 'gobp')
+```
+
+
+### GO Biological Processes: EM > E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'EM_E', 'pos', 'gobp')
+```
+
+### GO Biological Processes: EM != E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'EM_E', 'both', 'gobp')
+```
+
+### GO Molecular Functions: EM < E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'EM_E', 'neg', 'gomf')
+```
+
+### GO Molecular Functions: EM > E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'EM_E', 'pos', 'gomf')
+```
+
+### GO Molecular Functions: EM != E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'EM_E', 'both', 'gomf')
+```
+
+### KEGG Pathways: EM < E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'EM_E', 'neg', 'kegg')
+```
+
+### KEGG Pathways: EM > E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'EM_E', 'pos', 'kegg')
+```
+
+### KEGG Pathways: EM != E
+
+```{r, results = 'asis', echo = FALSE}
+   print_pathway_results(analysis_dir, 'EM_E', 'both', 'kegg')
+```
+
+
+
+
