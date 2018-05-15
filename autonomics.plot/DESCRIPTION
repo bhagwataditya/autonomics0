@@ -1,0 +1,48 @@
+Package: autonomics.plot
+Title: Functions to plot esets
+Version: 0.8.1
+Authors@R: c(person("Aditya",   "Bhagwat",  email = "adb2018@qatar-med.cornell.edu",   role = c("aut", "cre")),
+             person("Shahina",  "Hayat",    email = "shh2026@qatar-med.cornell.edu",   role = "aut"),
+             person("Johannes", "Graumann", email = "Johannes.Graumann@mpi-bn.mpg.de", role = "aut"),
+             person("John",     "Colby",    email = "johncolby@ucla.edu",              role = "ctb"))
+Description: This package contains functions to plot esets.
+Depends:
+    R (>= 3.4.0)
+Imports:
+    assertive.base,
+    assertive.numbers,
+    assertive.properties,
+    assertive.sets,
+    assertive.strings,
+    assertive.types,
+    autonomics.import,
+    autonomics.preprocess,
+    autonomics.support,
+    data.table,
+    dplyr,
+    futile.logger,
+    ggplot2,
+    ggrepel,
+    ggstance,
+    grDevices,
+    gridExtra,
+    magrittr,
+    mgcv,
+    pheatmap,
+    reshape2,
+    rlang,
+    stringi,
+    tidyr, 
+    VennDiagram
+Suggests:
+    atkin.2014,
+    autonomics.data,
+    billing.differentiation.data,
+    Biobase,
+    halama.2016,
+    subramanian.2016,
+    SummarizedExperiment
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
