@@ -1,0 +1,47 @@
+Package: autonomics.ora
+Title: over representation analysis
+Version: 0.13.3
+Authors@R: c(person("Aditya",   "Bhagwat",  email = "bhagwataditya@gmail.com",         role = c("aut", "cre")), 
+             person("Richie",   "Cotton",   email = "richierocks@gmail.com",           role = "ctb"), 
+             person("Anja",     "Billing",  email = "anb2061@qatar-med.cornell.edu",   role = "ctb"),
+             person("Johannes", "Graumann", email = "Johannes.Graumann@mpi-bn.mpg.de", role = "ctb"))
+Description: This is the over representation analysis module of 'autonomics',
+    a suite of R packages for the automated analysis of omics data.
+Depends:
+    R (>= 3.4.0)
+Imports:
+    AnnotationDbi,
+    assertive.base,
+    assertive.files,
+    assertive.sets,
+    assertive.types,
+    autonomics.find,
+    autonomics.import,
+    autonomics.support,
+    Biobase,
+    data.table,
+    dplyr,
+    GO.db,
+    magrittr,
+    PANTHER.db,
+    stats,
+    stringi,
+    tibble,
+    tidyr,
+    utils
+License: GPL-3
+LazyData: true
+RoxygenNote: 6.0.1
+Suggests:
+    atkin.2014,
+    autonomics.data,
+    billing.differentiation.data,
+    devtools,
+    org.Hs.eg.db,
+    org.Cf.eg.db,
+    org.Dr.eg.db,
+    org.Mm.eg.db,
+    org.Rn.eg.db,
+    org.Sc.sgd.db,
+    org.Xl.eg.db,
+    testthat
