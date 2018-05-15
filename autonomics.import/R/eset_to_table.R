@@ -1,0 +1,43 @@
+#' Convert eset into wide datatable
+#' @param object eset
+#' @param fid      fvar carrying feature id
+#' @param fvars    additional fvars to include in table
+#' @return datatable
+#' @importFrom data.table  data.table
+#' @importFrom magrittr    %>%
+#' @export
+eset_to_wide_table <- function(
+   object,
+   fid = autonomics.import::fid_var(object),
+   fvars = character(0)
+){
+  fdata1 <- autonomics.import::fdata(object) %>% magrittr::extract(, unique(c(fid, fvars)), drop = FALSE) %>% data.table::data.table()
+  exprs1 <- autonomics.import::exprs(object) %>% data.table::data.table()
+  wide1  <- cbind(fdata1, exprs1)
+  wide1
+}
+
+#' Convert eset into long datatable
+#' @param object eset
+#' @param fid      fvar carrying feature id
+#' @param fvars    additional fvars to include in table
+#' @param sid      svar carrying sample id
+#' @param svars    additional svars to include in table
+#' @return datatable
+#' @importFrom data.table   data.table
+#' @importFrom magrittr     %>%
+#' @export
+eset_to_long_table <- function(
+   object,
+   fid = autonomics.import::fid_var(object),
+   fvars = character(0),
+   sid = 'sample_id',
+   svars = character(0)
+){
+  sdata1 <- autonomics.import::sdata(object) %>% magrittr::extract(, c('sample_id', svars), drop = FALSE)
+  # Note: unique is to avoid duplication of same fields in fid and fvars
+  object %>% autonomics.import::eset_to_wide_table(fid, fvars) %>%
+               data.table::melt.data.table(id.vars = unique(c(fid, fvars)), variable.name = sid, value.name = 'value') %>%
+               merge(sdata1, by = sid) %>%
+               magrittr::extract(, unique(c(fid, fvars, sid, svars, 'value')), with = FALSE)
+}

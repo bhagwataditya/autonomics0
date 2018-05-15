@@ -1,0 +1,61 @@
+Package: autonomics.import
+Title: Import omics data from various platforms
+Version: 0.3.12
+Authors@R: c(person("Aditya",   "Bhagwat",  email = "adb2018@qatar-med.cornell.edu", role = c("aut", "cre")), 
+             person("Johannes", "Graumann", email = "jog2030@qatar-med.cornell.edu", role = "ctb"), 
+             person("Richie",   "Cotton",   email = "richierocks@gmail.com",         role = "ctb"))
+Description: This package contains functions to import omics data from different platforms. 
+             Currently supported data types include rnaseq (counts), exiqon (Ct values), 
+             metabolon (values normalized by metabolon), and SOMAscan.
+Depends:
+    R (>= 3.4.0)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+    assertive.base,
+    assertive.files,
+    assertive.numbers,
+    assertive.properties,
+    assertive.reflection,
+    assertive.strings,
+    assertive.sets,
+    assertive.types,
+    autonomics.annotate,
+    autonomics.support,
+    Biobase,
+    data.table,
+    dplyr,
+    edgeR,
+    lazyeval,
+    limma,
+    magrittr,
+    matrixStats,
+    methods,
+    readat,
+    readxl,
+    reshape2,
+    stringi, 
+    stringr, 
+    S4Vectors,
+    SummarizedExperiment, 
+    tidyr
+Suggests:
+    alnoubi.2017,
+    atkin.2014,
+    autonomics.data,
+    billing.differentiation.data,
+    billing.vesicles,
+    graumann.lfq,
+    graumann.zebra,
+    halama.2016,
+    knitr,
+    org.Hs.eg.db, 
+    org.Mm.eg.db, 
+    org.Rn.eg.db, 
+    org.Sc.sgd.db,
+    org.Dr.eg.db,
+    org.Xl.eg.db,
+    subramanian.2016
+VignetteBuilder: knitr
+RoxygenNote: 6.0.1
