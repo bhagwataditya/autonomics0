@@ -1,0 +1,13 @@
+Package: autonomics.data
+Title: Example datasets for autonomics
+Version: 0.1.3.2
+Authors@R: c(person("Aditya", "Bhagwat", email = "bhagwataditya@gmail.com", role = c("aut", "cre")), 
+             person("Anja",   "Billing", email = "and2061@qatar-med.cornell.edu", role = c("aut")),
+             person("Johannes", "Graumann", email = "Johannes.Graumann@mpi-bn.mpg.de", role = "ctb"))
+Description: This package contains example datasets for autonomics, an R suite
+             for automated omics data analysis.
+Depends:
+    R (>= 3.4.0),
+License: GPL-3
+LazyData: true
+RoxygenNote: 6.0.1
