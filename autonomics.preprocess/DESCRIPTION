@@ -1,0 +1,37 @@
+Package: autonomics.preprocess
+Title: Functions for preprocessing of omics data
+Version: 0.4.2
+Authors@R: c(person("Aditya", "Bhagwat", email = "adb2018@qatar-med.cornell.edu", role = c("aut", "cre")),
+             person("Richard", "Cotton", email = "richierocks@gmail.com", role = "aut"),
+             person("Johannes", "Graumann", email = "Johannes.Graumann@mpi-bn.mpg.de", role = "ctb"))
+Description: This package contains functions for the preprocessing of omics data.
+Depends:
+    R (>= 3.4.0)
+Imports:
+    assertive.base,
+    assertive.sets,
+    assertive.types,
+    autonomics.support,
+    dplyr,
+    imputeLCMD,
+    limma,
+    magrittr,
+    MASS,
+    matrixStats,
+    methods,
+    pcaPP,
+    stats,
+    stringi,
+    R.utils
+Suggests:
+    alnoubi.2017, 
+    atkin.2014,
+    autonomics.data,
+    autonomics.import,
+    billing.differentiation.data,
+    halama.2016,
+    subramanian.2016
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
