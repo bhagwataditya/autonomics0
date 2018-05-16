@@ -43,31 +43,31 @@
 #' requireNamespace('ggstance')
 #' if (require(autonomics.data)){
 #'    # Just the basics ...
-#'    core_ggplot_from_data(autonomics.data::ALL[, 1:30])
+#'    autonomics.plot::core_ggplot_from_data(autonomics.data::ALL[, 1:30])
 #'    # Add a 'geom' layer
-#'    core_ggplot_from_data(autonomics.data::ALL[, 1:30]) +
+#'    autonomics.plot::core_ggplot_from_data(autonomics.data::ALL[, 1:30]) +
 #'      ggplot2::geom_violin()
 #'    # (Nearly) same thing, but horizontal and filled ...
-#'    core_ggplot_from_data(autonomics.data::ALL[, 1:15], fill_var = 'sex', horizontal = TRUE) +
+#'    autonomics.plot::core_ggplot_from_data(autonomics.data::ALL[, 1:15], fill_var = 'sex', horizontal = TRUE) +
 #'      ggstance::geom_violinh()
 #'    # Combine 2 'data sets', separating them by fill (augmenting the data on-the-fly)
-#'    core_ggplot_from_data(
+#'    autonomics.plot::core_ggplot_from_data(
 #'      autonomics.data::ALL[, 1:15], autonomics.data::ALL[, 16:30],
 #'      color_var = NULL,
 #'      fill_var = c('A', 'B')) +
 #'      ggplot2::geom_boxplot()
 #'    # Combine 2 'data sets', separating them by facetting
-#'    core_ggplot_from_data(
+#'    autonomics.plot::core_ggplot_from_data(
 #'      autonomics.data::ALL[, 1:30], autonomics.data::ALL[, 31:60],
 #'      facet2_var = c('A', 'B'), horizontal = TRUE) +
 #'      ggstance::geom_boxploth()
 #'    # Combine with further facetting ... using sdata ...
-#'    core_ggplot_from_data(
+#'    autonomics.data::core_ggplot_from_data(
 #'      autonomics.data::ALL[, 1:15], autonomics.data::ALL[, 16:30],
 #'      facet1_var = 'sex', facet2_var = c('A', 'B'), horizontal = TRUE) +
 #'      ggstance::geom_boxploth()
 #'    # Combine with further facetting ... using on-the-fly augmentation (only) ...
-#'    core_ggplot_from_data(
+#'    autonomics.plot::core_ggplot_from_data(
 #'      autonomics.data::ALL[, 1:15], autonomics.data::ALL[, 16:30],
 #'      facet1_var = c('C', 'D'), facet2_var = c('A', 'B'), horizontal = TRUE) +
 #'      ggstance::geom_boxploth()

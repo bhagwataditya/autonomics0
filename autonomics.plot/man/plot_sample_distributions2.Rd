@@ -47,7 +47,7 @@ The box is colored per value of color_var
 require(magrittr)
 if (require(autonomics.data)){
    # Simple plot
-     plot_sample_distributions2(autonomics.data::billing2016)
+     autonomics.plot::plot_sample_distributions2(autonomics.data::billing2016)
    # Same thing vertical
      plot_sample_distributions2(autonomics.data::billing2016, horizontal = FALSE)
    # More complex using facetting
