@@ -139,7 +139,7 @@ plot_projected_samples2 <- function(
       }
    }
    
-   # Must bee left AFTER 'facet_var' - as obj_list may change dependeing on that
+   # Must be left AFTER 'facet_var' - as obj_list may change depending on that
    method %<>%
       match.arg(
          choices = c('pca', 'lda', 'sma', 'pls'),
