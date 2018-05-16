@@ -198,8 +198,7 @@ plot_projected_samples2 <- function(
       stop('\'legend.position\' must be of length [1,2].')
    }
    # Transform
-   project_list <- obj_list %>%
-      seq_along() %>%
+   project_list <- seq_along(obj_list) %>%
       lapply(
          function(x)
          {
@@ -215,28 +214,26 @@ plot_projected_samples2 <- function(
    # Are we dealing with an on-the-fly generated facetting variable or do we use one from the data?
    ## Augment the facet vars
    if(length(facet_var) > 1){
-      facet_var %<>%
-         seq_along() %>%
-         sapply(
-            function(x)
-            {
-               make_sample_scores_title2(
-                  object                = obj_list[[x]],
-                  project_result        = project_list[[x]],
-                  dims                  = dims,
-                  method                = ifelse(length(method) == 1, method, method[x]),
-                  manual_label          = facet_var[x],
-                  mention_method        = mention_method,
-                  mention_feature_count = TRUE,
-                  mention_variance      = TRUE,
-                  separator      = '\n')
-            }
-         )
+      facet_var <- seq_along(facet_var) %>%
+                   sapply(
+                     function(x)
+                     {
+                        make_sample_scores_title2(
+                           object                = obj_list[[x]],
+                           project_result        = project_list[[x]],
+                           dims                  = dims,
+                           method                = ifelse(length(method) == 1, method, method[x]),
+                           manual_label          = facet_var[x],
+                           mention_method        = mention_method,
+                           mention_feature_count = TRUE,
+                           mention_variance      = TRUE,
+                           separator      = '\n')
+                     }
+                  )
    }
    
    # Generate data.tables/frames
-   plotDF <- obj_list %>%
-      seq_along() %>%
+   plotDF <- seq_along(obj_list) %>%
       lapply(
          function(x)
          {
