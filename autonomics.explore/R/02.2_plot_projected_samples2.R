@@ -67,7 +67,7 @@ plot_projected_samples2 <- function(
       listed_objects %>%
          assertive.types::assert_is_list()
    }
-   obj_list <- object %>%
+   obj_list <- list(object) %>%
       c(rlang::dots_list(...), listed_objects)
    obj_list %<>%
       magrittr::extract(!sapply(obj_list, is.null))
