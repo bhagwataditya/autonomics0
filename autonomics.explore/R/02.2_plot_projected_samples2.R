@@ -26,7 +26,7 @@
 #'    object <- autonomics.data::billing2016
 #'    object %>% autonomics.explore::plot_pca_samples2()
 #'    object %>% autonomics.explore::plot_lda_samples2()
-#'    object %>%
+#'    object %>% 
 #'      autonomics.explore::plot_projected_samples2(
 #'        method = c('pca', 'lda', 'sma', 'pls'),
 #'        facet_var = c('OK PCA', 'Not so nice LDA', 'Nice SMA', 'Very nice PLS'),
@@ -286,6 +286,8 @@ plot_projected_samples2 <- function(
             size  = 'size'))
    if (is.null(shape_var))  p <- p + ggplot2::scale_shape_manual(values = c(default = 15), guide = FALSE) 
    if (is.null(size_var))   p <- p + ggplot2::scale_size_manual( values = c(default = 3),  guide = FALSE)
+   plot_guide <- if (is.null(color_var)) FALSE  else TRUE
+   p <- p + ggplot2::scale_color_manual(values = color_values, guide = plot_guide)
    if (!is.null(color_var)) p <- p + ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = 15, size = 2)))
    
    # Line
