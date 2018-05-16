@@ -42,8 +42,8 @@ plot_features_mean_sd <- function(
    facet_grid_labeller = 'label_parsed',
    alpha               = 0.1)
 {
-   obj_list <- object %>%
-      c(rlang::dots_list(...))
+   obj_list <- list(object) %>%
+      c(list(...))
 
    for(obj in obj_list)
    {

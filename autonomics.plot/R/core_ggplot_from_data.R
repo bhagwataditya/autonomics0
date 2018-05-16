@@ -128,7 +128,7 @@ core_ggplot_from_data <- function(
          several.ok = FALSE)
 
    obj_list <- list(object) %>%
-      c(rlang::dots_list(...), listed_objects)
+      c(list(...), listed_objects)
    obj_list %<>%
       magrittr::extract(!sapply(obj_list, is.null))
 
