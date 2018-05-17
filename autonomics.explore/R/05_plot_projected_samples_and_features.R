@@ -118,8 +118,7 @@ plot_projected_samples_and_features <- function(
    plotlist <- list(
       samples = autonomics.explore::plot_projected_samples(
                    object, method = method, implementation = implementation, color_var = color_var, color_values = color_values, 
-                   shape_var = shape_var, txt_var = txt_var, dims = dims, na.impute = na.impute, 
-                   n = n),
+                   shape_var = shape_var, txt_var = txt_var, dims = dims, na.impute = na.impute),
       features1 = autonomics.explore::plot_projection_features %>% do.call(c(feature_plot_args, list(dim = dims[1]))),
       features2 = autonomics.explore::plot_projection_features %>% do.call(c(feature_plot_args, list(dim = dims[2])))
    )
