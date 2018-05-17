@@ -78,41 +78,41 @@ make_sample_scores_title <- function(object, method){
 #' require(magrittr)
 #' if (require(subramanian.2016)){
 #'    object <- subramanian.2016::metabolon
-#'    object %>% autonomics.explore::plot_pca_samples()
-#'    object %>% autonomics.explore::plot_sma_samples()
-#'    object %>% autonomics.explore::plot_lda_samples()
-#'    object %>% autonomics.explore::plot_pls_samples()
-#'    object %>% autonomics.explore::plot_pca_samples(color_var = 'condition')
-#'    object %>% autonomics.explore::plot_pca_samples(color_var = 'condition', size = 'time')
-#'    object %>% autonomics.explore::plot_lda_samples(color_var = 'condition', size = 'time')
-#'    object %>% autonomics.explore::plot_pca_samples(facet_var = 'condition')
-#'    object %>% autonomics.explore::plot_pca_samples(split_var = 'condition')
-#'    object %>% autonomics.explore::plot_pca_samples(
+#'    object %>% autonomics.explore::plot_pca_samples1()
+#'    object %>% autonomics.explore::plot_sma_samples1()
+#'    object %>% autonomics.explore::plot_lda_samples1()
+#'    object %>% autonomics.explore::plot_pls_samples1()
+#'    object %>% autonomics.explore::plot_pca_samples1(color_var = 'condition')
+#'    object %>% autonomics.explore::plot_pca_samples1(color_var = 'condition', size = 'time')
+#'    object %>% autonomics.explore::plot_lda_samples1(color_var = 'condition', size = 'time')
+#'    object %>% autonomics.explore::plot_pca_samples1(facet_var = 'condition')
+#'    object %>% autonomics.explore::plot_pca_samples1(split_var = 'condition')
+#'    object %>% autonomics.explore::plot_pca_samples1(
 #'                 color_var = 'subgroup',  size_var = 'time', split_var = 'condition')
-#'    object %>% autonomics.explore::plot_pca_samples(
+#'    object %>% autonomics.explore::plot_pca_samples1(
 #'                  color_var = 'condition', size_var = 'time', split_var = 'condition')
 #' }
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::billing2016
-#'    object %>% autonomics.explore::plot_pca_samples()
-#'    object %>% autonomics.explore::plot_lda_samples()
+#'    object %>% autonomics.explore::plot_pca_samples1()
+#'    object %>% autonomics.explore::plot_lda_samples1()
 #' }
 #' if (require(billing.differentiation.data)){
 #'    object <- billing.differentiation.data::protein.ratios
-#'    object %>% autonomics.explore::plot_pca_samples()
-#'    object %>% autonomics.explore::plot_lda_samples()
-#'    object %>% autonomics.explore::plot_pls_samples()
+#'    object %>% autonomics.explore::plot_pca_samples1()
+#'    object %>% autonomics.explore::plot_lda_samples1()
+#'    object %>% autonomics.explore::plot_pls_samples1()
 #' }
 #' if (require(atkin.2014)){
 #'    object <- atkin.2014::soma
-#'    object %>% autonomics.explore::plot_lda_samples()
-#'    object %>% autonomics.explore::plot_lda_samples(group_var = 'block')
-#'    object %>% autonomics.explore::plot_lda_samples(group_var = 'block', facet_var = 'condition')
-#'    object %>% autonomics.explore::plot_lda_samples(group_var = 'block', split_var = 'condition')
+#'    object %>% autonomics.explore::plot_lda_samples1()
+#'    object %>% autonomics.explore::plot_lda_samples1(group_var = 'block')
+#'    object %>% autonomics.explore::plot_lda_samples1(group_var = 'block', facet_var = 'condition')
+#'    object %>% autonomics.explore::plot_lda_samples1(group_var = 'block', split_var = 'condition')
 #' }
 #' @importFrom data.table   data.table   :=
 #' @export
-plot_projected_samples <- function(
+plot_projected_samples1 <- function(
    object, 
    method         = 'pca',
    implementation = NULL,
@@ -198,27 +198,27 @@ plot_projected_samples <- function(
    #suppressWarnings(print(p))
 }
 
-#' @rdname plot_projected_samples
+#' @rdname plot_projected_samples1
 #' @export
-plot_pca_samples <- function(object, ...){
-   plot_projected_samples(object = object, method = 'pca', ...)
+plot_pca_samples1 <- function(object, ...){
+   plot_projected_samples1(object = object, method = 'pca', ...)
 }
 
-#' @rdname plot_projected_samples
+#' @rdname plot_projected_samples1
 #' @export
-plot_sma_samples <- function(object, ...){
-   plot_projected_samples(object = object, method = 'sma', ...)
+plot_sma_samples1 <- function(object, ...){
+   plot_projected_samples1(object = object, method = 'sma', ...)
 }
 
-#' @rdname plot_projected_samples
+#' @rdname plot_projected_samples1
 #' @export
-plot_lda_samples <- function(object, ...){
-   plot_projected_samples(object = object, method = 'lda', ...)
+plot_lda_samples1 <- function(object, ...){
+   plot_projected_samples1(object = object, method = 'lda', ...)
 }
 
-#' @rdname plot_projected_samples
+#' @rdname plot_projected_samples1
 #' @export
-plot_pls_samples <- function(object, ...){
-   plot_projected_samples(object = object, method = 'pls', ...)
+plot_pls_samples1 <- function(object, ...){
+   plot_projected_samples1(object = object, method = 'pls', ...)
 }
 
