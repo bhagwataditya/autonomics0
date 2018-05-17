@@ -82,7 +82,7 @@ if (require(autonomics.data)){
    object <- autonomics.data::billing2016
    object \%>\% autonomics.explore::plot_pca_samples2()
    object \%>\% autonomics.explore::plot_lda_samples2()
-   object \%>\%
+   object \%>\% 
      autonomics.explore::plot_projected_samples2(
        method = c('pca', 'lda', 'sma', 'pls'),
        facet_var = c('OK PCA', 'Not so nice LDA', 'Nice SMA', 'Very nice PLS'),
