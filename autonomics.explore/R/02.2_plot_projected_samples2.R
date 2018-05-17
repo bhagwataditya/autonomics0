@@ -24,10 +24,10 @@
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::billing2016
-#'    object %>% autonomics.explore::plot_pca_samples2()
-#'    object %>% autonomics.explore::plot_lda_samples2()
+#'    object %>% autonomics.explore::plot_pca_samples()
+#'    object %>% autonomics.explore::plot_lda_samples()
 #'    object %>% 
-#'      autonomics.explore::plot_projected_samples2(
+#'      autonomics.explore::plot_projected_samples(
 #'        method = c('pca', 'lda', 'sma', 'pls'),
 #'        facet_var = c('OK PCA', 'Not so nice LDA', 'Nice SMA', 'Very nice PLS'),
 #'        nrow = 2)
@@ -35,7 +35,7 @@
 #' @importFrom data.table   data.table   :=
 #' @importFrom magrittr %>% %<>%
 #' @export
-plot_projected_samples2 <- function(
+plot_projected_samples <- function(
    object,
    ...,
    listed_objects    = NULL,
@@ -413,27 +413,27 @@ make_sample_scores_title2 <- function(
    paste0(all_strings, collapse = separator)
 }
 
-#' @rdname plot_projected_samples2
+#' @rdname plot_projected_samples
 #' @export
-plot_pca_samples2 <- function(object, ...){
-   plot_projected_samples2(object = object, method = 'pca', ...)
+plot_pca_samples <- function(object, ...){
+   plot_projected_samples(object = object, method = 'pca', ...)
 }
 
-#' @rdname plot_projected_samples2
+#' @rdname plot_projected_samples
 #' @export
-plot_sma_samples2 <- function(object, ...){
-   plot_projected_samples2(object = object, method = 'sma', ...)
+plot_sma_samples <- function(object, ...){
+   plot_projected_samples(object = object, method = 'sma', ...)
 }
 
-#' @rdname plot_projected_samples2
+#' @rdname plot_projected_samples
 #' @export
-plot_lda_samples2 <- function(object, ...){
-   plot_projected_samples2(object = object, method = 'lda', ...)
+plot_lda_samples <- function(object, ...){
+   plot_projected_samples(object = object, method = 'lda', ...)
 }
 
-#' @rdname plot_projected_samples2
+#' @rdname plot_projected_samples
 #' @export
-plot_pls_samples2 <- function(object, ...){
+plot_pls_samples <- function(object, ...){
    plot_projected_samples(object = object, method = 'pls', ...)
 }
 
