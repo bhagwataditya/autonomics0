@@ -103,17 +103,19 @@ lda <- function(
          length(),
       1)
 
-   max_dim <- object %>%
-      autonomics.import::subgroup_levels() %>%
-      length() %>%
-      magrittr::subtract(1)
-   
-   legal_dims_subsetter <- assertive.base::assert_all_are_true(
-      dims %>%
-         magrittr::is_weakly_less_than(max_dim))
-   
-   dims %<>%
-      magrittr::extract(legal_dims_subsetter)
+   # This is too strict: the function does work with dim=1:2 and 2 subgroup, 
+   # as it internally sets LD2 = 0.s
+   # max_dim <- object %>%
+   #    autonomics.import::subgroup_levels() %>%
+   #    length() %>%
+   #    magrittr::subtract(1)
+   # 
+   # legal_dims_subsetter <- assertive.base::assert_all_are_true(
+   #    dims %>%
+   #       magrittr::is_weakly_less_than(max_dim))
+   # 
+   # dims %<>%
+   #    magrittr::extract(legal_dims_subsetter)
 
    # Preprocess
    object %<>% autonomics.preprocess::minusinf_to_na()
