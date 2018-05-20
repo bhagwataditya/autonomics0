@@ -9,7 +9,7 @@
 pct_available <- function(x){
   selector <- !is.na(x)
   pct <- 100*sum(selector)/length(selector)
-  pct %>% floor()
+  floor(pct)
 }
 
 #' Percentage of TRUE value
@@ -23,5 +23,5 @@ pct_available <- function(x){
 pct_true <- function(x){
   assertive.types::assert_is_logical(x)
   pct <- 100*sum(x)/length(x)
-  pct %>% floor()
+  floor(pct)
 }

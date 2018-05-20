@@ -23,5 +23,5 @@ Convenient left_join function that preserves row names
 and avoids warning messages when by values are of different type.
 }
 \seealso{
-\code{\link[dplyr]{left_join}}
+dplyr::left_join
 }

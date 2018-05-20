@@ -8,7 +8,7 @@
 #' @param by by
 #' @param ... passed to dplyr::left_join
 #' @return merged dataframe
-#' @seealso \code{\link[dplyr]{left_join}}
+#' @seealso dplyr::left_join
 #' @importFrom magrittr %>% 
 #' @export
 left_join_keeping_rownames <- function(x, y, by, ...){
