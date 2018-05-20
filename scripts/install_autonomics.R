@@ -35,7 +35,7 @@ install_autonomics <- function(){
    install_if_not_available('devtools')
 
    # autonomics.data & autonomics.support
-   devtools::install_github('bhagwataditya/autonomics/autonomics.data',    repos = biocinstallRepos())
+#   devtools::install_github('bhagwataditya/autonomics/autonomics.data',    repos = biocinstallRepos())
    devtools::install_github('bhagwataditya/autonomics/autonomics.support', repos = biocinstallRepos())
 
    # autonomics.annotate & autonomics.import
