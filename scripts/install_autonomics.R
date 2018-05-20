@@ -35,30 +35,30 @@ install_autonomics <- function(){
    install_if_not_available('devtools')
 
    # autonomics.data & autonomics.support
-   devtools::install_bitbucket('graumannlabtools/autonomics.data',    repos = biocinstallRepos())
-   devtools::install_bitbucket('graumannlabtools/autonomics.support', repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics.data',    repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics.support', repos = biocinstallRepos())
 
    # autonomics.annotate & autonomics.import
    install_if_not_available(c('SummarizedExperiment', 'GenomeInfoDbData'))
-   devtools::install_bitbucket('graumannlabtools/autonomics.annotate', repos = biocinstallRepos())
-   devtools::install_bitbucket('graumannlabtools/autonomics.import',   repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics.annotate', repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics.import',   repos = biocinstallRepos())
 
    # autonomics.preprocess
    install_if_not_available('imputeLCMD')
-   devtools::install_bitbucket('graumannlabtools/autonomics.preprocess', repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics.preprocess', repos = biocinstallRepos())
 
    # autonomics.plot
-   devtools::install_bitbucket('graumannlabtools/autonomics.plot',       repos = biocinstallRepos())
-   devtools::install_bitbucket('graumannlabtools/autonomics.explore',    repos = biocinstallRepos())
-   devtools::install_bitbucket('graumannlabtools/autonomics.find',       repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics.plot',       repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics.explore',    repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics.find',       repos = biocinstallRepos())
 
    # autonomics.ora
    install_if_not_available(c('GO.db', 'PANTHER.db'))
-   devtools::install_bitbucket('graumannlabtools/autonomics.ora',        repos = biocinstallRepos())
-   devtools::install_bitbucket('graumannlabtools/autonomics.integrate',  repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics.ora',        repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics.integrate',  repos = biocinstallRepos())
 
    # autonomics
-   devtools::install_bitbucket('graumannlabtools/autonomics',            repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics',            repos = biocinstallRepos())
 
 }
 
