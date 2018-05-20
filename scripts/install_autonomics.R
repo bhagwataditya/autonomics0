@@ -35,30 +35,30 @@ install_autonomics <- function(){
    install_if_not_available('devtools')
 
    # autonomics.data & autonomics.support
-   devtools::install_github('bhagwataditya/autonomics.data',    repos = biocinstallRepos())
-   devtools::install_github('bhagwataditya/autonomics.support', repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics/autonomics.data',    repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics/autonomics.support', repos = biocinstallRepos())
 
    # autonomics.annotate & autonomics.import
    install_if_not_available(c('SummarizedExperiment', 'GenomeInfoDbData'))
-   devtools::install_github('bhagwataditya/autonomics.annotate', repos = biocinstallRepos())
-   devtools::install_github('bhagwataditya/autonomics.import',   repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics/autonomics.annotate', repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics/autonomics.import',   repos = biocinstallRepos())
 
    # autonomics.preprocess
    install_if_not_available('imputeLCMD')
-   devtools::install_github('bhagwataditya/autonomics.preprocess', repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics/autonomics.preprocess', repos = biocinstallRepos())
 
    # autonomics.plot
-   devtools::install_github('bhagwataditya/autonomics.plot',       repos = biocinstallRepos())
-   devtools::install_github('bhagwataditya/autonomics.explore',    repos = biocinstallRepos())
-   devtools::install_github('bhagwataditya/autonomics.find',       repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics/autonomics.plot',       repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics/autonomics.explore',    repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics/autonomics.find',       repos = biocinstallRepos())
 
    # autonomics.ora
    install_if_not_available(c('GO.db', 'PANTHER.db'))
-   devtools::install_github('bhagwataditya/autonomics.ora',        repos = biocinstallRepos())
-   devtools::install_github('bhagwataditya/autonomics.integrate',  repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics/autonomics.ora',        repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics/autonomics.integrate',  repos = biocinstallRepos())
 
    # autonomics
-   devtools::install_github('bhagwataditya/autonomics',            repos = biocinstallRepos())
+   devtools::install_github('bhagwataditya/autonomics/autonomics',            repos = biocinstallRepos())
 
 }
 
