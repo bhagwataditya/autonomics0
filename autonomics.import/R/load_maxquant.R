@@ -1380,13 +1380,9 @@ esetise_maxquant_dt <- function(
 #                                                                              #
 ################################################################################
 
-#' Load proteingroup ratios or phosphosite ratios/occupancies
-#'
-#' Returned either as a long datatable or as an eset,
-#' depending on the value of return_type
+#' Load proteingroup ratios/intensities
 #'
 #' @param proteingroups_file  full path to "proteinGroups.txt"
-#' @param phosphosites_file   full path to "Phospho (STY)Sites.txt"
 #' @param sample_file         full path to "sample_design.txt"
 #' @param parameter_file      full path to "parameters.txt"
 #' @param log2_transform      logical
@@ -1447,16 +1443,30 @@ load_proteingroups <- function(
              parameter_file = parameter_file)
 }
 
-#' @rdname load_proteingroups
+#' Load phosphosite ratios
+#'
+#' @param phosphosites_file   full path to "Phospho (STY)Sites.txt"
+#' @param sample_file         full path to "sample_design.txt"
+#' @param parameter_file      full path to "parameters.txt"
+#' @param log2_transform      logical
+#' @param value_type          any value in autonomics.import::MAXQUANT_VALUE_TYPES
+#' @param type               'proteingroup_ratios', 'phospho_ratios', 'phospho_occupancies'
+#' @param ...                 passed on the respective function
+#' @examples
+#' require(magrittr)
+#' if (require(billing.differentiation.data)){
+#'    'extdata/maxquant/Phospho (STY)Sites.txt' %>%
+#'    system.file(package = 'billing.differentiation.data') %>%
+#'    load_phosphosites()
+#' }
 #' @importFrom data.table  data.table   :=
 #' @importFrom magrittr    %>%
 #' @export
 load_phosphosites <- function(
-   proteingroups_file,
-   sample_file    = paste0(dirname(proteingroups_file), '/sample_design.txt'),
-   phosphosites_file   = paste0(dirname(proteingroups_file), '/Phospho (STY)Sites.txt'),
-   parameter_file = paste0(dirname(proteingroups_file), '/parameters.txt'),
-   value_type     = autonomics.import::infer_maxquant_value_type(phosphosites_file)
+   phosphosites_file = paste0(dirname(proteingroups_file), '/Phospho (STY)Sites.txt'),
+   sample_file       = paste0(dirname(proteingroups_file), '/sample_design.txt'),
+   parameter_file    = paste0(dirname(proteingroups_file), '/parameters.txt'),
+   value_type        = autonomics.import::infer_maxquant_value_type(phosphosites_file)
 ){
    # Satisfy CHECK
    feature_id <- NULL
@@ -1471,13 +1481,29 @@ load_phosphosites <- function(
              parameter_file)
 }
 
-#' @rdname load_proteingroups
+#' Load phosphosite occupancies
+#'
+#' @param phosphosites_file   full path to "Phospho (STY)Sites.txt"
+#' @param proteingroups_file  full path to "proteinGroups.txt"
+#' @param sample_file         full path to "sample_design.txt"
+#' @param parameter_file      full path to "parameters.txt"
+#' @param log2_transform      logical
+#' @param value_type          any value in autonomics.import::MAXQUANT_VALUE_TYPES
+#' @param type               'proteingroup_ratios', 'phospho_ratios', 'phospho_occupancies'
+#' @param ...                 passed on the respective function
+#' @examples
+#' require(magrittr)
+#' if (require(billing.differentiation.data)){
+#'    'extdata/maxquant/Phospho (STY)Sites.txt' %>%
+#'     system.file(package = 'billing.differentiation.data') %>%
+#'     load_phosphosite_occupanciess()
+#' }
 #' @importFrom data.table  data.table   :=
 #' @importFrom magrittr    %>%
 #' @export
 load_phosphosite_occupancies <- function(
-   proteingroups_file,
-   phosphosites_file       = paste0(dirname(proteingroups_file), '/Phospho (STY)Sites.txt'),
+   phosphosites_file,
+   proteingroups_file = paste0(dirname(proteingroups_file), '/proteinGroups.txt'),
    sample_file        = paste0(dirname(proteingroups_file), '/sample_design.txt'),
    parameter_file     = paste0(dirname(proteingroups_file), '/parameters.txt'),
    value_type         = infer_maxquant_value_type(proteingroups_file)

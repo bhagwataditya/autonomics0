@@ -2,33 +2,13 @@
 % Please edit documentation in R/load_maxquant.R
 \name{load_proteingroups}
 \alias{load_proteingroups}
-\alias{load_phosphosites}
-\alias{load_phosphosite_occupancies}
-\alias{load_maxquant}
-\title{Load proteingroup ratios or phosphosite ratios/occupancies}
+\title{Load proteingroup ratios/intensities}
 \usage{
 load_proteingroups(proteingroups_file,
   sample_file = paste0(dirname(proteingroups_file), "/sample_design.txt"),
   parameter_file = paste0(dirname(proteingroups_file), "/parameters.txt"),
   log2_transform = TRUE,
   value_type = autonomics.import::infer_maxquant_value_type(proteingroups_file))
-
-load_phosphosites(proteingroups_file,
-  sample_file = paste0(dirname(proteingroups_file), "/sample_design.txt"),
-  phosphosites_file = paste0(dirname(proteingroups_file),
-  "/Phospho (STY)Sites.txt"),
-  parameter_file = paste0(dirname(proteingroups_file), "/parameters.txt"),
-  value_type = autonomics.import::infer_maxquant_value_type(phosphosites_file))
-
-load_phosphosite_occupancies(proteingroups_file,
-  phosphosites_file = paste0(dirname(proteingroups_file),
-  "/Phospho (STY)Sites.txt"),
-  sample_file = paste0(dirname(proteingroups_file), "/sample_design.txt"),
-  parameter_file = paste0(dirname(proteingroups_file), "/parameters.txt"),
-  value_type = infer_maxquant_value_type(proteingroups_file))
-
-load_maxquant(type = c("protein", "phospho_ratios", "phospho_occupancies"),
-  ...)
 }
 \arguments{
 \item{proteingroups_file}{full path to "proteinGroups.txt"}
@@ -41,8 +21,6 @@ load_maxquant(type = c("protein", "phospho_ratios", "phospho_occupancies"),
 
 \item{value_type}{any value in autonomics.import::MAXQUANT_VALUE_TYPES}
 
-\item{phosphosites_file}{full path to "Phospho (STY)Sites.txt"}
-
 \item{type}{'proteingroup_ratios', 'phospho_ratios', 'phospho_occupancies'}
 
 \item{...}{passed on the respective function}
@@ -51,10 +29,7 @@ load_maxquant(type = c("protein", "phospho_ratios", "phospho_occupancies"),
 data.table or ExpressionSet
 }
 \description{
-Returned either as a long datatable or as an eset,
-depending on the value of return_type
-
-Load max quant type
+Load proteingroup ratios/intensities
 }
 \examples{
 library(magrittr)
