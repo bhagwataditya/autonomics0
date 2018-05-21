@@ -170,7 +170,7 @@ load_rnaseq_counts <- function(
    autonomics.import::assert_is_valid_eset(eset1)
 
    # Filter
-   eset1 %<>% autonomics.import::filter_features_nonzero_in_some_sample()
+   eset1 %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample()
 
    # Return
    eset1
