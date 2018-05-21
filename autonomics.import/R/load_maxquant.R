@@ -1387,8 +1387,6 @@ esetise_maxquant_dt <- function(
 #' @param parameter_file      full path to "parameters.txt"
 #' @param log2_transform      logical
 #' @param value_type          any value in autonomics.import::MAXQUANT_VALUE_TYPES
-#' @param type               'proteingroup_ratios', 'phospho_ratios', 'phospho_occupancies'
-#' @param ...                 passed on the respective function
 #' @examples
 #' library(magrittr)
 #' if (require(autonomics.data)){
@@ -1448,10 +1446,7 @@ load_proteingroups <- function(
 #' @param phosphosites_file   full path to "Phospho (STY)Sites.txt"
 #' @param sample_file         full path to "sample_design.txt"
 #' @param parameter_file      full path to "parameters.txt"
-#' @param log2_transform      logical
 #' @param value_type          any value in autonomics.import::MAXQUANT_VALUE_TYPES
-#' @param type               'proteingroup_ratios', 'phospho_ratios', 'phospho_occupancies'
-#' @param ...                 passed on the respective function
 #' @examples
 #' require(magrittr)
 #' if (require(billing.differentiation.data)){
@@ -1463,7 +1458,7 @@ load_proteingroups <- function(
 #' @importFrom magrittr    %>%
 #' @export
 load_phosphosites <- function(
-   phosphosites_file = paste0(dirname(proteingroups_file), '/Phospho (STY)Sites.txt'),
+   phosphosites_file,
    sample_file       = paste0(dirname(proteingroups_file), '/sample_design.txt'),
    parameter_file    = paste0(dirname(proteingroups_file), '/parameters.txt'),
    value_type        = autonomics.import::infer_maxquant_value_type(phosphosites_file)
@@ -1487,10 +1482,7 @@ load_phosphosites <- function(
 #' @param proteingroups_file  full path to "proteinGroups.txt"
 #' @param sample_file         full path to "sample_design.txt"
 #' @param parameter_file      full path to "parameters.txt"
-#' @param log2_transform      logical
 #' @param value_type          any value in autonomics.import::MAXQUANT_VALUE_TYPES
-#' @param type               'proteingroup_ratios', 'phospho_ratios', 'phospho_occupancies'
-#' @param ...                 passed on the respective function
 #' @examples
 #' require(magrittr)
 #' if (require(billing.differentiation.data)){

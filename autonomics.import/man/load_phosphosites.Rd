@@ -4,8 +4,7 @@
 \alias{load_phosphosites}
 \title{Load phosphosite ratios}
 \usage{
-load_phosphosites(phosphosites_file = paste0(dirname(proteingroups_file),
-  "/Phospho (STY)Sites.txt"),
+load_phosphosites(phosphosites_file,
   sample_file = paste0(dirname(proteingroups_file), "/sample_design.txt"),
   parameter_file = paste0(dirname(proteingroups_file), "/parameters.txt"),
   value_type = autonomics.import::infer_maxquant_value_type(phosphosites_file))
@@ -18,12 +17,6 @@ load_phosphosites(phosphosites_file = paste0(dirname(proteingroups_file),
 \item{parameter_file}{full path to "parameters.txt"}
 
 \item{value_type}{any value in autonomics.import::MAXQUANT_VALUE_TYPES}
-
-\item{log2_transform}{logical}
-
-\item{type}{'proteingroup_ratios', 'phospho_ratios', 'phospho_occupancies'}
-
-\item{...}{passed on the respective function}
 }
 \description{
 Load phosphosite ratios

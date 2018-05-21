@@ -20,10 +20,6 @@ load_proteingroups(proteingroups_file,
 \item{log2_transform}{logical}
 
 \item{value_type}{any value in autonomics.import::MAXQUANT_VALUE_TYPES}
-
-\item{type}{'proteingroup_ratios', 'phospho_ratios', 'phospho_occupancies'}
-
-\item{...}{passed on the respective function}
 }
 \value{
 data.table or ExpressionSet
