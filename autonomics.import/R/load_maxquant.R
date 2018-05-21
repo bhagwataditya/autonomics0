@@ -1459,8 +1459,8 @@ load_proteingroups <- function(
 #' @export
 load_phosphosites <- function(
    phosphosites_file,
-   sample_file       = paste0(dirname(proteingroups_file), '/sample_design.txt'),
-   parameter_file    = paste0(dirname(proteingroups_file), '/parameters.txt'),
+   sample_file       = paste0(dirname(phosphosites_file), '/sample_design.txt'),
+   parameter_file    = paste0(dirname(phosphosites_file), '/parameters.txt'),
    value_type        = autonomics.import::infer_maxquant_value_type(phosphosites_file)
 ){
    # Satisfy CHECK
@@ -1495,13 +1495,13 @@ load_phosphosites <- function(
 #' @export
 load_phosphosite_occupancies <- function(
    phosphosites_file,
-   proteingroups_file = paste0(dirname(proteingroups_file), '/proteinGroups.txt'),
-   sample_file        = paste0(dirname(proteingroups_file), '/sample_design.txt'),
-   parameter_file     = paste0(dirname(proteingroups_file), '/parameters.txt'),
-   value_type         = infer_maxquant_value_type(proteingroups_file)
+   proteingroups_file = paste0(dirname(phosphosites_file), '/proteinGroups.txt'),
+   sample_file        = paste0(dirname(phosphosites_file), '/sample_design.txt'),
+   parameter_file     = paste0(dirname(phosphosites_file), '/parameters.txt'),
+   value_type         = infer_maxquant_value_type(phosphosites_file)
 ){
    assertive.files::assert_all_are_existing_files(c(proteingroups_file, phosphosites_file, sample_file, parameter_file))
-   DT <- load_phosphosite_occupancies_to_long_dt(proteingroups_file = proteingroups_file, phosphosites_file  = phosphosites_file)
+   DT <- load_phosphosite_occupancies_to_long_dt(phosphosites_file  = phosphosites_file, proteingroups_file = proteingroups_file)
    DT %>% esetise_maxquant_dt(entity = 'phosphosite',
                               quantity = 'occupancy',
                               sample_file = sample_file,

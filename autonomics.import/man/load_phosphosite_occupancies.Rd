@@ -5,11 +5,11 @@
 \title{Load phosphosite occupancies}
 \usage{
 load_phosphosite_occupancies(phosphosites_file,
-  proteingroups_file = paste0(dirname(proteingroups_file),
-  "/proteinGroups.txt"), sample_file = paste0(dirname(proteingroups_file),
-  "/sample_design.txt"), parameter_file = paste0(dirname(proteingroups_file),
+  proteingroups_file = paste0(dirname(phosphosites_file),
+  "/proteinGroups.txt"), sample_file = paste0(dirname(phosphosites_file),
+  "/sample_design.txt"), parameter_file = paste0(dirname(phosphosites_file),
   "/parameters.txt"),
-  value_type = infer_maxquant_value_type(proteingroups_file))
+  value_type = infer_maxquant_value_type(phosphosites_file))
 }
 \arguments{
 \item{phosphosites_file}{full path to "Phospho (STY)Sites.txt"}
