@@ -6,8 +6,9 @@
 
 3. Install the latest version of BioConductor
      ```
-     source("https://bioconductor.org/biocLite.R")
-     biocLite(suppressUpdates = TRUE)
+     remove.packages('BiocInstaller')               # We want the latest version of BiocInstaller
+     source("https://bioconductor.org/biocLite.R")  # Install latest version of BiocInstaller
+     biocLite(suppressUpdates = TRUE)               # Install latest version of Bioconductor
      ```
     
 4. Upgrade packages
