@@ -1516,19 +1516,6 @@ load_phosphosite_occupancies <- function(
                               parameter_file = parameter_file)
 }
 
-#' Load max quant type
-#' @rdname load_proteingroups
-#' @export
-load_maxquant <- function(type = c('protein', 'phospho_ratios', 'phospho_occupancies'), ...){
-   type <- match.arg(type)
-   switch(
-      type,
-      protein_ratios      = load_proteingroups(...),
-      phospho_ratios      = load_phosphosites(...),
-      phospho_occupancies = load_phosphosite_occupancies(...)
-   )
-}
-
 utils::globalVariables(c('.SD', 'goid', 'interpro', 'ngoid', 'ninterpro', 'score', '.', 'Protein names', 'Gene names'))
 
 ##############################################
