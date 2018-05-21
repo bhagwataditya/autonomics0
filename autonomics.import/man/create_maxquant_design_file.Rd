@@ -5,7 +5,7 @@
 \alias{create_sample_design_file}
 \alias{create_maxquant_design_df}
 \alias{create_maxquant_design_file}
-\title{Create maxquant sample design}
+\title{Create maxquant design dataframe/file}
 \usage{
 create_sample_design_df(...)
 
@@ -32,7 +32,7 @@ create_maxquant_design_file(proteingroups_file,
 sample design dataframe (create_maxquant_design_df) or file (create_maxquant_design_file)
 }
 \description{
-Create maxquant sample design
+Create maxquant design dataframe/file
 }
 \examples{
 require(magrittr)

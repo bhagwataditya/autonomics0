@@ -361,21 +361,56 @@ make_sample_names <- function(injection, channel = rep(1, length(injection)) ){
 }
 
 
-#'@rdname create_maxquant_design_df
+#'@rdname create_maxquant_design_file
 #'@export
 create_sample_design_df <- function(...){
    .Deprecated('create_maxquant_design_df')
    create_maxquant_design_df(...)
 }
 
-#'@rdname create_maxquant_design_df
+#'@rdname create_maxquant_design_file
 #'@export
 create_sample_design_file <- function(...){
    .Deprecated('create_maxquant_design_file')
    create_maxquant_design_file(...)
 }
 
-#' Create maxquant sample design
+#' @rdname create_maxquant_design_file
+#' @importFrom magrittr %>%
+#' @export
+create_maxquant_design_df <- function(
+   proteingroups_file,
+   value_type = autonomics.import::infer_maxquant_value_type(proteingroups_file)
+){
+
+   # Assert
+   #-------
+   assertive.files::assert_all_are_dirs(dirname(proteingroups_file))
+   #assertive.files::assert_all_are_readable_files(proteingroups_file, warn_about_windows = FALSE)
+
+   # Read
+   #-----
+   DT <- data.table::fread(proteingroups_file)
+
+   # Extract channel & injection
+   #----------------------------
+   value_columns <- DT %>% get_maxquant_value_columns(value_type)
+   injection <- names(value_columns) %>% stringi::stri_replace_first_regex('\\[.+\\]', '')   # injection [channel]
+   channel   <- names(value_columns) %>% stringi::stri_extract_first_regex('\\[.+\\]') %>%
+      stringi::stri_replace_first_fixed('[', '') %>%
+      stringi::stri_replace_first_fixed(']', '')
+   # Return
+   #-------
+   sample_design <- data.frame(injection = injection, channel = channel, subgroup  = '', replicate = '')
+   if (all(is.na(channel))){
+      sample_design$channel <- NULL
+   }
+   sample_design
+
+}
+
+
+#' Create maxquant design dataframe/file
 #'
 #' @param proteingroups_file full path to protein groups file
 #' @param sample_design_file full path to sample design file
@@ -431,41 +466,6 @@ create_sample_design_file <- function(...){
 #'    proteingroups_file <- system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017')
 #'    create_maxquant_design_df(proteingroups_file)
 #' }
-#' @importFrom magrittr %>%
-#' @export
-create_maxquant_design_df <- function(
-   proteingroups_file,
-   value_type = autonomics.import::infer_maxquant_value_type(proteingroups_file)
-){
-
-   # Assert
-   #-------
-   assertive.files::assert_all_are_dirs(dirname(proteingroups_file))
-   #assertive.files::assert_all_are_readable_files(proteingroups_file, warn_about_windows = FALSE)
-
-   # Read
-   #-----
-   DT <- data.table::fread(proteingroups_file)
-
-   # Extract channel & injection
-   #----------------------------
-   value_columns <- DT %>% get_maxquant_value_columns(value_type)
-   injection <- names(value_columns) %>% stringi::stri_replace_first_regex('\\[.+\\]', '')   # injection [channel]
-   channel   <- names(value_columns) %>% stringi::stri_extract_first_regex('\\[.+\\]') %>%
-      stringi::stri_replace_first_fixed('[', '') %>%
-      stringi::stri_replace_first_fixed(']', '')
-   # Return
-   #-------
-   sample_design <- data.frame(injection = injection, channel = channel, subgroup  = '', replicate = '')
-   if (all(is.na(channel))){
-      sample_design$channel <- NULL
-   }
-   sample_design
-
-}
-
-
-#' @rdname create_maxquant_design_df
 #' @importFrom magrittr %>%
 #' @export
 create_maxquant_design_file <- function(
