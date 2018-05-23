@@ -38,14 +38,14 @@ install_autonomics <- function(){
    devtools::install_github('bhagwataditya/autonomics/autonomics.data',    repos = biocinstallRepos())
    devtools::install_github('bhagwataditya/autonomics/autonomics.support', repos = biocinstallRepos())
 
+   # autonomics.preprocess
+   install_if_not_available('imputeLCMD')
+   devtools::install_github('bhagwataditya/autonomics/autonomics.preprocess', repos = biocinstallRepos())
+   
    # autonomics.annotate & autonomics.import
    install_if_not_available(c('SummarizedExperiment', 'GenomeInfoDbData'))
    devtools::install_github('bhagwataditya/autonomics/autonomics.annotate', repos = biocinstallRepos())
    devtools::install_github('bhagwataditya/autonomics/autonomics.import',   repos = biocinstallRepos())
-
-   # autonomics.preprocess
-   install_if_not_available('imputeLCMD')
-   devtools::install_github('bhagwataditya/autonomics/autonomics.preprocess', repos = biocinstallRepos())
 
    # autonomics.plot
    devtools::install_github('bhagwataditya/autonomics/autonomics.plot',       repos = biocinstallRepos())
