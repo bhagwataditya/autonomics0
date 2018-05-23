@@ -181,8 +181,6 @@ infer_organism_from_mirs <- function(mir){
 #' @examples
 #' require(magrittr)
 #' mir <- c('hsa-mir-7-5p', 'hsa-mir-29a-3p', 'hsa-mir-199a-5p ')
-#' mir %>% mir_to_ensg()
-#' mir %>% mir_to_gsymbol()
 #' mir %>% mir_to('gsymbol')
 #' @importFrom magrittr %>%
 #' @export
@@ -196,14 +194,25 @@ mir_to <- function(mir, to){
    targetscan
 }
 
-#' @rdname mir_to
-#' @importFrom magrittr %>%
+#' Map vector of microRNAs to target gsymbols
+#' @param mir vector of microRNAs
+#' @return named list which maps each mir to its target gene symbols
+#' @examples
+#' require(magrittr)
+#' mir <- c('hsa-mir-7-5p', 'hsa-mir-29a-3p', 'hsa-mir-199a-5p ')
+#' mir %>% mir_to_gsymbol()
 #' @export
 mir_to_gsymbol <- function(mir){
    mir_to(mir, 'gsymbol')
 }
 
-#' @rdname mir_to
+#' Map vector of microRNAs to target ensgs
+#' @param mir vector of microRNAs
+#' @return named list which maps each mir to its target ensgs
+#' @examples
+#' require(magrittr)
+#' mir <- c('hsa-mir-7-5p', 'hsa-mir-29a-3p', 'hsa-mir-199a-5p ')
+#' mir %>% mir_to_ensg()
 #' @importFrom magrittr %>%
 #' @export
 mir_to_ensg <- function(mir){
