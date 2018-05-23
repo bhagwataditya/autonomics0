@@ -6,7 +6,7 @@
 \alias{fetch_kegg_maps}
 \title{Functions to generate maps for various ontology accession-based mapping operations}
 \usage{
-fetch_interpro_maps(interpro_url = paste0(c("ftp:/", "ftp.ebi.ac.uk", "pub",
+fetch_interpro_maps(interpro_url = paste0(c("http:/", "ftp.ebi.ac.uk", "pub",
   "databases", "interpro", "current", "names.dat"), collapse = "/"),
   verbose = FALSE)
 
@@ -42,4 +42,7 @@ fetch_interpro_maps() \%>\%
 c("dre:793465", "dre:571876", "dre:798771", "dre:564511") \%>\%
   fetch_kegg_maps() \%>\%
   str()
+}
+\author{
+Johannes Graumann
 }

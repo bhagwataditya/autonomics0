@@ -22,11 +22,12 @@
 #' c("dre:793465", "dre:571876", "dre:798771", "dre:564511") %>%
 #'   fetch_kegg_maps() %>%
 #'   str()
+#' @author Johannes Graumann
 #' @rdname fetch_ontology_maps
 #' @export
 fetch_interpro_maps <- function(
   interpro_url   = paste0(
-     c('ftp:/',
+     c('http:/',
      'ftp.ebi.ac.uk',
       'pub',
       'databases',
@@ -41,6 +42,11 @@ fetch_interpro_maps <- function(
 
   verbose %>%
     assertive.types::assert_is_a_bool()
+
+  if (!RCurl::url.exists(interpro_url, timeout = 5)){
+     autonomics.support::cmessage('Interpro FTP site not working - returning NULL\n%s', interpro_url)
+     return(NULL)
+  }
 
   # Processing --------------------------------------------------------------
   # Retrieve the matching table

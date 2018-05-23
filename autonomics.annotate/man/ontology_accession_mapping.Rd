@@ -67,3 +67,6 @@ pwa \%>\%
   unlist(use.names = FALSE) \%>\%
   pathway_accessions_to_names(mapping_object = mo_kegg)
 }
+\author{
+Johannes Graumann
+}

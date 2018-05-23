@@ -21,6 +21,7 @@ Imports:
    devtools,
    KEGGREST,
    magrittr,
+   RCurl,
    rvest,
    stringi,
    UniProt.ws,

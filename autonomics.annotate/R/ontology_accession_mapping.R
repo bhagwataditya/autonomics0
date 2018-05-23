@@ -44,6 +44,7 @@
 #'   strsplit(split = ';') %>%
 #'   unlist(use.names = FALSE) %>%
 #'   pathway_accessions_to_names(mapping_object = mo_kegg)
+#' @author Johannes Graumann
 #' @importFrom magrittr %>%
 #' @rdname ontology_accession_mapping
 #' @export
@@ -111,6 +112,7 @@ pathway_accessions_to_names <- function(
     if(ontology == 'interpro')
     {
       mapping_object <- fetch_interpro_maps(..., verbose = verbose)
+      if (is.null(mapping_object)) return(NULL)
     } else if(ontology == 'kegg')
     {
       mapping_object <- fetch_kegg_maps(...)
