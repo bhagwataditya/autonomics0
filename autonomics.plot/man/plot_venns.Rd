@@ -4,7 +4,8 @@
 \alias{plot_venns}
 \title{Plot Venn diagrams}
 \usage{
-plot_venns(x, filename = NULL, width = 7, height = 7, title = NULL)
+plot_venns(x, filename = NULL, width = 7, height = width, title = NULL,
+  colors = autonomics.plot::make_gg_colors(1:length(x)))
 }
 \arguments{
 \item{x}{named list of character vectors}
