@@ -31,18 +31,18 @@ make_gtf_link <- function(organism, release){
 #' download_gtf('Rattus norvegicus')
 #' @export
 download_gtf <- function(organism, release = 92){
-  
+
   # Assert validity
   assertive.sets::assert_is_subset(organism, c('Homo sapiens', 'Mus musculus', 'Rattus norvegicus'))
-  
+
   # Satisfy CHECK
   . <- NULL
-  
+
   create_dir <- dir.create(sprintf("~/.autonomics/gtf/%s", stringi::stri_replace_first_fixed(organism,' ', '_')), recursive=TRUE, showWarnings = FALSE)
   remote <- make_gtf_link(organism, release)
-  
+
   if(!file.exists(sprintf("~/.autonomics/gtf/%s/%s", stringi::stri_replace_first_fixed(organism,' ', '_'), basename(remote)))){
-      
+
         local <- sprintf("~/.autonomics/gtf/%s/%s", stringi::stri_replace_first_fixed(organism,' ', '_'), basename(remote))
         utils::download.file(url = remote, destfile = local )
         R.utils::gunzip(local,  remove = FALSE, overwrite = TRUE)
@@ -51,7 +51,7 @@ download_gtf <- function(organism, release = 92){
   else{
         message(sprintf("GTF release %s already exists under ~/.autonomics/gtf/%s", release, stringi::stri_replace_first_fixed(organism,' ', '_')))
 }
-    
+
 }
 
 
@@ -73,23 +73,24 @@ select_organism_database <- function(organism){
 #' @export
 get_gene_annotations <- function(
   organism,
-  select = c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name','gene_biotype','entrezgene'),
+  select = c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name','gene_biotype'),
+  #,'entrezgene'
   filter = NULL
 ){
   # Satisfy CHECK
   . <- NULL
-  
+
   # Assert validity
   assertive.sets::assert_is_subset(organism, c('Homo sapiens', 'Mus musculus', 'Rattus norvegicus'))
-  
-  
+
+
   message("get gene annotations for selected organism")
-  
+
   create_dir <- dir.create(sprintf("~/.autonomics/annotations/%s", stringi::stri_replace_first_fixed(organism,' ', '_')), recursive=TRUE, showWarnings = FALSE)
   ensembl = biomaRt::useMart("ensembl", dataset=select_organism_database(organism))
   attributes = biomaRt::listAttributes(ensembl)
   select_attributes = biomaRt::getBM(attributes = select, mart = ensembl)
-  
+
   if(is.null(filter)){
     select_attributes %<>%
       tidyr::unite(chr_and_start_pos, chromosome_name,start_position, sep = ":", remove = TRUE) %>%
@@ -101,8 +102,9 @@ get_gene_annotations <- function(
       tidyr::unite(chr_and_start_pos, chromosome_name,start_position, sep = ":", remove = TRUE) %>%
       tidyr::unite(locus, chr_and_start_pos,end_position, sep = "-", remove = TRUE)
   }
-  
-  colnames(select_attributes) <- c("gene_id", "locus", "gene_name", "biotype","entrezg")
+
+  colnames(select_attributes) <- c("gene_id", "locus", "gene_name", "biotype")
+  #,"entrezg"
   write.table(select_attributes,sprintf("~/.autonomics/annotations/%s/features.txt",stringi::stri_replace_first_fixed(organism,' ', '_')), quote=FALSE, sep="\t", row.names=FALSE)
   message("\n")
   message(sprintf("features.txt written under ~/.autonomics/annotations/%s", stringi::stri_replace_first_fixed(organism,' ', '_')))
@@ -124,25 +126,25 @@ get_gene_annotations <- function(
 get_feature_counts <- function(
   dir_to_samples,
   organism,
-  release,
+  release = 92,
   paired_end = FALSE,
   ...
 ){
   #set directory to samples with bam files
   setwd(sprintf("%s",dir_to_samples))
-  
+
   #list directories with bam files
   dir_list <- dir()
   sample_names <- dir(dir_list[1:length(dir_list)], pattern=".bam$",full.names=T)
-  
+
   message(sprintf("Checking for GTF release %s",release))
   message("\n")
   download_gtf(organism, release = release)
-  
+
   gtf_file = list.files(sprintf("~/.autonomics/gtf/%s", stringi::stri_replace_first_fixed(organism,' ', '_')) ,pattern = "\\.gtf$")
   message("\n")
   message("Starting to count reads per feature for given samples")
-  
+
   #count features for the list of samples
   feature_count <- sapply(sample_names, function(x)
     Rsubread::featureCounts(files = x,
@@ -153,36 +155,41 @@ get_feature_counts <- function(
                           simplify = FALSE,
                           USE.NAMES = TRUE
   )
-  
+
   #convert list to dataframe
   feature_counts <- feature_count %>%
                    lapply(function(x) x$counts) %>%
                    do.call(cbind, .) %>%
                    magrittr::set_colnames(stringi::stri_replace_all_regex(names(feature_count),'/.*bam$', ''))
-  
+
+
+  message("filtering feature counts with atleast 1 read")
+  #filter rows with atleast 1 read
+  feature_counts <- feature_counts[which(rowSums(feature_counts) >= 1 ),]
+
   #create directory for saving gene_counts.txt file
   create_dir <- dir.create("~/.autonomics/feature_count", recursive=TRUE, showWarnings = FALSE)
-  
+
   write.table(feature_counts,"~/.autonomics/feature_count/gene_counts.txt", quote=FALSE, sep="\t", row.names = TRUE)
-  
+
   message("gene_counts.txt file written under ~/.autonomics/feature_count/gene_counts.txt")
-  
+
 }
 #get_feature_counts("/Users/shh2026/Desktop/bam_file/",'Mus musculus', 91, TRUE)
 
 
 #create sample design
 create_rnaseq_sample_design <- function(countfile){
-  
+
      gene_counts <- read.table(countfile)
      design_df <- data.frame(sample_id = colnames(gene_counts))
-     design_df$subgroup <- "" 
+     design_df$subgroup <- ""
      design_df$replicate <- ""
      design_df$block <- ""
-     
+
      create_dir <- dir.create("~/.autonomics/sample_design/", recursive=TRUE, showWarnings = FALSE)
      write.table(design_df,"~/.autonomics/sample_design/samples.txt", quote=FALSE, row.names = FALSE)
-     
+
      message("Please fill in blanks in sample design templete under ~/.autonomics/sample_design/samples.txt")
 }
 #create_rnaseq_sample_design("~/.autonomics/feature_count/gene_counts.txt")
@@ -190,29 +197,32 @@ create_rnaseq_sample_design <- function(countfile){
 
 #load RNAseq counts
 load_RNAseq <- function(countfile, samplesfile, featurefile){
-      
+
     countfile <- read.table("~/.autonomics/feature_count/gene_counts.txt")
     samplesfile <- data.table::fread("~/.autonomics/sample_design/samples.txt",fill=TRUE, data.table = FALSE)
     featurefile <- data.table::fread("~/.autonomics/annotations/Mus_musculus/features.txt", data.table = FALSE)
-    
+
+    #removed entrezgene id from feature annotations because same gene has different ids
+    #multiple biotypes given to same gene_name in featurefile  #featurefile_filter_on_countfile[featurefile_filter_on_countfile$gene_name == "Gm15853",]
+    featurefile_filter_on_countfile <- featurefile[featurefile$gene_id %in% rownames(countfile),]
+
     #define variables for summerized experiment object
-    fdata1 <- featurefile
-    
-    sdata1 <- samplesfile %>% 
+    fdata1 <- featurefile_filter_on_countfile
+
+    sdata1 <- samplesfile %>%
              set_rownames(.$sample_id)
-    
+
     exprs1 <- countfile %>%
              data.matrix()
-    
+
     #create summerized experiment object
     rnaseq <- SummarizedExperiment::SummarizedExperiment(assays=list(exprs=exprs1), rowData=fdata1, colData=sdata1)
-    
-    save(rnaseq, file = 'data/rnaseq.RData', compress = 'xz')  
-  
-  
+
+    #Return rnaseq
+    rnaseq
+    #save(rnaseq, file = 'inst/extdata/rnaseq.RData', compress = 'xz')
+
 }
-
-
 
 
 REQUIRED_FVARS_RNASEQ <- c('gene_id', 'gene_name')
