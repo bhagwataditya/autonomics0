@@ -32,6 +32,13 @@ eset_to_wide_table <- function(...){
 #' @param svars  additional svars to include in table
 #' @param ...    (backward compatibility)
 #' @return long data.table
+#' @examples
+#' require(magrittr)
+#' if (require(billing.differentiation.data)){
+#'    object <- billing.differentiation.data::protein.ratios
+#'    object %>% autonomics.import::sumexp_to_long_dt()
+#'    object %>% autonomics.import::sumexp_to_long_dt(svars = 'subgroup')
+#' }
 #' @importFrom data.table   data.table
 #' @importFrom magrittr     %>%
 #' @export

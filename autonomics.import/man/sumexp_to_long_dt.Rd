@@ -29,3 +29,11 @@ long data.table
 \description{
 Convert sumexp into long datatable
 }
+\examples{
+require(magrittr)
+if (require(billing.differentiation.data)){
+   object <- billing.differentiation.data::protein.ratios
+   object \%>\% autonomics.import::sumexp_to_long_dt()
+   object \%>\% autonomics.import::sumexp_to_long_dt(svars = 'subgroup')
+}
+}
