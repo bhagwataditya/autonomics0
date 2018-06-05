@@ -4,12 +4,14 @@
 \alias{melt_wide_maxquant_dt}
 \title{Tidy max quant table}
 \usage{
-melt_wide_maxquant_dt(DT, log2_transform = TRUE)
+melt_wide_maxquant_dt(DT, log2_transform = TRUE, log2_offset = 0)
 }
 \arguments{
 \item{DT}{maxquant datatable}
 
 \item{log2_transform}{logical}
+
+\item{log2_offset}{offset added to value before log2 transformation ()}
 }
 \description{
 Tidy max quant table

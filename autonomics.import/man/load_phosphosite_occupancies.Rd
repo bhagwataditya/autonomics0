@@ -8,7 +8,7 @@ load_phosphosite_occupancies(phosphosites_file,
   proteingroups_file = paste0(dirname(phosphosites_file),
   "/proteinGroups.txt"), sample_file = paste0(dirname(phosphosites_file),
   "/sample_design.txt"), parameter_file = paste0(dirname(phosphosites_file),
-  "/parameters.txt"),
+  "/parameters.txt"), log2_transform = TRUE,
   value_type = infer_maxquant_value_type(phosphosites_file))
 }
 \arguments{
@@ -20,6 +20,8 @@ load_phosphosite_occupancies(phosphosites_file,
 
 \item{parameter_file}{full path to "parameters.txt"}
 
+\item{log2_transform}{logical}
+
 \item{value_type}{any value in autonomics.import::MAXQUANT_VALUE_TYPES}
 }
 \description{
@@ -28,8 +30,8 @@ Load phosphosite occupancies
 \examples{
 require(magrittr)
 if (require(billing.differentiation.data)){
-   'extdata/maxquant/Phospho (STY)Sites.txt' \%>\%
+   'extdata/maxquant/Phospho (STY)Sites.txt'              \%>\%
     system.file(package = 'billing.differentiation.data') \%>\%
-    load_phosphosite_occupanciess()
+    autonomics.import::load_phosphosite_occupancies()
 }
 }

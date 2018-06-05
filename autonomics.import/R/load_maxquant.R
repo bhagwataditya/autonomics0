@@ -729,6 +729,7 @@ load_phosphosites_to_wide_dt <- function(
 #' Tidy max quant table
 #' @param DT maxquant datatable
 #' @param log2_transform logical
+#' @param log2_offset offset added to value before log2 transformation ()
 #' @examples
 #' require(magrittr)
 #' if (require(billing.differentiation.data)){
@@ -746,7 +747,7 @@ load_phosphosites_to_wide_dt <- function(
 #' @importFrom magrittr     %>%   %<>%
 #' @importFrom data.table   data.table   :=
 #' @export
-melt_wide_maxquant_dt <- function(DT, log2_transform = TRUE){
+melt_wide_maxquant_dt <- function(DT, log2_transform = TRUE, log2_offset = 0){
 
    # Satisfy CHECK
    .SD <- feature_id <- value <- NULL
@@ -777,10 +778,8 @@ melt_wide_maxquant_dt <- function(DT, log2_transform = TRUE){
 
    # Log2 transform
    if (log2_transform){
-      autonomics.support::cmessage('\t\tLog2 transform.')
-      # pseudoval <- if (quantity %in% c('lfq.intensity'))   0.005 else 0
-      pseudoval <- 0
-      DT[, value:=log2(value + pseudoval)]
+      autonomics.support::cmessage('\t\tLog2 transform (offset %d).', log2_offset)
+      DT[, value:=log2(value + log2_offset)]
    }
    DT
 }
@@ -813,7 +812,8 @@ load_proteingroups_to_long_dt <- function(
 ){
    output <- autonomics.import::load_proteingroups_to_wide_dt(proteingroups_file = proteingroups_file, value_type = value_type)
    tmp_summary_attr <- output %>% get_summary_attr()
-   long_dt <- output %>% autonomics.import::melt_wide_maxquant_dt(log2_transform = log2_transform)
+   log2_offset <- if (value_type == 'raw.intensity') 1 else 0
+   long_dt <- output %>% autonomics.import::melt_wide_maxquant_dt(log2_transform = log2_transform, log2_offset = log2_offset)
    long_dt %>% set_summary_attr(tmp_summary_attr %>%
                                 c(proteingroups_n_quantified = long_dt %>%
                                                                magrittr::extract2('feature_id') %>%
@@ -824,6 +824,7 @@ load_proteingroups_to_long_dt <- function(
 #' Load datatable with phosphosite ratios
 #' @param phosphosites_file  phosphosites file
 #' @param value_type    any value in names(VALUE_COLNAME_PATTERNS)
+#' @param log2_transform   whether to log2 transform
 #' @param min_loc_prob  mimum localization probability
 #' @param remove_multiple_pg whether to remove phosphosites mapping to multiple protein groups (logical)
 #' @return phosophosites data.table
@@ -839,8 +840,9 @@ load_proteingroups_to_long_dt <- function(
 #' @export
 load_phosphosite_ratios_to_long_dt <- function(
    phosphosites_file,
-   value_type   = infer_maxquant_value_type(phosphosites_file),
-   min_loc_prob = 0.75,
+   value_type         = infer_maxquant_value_type(phosphosites_file),
+   log2_transform     = TRUE,
+   min_loc_prob       = 0.75,
    remove_multiple_pg = FALSE
 ){
    output <- load_phosphosites_to_wide_dt(phosphosites_file = phosphosites_file,
@@ -848,7 +850,7 @@ load_phosphosite_ratios_to_long_dt <- function(
                                           min_loc_prob = min_loc_prob,
                                           remove_multiple_pg = remove_multiple_pg)
                                           tmp_summary_attr <- get_summary_attr(output)
-   long_dt <- output %>% melt_wide_maxquant_dt()
+   long_dt <- output %>% melt_wide_maxquant_dt(log2_transform = log2_transform, log2_offset = 0)
    long_dt %>% set_summary_attr(tmp_summary_attr %>%
                                 c(phosphosites_n_quantified = long_dt %>%
                                                               magrittr::extract2('feature_id') %>%
@@ -871,6 +873,7 @@ load_phosphosite_ratios_to_long_dt <- function(
 #' @param phosphosites_file  phosphosites  file
 #' @param proteingroups_file  proteingroups file
 #' @param value_type    any value in names(VALUE_COLNAME_PATTERNS)
+#' @param log2_transform   whether to log2 transform
 #' @param min_loc_prob  minimum localization probability (numeric)
 #' @return datatable with phosphosite occupancies
 #' @examples
@@ -887,14 +890,18 @@ load_phosphosite_ratios_to_long_dt <- function(
 load_phosphosite_occupancies_to_long_dt <- function(
    phosphosites_file,
    proteingroups_file = paste0(dirname(phosphosites_file), '/proteinGroups.txt'),
-   value_type   = infer_maxquant_value_type(proteingroups_file),
-   min_loc_prob = 0.75
+   value_type         = infer_maxquant_value_type(proteingroups_file),
+   log2_transform     = TRUE,
+   min_loc_prob       = 0.75
 ){
    # Satisfy CHECK
    `Protein group IDs` <- feature_id <- sample <- value <- protein.value <- phospho.value <- NULL
 
    # Load protein data
-   proteins <- load_proteingroups_to_long_dt(proteingroups_file = proteingroups_file, value_type = value_type)
+   proteins <- load_proteingroups_to_long_dt(
+                  proteingroups_file = proteingroups_file,
+                  value_type         = value_type,
+                  log2_transform     = log2_transform)
    tmp_summary_attr_prot <- get_summary_attr(proteins)
    proteins %<>% magrittr::extract(, list(feature_id, sample, value))
    data.table::setnames(proteins, 'feature_id', 'Protein group IDs')
@@ -903,9 +910,10 @@ load_phosphosite_occupancies_to_long_dt <- function(
 
    # Load phosphosite data
    phosphosites <- load_phosphosite_ratios_to_long_dt(
-                      phosphosites_file = phosphosites_file,
-                      value_type = value_type,
-                      min_loc_prob = min_loc_prob,
+                      phosphosites_file  = phosphosites_file,
+                      value_type         = value_type,
+                      log2_transform     = log2_transform,
+                      min_loc_prob       = min_loc_prob,
                       remove_multiple_pg = TRUE)
    tmp_summary_attr_phos <- get_summary_attr(phosphosites)
    data.table::setnames(phosphosites, 'value', 'phospho.value')
@@ -915,7 +923,7 @@ load_phosphosite_occupancies_to_long_dt <- function(
    data.table::setkey(proteins,      `Protein group IDs`, sample)
    data.table::setkey(phosphosites,  `Protein group IDs`, sample)
    occupancies <- merge(phosphosites, proteins)
-   occupancies[,  value := phospho.value - protein.value]
+   occupancies %>% magrittr::extract(,  value := if (log2_transform) phospho.value - protein.value else phospho.value / protein.value)
    occupancies %>% set_summary_attr(c(tmp_summary_attr_prot, tmp_summary_attr_phos))
 }
 
@@ -1424,7 +1432,9 @@ load_proteingroups <- function(
    assertive.files::assert_all_are_existing_files(c(proteingroups_file, sample_file, parameter_file))
 
    # Load
-   DT <- autonomics.import::load_proteingroups_to_long_dt(proteingroups_file, value_type = value_type, log2_transform = log2_transform)
+   DT <- autonomics.import::load_proteingroups_to_long_dt(proteingroups_file,
+                                                          log2_transform = log2_transform,
+                                                          value_type     = value_type)
    DT[, feature_id := paste0('PG', formatC(feature_id, digits = max(floor(log10(feature_id))), flag = '0'))]
    DT %>% autonomics.import::esetise_maxquant_dt(
              entity = 'proteingroup',
@@ -1438,13 +1448,14 @@ load_proteingroups <- function(
 #' @param phosphosites_file   full path to "Phospho (STY)Sites.txt"
 #' @param sample_file         full path to "sample_design.txt"
 #' @param parameter_file      full path to "parameters.txt"
+#' @param log2_transform      logical
 #' @param value_type          any value in autonomics.import::MAXQUANT_VALUE_TYPES
 #' @examples
 #' require(magrittr)
 #' if (require(billing.differentiation.data)){
-#'    'extdata/maxquant/Phospho (STY)Sites.txt' %>%
+#'    'extdata/maxquant/Phospho (STY)Sites.txt'             %>%
 #'    system.file(package = 'billing.differentiation.data') %>%
-#'    load_phosphosites()
+#'    autonomics.import::load_phosphosites()
 #' }
 #' @importFrom data.table  data.table   :=
 #' @importFrom magrittr    %>%
@@ -1453,13 +1464,16 @@ load_phosphosites <- function(
    phosphosites_file,
    sample_file       = paste0(dirname(phosphosites_file), '/sample_design.txt'),
    parameter_file    = paste0(dirname(phosphosites_file), '/parameters.txt'),
+   log2_transform    = TRUE,
    value_type        = autonomics.import::infer_maxquant_value_type(phosphosites_file)
 ){
    # Satisfy CHECK
    feature_id <- NULL
 
    assertive.files::assert_all_are_existing_files(c(phosphosites_file, sample_file, parameter_file))
-   DT <- autonomics.import::load_phosphosite_ratios_to_long_dt(phosphosites_file = phosphosites_file, value_type = value_type)
+   DT <- autonomics.import::load_phosphosite_ratios_to_long_dt(phosphosites_file = phosphosites_file,
+                                                               log2_transform    = log2_transform,
+                                                               value_type        = value_type)
    DT[, feature_id := paste0('PS', formatC(feature_id, digits = max(floor(log10(feature_id))), flag = '0'))]
    DT %>% esetise_maxquant_dt(
              entity = 'phosphosite',
@@ -1474,13 +1488,14 @@ load_phosphosites <- function(
 #' @param proteingroups_file  full path to "proteinGroups.txt"
 #' @param sample_file         full path to "sample_design.txt"
 #' @param parameter_file      full path to "parameters.txt"
+#' @param log2_transform      logical
 #' @param value_type          any value in autonomics.import::MAXQUANT_VALUE_TYPES
 #' @examples
 #' require(magrittr)
 #' if (require(billing.differentiation.data)){
-#'    'extdata/maxquant/Phospho (STY)Sites.txt' %>%
+#'    'extdata/maxquant/Phospho (STY)Sites.txt'              %>%
 #'     system.file(package = 'billing.differentiation.data') %>%
-#'     load_phosphosite_occupanciess()
+#'     autonomics.import::load_phosphosite_occupancies()
 #' }
 #' @importFrom data.table  data.table   :=
 #' @importFrom magrittr    %>%
@@ -1490,10 +1505,13 @@ load_phosphosite_occupancies <- function(
    proteingroups_file = paste0(dirname(phosphosites_file), '/proteinGroups.txt'),
    sample_file        = paste0(dirname(phosphosites_file), '/sample_design.txt'),
    parameter_file     = paste0(dirname(phosphosites_file), '/parameters.txt'),
+   log2_transform     = TRUE,
    value_type         = infer_maxquant_value_type(phosphosites_file)
 ){
    assertive.files::assert_all_are_existing_files(c(proteingroups_file, phosphosites_file, sample_file, parameter_file))
-   DT <- load_phosphosite_occupancies_to_long_dt(phosphosites_file  = phosphosites_file, proteingroups_file = proteingroups_file)
+   DT <- load_phosphosite_occupancies_to_long_dt(phosphosites_file  = phosphosites_file,
+                                                 proteingroups_file = proteingroups_file,
+                                                 log2_transform     = log2_transform)
    DT %>% esetise_maxquant_dt(entity = 'phosphosite',
                               quantity = 'occupancy',
                               sample_file = sample_file,

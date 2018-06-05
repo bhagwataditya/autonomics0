@@ -8,7 +8,7 @@ load_phosphosite_occupancies_to_long_dt(phosphosites_file,
   proteingroups_file = paste0(dirname(phosphosites_file),
   "/proteinGroups.txt"),
   value_type = infer_maxquant_value_type(proteingroups_file),
-  min_loc_prob = 0.75)
+  log2_transform = TRUE, min_loc_prob = 0.75)
 }
 \arguments{
 \item{phosphosites_file}{phosphosites  file}
@@ -16,6 +16,8 @@ load_phosphosite_occupancies_to_long_dt(phosphosites_file,
 \item{proteingroups_file}{proteingroups file}
 
 \item{value_type}{any value in names(VALUE_COLNAME_PATTERNS)}
+
+\item{log2_transform}{whether to log2 transform}
 
 \item{min_loc_prob}{minimum localization probability (numeric)}
 }
