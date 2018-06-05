@@ -251,7 +251,7 @@ infer_maxquant_value_type <- function(file){
    DT <- data.table::fread(file)
 
    # Normalized ratios
-   x <- DT %>% get_maxquant_normalized_ratios()
+   x <- DT %>% autonomics.import::get_maxquant_normalized_ratios()
    if (!is.null(x)) return('normalized.ratio')
 
    # Reporter intensities
@@ -552,14 +552,6 @@ rename_maxquant_annotation_columns <- function(DT){
    DT
 }
 
-#' @importFrom data.table   data.table   :=
-log2_transform_ratios <- function(DT){
-   ratio <- NULL
-   DT[, ratio:=log2(ratio)]
-   data.table::setnames(DT, 'ratio', 'l2r')
-   DT
-}
-
 #' Remove reverse hits
 #' @param PG maxquant dataframe
 #' @importFrom data.table   data.table   :=
@@ -816,10 +808,10 @@ melt_wide_maxquant_dt <- function(DT, log2_transform = TRUE){
 #' @export
 load_proteingroups_to_long_dt <- function(
    proteingroups_file,
-   value_type     = infer_maxquant_value_type(proteingroups_file),
+   value_type     = autonomics.import::infer_maxquant_value_type(proteingroups_file),
    log2_transform = TRUE
 ){
-   output <- load_proteingroups_to_wide_dt(proteingroups_file = proteingroups_file, value_type = value_type)
+   output <- autonomics.import::load_proteingroups_to_wide_dt(proteingroups_file = proteingroups_file, value_type = value_type)
    tmp_summary_attr <- output %>% get_summary_attr()
    long_dt <- output %>% autonomics.import::melt_wide_maxquant_dt(log2_transform = log2_transform)
    long_dt %>% set_summary_attr(tmp_summary_attr %>%

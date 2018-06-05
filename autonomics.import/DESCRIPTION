@@ -3,6 +3,7 @@ Title: Import omics data from various platforms
 Version: 0.3.12
 Authors@R: c(person("Aditya",   "Bhagwat",  email = "adb2018@qatar-med.cornell.edu", role = c("aut", "cre")), 
              person("Johannes", "Graumann", email = "jog2030@qatar-med.cornell.edu", role = "ctb"), 
+             person("Shahina",  "Hayat",    email = "shh2026@qatar-med.cornell.edu", role = "ctb"),
              person("Richie",   "Cotton",   email = "richierocks@gmail.com",         role = "ctb"))
 Description: This package contains functions to import omics data from different platforms. 
              Currently supported data types include rnaseq (counts), exiqon (Ct values), 

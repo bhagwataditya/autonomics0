@@ -5,7 +5,7 @@
 \title{Load protein table}
 \usage{
 load_proteingroups_to_long_dt(proteingroups_file,
-  value_type = infer_maxquant_value_type(proteingroups_file),
+  value_type = autonomics.import::infer_maxquant_value_type(proteingroups_file),
   log2_transform = TRUE)
 }
 \arguments{
