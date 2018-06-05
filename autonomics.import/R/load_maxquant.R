@@ -768,13 +768,12 @@ melt_wide_maxquant_dt <- function(DT, log2_transform = TRUE, log2_offset = 0){
 
    # Melt
    n0 <- DT[, length(unique(feature_id))]
-   tmp_summary_attr <- get_summary_attr(DT)
-   DT %<>% data.table::melt(measure.vars = value_vars, variable.name = 'sample', value.name = 'value', na.rm = TRUE)
-   DT %<>% set_summary_attr(tmp_summary_attr)
-
-   # DT %<>% data.table::melt(id.vars = PROTEIN_VARS_MAXQUANT, variable.name = 'sample', value.name = 'value', na.rm = TRUE)
-   n1 <- DT[, length(unique(feature_id))]
-   autonomics.support::cmessage('\t\tRetain %d/%d features with a value for at least one sample', n1, n0)
+   tmp_summary_attr <- autonomics.import::get_summary_attr(DT)
+   DT %<>% data.table::melt(measure.vars  = value_vars,
+                            variable.name = 'sample',  # na.rm = FALSE is a must !!!
+                            value.name    = 'value',   # Avoids an "only NaN values sample" from being dropped
+                            na.rm         = FALSE)     # Which has happened in a labeled IP study (where H and L differed massively)
+   DT %<>% autonomics.import::set_summary_attr(tmp_summary_attr)
 
    # Log2 transform
    if (log2_transform){
@@ -1368,6 +1367,14 @@ esetise_maxquant_dt <- function(
 
    # Assert validity
    autonomics.import::assert_is_valid_eset(object)
+
+   # Filter rows with no available value for any sample
+   # This filtering is placed here because it
+   #    (1) is generic to proteingroups and phosphosites
+   #    (2) does not belong in the wideDT -> longDT step (where a full NaN sample gets completely removed from the data - see comments there)
+   #    (3) should come after including sample data (and hence removing unannotated samples)
+   autonomics.support::cmessage('\tFilter features')
+   object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample()
 
    # Return
    return(object)
