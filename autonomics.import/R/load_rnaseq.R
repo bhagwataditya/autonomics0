@@ -204,38 +204,27 @@ load_RNAseq <- function(countfile, samplesfile, featurefile){
 
     dt <- featurefile %>% data.table::data.table()
     dt[, entrezg:=as.character(entrezg)]
+
+    #group entrez id by gene id
     dt[, entrezg := paste(entrezg, collapse = ';'), by = 'gene_id']
     
+    #group biotypes by gene id
+    dt[, biotype := paste(unique(biotype), collapse = ';'), by = 'gene_name']
+
     #54590
-    feature_dt <- dt[!duplicated(dt$gene_id),]
-     
+    dt %<>% data.table::setkey("gene_id") %>% unique()
+    
     #53465
-    c_gene_id <- data.frame(gene_id=rownames(countfile))
+    c_gene_id <- rownames(countfile) %>% data.table::data.table()
     
     #53451
-    feature_dt <- feature_dt[feature_dt$gene_id %in% c_gene_id$gene_id,]
+    feature_dt <- merge(dt , c_gene_id, by="gene_id")
     
     #14 genes are not presnet in biomart list which are predicted genes
     #length(c_gene_id[!c_gene_id$gene_id %in% feature_dt$gene_id,])
     
     #keep genes from countfile exisiting in feature_dt
     countfile1 = countfile[rownames(countfile) %in% feature_dt$gene_id,]
-    
-    
-    #dt[, biotype := paste(unique(biotype), collapse = ';'), by = 'gene_name']
-    #dt[gene_id=='ENSMUSG00000096902']
-    #dt[gene_id=='ENSMUSG00000096902', entrezg]
-    #dt[gene_id=='ENSMUSG00000096902', paste(entrezg, collapse = ';')]
-    #dt[gene_id=='ENSMUSG00000096902', biotype]
-    #dt[gene_id=='ENSMUSG00000096902', unique(biotype)]
-    #dt[, gene_name := paste(gene_name, collapse = ';'), by = 'gene_id']
-    #feature_dt[feature_dt$gene_name ==  "Rnf26",]
-    #head(feature_dt[duplicated(feature_dt$gene_name),])
-
-    #removed entrezgene id from feature annotations because same gene has different ids
-    #multiple biotypes given to same gene_name in featurefile  #feature_dt[feature_dt$gene_name == "Gm15853",]
-    #featurefile_filter_on_countfile <- featurefile[featurefile$gene_id %in% rownames(countfile),]
-    #same gene name for multiple gene id 
 
     #define variables for summerized experiment object
     fdata1 <- feature_dt
@@ -254,6 +243,17 @@ load_RNAseq <- function(countfile, samplesfile, featurefile){
     #Return rnaseq
     rnaseq
     #save(rnaseq, file = 'inst/extdata/rnaseq.RData', compress = 'xz')
+    
+    
+    #feature_dt[, biotype := paste(unique(biotype), collapse = ';'), by = 'gene_name']
+    #dt[gene_id=='ENSMUSG00000096902']
+    #dt[gene_id=='ENSMUSG00000096902', entrezg]
+    #dt[gene_id=='ENSMUSG00000096902', paste(entrezg, collapse = ';')]
+    #dt[gene_id=='ENSMUSG00000096902', biotype]
+    #dt[gene_id=='ENSMUSG00000096902', unique(biotype)]
+    #dt[, gene_name := paste(gene_name, collapse = ';'), by = 'gene_id']
+    #feature_dt[feature_dt$gene_name ==  "Rnf26",]
+    #head(feature_dt[duplicated(feature_dt$gene_name),])
 
 }
 
