@@ -1,3 +1,39 @@
+#' Principal component analysis
+#' 
+#' \code{\link[autonomics.explore]{pca}}
+#' @name pca
+#' @importFrom autonomics.explore   pca
+#' @export  pca
+NULL
+
+
+#' Linear discriminant analysis
+#' 
+#' \code{\link[autonomics.explore]{lda}}
+#' @name lda
+#' @importFrom autonomics.explore   lda
+#' @export  lda
+NULL
+
+
+#' Partial Least Squares analysis
+#' 
+#' \code{\link[autonomics.explore]{pls}}
+#' @name pls
+#' @importFrom autonomics.explore   pls
+#' @export  pls
+NULL
+
+
+#' Spectral map analysis
+#' 
+#' \code{\link[autonomics.explore]{sma}}
+#' @name sma
+#' @importFrom autonomics.explore   sma
+#' @export  sma
+NULL
+
+
 #' Plot PCA samples
 #' 
 #' \code{\link[autonomics.explore]{plot_pca_samples}}

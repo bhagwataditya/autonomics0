@@ -88,6 +88,16 @@ NULL
 #' @export load_metabolon
 NULL
 
+
+#' Load somascan data
+#' 
+#' \code{\link[autonomics.import]{load_soma}}
+#' @name load_soma
+#' @importFrom autonomics.import   load_soma
+#' @export load_soma
+NULL
+
+
 #' prepro
 #' 
 #' \code{\link[autonomics.import]{prepro}}
