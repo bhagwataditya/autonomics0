@@ -202,28 +202,60 @@ load_RNAseq <- function(countfile, samplesfile, featurefile){
     samplesfile <- data.table::fread("~/.autonomics/sample_design/samples.txt",fill=TRUE, data.table = FALSE)
     featurefile <- data.table::fread("~/.autonomics/annotations/Mus_musculus/features.txt", data.table = FALSE)
 
+    dt <- featurefile %>% data.table::data.table()
+    dt[, entrezg:=as.character(entrezg)]
+    dt[, entrezg := paste(entrezg, collapse = ';'), by = 'gene_id']
+    
+    #54590
+    feature_dt <- dt[!duplicated(dt$gene_id),]
+     
+    #53465
+    c_gene_id <- data.frame(gene_id=rownames(countfile))
+    
+    #53451
+    feature_dt <- feature_dt[feature_dt$gene_id %in% c_gene_id$gene_id,]
+    
+    #14 genes are not presnet in biomart list which are predicted genes
+    #length(c_gene_id[!c_gene_id$gene_id %in% feature_dt$gene_id,])
+    
+    #keep genes from countfile exisiting in feature_dt
+    countfile1 = countfile[rownames(countfile) %in% feature_dt$gene_id,]
+    
+    
+    #dt[, biotype := paste(unique(biotype), collapse = ';'), by = 'gene_name']
+    #dt[gene_id=='ENSMUSG00000096902']
+    #dt[gene_id=='ENSMUSG00000096902', entrezg]
+    #dt[gene_id=='ENSMUSG00000096902', paste(entrezg, collapse = ';')]
+    #dt[gene_id=='ENSMUSG00000096902', biotype]
+    #dt[gene_id=='ENSMUSG00000096902', unique(biotype)]
+    #dt[, gene_name := paste(gene_name, collapse = ';'), by = 'gene_id']
+    #feature_dt[feature_dt$gene_name ==  "Rnf26",]
+    #head(feature_dt[duplicated(feature_dt$gene_name),])
+
     #removed entrezgene id from feature annotations because same gene has different ids
-    #multiple biotypes given to same gene_name in featurefile  #featurefile_filter_on_countfile[featurefile_filter_on_countfile$gene_name == "Gm15853",]
-    featurefile_filter_on_countfile <- featurefile[featurefile$gene_id %in% rownames(countfile),]
+    #multiple biotypes given to same gene_name in featurefile  #feature_dt[feature_dt$gene_name == "Gm15853",]
+    #featurefile_filter_on_countfile <- featurefile[featurefile$gene_id %in% rownames(countfile),]
+    #same gene name for multiple gene id 
 
     #define variables for summerized experiment object
-    fdata1 <- featurefile_filter_on_countfile
+    fdata1 <- feature_dt
 
     sdata1 <- samplesfile %>%
              set_rownames(.$sample_id)
 
-    exprs1 <- countfile %>%
+    exprs1 <- countfile1 %>%
              data.matrix()
 
     #create summerized experiment object
-    rnaseq <- SummarizedExperiment::SummarizedExperiment(assays=list(exprs=exprs1), rowData=fdata1, colData=sdata1)
+    rnaseq <- SummarizedExperiment::SummarizedExperiment(assays  =  list(exprs = exprs1), 
+                                                         rowData = fdata1,
+                                                         colData = sdata1)
 
     #Return rnaseq
     rnaseq
     #save(rnaseq, file = 'inst/extdata/rnaseq.RData', compress = 'xz')
 
 }
-
 
 REQUIRED_FVARS_RNASEQ <- c('gene_id', 'gene_name')
 #' Required feature variables
