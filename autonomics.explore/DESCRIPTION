@@ -2,10 +2,9 @@ Package: autonomics.explore
 Title: Explore Omics Data
 Version: 0.9.1
 Authors@R: c(person("Aditya",   "Bhagwat",    email = "bhagwataditya@gmail.com",         role = c("aut", "cre")), 
+             person("Johannes", "Graumann",   email = "Johannes.Graumann@mpi-bn.mpg.de", role = "aut"),
              person("Laure",    "Cougnaud",   email = "laure.cougnaud@openanalytics.eu", role = "aut"),
-             person("Richard",  "Cotton",     email = 'richierocks@gmail.com',           role = "ctb"),
-             person("Johannes", "Graumann",   email = "Johannes.Graumann@mpi-bn.mpg.de", role = "ctb")
-           )
+             person("Richard",  "Cotton",     email = 'richierocks@gmail.com',           role = "ctb"))
 Description: This package contains functions for exploratory analysis of omics
              data. It is part of autonomics, the R suite for automated analysis of omics data.
 Depends:
