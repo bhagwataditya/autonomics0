@@ -9,6 +9,8 @@ pls(object, implementation = NULL, dims = 1:2, ...)
 \arguments{
 \item{object}{SummarizedExperiment}
 
+\item{implementation}{'mixOmics::plsda', 'mixOmics::splsda', or 'ropls::opls'}
+
 \item{dims}{dimensions vector}
 
 \item{...}{only inlcuded to keep \code{\link[autonomics.explore]{project}} generic}

@@ -41,7 +41,7 @@ if (require(billing.differentiation.data)){
    object \%>\% autonomics.explore::lda() \%>\% str()
 }
 if (require(halama.2016)){
-   object <- halama.2016::cell.metabolites  \%>\% 
+   object <- halama.2016::cell.metabolites
    object \%>\% autonomics.explore::lda() \%>\% str()
 }
 if (require(subramanian.2016)){

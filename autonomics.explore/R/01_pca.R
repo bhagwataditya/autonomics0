@@ -259,6 +259,7 @@ lda <- function(
 #' 
 #' @param object SummarizedExperiment
 #' @param dims   dimensions vector
+#' @param implementation 'mixOmics::plsda', 'mixOmics::splsda', or 'ropls::opls'
 #' @param ...    only inlcuded to keep \code{\link[autonomics.explore]{project}} generic
 #' @return 
 #' ```

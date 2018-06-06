@@ -80,11 +80,14 @@ require(magrittr)
 if (require(autonomics.data)){
    object <- autonomics.data::billing2016
    object \%>\% autonomics.explore::plot_pca_samples()
-   object \%>\% autonomics.explore::plot_lda_samples()
-   object \%>\% 
-     autonomics.explore::plot_projected_samples(
+   object \%>\% autonomics.explore::plot_pca_samples(dims = c(3,4))
+   
+   object \%>\% autonomics.explore::plot_projected_samples(
        method = c('pca', 'lda', 'sma', 'pls'),
        facet_var = c('OK PCA', 'Not so nice LDA', 'Nice SMA', 'Very nice PLS'),
        nrow = 2)
 }
+}
+\author{
+Aditya Bhagwat, Johannes Graumann
 }

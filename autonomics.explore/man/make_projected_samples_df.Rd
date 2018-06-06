@@ -31,3 +31,23 @@ make_projected_samples_df(projection, object, dims, color_var, shape_var,
 \description{
 Make datatable to plot PCA, LDA, or PLS sample scores
 }
+\examples{
+require(magrittr)
+if (require(billing.differentiation.data)){
+   object <- billing.differentiation.data::protein.ratios
+   
+   autonomics.explore::pca(object) \%>\% 
+   autonomics.explore::make_projected_samples_df(
+      object, dims = c(1,2), color_var = 'subgroup', 
+      shape_var = NULL, size_var = NULL, txt_var = NULL, 
+      split_var = NULL, facet_var = NULL, group_var = NULL) \%>\% 
+   print()
+   
+   autonomics.explore::pca(object, dims = 1:4) \%>\% 
+   autonomics.explore::make_projected_samples_df(
+      object, dims = 3:4, color_var = 'subgroup', 
+      shape_var = NULL, size_var = NULL, txt_var = NULL, 
+      split_var = NULL, facet_var = NULL, group_var = NULL) \%>\% 
+   print()
+}
+}
