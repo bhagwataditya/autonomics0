@@ -27,6 +27,16 @@ NULL
 NULL
 
 
+#' fvars
+#' 
+#' \code{\link[autonomics.import]{fvars}}
+#' @name fdata
+#' @importFrom autonomics.import  fvars   fvars<- 
+#' @export fvars
+#' @export fvars<-
+NULL
+
+
 #' filter_features
 #' 
 #' \code{\link[autonomics.import]{filter_features}}
@@ -115,4 +125,13 @@ NULL
 #' @export sdata<-
 NULL
 
+
+#' svars
+#' 
+#' \code{\link[autonomics.import]{svars}}
+#' @name svars
+#' @importFrom autonomics.import  svars   svars<- 
+#' @export svars
+#' @export svars<-
+NULL
 

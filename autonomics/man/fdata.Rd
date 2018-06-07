@@ -2,7 +2,10 @@
 % Please edit documentation in R/autonomics_import.R
 \name{fdata}
 \alias{fdata}
+\alias{fdata}
 \title{fdata}
 \description{
 \code{\link[autonomics.import]{fdata}}
+
+\code{\link[autonomics.import]{fvars}}
 }
