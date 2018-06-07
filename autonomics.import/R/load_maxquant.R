@@ -658,7 +658,7 @@ load_proteingroups_to_wide_dt <- function(
    value_type = infer_maxquant_value_type(proteingroups_file)
 ){
    autonomics.support::cmessage('\tLoad proteingroups')
-   DT <- suppressWarnings(data.table::fread(proteingroups_file, verbose = FALSE, integer64 = 'numeric', colClasses = c(id='character')))
+   DT <- autonomics.support::cfread(proteingroups_file, colClasses = c(id = 'character'))
    tmp_summary_attr <- list(proteingroups_n = nrow(DT))
 
    DT %<>% autonomics.import::rm_contaminants()
@@ -703,7 +703,7 @@ load_phosphosites_to_wide_dt <- function(
    `Protein group IDs` <- `Localization prob` <- NULL
 
    autonomics.support::cmessage('\tLoad phosphosite ratios')
-   DT <- suppressWarnings(data.table::fread(phosphosites_file, verbose = FALSE, integer64 = 'numeric', colClasses = c(id = 'character')))
+   DT <- autonomics.support::cfread(phosphosites_file, colClasses = c(id = 'character'))
    tmp_summary_attr <- list(phosphosites_n = nrow(DT))
 
    DT %<>% rm_contaminants()
