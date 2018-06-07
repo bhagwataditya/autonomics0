@@ -4,7 +4,7 @@
 \alias{cfread}
 \title{convenient fread}
 \usage{
-cfread(file, verbose = FALSE, integer64 = "numeric", data.table = FALSE,
+cfread(file, verbose = FALSE, integer64 = "numeric", data.table = TRUE,
   ...)
 }
 \arguments{

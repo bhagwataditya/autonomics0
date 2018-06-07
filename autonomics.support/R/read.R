@@ -24,7 +24,7 @@
 #' returns a \code{data.frame}. Passed to \code{\link[data.table]{fread}}.
 #' @param ... Passed to \code{\link[data.table]{fread}}.
 #' @export
-cfread <- function(file, verbose = FALSE, integer64  = 'numeric', data.table = FALSE, ...){
+cfread <- function(file, verbose = FALSE, integer64  = 'numeric', data.table = TRUE, ...){
   
   dt <- suppressWarnings(
         data.table::fread(
