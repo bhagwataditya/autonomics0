@@ -25,14 +25,23 @@
 #' @param ... Passed to \code{\link[data.table]{fread}}.
 #' @export
 cfread <- function(file, verbose = FALSE, integer64  = 'numeric', data.table = FALSE, ...){
-  suppressWarnings(
-    data.table::fread(
-      file, 
-      data.table = data.table, 
-      integer64  = integer64, 
-      verbose    = verbose,
-      ...
-    )
-  )
+  
+  dt <- suppressWarnings(
+        data.table::fread(
+          file, 
+          data.table = data.table, 
+          integer64  = integer64, 
+          verbose    = verbose,
+          ...
+        )
+      )
+  
+  # The integer64 = 'numeric' sometimes fails: https://github.com/Rdatatable/data.table/issues/2607
+  # Enforce it.
+  integer64_columns <- names(which(lapply(dt, class) == 'integer64'))
+  for (col in integer64_columns) data.table::set(dt, j=col, value=as.numeric(dt[[col]]))
+  
+  dt
+  
 }
  
