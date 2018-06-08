@@ -43,6 +43,15 @@ NULL
 NULL
 
 
+#' Plot projected samples
+#' 
+#' \code{\link[autonomics.explore]{plot_projected_samples}}
+#' @name plot_projected_samples
+#' @importFrom autonomics.explore   plot_projected_samples
+#' @export  plot_projected_samples
+NULL
+
+
 #' Plot LDA samples
 #' 
 #' \code{\link[autonomics.explore]{plot_lda_samples}}
