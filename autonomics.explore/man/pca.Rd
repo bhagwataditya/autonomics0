@@ -4,19 +4,19 @@
 \alias{pca}
 \title{Principal Component Analysis (PCA)}
 \usage{
-pca(object, dims = 1:2, ...)
+pca(object, ndim = 2, ...)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{dims}{dimensions vector}
+\item{ndim}{Number of PCA components to include in results}
 
 \item{...}{included only to keep \code{\link{project}} generic}
 }
 \value{
-\preformatted{list(samples  =   sample scores,       # matrix:  samples x dims
-     features =  feature loadings,     # matrix: features x dims
-     var      = variance percentages   # vector:        1 x dims
+\preformatted{list(samples  =   sample scores,       # matrix:  nsamples x ndim
+     features =  feature loadings,     # matrix: nfeatures x ndim
+     var      = variance percentages   # vector:         1 x ndim
 }
 }
 \description{

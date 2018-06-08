@@ -4,21 +4,21 @@
 \alias{lda}
 \title{Linear discriminant analysis (LDA)}
 \usage{
-lda(object, na.impute = FALSE, dims = 1:2, ...)
+lda(object, na.impute = FALSE, ndim = 2, ...)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
 
 \item{na.impute}{currently ignored. May be used in future.}
 
-\item{dims}{dimensions vector}
+\item{ndim}{Number of linear discriminants to include in results}
 
 \item{...}{only included to keep \code{\link[autonomics.explore]{project}} generic}
 }
 \value{
-\preformatted{list(samples  =   sample scores,       # matrix:  samples x dims
-     features =  feature loadings,     # matrix: features x dims
-     var      = variance percentages   # vector:        1 x dims
+\preformatted{list(samples  =   sample scores,       # matrix:  nsample x ndim
+     features =  feature loadings,     # matrix: nfeature x ndim
+     var      = variance percentages   # vector:        1 x ndim
 }
 }
 \description{
@@ -33,7 +33,7 @@ if (require(autonomics.data)){
    object <- autonomics.data::billing2016
    object \%>\% autonomics.explore::lda() \%>\% str()
    \dontrun{ # Fails, as max dim length(subgroup) - 1
-      object \%>\% autonomics.explore::lda(dims = 1:3) \%>\% str()
+      object \%>\% autonomics.explore::lda(ndim = 3) \%>\% str()
    }
 }
 if (require(billing.differentiation.data)){
@@ -47,9 +47,6 @@ if (require(halama.2016)){
 if (require(subramanian.2016)){
    object <- subramanian.2016::metabolon
    object \%>\% autonomics.explore::lda()  \%>\%  str()
-   object \%>\% autonomics.import::filter_samples(
-              subgroup \%in\% autonomics.import::subgroup_levels(.)[1:2]) \%>\% 
-              autonomics.explore::lda() \%>\% str()
 }
 }
 \seealso{

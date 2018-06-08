@@ -4,21 +4,21 @@
 \alias{sma}
 \title{Spectral Map Analysis (SMA)}
 \usage{
-sma(object, na.impute = FALSE, dims = 1:2, ...)
+sma(object, na.impute = FALSE, ndim = 2, ...)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
 
 \item{na.impute}{whether to \code{\link[autonomics.preprocess]{impute}} prior to \code{SMA}}
 
-\item{dims}{dimensions vector}
+\item{ndim}{Number of SMA components to include in results}
 
 \item{...}{used to keep \code{\link{project}} generic}
 }
 \value{
-\preformatted{list(samples  =   sample scores,       # matrix:  samples x dims
-     features =  feature loadings,     # matrix: features x dims
-     var      = variance percentages   # vector:        1 x dims
+\preformatted{list(samples  =   sample scores,       # matrix:  nsample x ndim
+     features =  feature loadings,     # matrix: nfeature x ndim
+     var      = variance percentages   # vector:        1 x ndim
 }
 }
 \description{

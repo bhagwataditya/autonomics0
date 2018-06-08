@@ -4,21 +4,21 @@
 \alias{pls}
 \title{Partial least squares analysis (PLS)}
 \usage{
-pls(object, implementation = NULL, dims = 1:2, ...)
+pls(object, implementation = NULL, ndim = 2, ...)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
 
 \item{implementation}{'mixOmics::plsda', 'mixOmics::splsda', or 'ropls::opls'}
 
-\item{dims}{dimensions vector}
+\item{ndim}{Number of latent variables to include in results}
 
 \item{...}{only inlcuded to keep \code{\link[autonomics.explore]{project}} generic}
 }
 \value{
-\preformatted{list(samples  =   sample scores,       # matrix:  samples x dims
-     features =  feature loadings,     # matrix: features x dims
-     var      = variance percentages   # vector:        1 x dims
+\preformatted{list(samples  =   sample scores,       # matrix:  nsample x ndim
+     features =  feature loadings,     # matrix: nfeature x ndim
+     var      = variance percentages   # vector:        1 x ndim
 }
 }
 \description{

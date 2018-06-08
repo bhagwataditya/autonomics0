@@ -2,20 +2,28 @@ get_pca_var <- function(method, dim){
    sprintf('%s%d', method, dim)
 }
 
-order_features_on_projection <- function(object, method, dim, na.impute){
+#' Order on feature loadings
+#' @param object    SummarizedExperiment
+#' @param method   'pca', 'sma', 'lda', 'pls'
+#' @param dim       dimension
+#' @param na.impute whether to impute (if applicable)
+#' @return re-ordered sumexp
+#' @importFrom magrittr %>% 
+#' @export
+order_on_feature_loadings <- function(object, method, dim, na.impute){
    pca_var <- get_pca_var(method, dim)
    loadings <- autonomics.import::fdata(object) %>% magrittr::extract2(pca_var)
    idx <- order(loadings, na.last = NA)
    object[idx, ]
 }
 
-#' Extract top pca features
-#' @param object   eset object
-#' @param dim        principal component (integer)
-#' @param n          number of top features to be selected
-#' @param na.impute  logical
-#' @importFrom magrittr   %>%   %<>%
-extract_top_and_bottom <- function(object, dim = 1, n = 16, na.impute){
+#' Extract top and bottom of sumexp
+#' @param object  SummarizedExperiment
+#' @param n       number of top features to be selected
+#' @return sumex with top n/2 and bottom n/2 rows
+#' @importFrom magrittr   %>%
+#' @export
+extract_top_and_bottom <- function(object, n = 16){
 
    nfeature <- nrow(object)
    n1 <- ceiling(n/2)
@@ -85,41 +93,47 @@ extract_top_and_bottom <- function(object, dim = 1, n = 16, na.impute){
 #' @importFrom magrittr  %>%
 #' @export
 plot_projection_features <- function(
-  object,
-  method,
-  implementation  = NULL,
-  feature_plot    = autonomics.plot::default_feature_plots(object)[1],
-  x               = autonomics.plot::default_x(object, feature_plot),
-  color_var       = autonomics.plot::default_color_var(object),
-  color_values    = autonomics.plot::default_color_values(object, color_var),
-  shape_var       = autonomics.plot::default_shape_var(object),
-  group_var       = autonomics.plot::default_group_var(object),
-  txt_var         = autonomics.plot::default_txt_var(object),
-  facet_var       = NULL,
-  line            = autonomics.plot::default_line(object),
-  fvars           = autonomics.plot::default_fvars(object),
-  dim             = 1,
-  n               = 9,
-  na.impute       = FALSE,
-  title           = sprintf('X%d', dim),
-  file            = NULL,
-  legend.position = 'right'
+   object,
+   method,
+   implementation  = NULL,
+   feature_plot    = autonomics.plot::default_feature_plots(object)[1],
+   x               = autonomics.plot::default_x(object, feature_plot),
+   color_var       = autonomics.plot::default_color_var(object),
+   color_values    = autonomics.plot::default_color_values(object, color_var),
+   shape_var       = autonomics.plot::default_shape_var(object),
+   group_var       = autonomics.plot::default_group_var(object),
+   txt_var         = autonomics.plot::default_txt_var(object),
+   facet_var       = NULL,
+   line            = autonomics.plot::default_line(object),
+   fvars           = autonomics.plot::default_fvars(object),
+   dim             = 1,
+   n               = 9,
+   na.impute       = FALSE,
+   title           = sprintf('X%d', dim),
+   file            = NULL,
+   legend.position = 'right'
 ){
    # Check input args
    autonomics.import::assert_is_valid_eset(object)
    if (ncol(object) < 3){
-      autonomics.support::cmessage('\tExit PCA: only %d samples', ncol(object))
+      autonomics.support::cmessage('\tExit %s: only %d samples', method, ncol(object))
       return(invisible(NULL))
    }
    assertive.sets::assert_is_subset(feature_plot, autonomics.plot::FEATURE_PLOTS)
 
-   # Run pca if required
-   eset_has_loadings <- any(autonomics.import::fvars(object) %>% stringi::stri_detect_regex(paste0('^', method)))
-   if (!eset_has_loadings)   object %<>% autonomics.explore::add_projection_to_eset(method, na.impute = na.impute)
-
-   # Order on mpa results and write to file
-   object %<>% order_features_on_projection(method = method, dim = dim, na.impute = na.impute) %>%
-               extract_top_and_bottom(n=n)
+   # Add projection to eset if required
+   projection_dim_in_eset <- paste0(method, dim) %in% autonomics.import::fvars(object)
+   if (!projection_dim_in_eset){
+      # Wipe earlier accounts
+      idx <- which(autonomics.import::fvars(object) %>% stringi::stri_detect_regex(paste0('^', method)))
+      if (length(idx)>0) autonomics.import::fdata(object) %<>% magrittr::extract(, -idx)
+      # Add projection
+      object %<>% autonomics.explore::add_projection_to_eset(method, na.impute = na.impute, ndim = dim)
+   }
+   
+   # Order on projection and write to file
+   object %<>% autonomics.explore::order_on_feature_loadings(method = method, dim = dim, na.impute = na.impute) %>%
+               autonomics.explore::extract_top_and_bottom(n=n)
 
    # Dispatch to plotfun
    plotfun <- utils::getFromNamespace(paste0('plot_feature_', feature_plot), 'autonomics.plot')

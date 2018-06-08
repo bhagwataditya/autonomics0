@@ -14,13 +14,13 @@
 #'     Loadings = P = V
 #' ```
 #' @param object SummarizedExperiment
-#' @param dims   dimensions vector
+#' @param ndim   Number of PCA components to include in results
 #' @param ...    included only to keep \code{\link{project}} generic
 #' @return 
 #' ```
-#' list(samples  =   sample scores,       # matrix:  samples x dims
-#'      features =  feature loadings,     # matrix: features x dims
-#'      var      = variance percentages   # vector:        1 x dims
+#' list(samples  =   sample scores,       # matrix:  nsamples x ndim
+#'      features =  feature loadings,     # matrix: nfeatures x ndim
+#'      var      = variance percentages   # vector:         1 x ndim
 #' ```
 #' @examples 
 #' require(magrittr)
@@ -43,7 +43,7 @@
 #' @md
 #' @importFrom magrittr %>% 
 #' @export
-pca <- function(object, dims = 1:2, ...){
+pca <- function(object, ndim = 2, ...){
    
    # Rm features which are NA in all samples
    object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample()
@@ -60,15 +60,15 @@ pca <- function(object, dims = 1:2, ...){
         magrittr::divide_by(stats::sd(., na.rm=TRUE)) # Normalize
 
    # Perform PCA   
-   pca_res  <- pcaMethods::pca(t(x), nPcs = max(dims, na.rm = TRUE), scale = 'none', center = FALSE, method = 'nipals')
+   pca_res  <- pcaMethods::pca(t(x), nPcs = ndim, scale = 'none', center = FALSE, method = 'nipals')
    samples  <- pca_res@scores   %>% magrittr::set_colnames(sprintf('pca%d', 1:ncol(.)))
    features <- pca_res@loadings %>% magrittr::set_colnames(sprintf('pca%d', 1:ncol(.)))
    var <- round(100*pca_res@R2) %>% magrittr::set_names(   sprintf('pca%d', 1:length(.)))
    
    # Return
-   list(samples  = samples  %>% magrittr::extract(,dims),
-        features = features %>% magrittr::extract(,dims), 
-        var      = var      %>% magrittr::extract(dims))
+   list(samples  = samples  %>% magrittr::extract(,1:ndim, drop = FALSE), # drop = FALSE required when ndim=1!
+        features = features %>% magrittr::extract(,1:ndim, drop = FALSE), # drop = FALSE required when ndim=1!
+        var      = var      %>% magrittr::extract( 1:ndim))
 }
    
 
@@ -87,13 +87,13 @@ pca <- function(object, dims = 1:2, ...){
 #' ```
 #' @param object     SummarizedExperiment
 #' @param na.impute  whether to \code{\link[autonomics.preprocess]{impute}} prior to \code{SMA}
-#' @param dims       dimensions vector
+#' @param ndim       Number of SMA components to include in results
 #' @param ...        used to keep \code{\link{project}} generic
 #' @return 
 #' ```
-#' list(samples  =   sample scores,       # matrix:  samples x dims
-#'      features =  feature loadings,     # matrix: features x dims
-#'      var      = variance percentages   # vector:        1 x dims
+#' list(samples  =   sample scores,       # matrix:  nsample x ndim
+#'      features =  feature loadings,     # matrix: nfeature x ndim
+#'      var      = variance percentages   # vector:        1 x ndim
 #' ```
 #' @examples 
 #' require(magrittr)
@@ -115,7 +115,7 @@ pca <- function(object, dims = 1:2, ...){
 #' @md
 #' @importFrom magrittr %>% 
 #' @export
-sma <- function(object, na.impute = FALSE, dims = 1:2, ...){
+sma <- function(object, na.impute = FALSE, ndim = 2, ...){
    
    # Preprocess
    object %<>% autonomics.preprocess::minusinf_to_na()
@@ -128,16 +128,15 @@ sma <- function(object, na.impute = FALSE, dims = 1:2, ...){
               mpm::mpm(logtrans = FALSE, closure = 'none',  center = 'double',
                        normal = 'global', row.weight = 'mean', col.weight = 'constant')
    ncomponents <- (100*mpm_tmp$contrib) %>% magrittr::is_greater_than(1) %>% sum() %>% autonomics.support::evenify_upwards()
-   if(ncomponents < max(dims,na.rm = TRUE)){
-      stop('\'dims\' includes \'', max(dims, na.rm = TRUE), '\', but only \'', ncomponents, 'can be provided.')
+   if(ncomponents < ndim){
+      stop('\'ndim\' = \'', ndim, '\', but only \'', ncomponents, 'can be provided.')
    }
-   npairs      <-  ncomponents/2
-   mpm_out <-  split(1:ncomponents, rep(1:npairs, each = 2)) %>% 
-      lapply(function(x){
-         y <- suppressPackageStartupMessages(mpm::plot.mpm(mpm_tmp, do.plot = FALSE, dim = x))
-         list(features = y$Rows    %>% magrittr::extract(, c('X', 'Y')), 
-              samples  = y$Columns %>% magrittr::extract(, c('X', 'Y')))
-      })
+   npairs  <- ncomponents/2
+   mpm_out <- split(1:ncomponents, rep(1:npairs, each = 2)) %>% 
+              lapply(function(x){
+                        y <- suppressPackageStartupMessages(mpm::plot.mpm(mpm_tmp, do.plot = FALSE, dim = x))
+                        list(features = y$Rows    %>% magrittr::extract(, c('X', 'Y')), 
+                             samples  = y$Columns %>% magrittr::extract(, c('X', 'Y')))})
    
    # Extract
    samples  <- mpm_out %>% lapply(magrittr::extract2, 'samples')  %>% do.call(cbind, .) %>% magrittr::set_colnames(sprintf('sma%d', 1:ncol(.)))
@@ -145,9 +144,9 @@ sma <- function(object, na.impute = FALSE, dims = 1:2, ...){
    percentages <- round(100*mpm_tmp$contrib[1:ncomponents])                             %>% magrittr::set_names(   sprintf('sma%d', 1:length(.)))
    
    # Return
-   list(samples  = samples     %>% magrittr::extract(,dims),
-        features = features    %>% magrittr::extract(,dims),
-        var      = percentages %>% magrittr::extract( dims))
+   list(samples  = samples     %>% magrittr::extract(,1:ndim, drop = FALSE), # drop = FALSE required when ndim=1!
+        features = features    %>% magrittr::extract(,1:ndim, drop = FALSE), # drop = FALSE required when ndim=1!
+        var      = percentages %>% magrittr::extract( 1:ndim))
 }
 
 
@@ -159,13 +158,13 @@ sma <- function(object, na.impute = FALSE, dims = 1:2, ...){
 #' 
 #' @param object     SummarizedExperiment
 #' @param na.impute  currently ignored. May be used in future.
-#' @param dims       dimensions vector
+#' @param ndim       Number of linear discriminants to include in results
 #' @param ...        only included to keep \code{\link[autonomics.explore]{project}} generic
 #' @return 
 #' ```
-#' list(samples  =   sample scores,       # matrix:  samples x dims
-#'      features =  feature loadings,     # matrix: features x dims
-#'      var      = variance percentages   # vector:        1 x dims
+#' list(samples  =   sample scores,       # matrix:  nsample x ndim
+#'      features =  feature loadings,     # matrix: nfeature x ndim
+#'      var      = variance percentages   # vector:        1 x ndim
 #' ```
 #' @examples 
 #' require(magrittr)
@@ -173,7 +172,7 @@ sma <- function(object, na.impute = FALSE, dims = 1:2, ...){
 #'    object <- autonomics.data::billing2016
 #'    object %>% autonomics.explore::lda() %>% str()
 #'    \dontrun{ # Fails, as max dim length(subgroup) - 1
-#'       object %>% autonomics.explore::lda(dims = 1:3) %>% str()
+#'       object %>% autonomics.explore::lda(ndim = 3) %>% str()
 #'    }
 #' }
 #' if (require(billing.differentiation.data)){
@@ -187,9 +186,6 @@ sma <- function(object, na.impute = FALSE, dims = 1:2, ...){
 #' if (require(subramanian.2016)){
 #'    object <- subramanian.2016::metabolon
 #'    object %>% autonomics.explore::lda()  %>%  str()
-#'    object %>% autonomics.import::filter_samples(
-#'               subgroup %in% autonomics.import::subgroup_levels(.)[1:2]) %>% 
-#'               autonomics.explore::lda() %>% str()
 #' }
 #' @seealso \code{\link[autonomics.explore]{pca}}, 
 #'          \code{\link[autonomics.explore]{sma}}, 
@@ -199,28 +195,14 @@ sma <- function(object, na.impute = FALSE, dims = 1:2, ...){
 #' @importFrom magrittr %>% 
 #' @importFrom magrittr %<>% 
 #' @export
-lda <- function(
-   object,
-   na.impute = FALSE,
-   dims      = 1:2, 
-   ...
-){
+lda <- function(object, na.impute = FALSE, ndim = 2,  ...){
+   
    # Assert
-   assertive.numbers::assert_all_are_greater_than(object %>% autonomics.import::subgroup_levels() %>% length(), 1)
-
-   # This is too strict: the function does work with dim=1:2 and 2 subgroup, 
-   # as it internally sets LD2 = 0.s
-   # max_dim <- object %>%
-   #    autonomics.import::subgroup_levels() %>%
-   #    length() %>%
-   #    magrittr::subtract(1)
-   # 
-   # legal_dims_subsetter <- assertive.base::assert_all_are_true(
-   #    dims %>%
-   #       magrittr::is_weakly_less_than(max_dim))
-   # 
-   # dims %<>%
-   #    magrittr::extract(legal_dims_subsetter)
+   nsubgroup <- object %>% autonomics.import::subgroup_levels() %>% length()
+   assertive.numbers::assert_all_are_greater_than(nsubgroup, 1)
+   if (ndim > (nsubgroup-1)){
+      stop(sprintf('LDA requires ndim (%d) <= nsubgroup-1 (%d)', ndim, nsubgroup-1))
+   }
 
    # Preprocess
    object %<>% autonomics.preprocess::minusinf_to_na()
@@ -242,13 +224,11 @@ lda <- function(
    samples     %<>% (function(x){colnames(x) %<>% stringi::stri_replace_first_fixed('LD', 'lda'); x})
    percentages %<>% (function(x){names(x) <- sprintf('lda%d', 1:ncol(samples)); x})
 
-   # Subset
-   features    %<>% magrittr::extract(,dims)
-   samples     %<>% magrittr::extract(,dims)
-   percentages %<>% magrittr::extract(dims)
-
    # Return
-   list(samples = samples, features = features, var = percentages)
+   list(samples  = samples     %>% magrittr::extract(,1:ndim, drop = FALSE), # drop = FALSE required when ndim=1!
+        features = features    %>% magrittr::extract(,1:ndim, drop = FALSE), # drop = FALSE required when ndim=1!
+        var      = percentages %>% magrittr::extract( 1:ndim))
+
 }
 
 #' Partial least squares analysis (PLS)
@@ -258,14 +238,14 @@ lda <- function(
 #' \code{PLS} is performed using the (\code{NA}-friendly) \code{NIPALS} algorithm.
 #' 
 #' @param object SummarizedExperiment
-#' @param dims   dimensions vector
+#' @param ndim   Number of latent variables to include in results
 #' @param implementation 'mixOmics::plsda', 'mixOmics::splsda', or 'ropls::opls'
 #' @param ...    only inlcuded to keep \code{\link[autonomics.explore]{project}} generic
 #' @return 
 #' ```
-#' list(samples  =   sample scores,       # matrix:  samples x dims
-#'      features =  feature loadings,     # matrix: features x dims
-#'      var      = variance percentages   # vector:        1 x dims
+#' list(samples  =   sample scores,       # matrix:  nsample x ndim
+#'      features =  feature loadings,     # matrix: nfeature x ndim
+#'      var      = variance percentages   # vector:        1 x ndim
 #' ```
 #' @examples 
 #' require(magrittr)
@@ -288,12 +268,7 @@ lda <- function(
 #' @md
 #' @importFrom magrittr %>% 
 #' @export
-pls <- function(
-   object, 
-   implementation = NULL,
-   dims = 1:2,
-   ...
-){
+pls <- function(object, implementation = NULL, ndim = 2, ...){
    
    # Assert
    assertive.base::assert_is_identical_to_true(length(autonomics.import::subgroup_levels(object)) > 1)
@@ -306,9 +281,9 @@ pls <- function(
    if (implementation %in% c('mixOmics::plsda', 'mixOmics::splsda')){
       # Project
       pls_out <- if (implementation=='mixOmics::plsda'){
-         mixOmics::plsda( x, y, ncomp = max(dims, na.rm = TRUE)) 
+         mixOmics::plsda( x, y, ncomp = ndim) 
       } else {
-         mixOmics::splsda(x, y, ncomp = max(dims, na.rm = TRUE))
+         mixOmics::splsda(x, y, ncomp = ndim)
       }
       # Extract
       samples  <- pls_out$variates$X
@@ -326,7 +301,7 @@ pls <- function(
    if (implementation == 'ropls::opls'){
       
       # Project
-      pls_out <- ropls::opls(x, y, predI = max(dims, na.rm = TRUE), permI = 0, plotL = FALSE)
+      pls_out <- ropls::opls(x, y, predI = ndim, permI = 0, plotL = FALSE)
       
       # Extract
       samples  <- pls_out@scoreMN
@@ -340,9 +315,9 @@ pls <- function(
    }
    
    # Return
-   return(list(samples  = samples  %>% magrittr::extract(,dims),
-               features = features %>% magrittr::extract(,dims),
-               var      = var      %>% magrittr::extract(dims)))
+   list(samples  = samples  %>% magrittr::extract(,1:ndim, drop = FALSE), # drop = FALSE required when ndim=1!
+        features = features %>% magrittr::extract(,1:ndim, drop = FALSE), # drop = FALSE required when ndim=1!
+        var      = var      %>% magrittr::extract( 1:ndim))
 }
 
 #' Project
@@ -351,7 +326,7 @@ pls <- function(
 #' 
 #' @param object          SummarizedExperiment
 #' @param method         'pca', 'sma', 'lda', 'pls'
-#' @param dims            \code{\link{numeric}} vector indicating what 'dimentions' (e.g. PCA: dimensions == components) to return
+#' @param ndim            Number of 'dimensions' (e.g. PCA: dimensions == components) to return
 #' @param implementation  which implementation of the method to use
 #' @param na.impute       TRUE or FALSE
 #' @return list(samples, features, var)
@@ -372,6 +347,6 @@ pls <- function(
 #'          \code{\link[autonomics.explore]{pls}}
 #' @author Aditya Bhagwat
 #' @export
-project <- function(object, method = 'pca', na.impute = FALSE, implementation = NULL, dims = 1:2){
-   get(method)(object, na.impute = na.impute, implementation = implementation, dims = dims)
+project <- function(object, method = 'pca', na.impute = FALSE, implementation = NULL, ndim = 2){
+   get(method)(object, na.impute = na.impute, implementation = implementation, ndim = ndim)
 }

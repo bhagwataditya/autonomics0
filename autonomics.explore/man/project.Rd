@@ -5,7 +5,7 @@
 \title{Project}
 \usage{
 project(object, method = "pca", na.impute = FALSE, implementation = NULL,
-  dims = 1:2)
+  ndim = 2)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -16,7 +16,7 @@ project(object, method = "pca", na.impute = FALSE, implementation = NULL,
 
 \item{implementation}{which implementation of the method to use}
 
-\item{dims}{\code{\link{numeric}} vector indicating what 'dimentions' (e.g. PCA: dimensions == components) to return}
+\item{ndim}{Number of 'dimensions' (e.g. PCA: dimensions == components) to return}
 }
 \value{
 list(samples, features, var)

@@ -21,7 +21,7 @@
 #'       split_var = NULL, facet_var = NULL, group_var = NULL) %>% 
 #'    print()
 #'    
-#'    autonomics.explore::pca(object, dims = 1:4) %>% 
+#'    autonomics.explore::pca(object, ndim=4) %>% 
 #'    autonomics.explore::make_projected_samples_df(
 #'       object, dims = 3:4, color_var = 'subgroup', 
 #'       shape_var = NULL, size_var = NULL, txt_var = NULL, 

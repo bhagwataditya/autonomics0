@@ -132,7 +132,7 @@ plot_projected_samples <- function(
                                        autonomics.explore::project(
                                           method         = ifelse(length(method) == 1, method, method[x]),
                                           implementation = implementation,
-                                          dims           = seq(1, max(dims)),
+                                          ndim           = max(dims),
                                           na.impute      = na.impute)})
 
 # Processing --------------------------------------------------------------

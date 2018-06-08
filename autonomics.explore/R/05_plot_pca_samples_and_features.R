@@ -44,7 +44,6 @@ layout_sample_projections_and_features <- function(feature_plot){
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::billing2016
 #'    object %>% autonomics.explore::plot_pca_samples_and_features()
-#'    object %>% autonomics.explore::plot_pca_samples_and_features(na.impute = TRUE)
 #'    object %>% autonomics.explore::plot_pca_samples_and_features(
 #'                  feature_plot = 'distributions')
 #'    object %>% autonomics.explore::plot_pca_samples_and_features(
@@ -59,7 +58,8 @@ layout_sample_projections_and_features <- function(feature_plot){
 #'    object %>% autonomics.explore::plot_pca_samples_and_features(n = 4)
 #'    object %>% autonomics.explore::plot_lda_samples_and_features(n = 4)
 #'    
-#'    object %>% plot_pca_samples_and_features(color_var = 'condition', feature_plot = 'boxes')
+#'    object %>% autonomics.explore::plot_pca_samples_and_features(
+#'                  color_var = 'condition', feature_plot = 'boxes')
 #' }
 #' if (require(billing.differentiation.data)){
 #'    object <- billing.differentiation.data::rna.voomcounts
