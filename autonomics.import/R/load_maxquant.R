@@ -350,13 +350,13 @@ get_maxquant_value_columns <- function(DT, value_type){
    )
 }
 
-make_sample_names <- function(injection, channel = rep(1, length(injection)) ){
-   if (length(unique(channel))==1){
-      injection
-   } else {
-      paste0(injection, '[', channel, ']')
-   }
-}
+# make_sample_names <- function(injection, channel = rep(1, length(injection)) ){
+#    if (length(unique(channel))==1){
+#       injection
+#    } else {
+#       paste0(injection, '[', channel, ']')
+#    }
+# }
 
 
 #'@rdname create_maxquant_design_file
