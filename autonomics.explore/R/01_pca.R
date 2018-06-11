@@ -46,7 +46,7 @@
 pca <- function(object, ndim = 2, ...){
    
    # Convert NaN into NA (otherwise pcaMethods::pca fails)
-   autonomics.import::exprs(object) %<>% (function(x){x[is.nan(x)] <- NA_real_; x})
+   autonomics.import::exprs(object) %<>% (function(x){x[is.nan(x)|is.infinite(x)] <- NA_real_; x})
    
    # Rm features which are NA in all samples
    object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample()
