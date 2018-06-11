@@ -811,7 +811,7 @@ load_proteingroups_to_long_dt <- function(
 ){
    output <- autonomics.import::load_proteingroups_to_wide_dt(proteingroups_file = proteingroups_file, value_type = value_type)
    tmp_summary_attr <- output %>% get_summary_attr()
-   log2_offset <- if (value_type == 'raw.intensity') 1 else 0
+   log2_offset <- if (value_type %in% c('raw.intensity', 'lfq.intensity')) 1 else 0
    long_dt <- output %>% autonomics.import::melt_wide_maxquant_dt(log2_transform = log2_transform, log2_offset = log2_offset)
    long_dt %>% set_summary_attr(tmp_summary_attr %>%
                                 c(proteingroups_n_quantified = long_dt %>%
