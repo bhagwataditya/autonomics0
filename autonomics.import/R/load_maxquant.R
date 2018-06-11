@@ -1031,8 +1031,8 @@ nameify_strings <- function(x, verbose = TRUE){
    if (length(old_values) > 0){
       msg <- ''
       for (i in seq_along(old_values)){
-         x %<>% stringi::stri_replace_first_fixed(old_values[i], new_values[i])
-         msg             %<>%    paste0(sprintf('\n\t\t%s -> %s', old_values[i], new_values[i]))
+         x   %<>% stringi::stri_replace_first_fixed(old_values[i], new_values[i])
+         msg %<>%    paste0(sprintf('\n\t\t%s -> %s', old_values[i], new_values[i]))
       }
       msg %<>% substr(3, nchar(.))
       if (verbose) message(msg)
