@@ -382,28 +382,19 @@ create_maxquant_design_df <- function(
 ){
 
    # Assert
-   #-------
    assertive.files::assert_all_are_dirs(dirname(proteingroups_file))
    #assertive.files::assert_all_are_readable_files(proteingroups_file, warn_about_windows = FALSE)
 
    # Read
-   #-----
    DT <- data.table::fread(proteingroups_file)
 
-   # Extract channel & injection
-   #----------------------------
+   # Extract
    value_columns <- DT %>% get_maxquant_value_columns(value_type)
-   injection <- names(value_columns) %>% stringi::stri_replace_first_regex('\\[.+\\]', '')   # injection [channel]
-   channel   <- names(value_columns) %>% stringi::stri_extract_first_regex('\\[.+\\]') %>%
-      stringi::stri_replace_first_fixed('[', '') %>%
-      stringi::stri_replace_first_fixed(']', '')
+
    # Return
-   #-------
-   sample_design <- data.frame(injection = injection, channel = channel, subgroup  = '', replicate = '')
-   if (all(is.na(channel))){
-      sample_design$channel <- NULL
-   }
-   sample_design
+   data.frame(sample_id = names(value_columns),
+              subgroup  = '',
+              replicate = '')
 
 }
 
@@ -990,25 +981,21 @@ load_maxquant_design <- function(sample_file){
 
    # Load
    #assertive.files::assert_all_are_readable_files(sample_file, warn_about_windows = FALSE)
-   sample_design <- suppressWarnings(data.table::fread(sample_file,
-                                                       verbose    = FALSE,
-                                                       integer64  = 'numeric',
-                                                       colClasses = c(injection = 'character',
-                                                                      #channel   = 'character',
-                                                                      subgroup  = 'character',
-                                                                      replicate = 'character'),
-                                                       data.table = FALSE))
+   sample_design <- autonomics.support::cfread(sample_file,
+                                               colClasses = c(#injection = 'character',
+                                                              subgroup  = 'character',
+                                                              replicate = 'character'),
+                                               data.table = FALSE)
    # Check contents
-   assertive.strings::assert_all_are_non_empty_character(sample_design$injection)
-   #assertive.strings::assert_all_are_non_empty_character(sample_design$channel)
+   assertive.strings::assert_all_are_non_empty_character(sample_design$sample_id)
    assertive.strings::assert_any_are_non_missing_nor_empty_character(sample_design$subgroup)
 
    # Create replicates if all absent.
    if (all_are_missing_or_empty_character(sample_design$replicate)){
-      sample_design %<>% dplyr::group_by_('subgroup') %>%
-         dplyr::mutate(replicate = as.character(1:n())) %<>%
-         dplyr::ungroup() %>%
-         as.data.frame()
+      sample_design %<>% dplyr::group_by_('subgroup')                   %>%
+                         dplyr::mutate(replicate = as.character(1:n())) %<>%
+                         dplyr::ungroup()                               %>%
+                         as.data.frame()
    }
 
    # Return
@@ -1054,14 +1041,10 @@ nameify_strings <- function(x, verbose = TRUE){
 add_maxquant_sdata <- function(object, sample_file){
 
    # Prevent CHECK notes
-   sample_id <- injection <- channel <- NULL
+   sample_id <- NULL
 
    # Load
    sample_design <- load_maxquant_design(sample_file)
-   sample_design %>% magrittr::extract(, sample_id := injection)
-   if ('channel' %in% names(sample_design)){
-      sample_design %>% magrittr::extract(channel!='', sample_id := sprintf('%s[%s]', injection, channel))
-   }
    sample_design %<>% as.data.frame()
    rownames(sample_design) <- sample_design$sample_id
 
@@ -1089,8 +1072,8 @@ add_maxquant_sdata <- function(object, sample_file){
    replicates <- object$replicate %>% as.character()
    new_sample_ids <- paste0(subgroups, '.R', replicates)
    new_ids_suited <- all(assertive.strings::is_non_empty_character(subgroups))  &
-      all(assertive.strings::is_non_empty_character(replicates)) &
-      assertive.properties::has_no_duplicates(new_sample_ids)
+                     all(assertive.strings::is_non_empty_character(replicates)) &
+                     assertive.properties::has_no_duplicates(new_sample_ids)
    if (new_ids_suited){
       autonomics.import::snames(object) <- new_sample_ids
       autonomics.import::sdata(object)$sample_id <- new_sample_ids

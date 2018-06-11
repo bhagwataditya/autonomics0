@@ -8,9 +8,8 @@
 #' @noRd
 #' @importFrom magrittr %<>%
 save_billing2016 <- function(){
-   autonomics.import::create_maxquant_design_file( 'inst/extdata/billing2016/combined/txt', 
-                                                   'inst/extdata/billing2016')
-   billing2016 <- autonomics.import::load_proteingroups('inst/extdata/billing2016') %>% 
+   autonomics.import::create_maxquant_design_file( 'inst/extdata/billing2016/proteinGroups.txt')
+   billing2016 <- autonomics.import::load_proteingroups('inst/extdata/billing2016/proteinGroups.txt') %>% 
                   autonomics.preprocess::invert_ratios(
                      invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'), 
                      channel_frac     = '/', 
