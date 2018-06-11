@@ -24,8 +24,8 @@ get_maxquant_normalized_ratios <- function(DT){
    # Identify
    pattern <- '^Ratio ([HM]/[ML]) normalized (.+)'
    colnames <- names(DT) %>%
-      magrittr::extract(stringi::stri_detect_regex(., pattern)) %>%
-      magrittr::extract(!stringi::stri_detect_fixed(., '___'))  # phosphosites %>%
+               magrittr::extract(stringi::stri_detect_regex(., pattern)) %>%
+               magrittr::extract(!stringi::stri_detect_fixed(., '___'))  # phosphosites %>%
 
    # Extract
    if (length(colnames)==0) return(NULL)
@@ -54,10 +54,10 @@ get_maxquant_raw_ratios <- function(DT){
    # Identify
    pattern <-'^Ratio ([HM]/[ML]) (.+)$'
    colnames <- names(DT) %>%
-      magrittr::extract( stringi::stri_detect_regex(., pattern))                %>%
-      magrittr::extract(!stringi::stri_detect_regex(., '(normalized|variability|type|iso|count)')) %>%
-      magrittr::extract(!stringi::stri_detect_regex(., '(localized|unmod. pep.|nmods)'))           %>%  # phosphosites
-      magrittr::extract(!stringi::stri_detect_fixed(., '___')) # phosphosites
+               magrittr::extract( stringi::stri_detect_regex(., pattern))                %>%
+               magrittr::extract(!stringi::stri_detect_regex(., '(normalized|variability|type|iso|count)')) %>%
+               magrittr::extract(!stringi::stri_detect_regex(., '(localized|unmod. pep.|nmods)'))           %>%  # phosphosites
+               magrittr::extract(!stringi::stri_detect_fixed(., '___')) # phosphosites
 
    # Extract
    if (length(colnames)==0) return(NULL)
@@ -100,8 +100,7 @@ get_maxquant_lfq_intensities <- function(DT){
    design[label!='', newname := sprintf('%s[%s]', experiment, label)]
 
    if (length(design$colname)>0){
-      values <- DT %>%
-         magrittr::extract(, design$colname, with = FALSE)
+      values <- DT %>% magrittr::extract(, design$colname, with = FALSE)
       names(values) <- design$newname
       return(values)
    }
@@ -128,8 +127,7 @@ get_maxquant_reporter_intensities <- function(DT){
 
    # Identify
    pattern  <- '^Reporter intensity corrected ([0-9]+) (.+)$'
-   colnames <- names(DT) %>%
-      magrittr::extract( stringi::stri_detect_regex(., pattern))
+   colnames <- names(DT) %>% magrittr::extract( stringi::stri_detect_regex(., pattern))
 
    # Extract
    if (length(colnames)==0) return(NULL)
