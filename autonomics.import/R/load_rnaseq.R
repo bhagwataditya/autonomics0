@@ -163,7 +163,7 @@ get_feature_counts <- function(
                    magrittr::set_colnames(stringi::stri_replace_all_regex(names(feature_count),'/.*bam$', ''))
 
 
-  message("filtering feature counts with atleast 1 read")
+  message("filtering feature counts with >= 1 read")
   #filter rows with atleast 1 read
   feature_counts <- feature_counts[which(rowSums(feature_counts) >= 1 ),]
 
@@ -179,20 +179,40 @@ get_feature_counts <- function(
 
 
 #create sample design
-create_rnaseq_sample_design <- function(countfile){
+create_rnaseq_sample_design_file <- function(countfile){
 
-     gene_counts <- read.table(countfile)
-     design_df <- data.frame(sample_id = colnames(gene_counts))
-     design_df$subgroup <- ""
-     design_df$replicate <- ""
-     design_df$block <- ""
+   gene_counts <- read.table(countfile)
+   sample_ids <- as.character(colnames(gene_counts))
 
-     create_dir <- dir.create("~/.autonomics/sample_design/", recursive=TRUE, showWarnings = FALSE)
-     write.table(design_df,"~/.autonomics/sample_design/samples.txt", quote=FALSE, row.names = FALSE)
+   # Infer sep
+   sep <- sample_ids %>% autonomics.import::infer_design_sep()
 
-     message("Please fill in blanks in sample design templete under ~/.autonomics/sample_design/samples.txt")
+   # Return dataframe with only sample ids if no separator could be infered
+   if (is.null(sep))   return(data.frame(sample_id = sample_ids,
+                                         subgroup  = '',
+                                         replicate = '',
+                                         block     = '',
+                                         row.names = sample_ids))
+   # Separator infered
+   design_df <- data.frame(sample_id = sample_ids,
+                     subgroup  = sample_ids %>% stringi::stri_split_fixed(sep) %>%
+                                 vapply(function(y) y %>%
+                                 magrittr::extract(1:(length(y)-1)) %>%
+                                 paste0(collapse = sep), character(1)),
+                     replicate = sample_ids %>%
+                                 stringi::stri_split_fixed(sep) %>%
+                                 vapply(function(y) y %>%
+                                 magrittr::extract(length(y)), character(1)),
+                     block     = '',
+                     row.names = sample_ids)
+
+   write.table(design_df,"~/.autonomics/sample_design/samples.txt", quote=FALSE, row.names = FALSE)
+
+   message("Sample design file is completed under ~/.autonomics/sample_design/samples.txt")
+   message("Please fill in blanks in sample design file if any")
+
 }
-#create_rnaseq_sample_design("~/.autonomics/feature_count/gene_counts.txt")
+#create_rnaseq_sample_design_file("~/.autonomics/feature_count/gene_counts.txt")
 
 
 #load RNAseq counts
@@ -207,22 +227,22 @@ load_RNAseq <- function(countfile, samplesfile, featurefile){
 
     #group entrez id by gene id
     dt[, entrezg := paste(entrezg, collapse = ';'), by = 'gene_id']
-    
+
     #group biotypes by gene id
     dt[, biotype := paste(unique(biotype), collapse = ';'), by = 'gene_name']
 
     #54590
     dt %<>% data.table::setkey("gene_id") %>% unique()
-    
+
     #53465
     c_gene_id <- rownames(countfile) %>% data.table::data.table()
-    
+
     #53451
     feature_dt <- merge(dt , c_gene_id, by="gene_id")
-    
+
     #14 genes are not presnet in biomart list which are predicted genes
     #length(c_gene_id[!c_gene_id$gene_id %in% feature_dt$gene_id,])
-    
+
     #keep genes from countfile exisiting in feature_dt
     countfile1 = countfile[rownames(countfile) %in% feature_dt$gene_id,]
 
@@ -236,15 +256,15 @@ load_RNAseq <- function(countfile, samplesfile, featurefile){
              data.matrix()
 
     #create summerized experiment object
-    rnaseq <- SummarizedExperiment::SummarizedExperiment(assays  =  list(exprs = exprs1), 
+    rnaseq <- SummarizedExperiment::SummarizedExperiment(assays  =  list(exprs = exprs1),
                                                          rowData = fdata1,
                                                          colData = sdata1)
 
     #Return rnaseq
     rnaseq
     #save(rnaseq, file = 'inst/extdata/rnaseq.RData', compress = 'xz')
-    
-    
+
+
     #feature_dt[, biotype := paste(unique(biotype), collapse = ';'), by = 'gene_name']
     #dt[gene_id=='ENSMUSG00000096902']
     #dt[gene_id=='ENSMUSG00000096902', entrezg]
