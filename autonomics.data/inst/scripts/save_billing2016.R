@@ -8,11 +8,10 @@
 #' @noRd
 #' @importFrom magrittr %<>%
 save_billing2016 <- function(){
-   autonomics.import::create_maxquant_design_file( 'inst/extdata/billing2016/proteinGroups.txt')
+   autonomics.import::create_maxquant_sample_file( 'inst/extdata/billing2016/proteinGroups.txt')
    billing2016 <- autonomics.import::load_proteingroups('inst/extdata/billing2016/proteinGroups.txt') %>% 
                   autonomics.preprocess::invert_ratios(
                      invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'), 
-                     channel_frac     = '/', 
                      subgroup_frac    = '_')
    billing2016 %<>% autonomics.import::annotate_proteingroups()
    autonomics.import::fdata(billing2016)$`Fasta headers` <- NULL

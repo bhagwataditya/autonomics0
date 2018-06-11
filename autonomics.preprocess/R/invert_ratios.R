@@ -43,7 +43,6 @@ invert_collapsed_strings <- function(x, sep){
 #'    object <- autonomics.import::load_proteingroups(proteingroups_file)
 #'    invert_subgroups <- unique(object$subgroup)
 #'    object$subgroup;  subgroup_frac <- '_'
-#'    object$channel;   channel_frac <- '/'
 #'    object %>% autonomics.preprocess::invert_ratios(invert_subgroups, channel_frac, subgroup_frac)
 #' }
 #' @importFrom dplyr     n
@@ -52,7 +51,6 @@ invert_collapsed_strings <- function(x, sep){
 invert_ratios <- function(
    object,
    invert_subgroups,
-   channel_frac,
    subgroup_frac
 ){
 
@@ -79,9 +77,7 @@ invert_ratios <- function(
 
   # Invert labels and subgroup
   sdata1 <- autonomics.import::sdata(object)
-  sdata1$channel  %<>% as.character()
   sdata1$subgroup %<>% as.character()
-  sdata1$channel[ selector] %<>% autonomics.preprocess::invert_collapsed_strings(channel_frac)
   sdata1$subgroup[selector] %<>% autonomics.preprocess::invert_collapsed_strings(subgroup_frac)
 
   # Redefine replicates and sample names
