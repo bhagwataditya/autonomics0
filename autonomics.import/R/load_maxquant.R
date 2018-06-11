@@ -394,7 +394,8 @@ create_maxquant_design_df <- function(
    # Return
    data.frame(sample_id = names(value_columns),
               subgroup  = '',
-              replicate = '')
+              replicate = '',
+              block     = '')
 
 }
 
@@ -966,7 +967,7 @@ all_are_missing_or_empty_character <- function(x){
 #' if (require(autonomics.data)){
 #'    sample_file <- system.file('extdata/billing2016/sample_design.txt',
 #'                                       package = 'autonomics.data')
-#'    load_maxquant_design(sample_file)
+#'    autonomics.import::load_maxquant_design(sample_file)
 #' }
 #' if (require(billing.differentiation.data)){
 #'    sample_file <- system.file('extdata/maxquant/sample_design.txt',
@@ -982,13 +983,17 @@ load_maxquant_design <- function(sample_file){
    # Load
    #assertive.files::assert_all_are_readable_files(sample_file, warn_about_windows = FALSE)
    sample_design <- autonomics.support::cfread(sample_file,
-                                               colClasses = c(#injection = 'character',
+                                               colClasses = c(sample_id = 'character',
                                                               subgroup  = 'character',
-                                                              replicate = 'character'),
+                                                              replicate = 'character',
+                                                              block     = 'character'),
                                                data.table = FALSE)
    # Check contents
    assertive.strings::assert_all_are_non_empty_character(sample_design$sample_id)
    assertive.strings::assert_any_are_non_missing_nor_empty_character(sample_design$subgroup)
+
+   # Remove variable block if all values empty
+   if (all_are_missing_or_empty_character(sample_design$block))   sample_design$block <- NULL
 
    # Create replicates if all absent.
    if (all_are_missing_or_empty_character(sample_design$replicate)){

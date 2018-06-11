@@ -19,7 +19,7 @@ Load sample design
 if (require(autonomics.data)){
    sample_file <- system.file('extdata/billing2016/sample_design.txt',
                                       package = 'autonomics.data')
-   load_maxquant_design(sample_file)
+   autonomics.import::load_maxquant_design(sample_file)
 }
 if (require(billing.differentiation.data)){
    sample_file <- system.file('extdata/maxquant/sample_design.txt',
