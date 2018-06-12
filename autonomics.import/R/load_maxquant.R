@@ -359,10 +359,50 @@ get_maxquant_value_columns <- function(DT, value_type){
 # }
 
 
-#' @rdname create_maxquant_sample_file
+#' Create maxquant design
+#'
+#' @param proteingroups_file full path to protein groups file
+#' @param sample_file        full path to sample design file
+#' @param value_type         any value in autonomics.import::MAXQUANT_VALUE_TYPES
+#' @param ... backward compatibility to deprecated functions
+#' @return sample design dataframe
+#' @examples
+#' require(magrittr)
+#'
+#' # NORMALIZED RATIOS
+#' if (require(billing.differentiation.data)){
+#'    system.file('extdata/maxquant/proteinGroups.txt',
+#'                 package = 'billing.differentiation.data') %>%
+#'    autonomics.import::create_maxquant_design()
+#' }
+#'
+#' # REPORTER INTENSITIES
+#' if (require(billing.vesicles)){
+#'    system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') %>%
+#'    autonomics.import::create_maxquant_design()
+#' }
+#'
+#' # LFQ INTENSITIES
+#' if (require(graumann.lfq)){
+#'    system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') %>%
+#'    autonomics.import::create_maxquant_design()
+#' }
+#'
+#' # LABELED INTENSITIES
+#' if (require(billing.differentiation.data)){
+#'    system.file('extdata/maxquant/proteinGroups.txt',
+#'                 package = 'billing.differentiation.data') %>%
+#'    autonomics.import::create_maxquant_design(value_type = 'raw.intensity')
+#' }
+#'
+#' # UNLABELED INTENSITIES
+#' if (require(alnoubi.2017)){
+#'    system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017') %>%
+#'    autonomics.import::create_maxquant_design()
+#' }
 #' @importFrom magrittr %>%
 #' @export
-create_maxquant_sample_df <- function(
+create_maxquant_design <- function(
    proteingroups_file,
    value_type = autonomics.import::infer_maxquant_value_type(proteingroups_file)
 ){
@@ -386,14 +426,14 @@ create_maxquant_sample_df <- function(
 }
 
 create_maxquant_design_df <- function(...){
-   .Deprecated('autonomics.import::create_maxquant_sample_df')
-   autonomics.import::create_maxquant_sample_df(...)
+   .Deprecated('autonomics.import::create_maxquant_design')
+   autonomics.import::create_maxquant_design(...)
 }
 
-#'@rdname create_maxquant_sample_file
+#'@rdname write_maxquant_design
 #'@export
 create_sample_design_df <- function(...){
-   .Deprecated('create_maxquant_sample_df')
+   .Deprecated('create_maxquant_design')
    create_maxquant_design_df(...)
 }
 
@@ -403,7 +443,7 @@ create_sample_design_df <- function(...){
 #' @param sample_file full path to sample design file
 #' @param value_type         any value in autonomics.import::MAXQUANT_VALUE_TYPES
 #' @param ... backward compatibility to deprecated functions
-#' @return sample design dataframe (create_maxquant_sample_df) or file (create_maxquant_sample_file)
+#' @return sample design dataframe (create_maxquant_design) or file (write_maxquant_design)
 #' @examples
 #' require(magrittr)
 #'
@@ -412,7 +452,7 @@ create_sample_design_df <- function(...){
 #' if (require(billing.differentiation.data)){
 #'    proteingroups_file <- system.file('extdata/maxquant/proteinGroups.txt',
 #'                                      package = 'billing.differentiation.data')
-#'    autonomics.import::create_maxquant_sample_df(proteingroups_file)
+#'    autonomics.import::create_maxquant_design(proteingroups_file)
 #'    sample_design_file <- paste0(tempdir(), '/billing.differentiation/sample_design.txt')
 #'    dir.create(dirname(sample_design_file))
 #'    create_maxquant_design_file(proteingroups_file, sample_design_file)
@@ -422,7 +462,7 @@ create_sample_design_df <- function(...){
 #' #---------------------
 #' if (require(billing.vesicles)){
 #'    proteingroups_file <- system.file('extdata/proteinGroups.txt', package = 'billing.vesicles')
-#'    autonomics.import::create_maxquant_sample_df(proteingroups_file)
+#'    autonomics.import::create_maxquant_design(proteingroups_file)
 #'    sample_design_file <- paste0(tempdir(), '/billing.vesicles/sample_design.txt')
 #'    dir.create(dirname(sample_design_file))
 #'    create_maxquant_design_file(proteingroups_file, sample_design_file)
@@ -432,7 +472,7 @@ create_sample_design_df <- function(...){
 #' #----------------
 #' if (require(graumann.lfq)){
 #'    proteingroups_file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-#'    create_maxquant_sample_df(proteingroups_file)
+#'    create_maxquant_design(proteingroups_file)
 #'    sample_design_file <- paste0(tempdir(), '/graumann.lfq/sample_design.txt')
 #'    dir.create(dirname(sample_design_file))
 #'    create_maxquant_design_file(proteingroups_file, sample_design_file)
@@ -443,7 +483,7 @@ create_sample_design_df <- function(...){
 #' if (require(billing.differentiation.data)){
 #'    proteingroups_file <- system.file('extdata/maxquant/proteinGroups.txt',
 #'                                      package = 'billing.differentiation.data')
-#'    create_maxquant_sample_df(proteingroups_file, value_type = 'raw.intensity')
+#'    create_maxquant_design(proteingroups_file, value_type = 'raw.intensity')
 #' }
 #'
 #'
@@ -451,11 +491,11 @@ create_sample_design_df <- function(...){
 #' #--------------------------
 #' if (require(alnoubi.2017)){
 #'    proteingroups_file <- system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017')
-#'    create_maxquant_sample_df(proteingroups_file)
+#'    create_maxquant_design(proteingroups_file)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-create_maxquant_sample_file <- function(
+write_maxquant_design <- function(
    proteingroups_file,
    sample_file = paste0(dirname(proteingroups_file), '/sample_design.txt'),
    value_type = autonomics.import::infer_maxquant_value_type(proteingroups_file)
@@ -468,25 +508,25 @@ create_maxquant_sample_file <- function(
    }
 
    # Create
-   autonomics.import::create_maxquant_sample_df(proteingroups_file = proteingroups_file, value_type = value_type) %>%
+   autonomics.import::create_maxquant_design(proteingroups_file = proteingroups_file, value_type = value_type) %>%
    autonomics.import::write_sample_file(sample_file)
 
    # Return
    return(invisible(sample_file))
 }
 
-#' @rdname create_maxquant_sample_file
+#' @rdname write_maxquant_design
 #' @export
 create_maxquant_design_file <- function(...){
-   .Deprecated('autonomics.import::create_maxquant_sample_file')
-   autonomics.import::create_maxquant_sample_file(...)
+   .Deprecated('autonomics.import::write_maxquant_design')
+   autonomics.import::write_maxquant_design(...)
 }
 
-#'@rdname create_maxquant_sample_file
+#'@rdname write_maxquant_design
 #'@export
 create_sample_design_file <- function(...){
-   .Deprecated('create_maxquant_sample_file')
-   create_maxquant_sample_file(...)
+   .Deprecated('write_maxquant_design')
+   write_maxquant_design(...)
 }
 
 

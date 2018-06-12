@@ -50,8 +50,4 @@ if (require(graumann.zebra)){
    system.file('extdata/proteinGroups.txt', package = 'graumann.zebra') \%>\%
    autonomics.import::load_proteingroups()
 }
-if (require(alnoubi.2017)){
-   system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017') \%>\%
-   autonomics.import::load_proteingroups(value_type = 'raw.intensity')
-}
 }
