@@ -1158,15 +1158,6 @@ parse_protein_names_from_uniprot_fasta_hdrs <- function(x, sep = ';'){
 #'    autonomics.import::esetise_maxquant_dt(entity = 'phosphosite', quantity = 'occupancy',
 #'                           sample_file, parameter_file)
 #' }
-#' if (require(alnoubi.2017)){
-#'    maxquant_dir <- system.file('extdata', package = 'alnoubi.2017')
-#'    proteingroups_file <- paste0(maxquant_dir, '/proteinGroups.txt')
-#'    sample_file    <- paste0(maxquant_dir, '/sample_design.txt')
-#'    parameter_file <- paste0(maxquant_dir, '/parameters.txt')
-#'    load_proteingroups_to_long_dt(proteingroups_file, value_type = 'lfq.intensity') %>%
-#'       esetise_maxquant_dt(entity = 'proteingroup', quantity = 'lfq.intensity',
-#'                           sample_file, parameter_file)
-#' }
 #' if (require(graumann.lfq)){
 #'    maxquant_dir <- system.file('extdata', package = 'graumann.lfq')
 #'    proteingroups_file <- paste0(maxquant_dir, '/proteinGroups.txt')
@@ -1266,10 +1257,6 @@ esetise_maxquant_dt <- function(
 #' if (require(graumann.zebra)){
 #'    system.file('extdata/proteinGroups.txt', package = 'graumann.zebra') %>%
 #'    autonomics.import::load_proteingroups()
-#' }
-#' if (require(alnoubi.2017)){
-#'    system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017') %>%
-#'    autonomics.import::load_proteingroups(value_type = 'raw.intensity')
 #' }
 #' @return data.table or ExpressionSet
 #' @importFrom data.table   data.table   :=
