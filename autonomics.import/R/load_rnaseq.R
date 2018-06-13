@@ -122,6 +122,9 @@ get_gene_annotations <- function(
 #' @param paired_end        Paried end reads. FALSE by default
 #' @param ...               passed to Rsubread::featureCounts
 #' @importFrom magrittr %>%
+#' @examples
+#' download .zip file from "https://bitbucket.org/graumannlab/billing.stemcells/downloads/rnaseq_example_data.zip" and unzip it under ~/.autonomics/
+#' get_feature_counts(,'Homo sapiens',92, TRUE)
 #' @export
 get_feature_counts <- function(
   dir_to_samples,
@@ -143,7 +146,7 @@ get_feature_counts <- function(
 
   gtf_file = list.files(sprintf("~/.autonomics/gtf/%s", stringi::stri_replace_first_fixed(organism,' ', '_')) ,pattern = "\\.gtf$")
   message("\n")
-  message("Starting to count reads per feature for given samples")
+  message("Counting reads per feature for given samples")
 
   #count features for the list of samples
   feature_count <- sapply(sample_names, function(x)
@@ -163,7 +166,7 @@ get_feature_counts <- function(
                    magrittr::set_colnames(stringi::stri_replace_all_regex(names(feature_count),'/.*bam$', ''))
 
 
-  message("filtering feature counts with >= 1 read")
+  message("Filtering feature counts with >= 1 read")
   #filter rows with atleast 1 read
   feature_counts <- feature_counts[which(rowSums(feature_counts) >= 1 ),]
 
@@ -182,35 +185,40 @@ get_feature_counts <- function(
 create_rnaseq_sample_design_file <- function(countfile){
 
    gene_counts <- read.table(countfile)
-   sample_ids <- as.character(colnames(gene_counts))
+   design_df <- data.frame(sample_id = colnames(gene_counts))
+   design_df$subgroup <- ""
+   design_df$replicate <- ""
+   design_df$block <- ""
 
-   # Infer sep
-   sep <- sample_ids %>% autonomics.import::infer_design_sep()
-
-   # Return dataframe with only sample ids if no separator could be infered
-   if (is.null(sep))   return(data.frame(sample_id = sample_ids,
-                                         subgroup  = '',
-                                         replicate = '',
-                                         block     = '',
-                                         row.names = sample_ids))
-   # Separator infered
-   design_df <- data.frame(sample_id = sample_ids,
-                     subgroup  = sample_ids %>% stringi::stri_split_fixed(sep) %>%
-                                 vapply(function(y) y %>%
-                                 magrittr::extract(1:(length(y)-1)) %>%
-                                 paste0(collapse = sep), character(1)),
-                     replicate = sample_ids %>%
-                                 stringi::stri_split_fixed(sep) %>%
-                                 vapply(function(y) y %>%
-                                 magrittr::extract(length(y)), character(1)),
-                     block     = '',
-                     row.names = sample_ids)
-
+   create_dir <- dir.create("~/.autonomics/sample_design/", recursive=TRUE, showWarnings = FALSE)
    write.table(design_df,"~/.autonomics/sample_design/samples.txt", quote=FALSE, row.names = FALSE)
 
-   message("Sample design file is completed under ~/.autonomics/sample_design/samples.txt")
-   message("Please fill in blanks in sample design file if any")
+   message("Sample design file templete is generated under ~/.autonomics/sample_design/samples.txt")
+   message("Please fill in blanks in sample design file if any and save")
 
+   #sample_ids <- as.character(colnames(gene_counts))
+
+   # Infer sep
+   #sep <- sample_ids %>% autonomics.import::infer_design_sep()
+
+   # Return dataframe with only sample ids if no separator could be infered
+   #if (is.null(sep))   return(data.frame(sample_id = sample_ids,
+                                         #subgroup  = '',
+                                         #replicate = '',
+                                         #block     = '',
+                                         #row.names = sample_ids))
+   # Separator infered
+   #design_df <- data.frame(sample_id = sample_ids,
+    #                 subgroup  = sample_ids %>% stringi::stri_split_fixed(sep) %>%
+    #                             vapply(function(y) y %>%
+    #                             magrittr::extract(1:(length(y)-1)) %>%
+    #                             paste0(collapse = sep), character(1)),
+    #                 replicate = sample_ids %>%
+    #                             stringi::stri_split_fixed(sep) %>%
+    #                             vapply(function(y) y %>%
+    #                             magrittr::extract(length(y)), character(1)),
+    #                             block     = '',
+    #                         row.names = sample_ids)
 }
 #create_rnaseq_sample_design_file("~/.autonomics/feature_count/gene_counts.txt")
 
@@ -641,4 +649,3 @@ voom_filter_n_transform <- function(object, normalize.method = 'none', file = NU
    # Return
    return(object)
 }
-
