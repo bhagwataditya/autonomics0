@@ -124,7 +124,7 @@ get_gene_annotations <- function(
 #' @importFrom magrittr %>%
 #' @examples
 #' download .zip file from "https://bitbucket.org/graumannlab/billing.stemcells/downloads/rnaseq_example_data.zip" and unzip it under ~/.autonomics/
-#' get_feature_counts("~/.autonomics/rnaseq_example_data",'Homo sapiens',92, TRUE)
+#' get_feature_counts("~/.autonomics/rnaseq_example_data/comparison",'Homo sapiens',92, TRUE)
 #' @export
 get_feature_counts <- function(
   dir_to_samples,
