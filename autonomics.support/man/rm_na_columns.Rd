@@ -22,6 +22,7 @@ df <- data.frame(
    id        = c('1',    '2'),
    name      = c('alpha-1-B glycoprotein', 'alpha-2-macroglobulin'), 
    relevance = c(NA_character_, NA_character_),
+   version   = c('NA', 'NA'), 
    type      = c('proteincoding', 'proteincoding'))
 df \%>\% autonomics.support::rm_na_columns()
 }
