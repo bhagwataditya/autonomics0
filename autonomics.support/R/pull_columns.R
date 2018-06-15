@@ -1,6 +1,6 @@
 #' Pull columns in a dataframe to the front
 #' @param df dataframe
-#' @param selected_cols 
+#' @param first_cols columns that need to be pulled to the front
 #' @return dataframe with re-ordered columns
 #' @examples 
 #' require(magrittr)
@@ -14,6 +14,10 @@
 #' @importFrom magrittr %>% 
 #' @export
 pull_columns <- function(df, first_cols){
+  
+  assertive.types::assert_is_data.frame(df)
+  assertive.types::assert_is_character(first_cols)
+  
   df %>% 
   magrittr::extract(, c(first_cols, setdiff(names(df), first_cols)), drop = FALSE)
 }

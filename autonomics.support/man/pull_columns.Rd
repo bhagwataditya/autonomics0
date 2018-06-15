@@ -9,7 +9,7 @@ pull_columns(df, first_cols)
 \arguments{
 \item{df}{dataframe}
 
-\item{selected_cols}{}
+\item{first_cols}{columns that need to be pulled to the front}
 }
 \value{
 dataframe with re-ordered columns
