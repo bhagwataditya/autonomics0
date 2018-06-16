@@ -4,30 +4,38 @@
 \alias{load_soma}
 \title{Load soma data}
 \usage{
-load_soma(file, keepOnlyPasses = TRUE, keepOnlySamples = TRUE,
-  verbose = FALSE)
+load_soma(file, log2_transform = TRUE, keep_only_passes = TRUE,
+  keep_only_samples = TRUE, infer_design_from_sampleids = FALSE,
+  rm_na_svars = TRUE, rm_single_value_svars = TRUE)
 }
 \arguments{
 \item{file}{adat file}
 
-\item{keepOnlyPasses}{A logical value indicating whether or not to keep only the
-rows and columns where the data quality was considered to be passable.}
+\item{log2_transform}{logical: whether to log2 transform (logical)}
 
-\item{keepOnlySamples}{A logical value indicating whether or not to keep only the rows
-containing actual samples (as opposed to QC, buffer, and calibrator
-samples).}
+\item{keep_only_passes}{logical: whether to keep only features and samples that pass QC}
 
-\item{verbose}{Logical value indicating whether (lots of) diagnostic messages should be shown.}
+\item{keep_only_samples}{logical: whether to keep only biological samples (and rm QC, buffer, and calibrator samples).}
+
+\item{infer_design_from_sampleids}{logical: whethe to infer design from sample_ids}
+
+\item{rm_na_svars}{logical: whether to rm na svars}
+
+\item{rm_single_value_svars}{logical: whether to rm single value svars}
 }
 \description{
-Load soma data
+Loads data from soma file.
+Extracts sample_id definitions from 'SampleId'    column
+Extracts subgroup definitions  from 'SampleGroup' column when available.
+When not available, attempts to extract subgroup definitions from 'sample_id'column.
 }
 \examples{
 require(magrittr)
-if (require(atkin.2014)){
-   object <- system.file(
-                'extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
-                 package = 'atkin.2014') \%>\%
-             load_soma()
+if (require(autonomics.data)){
+   file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+                        package = 'autonomics.data')
+   file \%>\% autonomics.import::load_soma()
+   file \%>\% autonomics.import::load_soma(infer_design_from_sampleids = TRUE)
 }
+
 }
