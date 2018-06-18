@@ -4,12 +4,18 @@
 \alias{infer_design_sep}
 \title{Infer design separator}
 \usage{
-infer_design_sep(sample_ids, possible_separators = c(".", " ", "_"))
+infer_design_sep(sample_ids, possible_separators = c(".", " ", "_"),
+  verbose = TRUE)
 }
 \arguments{
 \item{sample_ids}{character vector with sample ids}
 
 \item{possible_separators}{character vector with possible separators to look for}
+
+\item{verbose}{logical}
+}
+\value{
+separator (string) or NULL (if no separator could be identified)
 }
 \description{
 Infer design separator
@@ -18,6 +24,10 @@ Infer design separator
 require(magrittr)
 sample_ids <- c('PERM_NON.R1[H/L]', 'PERM_NON.R2[H/L]', 'PERM_NON.R3[H/L]', 'PERM_NON.R4[H/L]')
 sample_ids \%>\% infer_design_sep()
-sample_ids <- c('WT untreated 1', 'WT untreated 1', 'WT untreated 2')
+
+sample_ids <- c('WT untreated 1', 'WT untreated 2', 'WT treated 1')
+sample_ids \%>\% infer_design_sep()
+
+sample_ids <- c('group1', 'group2', 'group3.R1')
 sample_ids \%>\% infer_design_sep()
 }

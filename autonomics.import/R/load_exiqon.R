@@ -1,5 +1,10 @@
+#' @export
 EXIQON_PATTERN <- '^(mmu|rno)[-](miR|let)[-]([0-9]+[a-z]?[-]?[0-9]?)([-][35]p)?$'
+
+#' @export
 EXIQON_FEATURE_ROWS <- c('#RefGenes', '#Spike',        '#MissDataFreq(%)')
+
+#' @export
 EXIQON_SAMPLE_COLS  <- c('Exiqon',    '#IPC-PlateID',  '#MissDataFreq(%)')
 
 #' @rdname load_exiqon
@@ -21,8 +26,6 @@ load_exiqon_sdata <- function(file){
    sdata1 <- mir %>%
              magrittr::extract(!feature_rows, sample_cols) %>%
              magrittr::set_names(names(.) %>% stringi::stri_replace_first_fixed('Exiqon', 'sample_id'))
-   sdata1$sample_id %<>% autonomics.import::validify_sample_ids()
-   sdata1 %<>% autonomics.import::infer_add_design()
    sdata1
 }
 
@@ -71,7 +74,7 @@ filter_exiqon_features <- function(object, rm_ref_genes = TRUE, rm_spike = TRUE,
       object %<>% autonomics.import::filter_features_("`#RefGenes`==0")
       autonomics.import::fdata(object)$`#RefGenes` <- NULL
       n1 <- nrow(object)
-      autonomics.support::cmessage('\tRetain %d/%d miRNAs after removing ref genes', n1, n0)
+      autonomics.support::cmessage('Retain %d/%d miRNAs after removing ref genes', n1, n0)
    }
 
    if (rm_spike){
@@ -79,16 +82,17 @@ filter_exiqon_features <- function(object, rm_ref_genes = TRUE, rm_spike = TRUE,
       object %<>% autonomics.import::filter_features_("`#Spike`==0")
       autonomics.import::fdata(object)$`#Spike` <- NULL
       n1 <- nrow(object)
-      autonomics.support::cmessage('\tRetain %d/%d miRNAs after removing spike-ins', n1, n0)
+      autonomics.support::cmessage('Retain %d/%d miRNAs after removing spike-ins', n1, n0)
    }
    object
 }
 
 
 #' Load exiqon file
-#' @param file path to exiqon txt file
-#' @param rm_ref_genes whether to remove reference genes (logical)
-#' @param rm_spike     whether to remove spike-ins (logical)
+#' @param file         path to exiqon txt file
+#' @param infer_design logical: whether to infer design from samplesids
+#' @param rm_ref_genes logical: whether to rm reference genes
+#' @param rm_spike     logical: whether to rm spike-ins
 #' @return eset
 #' @examples
 #' require(magrittr)
@@ -96,12 +100,18 @@ filter_exiqon_features <- function(object, rm_ref_genes = TRUE, rm_spike = TRUE,
 #'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
 #'                         package = 'subramanian.2016')
 #'    file %>% autonomics.import::load_exiqon()
+#'    file %>% autonomics.import::load_exiqon(infer_design = FALSE)
 #'    file %>% autonomics.import::load_exiqon_sdata() %>% head(1)
 #'    file %>% autonomics.import::load_exiqon_fdata() %>% head(1)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-load_exiqon <- function(file, rm_ref_genes = TRUE, rm_spike = TRUE){
+load_exiqon <- function(
+   file,
+   infer_design = TRUE,
+   rm_ref_genes = TRUE,
+   rm_spike = TRUE
+){
    # Satisfy CHECK
    . <- NULL
 
@@ -109,8 +119,8 @@ load_exiqon <- function(file, rm_ref_genes = TRUE, rm_spike = TRUE){
    mir <- readxl::read_excel(file) %>% as.data.frame() %>% magrittr::set_rownames(.$Exiqon)
 
   # Define feature rows and sample cols
-  feature_rows <- rownames(mir) %in% EXIQON_FEATURE_ROWS
-  sample_cols  <- names(mir)    %in% EXIQON_SAMPLE_COLS
+  feature_rows <- rownames(mir) %in% autonomics.import::EXIQON_FEATURE_ROWS
+  sample_cols  <- names(mir)    %in% autonomics.import::EXIQON_SAMPLE_COLS
 
   # Create components
   feature_df   <- autonomics.import::load_exiqon_fdata(file)
@@ -127,6 +137,9 @@ load_exiqon <- function(file, rm_ref_genes = TRUE, rm_spike = TRUE){
      entity     = 'mirna',
      quantity   = 'ct',
      software   = 'genex')
+
+  # Standardize design
+  my_eset %>% autonomics.import::prepare_design(sampleid_var = 'sample_id', infer_design = infer_design)
 
   # Filter features
   my_eset %<>% autonomics.import::filter_exiqon_features(rm_ref_genes = rm_ref_genes,

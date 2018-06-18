@@ -11,21 +11,23 @@ load_metabolon_sdata(file, sheet = 2)
 
 load_metabolon_fdata(file, sheet = 2)
 
-load_metabolon(file, sheet = 2, verbose = TRUE, add_kegg_pathways = FALSE,
-  add_smiles = FALSE)
+load_metabolon(file, sheet = 2, log2_transform = TRUE,
+  infer_design = FALSE, add_kegg_pathways = FALSE, add_smiles = FALSE)
 
 load_metabolon_file(...)
 }
 \arguments{
-\item{file}{metabolon xlsx file (character)}
+\item{file}{metabolon xlsx file}
 
-\item{sheet}{number or name}
+\item{sheet}{xls sheet name  or number}
 
-\item{verbose}{logical}
+\item{log2_transform}{logical: whether to log2 transform}
 
-\item{add_kegg_pathways}{logical}
+\item{infer_design}{logical: whether to infer design from sample ids}
 
-\item{add_smiles}{logical}
+\item{add_kegg_pathways}{logical: whether to add KEGG pathways to fdata}
+
+\item{add_smiles}{logical: whether to add SMILES to fdata}
 
 \item{...}{(backward compatibility)}
 }
@@ -44,10 +46,13 @@ if (require(subramanian.2016)){
    file \%>\% autonomics.import::load_metabolon_sdata(sheet=5) \%>\% head(1)
    file \%>\% autonomics.import::load_metabolon_fdata(sheet=5) \%>\% head(1)
 }
-if (require(halama.2016)){
-   file <- system.file('extdata/halama.2016.xlsx', package = 'halama.2016')
-   file \%>\% autonomics.import::load_metabolon(sheet=4)
-   file \%>\% autonomics.import::load_metabolon_sdata(sheet=4) \%>\% head(1)
-   file \%>\% autonomics.import::load_metabolon_fdata(sheet=4) \%>\% head(1)
+if (require(autonomics.data)){
+   file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+   file \%>\% autonomics.import::load_metabolon()
+   file \%>\% autonomics.import::load_metabolon(sheet=3)
+   file \%>\% autonomics.import::load_metabolon() \%>\%
+            autonomics.import::sdata() \%>\% magrittr::extract(1:2, 1:5)
+   file \%>\% autonomics.import::load_metabolon(infer_design = TRUE) \%>\%
+            autonomics.import::sdata() \%>\% magrittr::extract(1:2, 1:5)
 }
 }

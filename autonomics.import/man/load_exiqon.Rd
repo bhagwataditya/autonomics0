@@ -10,14 +10,17 @@ load_exiqon_sdata(file)
 
 load_exiqon_fdata(file)
 
-load_exiqon(file, rm_ref_genes = TRUE, rm_spike = TRUE)
+load_exiqon(file, infer_design = TRUE, rm_ref_genes = TRUE,
+  rm_spike = TRUE)
 }
 \arguments{
 \item{file}{path to exiqon txt file}
 
-\item{rm_ref_genes}{whether to remove reference genes (logical)}
+\item{infer_design}{logical: whether to infer design from samplesids}
 
-\item{rm_spike}{whether to remove spike-ins (logical)}
+\item{rm_ref_genes}{logical: whether to rm reference genes}
+
+\item{rm_spike}{logical: whether to rm spike-ins}
 }
 \value{
 eset
@@ -31,6 +34,7 @@ if (require(subramanian.2016)){
    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
                         package = 'subramanian.2016')
    file \%>\% autonomics.import::load_exiqon()
+   file \%>\% autonomics.import::load_exiqon(infer_design = FALSE)
    file \%>\% autonomics.import::load_exiqon_sdata() \%>\% head(1)
    file \%>\% autonomics.import::load_exiqon_fdata() \%>\% head(1)
 }

@@ -5,8 +5,8 @@
 \title{Load soma data}
 \usage{
 load_soma(file, log2_transform = TRUE, keep_only_passes = TRUE,
-  keep_only_samples = TRUE, infer_design_from_sampleids = FALSE,
-  rm_na_svars = TRUE, rm_single_value_svars = TRUE)
+  keep_only_samples = TRUE, infer_design = FALSE, rm_na_svars = TRUE,
+  rm_single_value_svars = TRUE)
 }
 \arguments{
 \item{file}{adat file}
@@ -17,7 +17,7 @@ load_soma(file, log2_transform = TRUE, keep_only_passes = TRUE,
 
 \item{keep_only_samples}{logical: whether to keep only biological samples (and rm QC, buffer, and calibrator samples).}
 
-\item{infer_design_from_sampleids}{logical: whethe to infer design from sample_ids}
+\item{infer_design}{logical: whethe to infer design from sample_ids}
 
 \item{rm_na_svars}{logical: whether to rm na svars}
 
@@ -35,7 +35,7 @@ if (require(autonomics.data)){
    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
                         package = 'autonomics.data')
    file \%>\% autonomics.import::load_soma()
-   file \%>\% autonomics.import::load_soma(infer_design_from_sampleids = TRUE)
+   file \%>\% autonomics.import::load_soma(infer_design = TRUE)
 }
 
 }

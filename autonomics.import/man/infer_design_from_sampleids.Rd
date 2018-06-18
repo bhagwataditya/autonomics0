@@ -20,4 +20,6 @@ if (require(subramanian.2016)){
    subramanian.2016::metabolon$sample_id \%>\%
    autonomics.import::infer_design_from_sampleids()
 }
+sample_ids <- c("UT_10h_R1", "UT_10h_R2", "UT_10h_R3", "UT_10h_R4")
+sample_ids \%>\% autonomics.import::infer_design_from_sampleids()
 }
