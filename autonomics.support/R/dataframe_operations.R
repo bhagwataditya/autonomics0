@@ -61,22 +61,22 @@ mutate_keeping_rownames <- function(.data, ...){
     magrittr::set_rownames(rownames(.data))
 }
 
-#' Nullify variables in df
-#' @param df data.frame
-#' @param vars character vector with variable names
-#' @return dataframe
-#' @examples 
+#' Dedupe varnames
+#' @param x list
+#' @examples
 #' require(magrittr)
-#' data.frame(a = 1:3, b = 4:6, c = 7:9, d = 10:12) %>% 
-#' autonomics.support::nullify(c('a', 'b'))
-#' @importFrom magrittr %<>%
+#' x <- cbind(data.frame(a=1:3, b=1:3, c=1:3), data.frame(a=4:6))
+#' x
+#' x %>% autonomics.support::dedupe_varnames()
+#' @importFrom magrittr %>% 
 #' @export
-nullify <- function(df, vars){
-  if (length(vars)>0){
-    autonomics.support::cmessage('\tNullifying %s', paste0(sprintf('"%s"', vars), collapse = ', '))
-    plyr::l_ply(vars, function(x)df[[x]] <- NULL)   # Prevent duplicate names in cbind
+dedupe_varnames <- function(x){
+  selector <- duplicated(names(x))
+  if (any(selector)){
+     autonomics.support::cmessage('Rm repeated column "%s"', names(x)[selector])
+     x %<>% magrittr::extract(!selector)
   }
-  df
+  x
 }
 
 
