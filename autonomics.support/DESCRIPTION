@@ -22,6 +22,7 @@ Imports:
     magrittr,
     stringi,
     utils
+biocViews:
 RoxygenNote: 6.0.1
 Suggests:
    autonomics.data, 
