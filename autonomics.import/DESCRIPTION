@@ -59,5 +59,6 @@ Suggests:
     org.Dr.eg.db,
     org.Xl.eg.db,
     subramanian.2016
+biocViews:
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1

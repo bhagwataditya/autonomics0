@@ -44,4 +44,5 @@ Suggests:
    subramanian.2016,
    statmod, 
    testthat
+biocViews:
 RoxygenNote: 6.0.1
