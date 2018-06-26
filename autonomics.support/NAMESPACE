@@ -2,6 +2,7 @@
 
 export(all_have_value)
 export(cdraw)
+export(cduplicated)
 export(cfile.path)
 export(cfread)
 export(characterify)
