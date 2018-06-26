@@ -9,7 +9,7 @@ load_phosphosite_occupancies(phosphosites_file,
   "/proteinGroups.txt"), sample_file = paste0(dirname(phosphosites_file),
   "/sample_design.txt"), parameter_file = paste0(dirname(phosphosites_file),
   "/parameters.txt"), log2_transform = TRUE,
-  value_type = infer_maxquant_value_type(phosphosites_file))
+  value_type = autonomics.import::infer_maxquant_value_type(phosphosites_file))
 }
 \arguments{
 \item{phosphosites_file}{full path to "Phospho (STY)Sites.txt"}

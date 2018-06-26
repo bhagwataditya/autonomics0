@@ -956,7 +956,8 @@ load_phosphosite_occupancies_to_long_dt <- function(
    autonomics.support::cmessage('\tCompute phosphosite occupancies')
    data.table::setkey(proteins,      `Protein group IDs`, sample)
    data.table::setkey(phosphosites,  `Protein group IDs`, sample)
-   occupancies <- merge(phosphosites, proteins)
+   occupancies <- merge(phosphosites, proteins, all = TRUE) # all TRUE is required to avoid "all-NA samples" from being dropped
+   occupancies %<>% magrittr::extract(!is.na(feature_id))   # but NA fetaures should be removed
    occupancies %>% magrittr::extract(,  value := if (log2_transform) phospho.value - protein.value else phospho.value / protein.value)
    occupancies %>% set_summary_attr(c(tmp_summary_attr_prot, tmp_summary_attr_phos))
 }
@@ -1228,6 +1229,10 @@ esetise_maxquant_dt <- function(
    dcast_formula   <- create_dcast_formula(annotation_cols)
    #value.var <- switch(quantity, ratio='value', occupancy='occupancy', intensity='intensity')
    DT %<>% data.table::dcast(dcast_formula, value.var = 'value')
+   DT %<>% magrittr::extract(!is.na(feature_id))
+           # This is required for phospho occupancy datasets
+           # merge(proteingroups, phosphosites, all = TRUE) is used to avoid an all-NA-sample from being dropped.
+           # But now full NA fetaures need to be dropped
 
    # Make eset
    feature_names <- DT$feature_id
@@ -1390,16 +1395,19 @@ load_phosphosite_occupancies <- function(
    sample_file        = paste0(dirname(phosphosites_file), '/sample_design.txt'),
    parameter_file     = paste0(dirname(phosphosites_file), '/parameters.txt'),
    log2_transform     = TRUE,
-   value_type         = infer_maxquant_value_type(phosphosites_file)
+   value_type         = autonomics.import::infer_maxquant_value_type(phosphosites_file)
 ){
    assertive.files::assert_all_are_existing_files(c(proteingroups_file, phosphosites_file, sample_file, parameter_file))
-   DT <- load_phosphosite_occupancies_to_long_dt(phosphosites_file  = phosphosites_file,
-                                                 proteingroups_file = proteingroups_file,
-                                                 log2_transform     = log2_transform)
-   DT %>% esetise_maxquant_dt(entity = 'phosphosite',
-                              quantity = 'occupancy',
-                              sample_file = sample_file,
-                              parameter_file = parameter_file)
+   DT <- autonomics.import::load_phosphosite_occupancies_to_long_dt(
+            phosphosites_file  = phosphosites_file,
+            proteingroups_file = proteingroups_file,
+            log2_transform     = log2_transform)
+   DT[, feature_id := paste0('PS', formatC(feature_id, digits = max(floor(log10(feature_id))), flag = '0'))]
+   DT %>% autonomics.import::esetise_maxquant_dt(
+             entity         = 'phosphosite',
+             quantity       = 'occupancy',
+             sample_file    = sample_file,
+             parameter_file = parameter_file)
 }
 
 utils::globalVariables(c('.SD', 'goid', 'interpro', 'ngoid', 'ninterpro', 'score', '.', 'Protein names', 'Gene names'))
