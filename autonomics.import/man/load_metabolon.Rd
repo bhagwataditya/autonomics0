@@ -7,19 +7,22 @@
 \alias{load_metabolon_file}
 \title{Load metabolon data}
 \usage{
-load_metabolon_sdata(file, sheet = 2)
+load_metabolon_sdata(metabolon_file, sheet = 2)
 
-load_metabolon_fdata(file, sheet = 2)
+load_metabolon_fdata(metabolon_file, sheet = 2)
 
-load_metabolon(file, sheet = 2, log2_transform = TRUE,
-  infer_design = FALSE, add_kegg_pathways = FALSE, add_smiles = FALSE)
+load_metabolon(metabolon_file, sample_file = NULL, sheet = 2,
+  log2_transform = TRUE, infer_design = FALSE, add_kegg_pathways = FALSE,
+  add_smiles = FALSE)
 
 load_metabolon_file(...)
 }
 \arguments{
-\item{file}{metabolon xlsx file}
+\item{metabolon_file}{metabolon xlsx file}
 
 \item{sheet}{xls sheet name  or number}
+
+\item{sample_file}{NULL or character (sample design file)}
 
 \item{log2_transform}{logical: whether to log2 transform}
 
@@ -39,20 +42,23 @@ Load metabolon data
 }
 \examples{
 require(magrittr)
-if (require(subramanian.2016)){
-   file <- system.file('extdata/metabolon/subramanian.2016.metabolon.xlsx',
-                        package = 'subramanian.2016')
-   file \%>\% autonomics.import::load_metabolon(sheet=5)
-   file \%>\% autonomics.import::load_metabolon_sdata(sheet=5) \%>\% head(1)
-   file \%>\% autonomics.import::load_metabolon_fdata(sheet=5) \%>\% head(1)
-}
 if (require(autonomics.data)){
-   file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-   file \%>\% autonomics.import::load_metabolon()
-   file \%>\% autonomics.import::load_metabolon(sheet=3)
-   file \%>\% autonomics.import::load_metabolon() \%>\%
-            autonomics.import::sdata() \%>\% magrittr::extract(1:2, 1:5)
-   file \%>\% autonomics.import::load_metabolon(infer_design = TRUE) \%>\%
-            autonomics.import::sdata() \%>\% magrittr::extract(1:2, 1:5)
+
+   # Loading metabolon file is easy
+   metabolon_file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+   metabolon_file \%>\% autonomics.import::load_metabolon()
+
+   # Three ways to specify sample design
+      # Use Group definition in metabolon file
+      metabolon_file \%>\% autonomics.import::load_metabolon() \%>\%
+                         autonomics.import::sdata() \%>\% magrittr::extract(1:3, 1:5)
+      # Infer from sample id values
+      metabolon_file \%>\% autonomics.import::load_metabolon(infer_design = TRUE) \%>\%
+                         autonomics.import::sdata() \%>\% magrittr::extract(1:3, 1:5)
+      # Merge in from sample file
+      sample_file <- tempfile()
+      metabolon_file \%>\% autonomics.import::create_metabolon_design_file(sample_file, infer_design = TRUE)
+      metabolon_file \%>\% autonomics.import::load_metabolon(sample_file = sample_file) \%>\%
+                         autonomics.import::sdata() \%>\% magrittr::extract(1:3, 1:5)
 }
 }
