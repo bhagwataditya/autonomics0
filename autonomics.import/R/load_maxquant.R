@@ -350,183 +350,59 @@ get_maxquant_value_columns <- function(DT, value_type){
    )
 }
 
-# make_sample_names <- function(injection, channel = rep(1, length(injection)) ){
-#    if (length(unique(channel))==1){
-#       injection
-#    } else {
-#       paste0(injection, '[', channel, ']')
-#    }
-# }
-
-
-#' Create maxquant design
-#'
-#' @param proteingroups_file full path to protein groups file
-#' @param sample_file        full path to sample design file
-#' @param value_type         any value in autonomics.import::MAXQUANT_VALUE_TYPES
-#' @param ... backward compatibility to deprecated functions
-#' @return sample design dataframe
+#' Designify maxquant sampleids
+#' @param sampleids character vector
 #' @examples
-#' require(magrittr)
+#' sampleids <- c("STD(L).EM00(M).EM01(H).R1[H/L]",
+#'                "STD(L).EM00(M).EM01(H).R1[M/L]")
+#' sampleids %>% autonomics.import::designify_maxquant_sampleids()
 #'
-#' # NORMALIZED RATIOS
-#' if (require(billing.differentiation.data)){
-#'    system.file('extdata/maxquant/proteinGroups.txt',
-#'                 package = 'billing.differentiation.data') %>%
-#'    autonomics.import::create_maxquant_design()
-#' }
+#' sampleids <- c("Gel 11 1", "Gel 11 2", "Gel Ctrl 1")
+#' sampleids %>% autonomics.import::designify_maxquant_sampleids()
 #'
-#' # REPORTER INTENSITIES
-#' if (require(billing.vesicles)){
-#'    system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') %>%
-#'    autonomics.import::create_maxquant_design()
-#' }
-#'
-#' # LFQ INTENSITIES
-#' if (require(graumann.lfq)){
-#'    system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') %>%
-#'    autonomics.import::create_maxquant_design()
-#' }
-#'
-#' # LABELED INTENSITIES
-#' if (require(billing.differentiation.data)){
-#'    system.file('extdata/maxquant/proteinGroups.txt',
-#'                 package = 'billing.differentiation.data') %>%
-#'    autonomics.import::create_maxquant_design(value_type = 'raw.intensity')
-#' }
-#'
-#' # UNLABELED INTENSITIES
-#' if (require(alnoubi.2017)){
-#'    system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017') %>%
-#'    autonomics.import::create_maxquant_design()
-#' }
+#' sampleids <- c("ESC(0).NCM(1).CM(2).MV(3).EX(4).KIT(5).R1[0]",
+#'                "ESC(0).NCM(1).CM(2).MV(3).EX(4).KIT(5).R1[1]")
+#' sampleids %>% autonomics.import::designify_maxquant_sampleids()
 #' @importFrom magrittr %>%
 #' @export
-create_maxquant_design <- function(
-   proteingroups_file,
-   value_type = autonomics.import::infer_maxquant_value_type(proteingroups_file)
-){
+designify_maxquant_sampleids <- function(sampleids){
 
-   # Assert
-   assertive.files::assert_all_are_dirs(dirname(proteingroups_file))
-   #assertive.files::assert_all_are_readable_files(proteingroups_file, warn_about_windows = FALSE)
+   # Break into parts         #pattern <- '(.*)\\.R\\((.+)\\)\\[(.+)\\]'
+   sep <- sampleids %>% autonomics.import::infer_design_sep()
+   parts <- strsplit(sampleids, split = sep, fixed = TRUE)
+   n <- length(parts[[1]])
 
-   # Read
-   DT <- data.table::fread(proteingroups_file)
-
-   # Extract
-   value_columns <- DT %>% get_maxquant_value_columns(value_type)
-
-   # Return
-   data.frame(sample_id = names(value_columns),
-              subgroup  = '',
-              replicate = '',
-              block     = '')
-
-}
-
-create_maxquant_design_df <- function(...){
-   .Deprecated('autonomics.import::create_maxquant_design')
-   autonomics.import::create_maxquant_design(...)
-}
-
-#'@rdname write_maxquant_design
-#'@export
-create_sample_design_df <- function(...){
-   .Deprecated('create_maxquant_design')
-   create_maxquant_design_df(...)
-}
-
-#' Create maxquant sample dataframe/file
-#'
-#' @param proteingroups_file full path to protein groups file
-#' @param sample_file full path to sample design file
-#' @param value_type         any value in autonomics.import::MAXQUANT_VALUE_TYPES
-#' @param ... backward compatibility to deprecated functions
-#' @return sample design dataframe (create_maxquant_design) or file (write_maxquant_design)
-#' @examples
-#' require(magrittr)
-#'
-#' # normalized ratios
-#' #------------------
-#' if (require(billing.differentiation.data)){
-#'    proteingroups_file <- system.file('extdata/maxquant/proteinGroups.txt',
-#'                                      package = 'billing.differentiation.data')
-#'    autonomics.import::create_maxquant_design(proteingroups_file)
-#'    sample_design_file <- paste0(tempdir(), '/billing.differentiation/sample_design.txt')
-#'    dir.create(dirname(sample_design_file))
-#'    create_maxquant_design_file(proteingroups_file, sample_design_file)
-#' }
-#'
-#' # reporter intensities
-#' #---------------------
-#' if (require(billing.vesicles)){
-#'    proteingroups_file <- system.file('extdata/proteinGroups.txt', package = 'billing.vesicles')
-#'    autonomics.import::create_maxquant_design(proteingroups_file)
-#'    sample_design_file <- paste0(tempdir(), '/billing.vesicles/sample_design.txt')
-#'    dir.create(dirname(sample_design_file))
-#'    create_maxquant_design_file(proteingroups_file, sample_design_file)
-#' }
-#'
-#' # lfq intensities
-#' #----------------
-#' if (require(graumann.lfq)){
-#'    proteingroups_file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-#'    create_maxquant_design(proteingroups_file)
-#'    sample_design_file <- paste0(tempdir(), '/graumann.lfq/sample_design.txt')
-#'    dir.create(dirname(sample_design_file))
-#'    create_maxquant_design_file(proteingroups_file, sample_design_file)
-#' }
-#'
-#' # raw labeled intensities
-#' #---------------------
-#' if (require(billing.differentiation.data)){
-#'    proteingroups_file <- system.file('extdata/maxquant/proteinGroups.txt',
-#'                                      package = 'billing.differentiation.data')
-#'    create_maxquant_design(proteingroups_file, value_type = 'raw.intensity')
-#' }
-#'
-#'
-#' # raw unlabeled intensities
-#' #--------------------------
-#' if (require(alnoubi.2017)){
-#'    proteingroups_file <- system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017')
-#'    create_maxquant_design(proteingroups_file)
-#' }
-#' @importFrom magrittr %>%
-#' @export
-write_maxquant_design <- function(
-   proteingroups_file,
-   sample_file = paste0(dirname(proteingroups_file), '/sample_design.txt'),
-   value_type = autonomics.import::infer_maxquant_value_type(proteingroups_file)
-){
-
-   # Abort
-   if (file.exists(sample_file)) {
-      autonomics.support::cmessage('\tAbort - file already exists: %s', sample_file)
-      return(invisible(sample_file))
+   # replicate values
+   replicate_values <- parts %>% vapply(extract, character(1), n)
+   is_labeled <- parts %>% vapply(extract, character(1), n) %>% stringi::stri_detect_fixed('[') %>% any()
+   if (is_labeled){
+      label_values <- parts %>% vapply(extract, character(1), n) %>%
+                                stringi::stri_extract_first_regex('(?<=\\[)(.+)(?=\\])')  %>%
+                                strsplit(split = '/', fixed = TRUE)
+      replicate_values %<>% stringi::stri_replace_first_regex('(.+)(\\[.+\\])', '$1')
+      replicate_values %<>% paste0('_', label_values %>% vapply(paste0, character(1), collapse = ''))
    }
+   parts %<>% lapply(function(x)x %>% magrittr::extract(1:(length(x)-1)))
 
-   # Create
-   autonomics.import::create_maxquant_design(proteingroups_file = proteingroups_file, value_type = value_type) %>%
-   autonomics.import::write_sample_file(sample_file)
+   # subgroup values
+   subgroup_values <- if (is_labeled){
+                         parts %>% lapply(function(x){
+                                             cursample <- x %>% stringi::stri_replace_first_regex('(.+)\\(([HML0-9]+)\\)', '$1')
+                                             curname   <- x %>% stringi::stri_replace_first_regex('(.+)\\(([HML0-9]+)\\)', '$2')
+                                             cursample %>% magrittr::set_names(curname)
+                                          }) %>%
+                                   autonomics.support::vextract(label_values) %>%
+                                   vapply(paste0, character(1), collapse = '_')
+                      } else {
+                         parts %>% vapply(paste0, character(1), collapse = '.')
+                      }
 
-   # Return
-   return(invisible(sample_file))
-}
-
-#' @rdname write_maxquant_design
-#' @export
-create_maxquant_design_file <- function(...){
-   .Deprecated('autonomics.import::write_maxquant_design')
-   autonomics.import::write_maxquant_design(...)
-}
-
-#'@rdname write_maxquant_design
-#'@export
-create_sample_design_file <- function(...){
-   .Deprecated('write_maxquant_design')
-   write_maxquant_design(...)
+   # sampleid values
+   long_sampleid_values <- sprintf('%s.%s', subgroup_values, replicate_values)
+   sampleid_values <- long_sampleid_values %>% stringi::stri_replace_first_regex('_[HML0-9]+', '')
+   idx <- sampleid_values %>% autonomics.support::cduplicated()
+   sampleid_values[idx] <- long_sampleid_values[idx]
+   sampleid_values
 }
 
 

@@ -112,8 +112,8 @@ load_metabolon <- function(
                    autonomics.support::cfread(sample_file, data.table = FALSE) %>%
                    magrittr::set_rownames(.$CLIENT_IDENTIFIER)
                 }
-   autonomics.import::sdata(object) %<>% (function(x) autonomics.support::left_join_keeping_rownames(sample_df, x, by = 'CLIENT_IDENTIFIER'))
-   #autonomics.import::sdata(object) %<>% cbind(sample_df, .) %>% autonomics.support::dedupe_varnames()
+   autonomics.import::sdata(object) %<>% (function(x) autonomics.support::left_join_keeping_rownames(sample_df, x, by = 'CLIENT_IDENTIFIER')) %>%
+                                          autonomics.support::dedupe_varnames()
 
    # Annotate
    if (add_kegg_pathways){

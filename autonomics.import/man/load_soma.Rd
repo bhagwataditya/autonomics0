@@ -2,26 +2,31 @@
 % Please edit documentation in R/load_soma.R
 \name{load_soma}
 \alias{load_soma}
-\title{Load soma data}
+\title{Load soma}
 \usage{
-load_soma(file, log2_transform = TRUE, keep_only_passes = TRUE,
-  keep_only_samples = TRUE, infer_design = FALSE, rm_na_svars = TRUE,
-  rm_single_value_svars = TRUE)
+load_soma(file, sample_file = NULL, infer_design = FALSE,
+  log2_transform = TRUE, rm_na_svars = TRUE, rm_single_value_svars = TRUE,
+  rm_bad_features = FALSE, rm_bad_samples = FALSE)
 }
 \arguments{
-\item{file}{adat file}
+\item{file}{string: path to adat file}
 
-\item{log2_transform}{logical: whether to log2 transform (logical)}
+\item{sample_file}{NULL or string:  path to sample file}
 
-\item{keep_only_passes}{logical: whether to keep only features and samples that pass QC}
+\item{infer_design}{logical: whether to infer design from SampleId values}
 
-\item{keep_only_samples}{logical: whether to keep only biological samples (and rm QC, buffer, and calibrator samples).}
+\item{log2_transform}{logical: whether to log2 transform}
 
-\item{infer_design}{logical: whethe to infer design from sample_ids}
-
-\item{rm_na_svars}{logical: whether to rm na svars}
+\item{rm_na_svars}{logical: whether to rm NA svars}
 
 \item{rm_single_value_svars}{logical: whether to rm single value svars}
+
+\item{rm_bad_features}{logical: whether to rm features that fail QC}
+
+\item{rm_bad_samples}{logical: whether to rm samples  that fail QC}
+}
+\value{
+SummarizedExperiment
 }
 \description{
 Loads data from soma file.
@@ -31,11 +36,32 @@ When not available, attempts to extract subgroup definitions from 'sample_id'col
 }
 \examples{
 require(magrittr)
-if (require(autonomics.data)){
-   file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
-                        package = 'autonomics.data')
-   file \%>\% autonomics.import::load_soma()
-   file \%>\% autonomics.import::load_soma(infer_design = TRUE)
+if (require(atkin.2014)){
+   file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
+                        package = 'atkin.2014')
 }
+if (require(autonomics.data)){
 
+   # Loading soma is easy
+   file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+                             package = 'autonomics.data')
+   soma_file \%>\% autonomics.import::load_soma()
+
+   # Three ways to specify sample design
+      # Taken from from 'SampleId' column in soma file
+      soma_file \%>\% autonomics.import::load_soma() \%>\% autonomics.import::sdata() \%>\% head()
+
+      # Inferred from sample ids
+      soma_file \%>\% autonomics.import::load_soma(infer_design = TRUE) \%>\%
+                    autonomics.import::sdata() \%>\% head()
+
+      # Specified through sample file
+      sample_file <- tempfile()
+      soma_file \%>\% autonomics.import::create_soma_design_file(sample_file = sample_file, infer_design = TRUE)
+      soma_file \%>\% autonomics.import::load_soma(sample_file = sample_file) \%>\%
+                    autonomics.import::sdata() \%>\% head()
+}
+}
+\author{
+Aditya Bhagwat
 }

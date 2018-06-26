@@ -4,10 +4,16 @@
 \alias{infer_design_from_sampleids}
 \title{Convert sample IDs into sample design}
 \usage{
-infer_design_from_sampleids(sample_ids)
+infer_design_from_sampleids(sample_ids, sep = sample_ids \%>\%
+  autonomics.import::infer_design_sep(c(".", " ", "_")),
+  drop_common_parts = FALSE)
 }
 \arguments{
 \item{sample_ids}{character vector with sample ids}
+
+\item{sep}{string separator}
+
+\item{drop_common_parts}{logical}
 }
 \description{
 Convert sample IDs into sample design

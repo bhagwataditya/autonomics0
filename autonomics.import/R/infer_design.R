@@ -47,7 +47,9 @@ infer_design_sep <- function(sample_ids, possible_separators = c('.', ' ', '_'),
 }
 
 #' Convert sample IDs into sample design
-#' @param sample_ids character vector with sample ids
+#' @param sample_ids         character vector with sample ids
+#' @param sep                string separator
+#' @param drop_common_parts  logical
 #' @examples
 #' require(magrittr)
 #' sample_ids <- c('PERM_NON.R1[H/L]', 'PERM_NON.R2[H/L]', 'PERM_NON.R3[H/L]', 'PERM_NON.R4[H/L]')
@@ -60,16 +62,11 @@ infer_design_sep <- function(sample_ids, possible_separators = c('.', ' ', '_'),
 #' sample_ids %>% autonomics.import::infer_design_from_sampleids()
 #' @importFrom magrittr %>%
 #' @export
-infer_design_from_sampleids <- function(sample_ids){
-
-   # Rm label tags from Max Quant ratios
-   maxquant_ratios <- sample_ids %>% stringi::stri_detect_fixed('[H/L]') %>% any()
-   if (maxquant_ratios) sample_ids %<>% stringi::stri_replace_first_fixed('[H/L]', '') %>%
-                                       stringi::stri_replace_first_fixed('[H/M]', '') %>%
-                                       stringi::stri_replace_first_fixed('[M/L]', '')
-   # Infer sep
-   possible_separators <- if (maxquant_ratios)  c('.', ' ')  else  c('.', ' ', '_')
-   sep <- sample_ids %>% autonomics.import::infer_design_sep(possible_separators)
+infer_design_from_sampleids <- function(
+   sample_ids,
+   sep = sample_ids %>% autonomics.import::infer_design_sep(c('.', ' ', '_')),
+   drop_common_parts = FALSE
+){
 
    # Return dataframe with only sample ids if no separator could be infered
    if (is.null(sep))   return(data.frame(sample_id = sample_ids,
@@ -79,10 +76,10 @@ infer_design_from_sampleids <- function(sample_ids){
 
    # Extract subgroup and replicate
    subgroup_values  <- sample_ids %>% stringi::stri_split_fixed(sep) %>%
-                                      vapply(function(y) y %>% magrittr::extract(1:(length(y)-1)) %>%
-                                      paste0(collapse = sep), character(1))
+      vapply(function(y) y %>% magrittr::extract(1:(length(y)-1)) %>%
+                paste0(collapse = sep), character(1))
    replicate_values <- sample_ids %>% stringi::stri_split_fixed(sep) %>%
-                                      vapply(function(y) y %>% magrittr::extract(length(y)), character(1))
+      vapply(function(y) y %>% magrittr::extract(length(y)), character(1))
 
    # Return df
    return(data.frame(sample_id = sample_ids,
@@ -93,59 +90,59 @@ infer_design_from_sampleids <- function(sample_ids){
 }
 
 
-#' Standardize design in sdata
-#'
-#' @param object        Summarizedexperiment
-#' @param sampleid_var  sampleid svar
-#' @param subgroup_var  subgroup svar
-#' @param infer_design  logical
-#' @return SummarizedExperiment
-#' @importFrom magrittr %>%
-#' @export
-prepare_design <- function(
-   object,
-   sampleid_var,
-   subgroup_var = NULL,
-   infer_design = if (is.null(subgroup_var)) TRUE else FALSE
-){
-
-   design <- NULL
-
-   # Assert
-   assertive.sets::assert_is_subset(sampleid_var, autonomics.import::svars(object))
-   if (!is.null(subgroup_var)){
-      assertive.sets::assert_is_subset(subgroup_var, autonomics.import::svars(object))
-   }
-
-   # Either infer design from sampleids (if possible)
-   if (infer_design){
-      autonomics.support::cmessage('Infer design from sampleids')
-      sep <- autonomics.import::infer_design_sep(autonomics.import::sdata(object)[[sampleid_var]])
-      if (is.null(sep)){
-         autonomics.support::cmessage('No consistent unambiguous separator - design could not be prepared')
-      } else
-         design <- autonomics.import::sdata(object)[[sampleid_var]] %>%
-                   autonomics.import::infer_design_from_sampleids()
-   }
-
-   # Or extract from sdata
-   if (!is.null(subgroup_var)){
-      design <- data.table::data.table(sample_id = autonomics.import::sdata(object)[[sampleid_var]],
-                                       subgroup  = autonomics.import::sdata(object)[[subgroup_var]])  %>%
-                magrittr::extract(, replicate := sprintf('R%d', 1:.N), by = 'subgroup')               %>%
-                data.frame(row.names = .$sample_id, stringsAsFactors = FALSE)
-   }
-
-   # Add to sdata in standardized format
-   if (!is.null(design)){
-      autonomics.import::sdata(object) %<>% cbind(design, .)                       %>%
-                                            autonomics.support::dedupe_varnames()  %>%
-                                            magrittr::set_rownames(.$sample_id)
-   }
-
-   # Return
-   object
-}
+# Standardize design in sdata
+#
+# @param object        Summarizedexperiment
+# @param sampleid_var  sampleid svar
+# @param subgroup_var  subgroup svar
+# @param infer_design  logical
+# @return SummarizedExperiment
+# @importFrom magrittr %>%
+# @export
+# prepare_design <- function(
+#    object,
+#    sampleid_var,
+#    subgroup_var = NULL,
+#    infer_design = if (is.null(subgroup_var)) TRUE else FALSE
+# ){
+#
+#    design <- NULL
+#
+#    # Assert
+#    assertive.sets::assert_is_subset(sampleid_var, autonomics.import::svars(object))
+#    if (!is.null(subgroup_var)){
+#       assertive.sets::assert_is_subset(subgroup_var, autonomics.import::svars(object))
+#    }
+#
+#    # Either infer design from sampleids (if possible)
+#    if (infer_design){
+#       autonomics.support::cmessage('Infer design from sampleids')
+#       sep <- autonomics.import::infer_design_sep(autonomics.import::sdata(object)[[sampleid_var]])
+#       if (is.null(sep)){
+#          autonomics.support::cmessage('No consistent unambiguous separator - design could not be prepared')
+#       } else
+#          design <- autonomics.import::sdata(object)[[sampleid_var]] %>%
+#          autonomics.import::infer_design_from_sampleids()
+#    }
+#
+#    # Or extract from sdata
+#    if (!is.null(subgroup_var)){
+#       design <- data.table::data.table(sample_id = autonomics.import::sdata(object)[[sampleid_var]],
+#                                        subgroup  = autonomics.import::sdata(object)[[subgroup_var]])  %>%
+#          magrittr::extract(, replicate := sprintf('R%d', 1:.N), by = 'subgroup')               %>%
+#          data.frame(row.names = .$sample_id, stringsAsFactors = FALSE)
+#    }
+#
+#    # Add to sdata in standardized format
+#    if (!is.null(design)){
+#       autonomics.import::sdata(object) %<>% cbind(design, .)                       %>%
+#          autonomics.support::dedupe_varnames()  %>%
+#          magrittr::set_rownames(.$sample_id)
+#    }
+#
+#    # Return
+#    object
+# }
 
 
 #' Infer and add design to sdata
@@ -156,9 +153,9 @@ prepare_design <- function(
 infer_add_design <- function(sdata){
    . <- NULL
    sdata %>%
-   autonomics.support::left_join_keeping_rownames(
-      autonomics.import::infer_design_from_sampleids(
-         .$sample_id),
+      autonomics.support::left_join_keeping_rownames(
+         autonomics.import::infer_design_from_sampleids(
+            .$sample_id),
          .,
          by = 'sample_id')
 }
