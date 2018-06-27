@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_sample_file.R
 \name{create_metabolon_sample_file}
 \alias{create_metabolon_sample_file}
-\title{Create metabolon design file}
+\title{Create metabolon sample file}
 \usage{
 create_metabolon_sample_file(metabolon_file,
   sample_file = paste0(dirname(proteingroups_file), "/sample_design.txt"),
@@ -19,7 +19,7 @@ create_metabolon_sample_file(metabolon_file,
 path to metabolon file
 }
 \description{
-Create metabolon design file
+Create metabolon sample file
 }
 \examples{
 if (require(autonomics.data)){

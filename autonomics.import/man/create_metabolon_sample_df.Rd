@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_sample_file.R
 \name{create_metabolon_sample_df}
 \alias{create_metabolon_sample_df}
-\title{Create metabolon design dataframe}
+\title{Create metabolon sample dataframe}
 \usage{
 create_metabolon_sample_df(metabolon_file, infer_design = FALSE)
 }
@@ -17,7 +17,7 @@ create_metabolon_sample_df(metabolon_file, infer_design = FALSE)
 design dataframe
 }
 \description{
-Create metabolon design dataframe
+Create metabolon sample dataframe
 }
 \examples{
 if (require(autonomics.data)){

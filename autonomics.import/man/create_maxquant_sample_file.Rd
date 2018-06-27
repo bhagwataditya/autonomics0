@@ -4,7 +4,7 @@
 \alias{create_maxquant_sample_file}
 \alias{create_maxquant_design_file}
 \alias{create_sample_design_file}
-\title{Create maxquant design file}
+\title{Create maxquant sample file}
 \usage{
 create_maxquant_sample_file(proteingroups_file,
   sample_file = paste0(dirname(proteingroups_file), "/sample_design.txt"),

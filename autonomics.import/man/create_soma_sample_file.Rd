@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_sample_file.R
 \name{create_soma_sample_file}
 \alias{create_soma_sample_file}
-\title{Create soma design file}
+\title{Create soma sample file}
 \usage{
 create_soma_sample_file(soma_file, sample_file, infer_design = FALSE)
 }
@@ -17,7 +17,7 @@ create_soma_sample_file(soma_file, sample_file, infer_design = FALSE)
 path to soma design file
 }
 \description{
-Create soma design file
+Create soma sample file
 }
 \examples{
    soma_file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',

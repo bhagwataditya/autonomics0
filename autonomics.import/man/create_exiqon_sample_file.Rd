@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_sample_file.R
 \name{create_exiqon_sample_file}
 \alias{create_exiqon_sample_file}
-\title{Create exiqon design file}
+\title{Create exiqon sample file}
 \usage{
 create_exiqon_sample_file(exiqon_file,
   sample_file = paste0(dirname(proteingroups_file), "/sample_design.txt"),
@@ -19,7 +19,7 @@ create_exiqon_sample_file(exiqon_file,
 string: path to design file
 }
 \description{
-Create exiqon design file
+Create exiqon sample file
 }
 \examples{
 require(magrittr)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_sample_file.R
 \name{create_soma_sample_df}
 \alias{create_soma_sample_df}
-\title{Create soma design dataframe}
+\title{Create soma sample dataframe}
 \usage{
 create_soma_sample_df(soma_file, infer_design = FALSE)
 }
@@ -15,7 +15,7 @@ create_soma_sample_df(soma_file, infer_design = FALSE)
 sample design dataframe
 }
 \description{
-Create soma design dataframe
+Create soma sample dataframe
 }
 \examples{
 if (require(autonomics.data)){

@@ -117,6 +117,21 @@ load_exprs_rnaseq <-    function(count_file){
              magrittr::set_rownames(feature_ids)
 }
 
+#' Infer and add design to sdata
+#' @param sdata sample dataframe
+#' @return augmented sample dataframe
+#' @importFrom magrittr %>%
+#' @export
+infer_add_design <- function(sdata){
+   . <- NULL
+   sdata %>%
+      autonomics.support::left_join_keeping_rownames(
+         autonomics.import::infer_design_from_sampleids(
+            .$sample_id),
+         .,
+         by = 'sample_id')
+}
+
 #' Load RNA seq counts
 #' @param dir                directory with count file and sample design file
 #' @param count_file         gene count file

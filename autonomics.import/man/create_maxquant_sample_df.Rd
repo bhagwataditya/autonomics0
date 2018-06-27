@@ -4,7 +4,7 @@
 \alias{create_maxquant_sample_df}
 \alias{create_maxquant_design_df}
 \alias{create_sample_design_df}
-\title{Create maxquant design df}
+\title{Create maxquant sample df}
 \usage{
 create_maxquant_sample_df(proteingroups_file,
   value_type = autonomics.import::infer_maxquant_value_type(proteingroups_file),

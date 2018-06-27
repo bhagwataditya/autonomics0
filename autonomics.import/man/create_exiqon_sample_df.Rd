@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_sample_file.R
 \name{create_exiqon_sample_df}
 \alias{create_exiqon_sample_df}
-\title{Create exiqon design dataframe}
+\title{Create exiqon sample dataframe}
 \usage{
 create_exiqon_sample_df(exiqon_file, infer_design = FALSE)
 }
@@ -17,7 +17,7 @@ create_exiqon_sample_df(exiqon_file, infer_design = FALSE)
 string: path to design file
 }
 \description{
-Create exiqon design dataframe
+Create exiqon sample dataframe
 }
 \examples{
 require(magrittr)
