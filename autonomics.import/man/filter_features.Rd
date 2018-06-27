@@ -5,14 +5,16 @@
 \alias{filter_features}
 \title{Filter features on condition}
 \usage{
-filter_features_(x, condition)
+filter_features_(x, condition, verbose = FALSE)
 
-filter_features(x, condition)
+filter_features(x, condition, verbose = FALSE)
 }
 \arguments{
 \item{x}{eSet}
 
 \item{condition}{filter condition}
+
+\item{verbose}{logical}
 }
 \value{
 filtered eSet
@@ -21,8 +23,18 @@ filtered eSet
 Filter features on condition
 }
 \examples{
+require(magrittr)
 if (require(autonomics.data)){
-   filter_features( ALL,  gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1') )
-   filter_features_(ALL, "gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1')")
+   autonomics.data::ALL \%>\%
+   autonomics.import::filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1') )
+
+   autonomics.data::ALL \%>\%
+   autonomics.import::filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1'), verbose = TRUE)
+
+   autonomics.data::ALL \%>\%
+   autonomics.import::filter_features_("gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1')")
+
+   autonomics.data::ALL \%>\%
+   autonomics.import::filter_features_("gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1')", verbose = TRUE)
 }
 }

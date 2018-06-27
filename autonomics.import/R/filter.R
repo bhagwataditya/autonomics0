@@ -1,25 +1,36 @@
 
 #' @rdname filter_features
 #' @export
-filter_features_ <- function(x, condition){
+filter_features_ <- function(x, condition, verbose = FALSE){
    idx <- lazyeval::lazy_eval(condition, autonomics.import::fdata(x))
    idx <- idx & !is.na(idx)
-   # sprintf('\t%d/%d features pass filter', sum(idx), length(idx)) %>% message()
+   if (verbose) message('Retain ', sum(idx), '/', length(idx), ' features: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
    x[idx, ]
 }
 
 #' Filter features on condition
 #' @param x eSet
 #' @param condition filter condition
+#' @param verbose logical
 #' @return filtered eSet
 #' @examples
+#' require(magrittr)
 #' if (require(autonomics.data)){
-#'    filter_features( ALL,  gene_symbols %in% c('LIG4', 'MAPK12', 'MAPK1') )
-#'    filter_features_(ALL, "gene_symbols %in% c('LIG4', 'MAPK12', 'MAPK1')")
+#'    autonomics.data::ALL %>%
+#'    autonomics.import::filter_features(gene_symbols %in% c('LIG4', 'MAPK12', 'MAPK1') )
+#'
+#'    autonomics.data::ALL %>%
+#'    autonomics.import::filter_features(gene_symbols %in% c('LIG4', 'MAPK12', 'MAPK1'), verbose = TRUE)
+#'
+#'    autonomics.data::ALL %>%
+#'    autonomics.import::filter_features_("gene_symbols %in% c('LIG4', 'MAPK12', 'MAPK1')")
+#'
+#'    autonomics.data::ALL %>%
+#'    autonomics.import::filter_features_("gene_symbols %in% c('LIG4', 'MAPK12', 'MAPK1')", verbose = TRUE)
 #' }
 #' @export
-filter_features <- function(x, condition){
-   filter_features_(x, lazyeval::lazy(condition))
+filter_features <- function(x, condition, verbose = FALSE){
+   filter_features_(x, lazyeval::lazy(condition), verbose = verbose)
 }
 
 #' Identify reference features
@@ -102,10 +113,10 @@ filter_features_min_expr <- function(object, min_expr){
 #' @rdname filter_samples
 #' @importFrom magrittr %<>%
 #' @export
-filter_samples_ <- function(x, condition){
+filter_samples_ <- function(x, condition, verbose = FALSE){
    idx <- lazyeval::lazy_eval(condition, autonomics.import::sdata(x))
    idx <- idx & !is.na(idx)
-   # sprintf('\t%d/%d samples pass filter', sum(idx), length(idx)) %>% message()
+   if (verbose) if (verbose) message('Retain ', sum(idx), '/', length(idx), ' features: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
    x %<>% magrittr::extract(, idx)
    autonomics.import::sdata(x) %<>% droplevels()
    x
@@ -114,6 +125,7 @@ filter_samples_ <- function(x, condition){
 #' Filter samples on condition
 #' @param x eSet
 #' @param condition filter condition
+#' @param verbose logical
 #' @return filtered eSet
 #' @examples
 #' if (require(autonomics.data)){
@@ -121,7 +133,7 @@ filter_samples_ <- function(x, condition){
 #'    filter_samples_(ALL, "sex == 'M'")
 #' }
 #' @export
-filter_samples <- function(x, condition){
-   filter_samples_(x, lazyeval::lazy(condition))
+filter_samples <- function(x, condition, verbose = FALSE){
+   filter_samples_(x, lazyeval::lazy(condition), verbose = verbose)
 }
 

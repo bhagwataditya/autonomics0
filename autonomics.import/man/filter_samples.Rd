@@ -5,14 +5,16 @@
 \alias{filter_samples}
 \title{Filter samples on condition}
 \usage{
-filter_samples_(x, condition)
+filter_samples_(x, condition, verbose = FALSE)
 
-filter_samples(x, condition)
+filter_samples(x, condition, verbose = FALSE)
 }
 \arguments{
 \item{x}{eSet}
 
 \item{condition}{filter condition}
+
+\item{verbose}{logical}
 }
 \value{
 filtered eSet
