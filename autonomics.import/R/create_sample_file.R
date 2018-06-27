@@ -22,37 +22,37 @@
 #'    file <- system.file(
 #'       'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
 #'        package = 'autonomics.data')
-#'    file %>% create_maxquant_design_df()
-#'    file %>% create_maxquant_design_df(infer_design = TRUE)
-#'    file %>% create_maxquant_design_df(infer_design = TRUE, value_type = 'raw.intensity')
-#'    file %>% create_maxquant_design_df(infer_design = TRUE, value_type = 'raw.ratio')
+#'    file %>% create_maxquant_sample_df()
+#'    file %>% create_maxquant_sample_df(infer_design = TRUE)
+#'    file %>% create_maxquant_sample_df(infer_design = TRUE, value_type = 'raw.intensity')
+#'    file %>% create_maxquant_sample_df(infer_design = TRUE, value_type = 'raw.ratio')
 #' }
 #'
 #' # LFQ INTENSITIES
 #' if (require(graumann.lfq)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-#'    file %>% autonomics.import::create_maxquant_design_df()
-#'    file %>% autonomics.import::create_maxquant_design_df(infer_design = TRUE)
+#'    file %>% autonomics.import::create_maxquant_sample_df()
+#'    file %>% autonomics.import::create_maxquant_sample_df(infer_design = TRUE)
 #' }
 #'
 #' # UNLABELED INTENSITIES
 #' if (require(alnoubi.2017)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017')
-#'    file %>% autonomics.import::create_maxquant_design_df()
-#'    file %>% autonomics.import::create_maxquant_design_df(infer_design = TRUE)
+#'    file %>% autonomics.import::create_maxquant_sample_df()
+#'    file %>% autonomics.import::create_maxquant_sample_df(infer_design = TRUE)
 #' }
 #'
 #' # REPORTER INTENSITIES
 #' if (require(billing.vesicles)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'billing.vesicles')
-#'    file %>% autonomics.import::create_maxquant_design_df()
-#'    file %>% autonomics.import::create_maxquant_design_df(infer_design = TRUE)
+#'    file %>% autonomics.import::create_maxquant_sample_df()
+#'    file %>% autonomics.import::create_maxquant_sample_df(infer_design = TRUE)
 #' }
 #'
 #' @author Aditya Bhagwat
 #' @importFrom magrittr %>%
 #' @export
-create_maxquant_design_df <- function(
+create_maxquant_sample_df <- function(
    proteingroups_file,
    value_type   = autonomics.import::infer_maxquant_value_type(proteingroups_file),
    infer_design = FALSE
@@ -88,7 +88,14 @@ create_maxquant_design_df <- function(
 }
 
 
-#'@rdname create_maxquant_design_df
+#'@rdname create_maxquant_sample_df
+#'@export
+create_maxquant_design_df <- function(...){
+   .Deprecated('create_maxquant_sample_df')
+   create_maxquant_sample_df(...)
+}
+
+#'@rdname create_maxquant_sample_df
 #'@export
 create_sample_design_df <- function(...){
    .Deprecated('create_maxquant_design_df')
@@ -115,13 +122,13 @@ create_sample_design_df <- function(...){
 #'    file <- system.file(
 #'              'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
 #'               package = 'autonomics.data')
-#'    file %>% create_maxquant_design_df()
-#'    file %>% create_maxquant_design_file(sample_file = tempfile())
+#'    file %>% create_maxquant_sample_df()
+#'    file %>% create_maxquant_sample_file(sample_file = tempfile())
 #' }
 #'
 #' @importFrom magrittr %>%
 #' @export
-create_maxquant_design_file <- function(
+create_maxquant_sample_file <- function(
    proteingroups_file,
    sample_file  = paste0(dirname(proteingroups_file), '/sample_design.txt'),
    value_type   = autonomics.import::infer_maxquant_value_type(proteingroups_file),
@@ -129,7 +136,7 @@ create_maxquant_design_file <- function(
 ){
 
    # Create
-   autonomics.import::create_maxquant_design_df(proteingroups_file = proteingroups_file,
+   autonomics.import::create_maxquant_sample_df(proteingroups_file = proteingroups_file,
                                                 value_type         = value_type,
                                                 infer_design       = infer_design) %>%
    autonomics.import::write_sample_file(sample_file)
@@ -138,9 +145,14 @@ create_maxquant_design_file <- function(
    return(invisible(sample_file))
 }
 
+#' @rdname create_maxquant_sample_file
+#' @export
+create_maxquant_design_file <- function(...){
+   create_maxquant_sample_file(...)
+}
 
-#'@rdname write_maxquant_design
-#'@export
+#' @rdname create_maxquant_sample_file
+#' @export
 create_sample_design_file <- function(...){
    .Deprecated('write_maxquant_design')
    write_maxquant_design(...)
@@ -162,12 +174,12 @@ create_sample_design_file <- function(...){
 #' if (require(subramanian.2016)){
 #'    exiqon_file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
 #'                                package = 'subramanian.2016')
-#'    exiqon_file %>% autonomics.import::create_exiqon_design_df()
-#'    exiqon_file %>% autonomics.import::create_exiqon_design_df(infer_design = TRUE)
+#'    exiqon_file %>% autonomics.import::create_exiqon_sample_df()
+#'    exiqon_file %>% autonomics.import::create_exiqon_sample_df(infer_design = TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-create_exiqon_design_df <- function(
+create_exiqon_sample_df <- function(
    exiqon_file,
    infer_design = FALSE
 ){
@@ -194,17 +206,17 @@ create_exiqon_design_df <- function(
 #' if (require(subramanian.2016){
 #'    exiqon_file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
 #'                                package = 'subramanian.2016')
-#'    exiqon_file %>% autonomics.import::create_exiqon_design_file(sample_file = tempfile())
+#'    exiqon_file %>% autonomics.import::create_exiqon_sample_file(sample_file = tempfile())
 #'
 #' }
 #' @importFrom magrittr %>%
 #' @export
-create_exiqon_design_file <- function(
+create_exiqon_sample_file <- function(
    exiqon_file,
    sample_file  = paste0(dirname(proteingroups_file), '/sample_design.txt'),
    infer_design = FALSE
 ){
-   autonomics.import::create_exiqon_design_df(exiqon_file,
+   autonomics.import::create_exiqon_sample_df(exiqon_file,
                                               infer_design = infer_design) %>%
    autonomics.import::write_sample_file(sample_file)
 }
@@ -224,12 +236,12 @@ create_exiqon_design_file <- function(
 #' if (require(autonomics.data)){
 #'    metabolon_file <- system.file('extdata/glutaminase/glutaminase.xlsx',
 #'                                   package = 'autonomics.data')
-#'    metabolon_file %>% autonomics.import::create_metabolon_design_df()
-#'    metabolon_file %>% autonomics.import::create_metabolon_design_df(infer_design = TRUE)
+#'    metabolon_file %>% autonomics.import::create_metabolon_sample_df()
+#'    metabolon_file %>% autonomics.import::create_metabolon_sample_df(infer_design = TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-create_metabolon_design_df <- function(
+create_metabolon_sample_df <- function(
    metabolon_file,
    infer_design = FALSE
 ){
@@ -254,18 +266,18 @@ create_metabolon_design_df <- function(
 #' if (require(autonomics.data)){
 #'    metabolon_file <- system.file('extdata/glutaminase/glutaminase.xlsx',
 #'                                   package = 'autonomics.data')
-#'    metabolon_file %>% autonomics.import::create_metabolon_design_file(
+#'    metabolon_file %>% autonomics.import::create_metabolon_sample_file(
 #'                          sample_file = tempfile())
 #' }
 #' @importFrom magrittr %>%
 #' @export
-create_metabolon_design_file <- function(
+create_metabolon_sample_file <- function(
    metabolon_file,
    sample_file     = paste0(dirname(proteingroups_file), '/sample_design.txt'),
    infer_design    = FALSE
 ){
    df <- metabolon_file %>%
-         autonomics.import::create_metabolon_design_df(infer_design = infer_design)
+         autonomics.import::create_metabolon_sample_df(infer_design = infer_design)
    df %>% autonomics.import::write_sample_file(sample_file)
    df
 }
@@ -284,12 +296,12 @@ create_metabolon_design_file <- function(
 #' if (require(autonomics.data)){
 #'    soma_file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
 #'                              package = 'autonomics.data')
-#'    soma_file %>% autonomics.import::create_soma_design_df()
-#'    soma_file %>% autonomics.import::create_soma_design_df(infer_design = TRUE)
+#'    soma_file %>% autonomics.import::create_soma_sample_df()
+#'    soma_file %>% autonomics.import::create_soma_sample_df(infer_design = TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-create_soma_design_df <- function(
+create_soma_sample_df <- function(
    soma_file,
    infer_design = FALSE
 ){
@@ -315,16 +327,16 @@ create_soma_design_df <- function(
 #' @examples
 #'    soma_file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
 #'                              package = 'autonomics.data')
-#'    soma_file %>% autonomics.import::create_soma_design_file(sample_file = tempfile())
+#'    soma_file %>% autonomics.import::create_soma_sample_file(sample_file = tempfile())
 #' @importFrom magrittr %>%
 #' @export
-create_soma_design_file <- function(
+create_soma_sample_file <- function(
    soma_file,
    sample_file,
    infer_design = FALSE
 ){
    df <- soma_file %>%
-         autonomics.import::create_soma_design_df(infer_design = infer_design)
+         autonomics.import::create_soma_sample_df(infer_design = infer_design)
    df %>% autonomics.import::write_sample_file(sample_file)
    df
 }

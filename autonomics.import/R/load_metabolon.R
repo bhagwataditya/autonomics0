@@ -61,7 +61,7 @@ load_metabolon_fdata <- function(metabolon_file, sheet=2){
 #'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #'       # Merge in from sample file
 #'       sample_file <- tempfile()
-#'       metabolon_file %>% autonomics.import::create_metabolon_design_file(sample_file, infer_design = TRUE)
+#'       metabolon_file %>% autonomics.import::create_metabolon_sample_file(sample_file, infer_design = TRUE)
 #'       metabolon_file %>% autonomics.import::load_metabolon(sample_file = sample_file) %>%
 #'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #' }
@@ -107,7 +107,7 @@ load_metabolon <- function(
 
    # Standardize design
    sample_df <- if (is.null(sample_file)){
-                   autonomics.import::create_metabolon_design_df(metabolon_file, infer_design = infer_design)
+                   autonomics.import::create_metabolon_sample_df(metabolon_file, infer_design = infer_design)
                 } else {
                    autonomics.support::cfread(sample_file, data.table = FALSE) %>%
                    magrittr::set_rownames(.$CLIENT_IDENTIFIER)

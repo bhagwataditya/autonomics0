@@ -162,7 +162,7 @@ load_soma_exprs <- function(file){
 #'
 #'       # Specified through sample file
 #'       sample_file <- tempfile()
-#'       file %>% autonomics.import::create_soma_design_file(sample_file = sample_file, infer_design = TRUE)
+#'       file %>% autonomics.import::create_soma_sample_file(sample_file = sample_file, infer_design = TRUE)
 #'       file %>% autonomics.import::load_soma(sample_file = sample_file) %>%
 #'                autonomics.import::sdata() %>% head()
 #' }
@@ -205,7 +205,7 @@ load_soma <- function(
 
    # Add sdata
    sample_df <- if (is.null(sample_file)){
-                   autonomics.import::create_soma_design_df(file, infer_design = infer_design)
+                   autonomics.import::create_soma_sample_df(file, infer_design = infer_design)
                 } else {
                    autonomics.support::cfread(sample_file, data.table = FALSE) %>%
                    magrittr::set_rownames(.$SampleId)
@@ -327,7 +327,7 @@ soma_to_sumexp <- function (soma, log2_transform = TRUE){
 #'
 #'       # Specified through sample file
 #'       sample_file <- tempfile()
-#'       soma_file %>% autonomics.import::create_soma_design_file(sample_file = sample_file, infer_design = TRUE)
+#'       soma_file %>% autonomics.import::create_soma_sample_file(sample_file = sample_file, infer_design = TRUE)
 #'       soma_file %>% autonomics.import::old_load_soma(sample_file = sample_file) %>%
 #'                     autonomics.import::sdata() %>% head()
 #' }
@@ -353,7 +353,7 @@ old_load_soma <- function(
 
    # Add sdata
    sample_df <- if (is.null(sample_file)){
-                   autonomics.import::create_soma_design_df(soma_file, infer_design = infer_design)
+                   autonomics.import::create_soma_sample_df(soma_file, infer_design = infer_design)
                 } else {
                    autonomics.support::cfread(sample_file, data.table = FALSE) %>%
                    magrittr::set_rownames(.$SampleId)

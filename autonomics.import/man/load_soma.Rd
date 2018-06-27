@@ -59,7 +59,7 @@ if (require(autonomics.data)){
 
       # Specified through sample file
       sample_file <- tempfile()
-      file \%>\% autonomics.import::create_soma_design_file(sample_file = sample_file, infer_design = TRUE)
+      file \%>\% autonomics.import::create_soma_sample_file(sample_file = sample_file, infer_design = TRUE)
       file \%>\% autonomics.import::load_soma(sample_file = sample_file) \%>\%
                autonomics.import::sdata() \%>\% head()
 }
