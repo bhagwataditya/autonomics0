@@ -5,8 +5,10 @@
 \title{Load soma}
 \usage{
 load_soma(file, sample_file = NULL, infer_design = FALSE,
-  log2_transform = TRUE, rm_na_svars = TRUE, rm_single_value_svars = TRUE,
-  rm_bad_features = FALSE, rm_bad_samples = FALSE)
+  log2_transform = TRUE, rm_sample_type = character(0),
+  rm_feature_type = character(0), rm_sample_quality = character(0),
+  rm_feature_quality = character(0), rm_na_svars = TRUE,
+  rm_single_value_svars = TRUE)
 }
 \arguments{
 \item{file}{string: path to adat file}
@@ -17,13 +19,17 @@ load_soma(file, sample_file = NULL, infer_design = FALSE,
 
 \item{log2_transform}{logical: whether to log2 transform}
 
+\item{rm_sample_type}{character vector: sample  types to be removed. Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').}
+
+\item{rm_feature_type}{character vector: feature types to be removed. Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').}
+
+\item{rm_sample_quality}{character vector: sample  qualities to be removed. Probably a subset of c('PASS', 'FLAG', 'FAIL')}
+
+\item{rm_feature_quality}{character vector: feature qualities to be removed. Probably a subset of c('PASS', 'FLAG', 'FAIL')}
+
 \item{rm_na_svars}{logical: whether to rm NA svars}
 
 \item{rm_single_value_svars}{logical: whether to rm single value svars}
-
-\item{rm_bad_features}{logical: whether to rm features that fail QC}
-
-\item{rm_bad_samples}{logical: whether to rm samples  that fail QC}
 }
 \value{
 SummarizedExperiment
@@ -36,30 +42,32 @@ When not available, attempts to extract subgroup definitions from 'sample_id'col
 }
 \examples{
 require(magrittr)
-if (require(atkin.2014)){
-   file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
-                        package = 'atkin.2014')
-}
 if (require(autonomics.data)){
 
    # Loading soma is easy
    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
                              package = 'autonomics.data')
-   soma_file \%>\% autonomics.import::load_soma()
+   file \%>\% autonomics.import::load_soma()
 
    # Three ways to specify sample design
       # Taken from from 'SampleId' column in soma file
-      soma_file \%>\% autonomics.import::load_soma() \%>\% autonomics.import::sdata() \%>\% head()
+      file \%>\% autonomics.import::load_soma() \%>\% autonomics.import::sdata() \%>\% head()
 
       # Inferred from sample ids
-      soma_file \%>\% autonomics.import::load_soma(infer_design = TRUE) \%>\%
-                    autonomics.import::sdata() \%>\% head()
+      file \%>\% autonomics.import::load_soma(infer_design = TRUE) \%>\%
+               autonomics.import::sdata() \%>\% head()
 
       # Specified through sample file
       sample_file <- tempfile()
-      soma_file \%>\% autonomics.import::create_soma_design_file(sample_file = sample_file, infer_design = TRUE)
-      soma_file \%>\% autonomics.import::load_soma(sample_file = sample_file) \%>\%
-                    autonomics.import::sdata() \%>\% head()
+      file \%>\% autonomics.import::create_soma_design_file(sample_file = sample_file, infer_design = TRUE)
+      file \%>\% autonomics.import::load_soma(sample_file = sample_file) \%>\%
+               autonomics.import::sdata() \%>\% head()
+}
+if (require(atkin.2014)){
+   file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
+                        package = 'atkin.2014')
+   file \%>\% autonomics.import::load_soma()
+   file \%>\% autonomics.import::load_soma(rm_feature_quality = 'FAIL')
 }
 }
 \author{

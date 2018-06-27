@@ -25,7 +25,7 @@ if (require(autonomics.data)){
 if (require(atkin.2014)){
    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
                         package = 'atkin.2014')
-   file \%>\% autonomics.import::load_soma_fdata()
+   file \%>\% autonomics.import::load_soma_fdata() \%>\% head()
 }
 }
 \author{
