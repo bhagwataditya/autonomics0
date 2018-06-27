@@ -6,8 +6,12 @@
 #' @param format_string sprintf style format string
 #' @param x data.frame
 #' @examples
+#' require(magrittr)
 #' x <- data.frame(feature_id = c('F001', 'F002'), symbol = c('FEAT1', 'FEAT2'))
-#' cmessage_df('\t%s', x)
+#' autonomics.support::cmessage_df('\t%s', x)
+#' 
+#' x <- c(rep('PASS', 25), rep('FAIL', 25))
+#' autonomics.support::cmessage_df(format_string = '%s', table(x))
 #' @importFrom magrittr %>% 
 #' @export
 cmessage_df <- function(format_string, x){
