@@ -50,7 +50,7 @@ if (require(autonomics.data)){
    file \%>\% autonomics.import::load_soma()
 
    # Three ways to specify sample design
-      # Taken from from 'SampleId' column in soma file
+      # Taken from 'SampleId' column in soma file
       file \%>\% autonomics.import::load_soma() \%>\% autonomics.import::sdata() \%>\% head()
 
       # Inferred from sample ids

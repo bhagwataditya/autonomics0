@@ -71,12 +71,12 @@ load_metabolon_fdata <- function(file, sheet=2){
 #' @export
 load_metabolon <- function(
    file,
-   design_file        = NULL,
-   sheet              = 2,
-   log2_transform     = TRUE,
-   infer_design_from_sampleids       = FALSE,
-   add_kegg_pathways  = FALSE,
-   add_smiles         = FALSE
+   design_file                 = NULL,
+   sheet                       = 2,
+   log2_transform              = TRUE,
+   infer_design_from_sampleids = FALSE,
+   add_kegg_pathways           = FALSE,
+   add_smiles                  = FALSE
 ){
    # Satisfy CHECK
    . <- NULL
@@ -107,17 +107,12 @@ load_metabolon <- function(
    autonomics.import::prepro(object) <- list(assay='lcms', entity='metabolite', quantity='intensities', software='metabolon')
    autonomics.import::annotation(object) <- ''
 
-   # Add design
-   sample_df <- autonomics.import::write_metabolon_design(file, infer_from_sampleids = infer_design_from_sampleids)
-   autonomics.import::sdata(object) %<>% autonomics.support::left_join_keeping_rownames(sample_df, by = 'CLIENT_IDENTIFIER') %>%
-                                         autonomics.support::pull_columns(c('sample_id', 'subgroup', 'replicate'))
+   # Merge in design
+   design_df <- autonomics.import::write_metabolon_design(file, infer_from_sampleids = infer_design_from_sampleids)
+   object %<>% autonomics.import::merge_sdata(design_df, by = 'CLIENT_IDENTIFIER')
    if (!is.null(design_file)){
       file_df <- autonomics.import::read_metabolon_design(design_file)
-      common_vars <- names(file_df) %>% setdiff('CLIENT_IDENTIFIER') %>% intersect(autonomics.import::svars(object))
-      autonomics.support::cmessage("Ignore from design file (already in sumexp): %s", sprintf("'%s'", common_vars) %>% paste0(collapse = ', '))
-      file_df %<>% magrittr::extract(, setdiff(names(.), common_vars), drop = FALSE)
-      if (ncol(file_df)>1) autonomics.import::sdata(object) %<>% autonomics.support::left_join_keeping_rownames(file_df, by = 'SampleId') %>%
-                                                                 autonomics.support::pull_columns(c('sample_id', 'subgroup', 'replicate'))
+      object %<>% autonomics.import::merge_sdata(file_df, by = 'CLIENT_IDENTIFIER')
    }
 
    # Annotate
