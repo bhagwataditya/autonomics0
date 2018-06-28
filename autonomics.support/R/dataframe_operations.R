@@ -73,7 +73,7 @@ mutate_keeping_rownames <- function(.data, ...){
 dedupe_varnames <- function(x){
   selector <- duplicated(names(x))
   if (any(selector)){
-     autonomics.support::cmessage('Rm repeated column "%s"', names(x)[selector])
+     autonomics.support::cmessage('Rm repeated column "%s"', names(x)[selector] %>% paste0(collapse = ', '))
      x %<>% magrittr::extract(!selector)
   }
   x
