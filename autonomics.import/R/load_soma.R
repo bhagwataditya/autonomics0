@@ -132,24 +132,24 @@ load_soma_exprs <- function(file){
 #' Extracts subgroup definitions  from 'SampleGroup' column when available.
 #' When not available, attempts to extract subgroup definitions from 'sample_id'column.
 #'
-#' @param file                   string: path to adat file
-#' @param sample_file            NULL or string:  path to sample file
-#' @param infer_design           logical: whether to infer design from SampleId values
-#' @param log2_transform         logical: whether to log2 transform
-#' @param rm_sample_type         character vector: sample  types to be removed. Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').
-#' @param rm_feature_type        character vector: feature types to be removed. Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').
-#' @param rm_sample_quality      character vector: sample  qualities to be removed. Probably a subset of c('PASS', 'FLAG', 'FAIL')
-#' @param rm_feature_quality     character vector: feature qualities to be removed. Probably a subset of c('PASS', 'FLAG', 'FAIL')
-#' @param rm_na_svars            logical: whether to rm NA svars
-#' @param rm_single_value_svars  logical: whether to rm single value svars
+#' @param file                         string: path to adat file
+#' @param design_file                  NULL or string:  path to sample file
+#' @param infer_design_from_sampleids  logical: whether to infer design from SampleId values
+#' @param log2_transform               logical: whether to log2 transform
+#' @param rm_sample_type               character vector: sample  types to be removed. Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').
+#' @param rm_feature_type              character vector: feature types to be removed. Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').
+#' @param rm_sample_quality            character vector: sample  qualities to be removed. Probably a subset of c('PASS', 'FLAG', 'FAIL')
+#' @param rm_feature_quality           character vector: feature qualities to be removed. Probably a subset of c('PASS', 'FLAG', 'FAIL')
+#' @param rm_na_svars                  logical: whether to rm NA svars
+#' @param rm_single_value_svars        logical: whether to rm single value svars
 #' @return SummarizedExperiment
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'
-#'    # Loading soma is easy
+#'    # Loading soma file is simple
 #'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
-#'                              package = 'autonomics.data')
+#'                         package = 'autonomics.data')
 #'    file %>% autonomics.import::load_soma()
 #'
 #'    # Three ways to specify sample design
@@ -161,9 +161,9 @@ load_soma_exprs <- function(file){
 #'                autonomics.import::sdata() %>% head()
 #'
 #'       # Specified through sample file
-#'       sample_file <- tempfile()
-#'       file %>% autonomics.import::create_soma_sample_file(sample_file = sample_file, infer_design = TRUE)
-#'       file %>% autonomics.import::load_soma(sample_file = sample_file) %>%
+#'       design_file <- tempfile()
+#'       file %>% autonomics.import::write_soma_design(design_file = design_file, infer_from_sampleids = TRUE)
+#'       file %>% autonomics.import::load_soma(design_file = design_file) %>%
 #'                autonomics.import::sdata() %>% head()
 #' }
 #' if (require(atkin.2014)){
@@ -177,15 +177,15 @@ load_soma_exprs <- function(file){
 #' @export
 load_soma <- function(
    file,
-   sample_file           = NULL,
-   infer_design          = FALSE,
-   log2_transform        = TRUE,
-   rm_sample_type        = character(0),
-   rm_feature_type       = character(0),
-   rm_sample_quality     = character(0),
-   rm_feature_quality    = character(0),
-   rm_na_svars           = TRUE,
-   rm_single_value_svars = TRUE
+   design_file                 = NULL,
+   infer_design_from_sampleids = FALSE,
+   log2_transform              = TRUE,
+   rm_sample_type              = character(0),
+   rm_feature_type             = character(0),
+   rm_sample_quality           = character(0),
+   rm_feature_quality          = character(0),
+   rm_na_svars                 = TRUE,
+   rm_single_value_svars       = TRUE
 ){
 
    # Assemble components
@@ -203,15 +203,19 @@ load_soma <- function(
                                              software   = "somalogic",
                                              parameters = list())
 
-   # Add sdata
-   sample_df <- if (is.null(sample_file)){
-                   autonomics.import::create_soma_sample_df(file, infer_design = infer_design)
-                } else {
-                   autonomics.support::cfread(sample_file, data.table = FALSE) %>%
-                   magrittr::set_rownames(.$SampleId)
-                }
-   autonomics.import::sdata(object) %<>% (function(x) autonomics.support::left_join_keeping_rownames(sample_df, x, by = 'SampleId'))  %>%
-                                          autonomics.support::dedupe_varnames()
+   # Add design
+   design_df <- autonomics.import::write_soma_design(file, infer_from_sampleids = infer_design_from_sampleids)
+   autonomics.import::sdata(object) %<>% autonomics.support::left_join_keeping_rownames(design_df, by = 'SampleId') %>%
+                                         autonomics.support::pull_columns(c('sample_id', 'subgroup', 'replicate'))
+   if (!is.null(design_file)){
+      file_df <- autonomics.import::read_soma_design(design_file)
+      common_vars <- names(file_df) %>% setdiff('SampleId') %>% intersect(autonomics.import::svars(object))
+      autonomics.support::cmessage("Ignore from design file (already in sumexp): %s", sprintf("'%s'", common_vars) %>% paste0(collapse = ', '))
+      file_df %<>% magrittr::extract(, setdiff(names(.), common_vars), drop = FALSE)
+      if (ncol(file_df)>1) autonomics.import::sdata(object) %<>% autonomics.support::left_join_keeping_rownames(file_df, by = 'SampleId') %>%
+                                                                 autonomics.support::pull_columns(c('sample_id', 'subgroup', 'replicate'))
+   }
+
    # Preprocess
    if (log2_transform)         autonomics.import::exprs(object) %<>% log2()
 

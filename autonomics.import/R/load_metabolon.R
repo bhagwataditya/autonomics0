@@ -2,11 +2,11 @@
 #' @rdname load_metabolon
 #' @importFrom magrittr %>%
 #' @export
-load_metabolon_sdata <- function(metabolon_file, sheet = 2){
+load_metabolon_sdata <- function(file, sheet = 2){
 
    # Load sample data
    . <- NULL
-   df <- metabolon_file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
+   df <- file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
    sstart <- which(!is.na(df[1,]))[1]
    fstart <- which(!is.na(df[,1]))[1]
    df %<>% magrittr::extract(1:fstart, (sstart+1):ncol(.)) %>%
@@ -15,6 +15,8 @@ load_metabolon_sdata <- function(metabolon_file, sheet = 2){
            magrittr::set_names(df[[sstart]][1:fstart])     %>%
            magrittr::set_names(names(.) %>% stringi::stri_replace_first_fixed( 'Group   HMDB_ID', 'Group') %>% # recent metabolon files
                                             stringi::stri_replace_first_fixed('Sample   HMDB_ID', 'Group'))    # older metabolon files
+   df %<>% magrittr::set_rownames(.$CLIENT_IDENTIFIER)
+
    # Return
    df
 }
@@ -22,9 +24,9 @@ load_metabolon_sdata <- function(metabolon_file, sheet = 2){
 #' @rdname load_metabolon
 #' @importFrom magrittr %>%
 #' @export
-load_metabolon_fdata <- function(metabolon_file, sheet=2){
+load_metabolon_fdata <- function(file, sheet=2){
    . <- NULL
-   df <- metabolon_file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
+   df <- file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
    sstart <- which(!is.na(df[1,]))[1]
    fstart <- which(!is.na(df[,1]))[1]
    df %>% magrittr::extract((fstart+1):nrow(.), 1:sstart)                     %>%
@@ -35,11 +37,11 @@ load_metabolon_fdata <- function(metabolon_file, sheet=2){
 }
 
 #' Load metabolon data
-#' @param metabolon_file      metabolon xlsx file
-#' @param sample_file         NULL or character (sample design file)
+#' @param file      metabolon xlsx file
+#' @param design_file         NULL or character (sample design file)
 #' @param sheet               xls sheet name  or number
 #' @param log2_transform      logical: whether to log2 transform
-#' @param infer_design        logical: whether to infer design from sample ids
+#' @param infer_design_from_sampleids        logical: whether to infer design from sample ids
 #' @param add_kegg_pathways   logical: whether to add KEGG pathways to fdata
 #' @param add_smiles          logical: whether to add SMILES to fdata
 #' @param ... (backward compatibility)
@@ -49,30 +51,30 @@ load_metabolon_fdata <- function(metabolon_file, sheet=2){
 #' if (require(autonomics.data)){
 #'
 #'    # Loading metabolon file is easy
-#'    metabolon_file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    metabolon_file %>% autonomics.import::load_metabolon()
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+#'    file %>% autonomics.import::load_metabolon()
 #'
 #'    # Three ways to specify sample design
 #'       # Use Group definition in metabolon file
-#'       metabolon_file %>% autonomics.import::load_metabolon() %>%
+#'       file %>% autonomics.import::load_metabolon() %>%
 #'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #'       # Infer from sample id values
-#'       metabolon_file %>% autonomics.import::load_metabolon(infer_design = TRUE) %>%
+#'       file %>% autonomics.import::load_metabolon(infer_design_from_sampleids = TRUE) %>%
 #'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #'       # Merge in from sample file
-#'       sample_file <- tempfile()
-#'       metabolon_file %>% autonomics.import::create_metabolon_sample_file(sample_file, infer_design = TRUE)
-#'       metabolon_file %>% autonomics.import::load_metabolon(sample_file = sample_file) %>%
+#'       design_file <- tempfile()
+#'       file %>% autonomics.import::write_metabolon_design(design_file, infer_from_sampleids = TRUE)
+#'       file %>% autonomics.import::load_metabolon(design_file = design_file) %>%
 #'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #' }
 #' @importFrom magrittr %>%
 #' @export
 load_metabolon <- function(
-   metabolon_file,
-   sample_file        = NULL,
+   file,
+   design_file        = NULL,
    sheet              = 2,
    log2_transform     = TRUE,
-   infer_design       = FALSE,
+   infer_design_from_sampleids       = FALSE,
    add_kegg_pathways  = FALSE,
    add_smiles         = FALSE
 ){
@@ -80,21 +82,21 @@ load_metabolon <- function(
    . <- NULL
 
    # Sheet
-   cur_sheet <- readxl::excel_sheets(metabolon_file) %>%
+   cur_sheet <- readxl::excel_sheets(file) %>%
                (function(x){ names(x) <- x; x}) %>% magrittr::extract2(sheet)
-   autonomics.support::cmessage('Load  %s  %s', basename(metabolon_file), cur_sheet)
+   autonomics.support::cmessage('Load  %s  %s', basename(file), cur_sheet)
 
    # Get start points
-   df <- metabolon_file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
+   df <- file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
    sstart <- which(!is.na(df[1,]))[1]
    fstart <- which(!is.na(df[,1]))[1]
 
    # Load components
-   sdata1 <- load_metabolon_sdata(metabolon_file, sheet=sheet)
-   fdata1 <- load_metabolon_fdata(metabolon_file, sheet=sheet)
+   sdata1 <- autonomics.import::load_metabolon_sdata(file, sheet=sheet)
+   fdata1 <- autonomics.import::load_metabolon_fdata(file, sheet=sheet)
    exprs1 <- df %>% magrittr::extract((fstart+1):nrow(.), (sstart+1):ncol(.)) %>%
                     data.matrix() %>%
-                    magrittr::set_colnames(sdata1$sample_id) %>%
+                    magrittr::set_colnames(sdata1$CLIENT_IDENTIFIER) %>%
                     magrittr::set_rownames(fdata1$MCOMP_ID)
 
    # Wrap into SummarizedExperiment
@@ -105,15 +107,18 @@ load_metabolon <- function(
    autonomics.import::prepro(object) <- list(assay='lcms', entity='metabolite', quantity='intensities', software='metabolon')
    autonomics.import::annotation(object) <- ''
 
-   # Standardize design
-   sample_df <- if (is.null(sample_file)){
-                   autonomics.import::create_metabolon_sample_df(metabolon_file, infer_design = infer_design)
-                } else {
-                   autonomics.support::cfread(sample_file, data.table = FALSE) %>%
-                   magrittr::set_rownames(.$CLIENT_IDENTIFIER)
-                }
-   autonomics.import::sdata(object) %<>% (function(x) autonomics.support::left_join_keeping_rownames(sample_df, x, by = 'CLIENT_IDENTIFIER')) %>%
-                                          autonomics.support::dedupe_varnames()
+   # Add design
+   sample_df <- autonomics.import::write_metabolon_design(file, infer_from_sampleids = infer_design_from_sampleids)
+   autonomics.import::sdata(object) %<>% autonomics.support::left_join_keeping_rownames(sample_df, by = 'CLIENT_IDENTIFIER') %>%
+                                         autonomics.support::pull_columns(c('sample_id', 'subgroup', 'replicate'))
+   if (!is.null(design_file)){
+      file_df <- autonomics.import::read_metabolon_design(design_file)
+      common_vars <- names(file_df) %>% setdiff('CLIENT_IDENTIFIER') %>% intersect(autonomics.import::svars(object))
+      autonomics.support::cmessage("Ignore from design file (already in sumexp): %s", sprintf("'%s'", common_vars) %>% paste0(collapse = ', '))
+      file_df %<>% magrittr::extract(, setdiff(names(.), common_vars), drop = FALSE)
+      if (ncol(file_df)>1) autonomics.import::sdata(object) %<>% autonomics.support::left_join_keeping_rownames(file_df, by = 'SampleId') %>%
+                                                                 autonomics.support::pull_columns(c('sample_id', 'subgroup', 'replicate'))
+   }
 
    # Annotate
    if (add_kegg_pathways){

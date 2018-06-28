@@ -995,69 +995,6 @@ parse_protein_names_from_uniprot_fasta_hdrs <- function(x, sep = ';'){
 }
 
 
-is_missing_or_empty_character <- function(x){
-   x == '' | is.na(x)
-}
-
-#' @importFrom magrittr %>%
-is_neither_missing_nor_empty_character <- function(x){
-   x %>% is_missing_or_empty_character() %>% magrittr::not()
-}
-
-#' @importFrom magrittr %>%
-all_are_missing_or_empty_character <- function(x){
-   x %>% is_missing_or_empty_character() %>% all()
-}
-
-#' Load maxquant sample file
-#' @param sample_file sample design file
-#' @return sample design datatable
-#' @examples
-#' if (require(autonomics.data)){
-#'    sample_file <- system.file('extdata/billing2016/sample_design.txt',
-#'                                       package = 'autonomics.data')
-#'    autonomics.import::load_maxquant_sample_file(sample_file)
-#' }
-#' if (require(billing.differentiation.data)){
-#'    sample_file <- system.file('extdata/maxquant/sample_design.txt',
-#'                                       package = 'billing.differentiation.data')
-#'    load_maxquant_sample_file(sample_file)
-#' }
-#' @importFrom magrittr   %>%   %<>%
-#' @export
-load_maxquant_sample_file <- function(sample_file){
-   # Prevent CHECK warnings
-   n <- NULL
-
-   # Load
-   #assertive.files::assert_all_are_readable_files(sample_file, warn_about_windows = FALSE)
-   sample_design <- autonomics.support::cfread(sample_file,
-                                               colClasses = c(sample_id = 'character',
-                                                              subgroup  = 'character',
-                                                              replicate = 'character',
-                                                              block     = 'character'),
-                                               data.table = FALSE)
-   # Check contents
-   assertive.strings::assert_all_are_non_empty_character(sample_design$sample_id)
-   assertive.strings::assert_any_are_non_missing_nor_empty_character(sample_design$subgroup)
-
-   # Remove variable block if all values empty
-   if (all_are_missing_or_empty_character(sample_design$block))   sample_design$block <- NULL
-
-   # Create replicates if all absent.
-   if (all_are_missing_or_empty_character(sample_design$replicate)){
-      sample_design %<>% dplyr::group_by_('subgroup')                   %>%
-         dplyr::mutate(replicate = as.character(1:n())) %<>%
-         dplyr::ungroup()                               %>%
-         as.data.frame()
-   }
-
-   # Return
-   sample_design %<>% data.table::data.table()
-   return(sample_design)
-}
-
-
 #' Nameify strings
 #' @param x character vector
 #' @param verbose character
@@ -1102,7 +1039,7 @@ add_maxquant_sdata <- function(object, sample_file){
    sample_id <- NULL
 
    # Load
-   sample_design <- load_maxquant_sample_file(sample_file)
+   sample_design <- read_maxquant_design(sample_file)
    sample_design %<>% as.data.frame()
    rownames(sample_design) <- sample_design$sample_id
 

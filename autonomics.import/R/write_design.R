@@ -3,7 +3,7 @@
 #==================================================
 
 #' Infer design separator
-#' @param sample_ids character vector with sample ids
+#' @param sample_ids character vector with sampleids
 #' @param possible_separators character vector with possible separators to look for
 #' @param verbose logical
 #' @return separator (string) or NULL (if no separator could be identified)
@@ -51,7 +51,7 @@ infer_design_sep <- function(sample_ids, possible_separators = c('.', ' ', '_'),
 
 
 #' Convert sample IDs into sample design
-#' @param sample_ids         character vector with sample ids
+#' @param sample_ids         character vector with sampleids
 #' @param sep                string separator
 #' @param drop_common_parts  logical
 #' @examples
@@ -98,53 +98,53 @@ infer_design_from_sampleids <- function(
 #'
 #' Replicate values are set to the unique sampleid tails within each subgroup
 #'
-#' @param sample_df dataframe with columns 'sample_id' and 'subgroup'
-#' @return
+#' @param design_df dataframe with columns 'sample_id' and 'subgroup'
+#' @return dataframe
 #' @examples
 #' require(magrittr)
-#' sample_df <- data.frame(sample_id = c('E_1', 'E_2', 'E_3', 'EM_1', 'EM_2', 'EM_3'),
+#' design_df <- data.frame(sample_id = c('E_1', 'E_2', 'E_3', 'EM_1', 'EM_2', 'EM_3'),
 #'                         subgroup  = c('E',   'E',   'E',   'EM',   'EM',   'EM')) %>%
 #'              magrittr::set_rownames(.$sample_id)
-#' sample_df
-#' sample_df %>% add_replicate_values()
+#' design_df
+#' design_df %>% add_replicate_values()
 #' @importFrom magrittr %>%
 #' @export
-add_replicate_values <- function(sample_df){
-   sample_df %>% data.table::data.table() %>%
+add_replicate_values <- function(design_df){
+   design_df %>% data.table::data.table() %>%
                  magrittr::extract(, replicate := autonomics.support::get_unique_tails(sample_id), by = 'subgroup') %>%
-                 data.frame(row.names = rownames(sample_df))
+                 data.frame(row.names = rownames(design_df))
 }
 
 #========================================
-# WRITE SAMPLE FILE
+# WRITE DESIGN FILE
 #========================================
 
 #' Write sample df to file
-#' @param sample_df sample dataframe
-#' @param sample_file sample file
+#' @param design_df sample dataframe
+#' @param design_file sample file
 #' @return path to sample file
 #' @importFrom magrittr %>%
 #' @export
-write_sample_file <- function(sample_df, sample_file){
+write_design_file <- function(design_df, design_file){
 
    # Abort
-   if (file.exists(sample_file)) {
-      autonomics.support::cmessage('\tAbort - file already exists: %s', sample_file)
-      return(invisible(sample_file))
+   if (file.exists(design_file)) {
+      autonomics.support::cmessage('\tAbort - file already exists: %s', design_file)
+      return(invisible(design_file))
    }
 
    # Write
-   sample_df %>% autonomics.support::print2txt(sample_file)
-   autonomics.support::cmessage('\tWriting to: %s', sample_file)
+   design_df %>% autonomics.support::print2txt(design_file)
+   autonomics.support::cmessage('\tWriting to: %s', design_file)
    autonomics.support::cmessage('\tOpen this file in a Excel or LibrOffice, complete it manually and save.')
 
    # Open
    if(interactive() && assertive.reflection::is_windows()){
-      tryCatch(shell.exec(sample_file), return(invisible(sample_file)))
+      tryCatch(shell.exec(design_file), return(invisible(design_file)))
    }
 
    # Return
-   return(invisible(sample_file))
+   return(invisible(design_file))
 }
 
 
@@ -207,15 +207,16 @@ designify_maxquant_sampleids <- function(sampleids){
    sampleid_values
 }
 
-#' Create maxquant sample df
+
+#' Write maxquant design
 #'
-#' For automated infer of design, use the following sample naming
+#' For automated infer from sampleids, use the following sample naming
 #' scheme (before running max quant): WT(L).KD(M).OE(H).R1
 #'
-#' @param proteingroups_file string: full path to protein groups file
-#' @param sample_file        string: full path to sample design file
+#' @param file string: full path to protein groups file
+#' @param design_file        string: full path to sample design file
 #' @param value_type         string: any value in autonomics.import::MAXQUANT_VALUE_TYPES
-#' @param infer_design       logical: should design be infered from sample ids (see details)
+#' @param infer_from_sampleids       logical: should design be infered from sample ids (see details)
 #' @param ... backward compatibility to deprecated functions
 #' @return sample design dataframe
 #' @examples
@@ -226,140 +227,162 @@ designify_maxquant_sampleids <- function(sampleids){
 #'    file <- system.file(
 #'       'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
 #'        package = 'autonomics.data')
-#'    file %>% create_maxquant_sample_df()
-#'    file %>% create_maxquant_sample_df(infer_design = TRUE)
-#'    file %>% create_maxquant_sample_df(infer_design = TRUE, value_type = 'raw.intensity')
-#'    file %>% create_maxquant_sample_df(infer_design = TRUE, value_type = 'raw.ratio')
+#'    file %>% write_maxquant_design()
+#'    file %>% write_maxquant_design(infer_from_sampleids = TRUE)
+#'    file %>% write_maxquant_design(infer_from_sampleids = TRUE, value_type = 'raw.intensity')
+#'    file %>% write_maxquant_design(infer_from_sampleids = TRUE, value_type = 'raw.ratio')
 #' }
 #'
 #' # LFQ INTENSITIES
 #' if (require(graumann.lfq)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-#'    file %>% autonomics.import::create_maxquant_sample_df()
-#'    file %>% autonomics.import::create_maxquant_sample_df(infer_design = TRUE)
+#'    file %>% autonomics.import::write_maxquant_design()
+#'    file %>% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE)
 #' }
 #'
 #' # UNLABELED INTENSITIES
 #' if (require(alnoubi.2017)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017')
-#'    file %>% autonomics.import::create_maxquant_sample_df()
-#'    file %>% autonomics.import::create_maxquant_sample_df(infer_design = TRUE)
+#'    file %>% autonomics.import::write_maxquant_design()
+#'    file %>% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE)
 #' }
 #'
 #' # REPORTER INTENSITIES
 #' if (require(billing.vesicles)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'billing.vesicles')
-#'    file %>% autonomics.import::create_maxquant_sample_df()
-#'    file %>% autonomics.import::create_maxquant_sample_df(infer_design = TRUE)
+#'    file %>% autonomics.import::write_maxquant_design()
+#'    file %>% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE)
 #' }
 #'
 #' @author Aditya Bhagwat
 #' @importFrom magrittr %>%
 #' @export
-create_maxquant_sample_df <- function(
-   proteingroups_file,
-   value_type   = autonomics.import::infer_maxquant_value_type(proteingroups_file),
-   infer_design = FALSE
+write_maxquant_design <- function(
+   file,
+   value_type   = autonomics.import::infer_maxquant_value_type(file),
+   infer_from_sampleids = FALSE,
+   design_file = NULL
 ){
 
    # Assert
-   assertive.files::assert_all_are_dirs(dirname(proteingroups_file))
-   #assertive.files::assert_all_are_readable_files(proteingroups_file, warn_about_windows = FALSE)
+   assertive.files::assert_all_are_dirs(dirname(file))
+   #assertive.files::assert_all_are_readable_files(file, warn_about_windows = FALSE)
 
    # Read
-   DT <- autonomics.support::cfread(proteingroups_file)
+   DT <- autonomics.support::cfread(file)
 
    # Extract
    sampleids <- DT %>% autonomics.import::get_maxquant_value_columns(value_type) %>% names()
 
    # Infer design and return
-   if (infer_design){
-      design <- sampleids %>%
-         autonomics.import::designify_maxquant_sampleids()   %>%
-         autonomics.import::infer_design_from_sampleids('.')
-      design$sample_id <- sampleids
-      rownames(design) <- sampleids
-      return(design)
-   }
+   design <- if (infer_from_sampleids){
+                sampleids %>%
+                autonomics.import::designify_maxquant_sampleids()   %>%
+                autonomics.import::infer_design_from_sampleids('.') %>%
+               (function(x) x$sample_id <- sampleids)
+             } else {
+                data.frame(sample_id = sampleids,
+                           subgroup  = '',
+                           replicate = '',
+                           block     = '')
+             } %>% magrittr::set_rownames(sampleids)
 
-   # Return design template if not able to infer
-   return(data.frame(
-      sample_id = sampleids,
-      subgroup  = '',
-      replicate = '',
-      block     = ''))
+
+   # Sample file
+   if (is.null(design_file))  design_df %>% autonomics.import::write_design_file(design_file)
 
 }
 
 
-#'@rdname create_maxquant_sample_df
+#'@rdname write_maxquant_design
 #'@export
 create_maxquant_design_df <- function(...){
-   .Deprecated('create_maxquant_sample_df')
-   create_maxquant_sample_df(...)
+   .Deprecated('write_maxquant_design')
+   write_maxquant_design(...)
 }
 
-#'@rdname create_maxquant_sample_df
+#'@rdname write_maxquant_design
 #'@export
 create_sample_design_df <- function(...){
-   .Deprecated('create_maxquant_design_df')
-   create_maxquant_design_df(...)
+   .Deprecated('write_maxquant_design')
+   write_maxquant_design(...)
 }
 
-#' Create maxquant sample file
-#'
-#' For automated infer of design, use the following sample naming
-#' scheme (before running max quant): WT(L).KD(M).OE(H).R1
-#'
-#' @param proteingroups_file string: full path to protein groups file
-#' @param sample_file        string: full path to sample design file
-#' @param value_type         string: any value in autonomics.import::MAXQUANT_VALUE_TYPES
-#' @param infer_design       logical: should design be infered from sample ids (see details)
-#' @param ... backward compatibility to deprecated functions
-#' @return sample design dataframe
-#' @examples
-#' require(magrittr)
-#'
-#' # LABELED RATIOS and INTENSITIES
-#' if (require(autonomics.data)){
-#'    file <- system.file(
-#'              'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
-#'               package = 'autonomics.data')
-#'    file %>% create_maxquant_sample_df()
-#'    file %>% create_maxquant_sample_file(sample_file = tempfile())
-#' }
-#'
-#' @importFrom magrittr %>%
-#' @export
-create_maxquant_sample_file <- function(
-   proteingroups_file,
-   sample_file  = paste0(dirname(proteingroups_file), '/sample_design.txt'),
-   value_type   = autonomics.import::infer_maxquant_value_type(proteingroups_file),
-   infer_design = FALSE
-){
-
-   # Create
-   autonomics.import::create_maxquant_sample_df(proteingroups_file = proteingroups_file,
-                                                value_type         = value_type,
-                                                infer_design       = infer_design) %>%
-      autonomics.import::write_sample_file(sample_file)
-
-   # Return
-   return(invisible(sample_file))
-}
-
-
-#' @rdname create_maxquant_sample_file
+#' @rdname write_maxquant_design
 #' @export
 create_maxquant_design_file <- function(...){
-   create_maxquant_sample_file(...)
+   .Deprecated('write_maxquant_design')
+   write_maxquant_design(...)
 }
 
-#' @rdname create_maxquant_sample_file
+#' @rdname write_maxquant_design
 #' @export
 create_sample_design_file <- function(...){
    .Deprecated('write_maxquant_design')
    write_maxquant_design(...)
+}
+
+
+is_missing_or_empty_character <- function(x){
+   x == '' | is.na(x)
+}
+
+#' @importFrom magrittr %>%
+is_neither_missing_nor_empty_character <- function(x){
+   x %>% is_missing_or_empty_character() %>% magrittr::not()
+}
+
+#' @importFrom magrittr %>%
+all_are_missing_or_empty_character <- function(x){
+   x %>% is_missing_or_empty_character() %>% all()
+}
+
+#' Read maxquant design file
+#' @param design_file sample design file
+#' @return sample design datatable
+#' @examples
+#' if (require(autonomics.data)){
+#'    design_file <- system.file('extdata/billing2016/sample_design.txt',
+#'                                       package = 'autonomics.data')
+#'    autonomics.import::read_maxquant_design(design_file)
+#' }
+#' if (require(billing.differentiation.data)){
+#'    design_file <- system.file('extdata/maxquant/sample_design.txt',
+#'                                       package = 'billing.differentiation.data')
+#'    read_maxquant_design(design_file)
+#' }
+#' @importFrom magrittr   %>%   %<>%
+#' @export
+read_maxquant_design <- function(design_file){
+   # Prevent CHECK warnings
+   n <- NULL
+
+   # Load
+   #assertive.files::assert_all_are_readable_files(design_file, warn_about_windows = FALSE)
+   sample_design <- autonomics.support::cfread(design_file,
+                                               colClasses = c(sample_id = 'character',
+                                                              subgroup  = 'character',
+                                                              replicate = 'character',
+                                                              block     = 'character'),
+                                               data.table = FALSE)
+   # Check contents
+   assertive.strings::assert_all_are_non_empty_character(sample_design$sample_id)
+   assertive.strings::assert_any_are_non_missing_nor_empty_character(sample_design$subgroup)
+
+   # Remove variable block if all values empty
+   if (all_are_missing_or_empty_character(sample_design$block))   sample_design$block <- NULL
+
+   # Create replicates if all absent.
+   if (all_are_missing_or_empty_character(sample_design$replicate)){
+      sample_design %<>% dplyr::group_by_('subgroup')                   %>%
+         dplyr::mutate(replicate = as.character(1:n())) %<>%
+         dplyr::ungroup()                               %>%
+         as.data.frame()
+   }
+
+   # Return
+   sample_design %<>% data.table::data.table()
+   return(sample_design)
 }
 
 
@@ -368,60 +391,38 @@ create_sample_design_file <- function(...){
 #========================
 
 
-#' Create exiqon sample dataframe
-#' @param exiqon_file  string
-#' @param sample_file  string
-#' @param value_type   string: any value in autonomics.import::MAXQUANT_VALUE_TYPES
+#' Write exiqon design
+#' @param file            string: path to exiqon file
+#' @param infer_from_sampleids   logical: whether to infer design from sampleids
+#' @param design_file            string: path to sample file
 #' @return string: path to design file
 #' @examples
 #' require(magrittr)
 #' if (require(subramanian.2016)){
-#'    exiqon_file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
 #'                                package = 'subramanian.2016')
-#'    exiqon_file %>% autonomics.import::create_exiqon_sample_df()
-#'    exiqon_file %>% autonomics.import::create_exiqon_sample_df(infer_design = TRUE)
+#'    file %>% autonomics.import::write_exiqon_design()
+#'    file %>% autonomics.import::write_exiqon_design(infer_from_sampleids = TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-create_exiqon_sample_df <- function(
-   exiqon_file,
-   infer_design = FALSE
+write_exiqon_design <- function(
+   file,
+   infer_from_sampleids = FALSE,
+   design_file = NULL
 ){
-   sampleids <- autonomics.import::load_exiqon_sdata(exiqon_file)  %>%
+   sampleids <- autonomics.import::load_exiqon_sdata(file)  %>%
                 magrittr::extract2('sample_id')
-   if (infer_design){
-      sampleids %>% autonomics.import::infer_design_from_sampleids()
-   } else {
-      return(data.frame(sample_id = sampleids,
-                        subgroup  = '',
-                        replicate = '',
-                        block     = ''))
-   }
-}
-
-#' Create exiqon sample file
-#' @param exiqon_file  string: path to exiqon file
-#' @param sample_file  string: path to sample file
-#' @param infer_design logical: whether to infer design from sampleids
-#' @return string: path to design file
-#' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016){
-#'    exiqon_file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
-#'                                package = 'subramanian.2016')
-#'    exiqon_file %>% autonomics.import::create_exiqon_sample_file(sample_file = tempfile())
-#'
-#' }
-#' @importFrom magrittr %>%
-#' @export
-create_exiqon_sample_file <- function(
-   exiqon_file,
-   sample_file  = paste0(dirname(proteingroups_file), '/sample_design.txt'),
-   infer_design = FALSE
-){
-   autonomics.import::create_exiqon_sample_df(exiqon_file,
-                                              infer_design = infer_design) %>%
-      autonomics.import::write_sample_file(sample_file)
+   design_df <- if (infer_from_sampleids){
+                   sampleids %>% autonomics.import::infer_design_from_sampleids()
+                } else {
+                   return(data.frame(sample_id = sampleids,
+                                     subgroup  = '',
+                                     replicate = '',
+                                     block     = ''))
+                }
+   if (!is.null(design_file)) design_df %>% autonomics.import::write_design_file(design_file)
+   return(design_df)
 }
 
 
@@ -430,60 +431,59 @@ create_exiqon_sample_file <- function(
 #===========================
 
 
-#' Create metabolon sample dataframe
-#' @param  metabolon_file  string: path to metabolon file
-#' @param  sample_file     string: path to sample file
-#' @param  infer_design    logical: whether to infer design from CLIENT_IDENTIFIER
+#' Write metabolon design
+#' @param  file                   string: path to metabolon file
+#' @param  infer_from_sampleids   logical: whether to infer design from CLIENT_IDENTIFIER
+#' @param  design_file            string: path to design file
 #' @return design dataframe
 #' @examples
 #' if (require(autonomics.data)){
-#'    metabolon_file <- system.file('extdata/glutaminase/glutaminase.xlsx',
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
 #'                                   package = 'autonomics.data')
-#'    metabolon_file %>% autonomics.import::create_metabolon_sample_df()
-#'    metabolon_file %>% autonomics.import::create_metabolon_sample_df(infer_design = TRUE)
+#'    file %>% autonomics.import::write_metabolon_design()
+#'    file %>% autonomics.import::write_metabolon_design(infer_from_sampleids = TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-create_metabolon_sample_df <- function(
-   metabolon_file,
-   infer_design = FALSE
+write_metabolon_design <- function(
+   file,
+   infer_from_sampleids = FALSE,
+   design_file  = NULL
 ){
-   sdata1 <- metabolon_file %>% autonomics.import::load_metabolon_sdata()
+   sdata1 <- file %>% autonomics.import::load_metabolon_sdata()
    design_df <- data.frame(CLIENT_IDENTIFIER = sdata1$CLIENT_IDENTIFIER,
                            row.names         = sdata1$CLIENT_IDENTIFIER)
-   if (infer_design){
+   if (infer_from_sampleids){
       design_df %<>% cbind(autonomics.import::infer_design_from_sampleids(.$CLIENT_IDENTIFIER))
    } else {
       design_df$sample_id <- sdata1$CLIENT_IDENTIFIER
       design_df$subgroup  <- sdata1$Group
       design_df %<>% add_replicate_values()
    }
+   if (!is.null(design_file))  design_df %>% autonomics.import::write_design_file(design_file)
    design_df
+
 }
 
-#' Create metabolon sample file
-#' @param metabolon_file  string: path to metabolon file
-#' @param sample_file     string: path to sample file
-#' @param infer_design    logical: whether to infer design from sampleids
-#' @return path to metabolon file
+#' Read metabolon design
+#' @param design_file string: path to design file
+#' @return sample dataframe
 #' @examples
+#' require(magrittr)
 #' if (require(autonomics.data)){
-#'    metabolon_file <- system.file('extdata/glutaminase/glutaminase.xlsx',
-#'                                   package = 'autonomics.data')
-#'    metabolon_file %>% autonomics.import::create_metabolon_sample_file(
-#'                          sample_file = tempfile())
+#'    design_file <- tempfile()
+#'    system.file('extdata/glutaminase/glutaminase.xlsx',
+#'                 package = 'autonomics.data') %>%
+#'    autonomics.import::write_metabolon_design(design_file, infer_from_sampleids = TRUE)
+#'    design_file %>% read_metabolon_design()
 #' }
-#' @importFrom magrittr %>%
+#' @importFrom magrittr %<>%
 #' @export
-create_metabolon_sample_file <- function(
-   metabolon_file,
-   sample_file     = paste0(dirname(proteingroups_file), '/sample_design.txt'),
-   infer_design    = FALSE
-){
-   df <- metabolon_file %>%
-         autonomics.import::create_metabolon_sample_df(infer_design = infer_design)
-   df %>% autonomics.import::write_sample_file(sample_file)
-   df
+read_metabolon_design <- function(design_file){
+   design_df <- autonomics.support::cfread(design_file, data.table = FALSE)
+   assertive::assert_is_subset('CLIENT_IDENTIFIER', names(design_df))
+   design_df %<>% magrittr::set_rownames(.$CLIENT_IDENTIFIER)
+   design_df
 }
 
 
@@ -491,60 +491,60 @@ create_metabolon_sample_file <- function(
 # SOMA
 #=======================
 
-
-#' Create soma sample dataframe
-#' @param soma_file    string: path to soma file
-#' @param infer_design logical: whether to infer design from sampleids
+#' Write soma design
+#' @param soma_file             string: path to soma file
+#' @param infer_from_sampleids  logical: whether to infer design from sampleids
+#' @param design_file           string: path of sample file to which design is written
 #' @return sample design dataframe
 #' @examples
 #' if (require(autonomics.data)){
 #'    soma_file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
 #'                              package = 'autonomics.data')
-#'    soma_file %>% autonomics.import::create_soma_sample_df()
-#'    soma_file %>% autonomics.import::create_soma_sample_df(infer_design = TRUE)
+#'    soma_file %>% autonomics.import::write_soma_design()
+#'    soma_file %>% autonomics.import::write_soma_design(infer_from_sampleids = TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-create_soma_sample_df <- function(
+write_soma_design <- function(
    soma_file,
-   infer_design = FALSE
+   infer_from_sampleids = FALSE,
+   design_file = NULL
 ){
 
    sdata1 <- autonomics.import::load_soma_sdata(soma_file)
    design_df <- data.frame(SampleId  = sdata1$SampleId,
                            row.names = sdata1$SampleId)
-   if (infer_design){
+   if (infer_from_sampleids){
       design_df %<>% cbind(autonomics.import::infer_design_from_sampleids(.$SampleId))
    } else {
       design_df$sample_id <- sdata1$SampleId
       design_df$subgroup  <- sdata1$SampleGroup
       design_df %<>% add_replicate_values()
    }
+   if (!is.null(design_file)) design_df %>% autonomics.import::write_design_file(design_file)
    design_df
 }
 
 
-
-#' Create soma sample file
-#' @param soma_file     string: path to soma file
-#' @param sample_file   string: path to sample file
-#' @param infer_design  logical: whether to infer design from sampleids
-#' @return path to soma design file
+#' Read soma design
+#' @param design_file string: path to design file
+#' @return sample dataframe
 #' @examples
-#'    soma_file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
-#'                              package = 'autonomics.data')
-#'    soma_file %>% autonomics.import::create_soma_sample_file(sample_file = tempfile())
-#' @importFrom magrittr %>%
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    design_file <- tempfile()
+#'    system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'                 package = 'autonomics.data') %>%
+#'    autonomics.import::write_soma_design(design_file, infer_from_sampleids = TRUE)
+#'    design_file %>% read_soma_design()
+#' }
+#' @importFrom magrittr %<>%
 #' @export
-create_soma_sample_file <- function(
-   soma_file,
-   sample_file,
-   infer_design = FALSE
-){
-   df <- soma_file %>%
-      autonomics.import::create_soma_sample_df(infer_design = infer_design)
-   df %>% autonomics.import::write_sample_file(sample_file)
-   df
+read_soma_design <- function(design_file){
+   design_df <- autonomics.support::cfread(design_file, data.table = FALSE)
+   assertive::assert_is_subset('SampleId', names(design_df))
+   design_df %<>% magrittr::set_rownames(.$SampleId)
+   design_df
 }
 
 

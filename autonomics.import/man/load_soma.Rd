@@ -4,7 +4,7 @@
 \alias{load_soma}
 \title{Load soma}
 \usage{
-load_soma(file, sample_file = NULL, infer_design = FALSE,
+load_soma(file, design_file = NULL, infer_design_from_sampleids = FALSE,
   log2_transform = TRUE, rm_sample_type = character(0),
   rm_feature_type = character(0), rm_sample_quality = character(0),
   rm_feature_quality = character(0), rm_na_svars = TRUE,
@@ -13,9 +13,9 @@ load_soma(file, sample_file = NULL, infer_design = FALSE,
 \arguments{
 \item{file}{string: path to adat file}
 
-\item{sample_file}{NULL or string:  path to sample file}
+\item{design_file}{NULL or string:  path to sample file}
 
-\item{infer_design}{logical: whether to infer design from SampleId values}
+\item{infer_design_from_sampleids}{logical: whether to infer design from SampleId values}
 
 \item{log2_transform}{logical: whether to log2 transform}
 
@@ -44,9 +44,9 @@ When not available, attempts to extract subgroup definitions from 'sample_id'col
 require(magrittr)
 if (require(autonomics.data)){
 
-   # Loading soma is easy
+   # Loading soma file is simple
    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
-                             package = 'autonomics.data')
+                        package = 'autonomics.data')
    file \%>\% autonomics.import::load_soma()
 
    # Three ways to specify sample design
@@ -58,9 +58,9 @@ if (require(autonomics.data)){
                autonomics.import::sdata() \%>\% head()
 
       # Specified through sample file
-      sample_file <- tempfile()
-      file \%>\% autonomics.import::create_soma_sample_file(sample_file = sample_file, infer_design = TRUE)
-      file \%>\% autonomics.import::load_soma(sample_file = sample_file) \%>\%
+      design_file <- tempfile()
+      file \%>\% autonomics.import::write_soma_design(design_file = design_file, infer_from_sampleids = TRUE)
+      file \%>\% autonomics.import::load_soma(design_file = design_file) \%>\%
                autonomics.import::sdata() \%>\% head()
 }
 if (require(atkin.2014)){
