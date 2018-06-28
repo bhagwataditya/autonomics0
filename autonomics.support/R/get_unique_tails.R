@@ -6,8 +6,9 @@
 #' @importFrom magrittr %>%
 #' @export
 get_unique_tails <- function(x){
+  if (is.factor(x)) x %<>% as.character()
    for (k in 0:max(nchar(x))){
-      xtail <- sample_ids %>% substr(max(1, nchar(.)-k), nchar(.))
+      xtail <- x %>% substr(max(1, nchar(.)-k), nchar(.))
       if (!any(duplicated(xtail))) return(xtail)
    }
 }

@@ -94,6 +94,27 @@ infer_design_from_sampleids <- function(
 }
 
 
+#' Add replicate values
+#'
+#' Replicate values are set to the unique sampleid tails within each subgroup
+#'
+#' @param sample_df dataframe with columns 'sample_id' and 'subgroup'
+#' @return
+#' @examples
+#' require(magrittr)
+#' sample_df <- data.frame(sample_id = c('E_1', 'E_2', 'E_3', 'EM_1', 'EM_2', 'EM_3'),
+#'                         subgroup  = c('E',   'E',   'E',   'EM',   'EM',   'EM')) %>%
+#'              magrittr::set_rownames(.$sample_id)
+#' sample_df
+#' sample_df %>% add_replicate_values()
+#' @importFrom magrittr %>%
+#' @export
+add_replicate_values <- function(sample_df){
+   sample_df %>% data.table::data.table() %>%
+                 magrittr::extract(, replicate := autonomics.support::get_unique_tails(sample_id), by = 'subgroup') %>%
+                 data.frame(row.names = rownames(sample_df))
+}
+
 #========================================
 # WRITE SAMPLE FILE
 #========================================
@@ -435,6 +456,7 @@ create_metabolon_sample_df <- function(
    } else {
       design_df$sample_id <- sdata1$CLIENT_IDENTIFIER
       design_df$subgroup  <- sdata1$Group
+      design_df %<>% add_replicate_values()
    }
    design_df
 }
@@ -496,6 +518,7 @@ create_soma_sample_df <- function(
    } else {
       design_df$sample_id <- sdata1$SampleId
       design_df$subgroup  <- sdata1$SampleGroup
+      design_df %<>% add_replicate_values()
    }
    design_df
 }
