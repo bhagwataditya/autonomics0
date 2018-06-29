@@ -1094,13 +1094,13 @@ add_maxquant_sdata <- function(object, sample_file){
 #'    parameter_file     <- paste0(maxquant_dir, '/parameters.txt')
 #'
 #'    autonomics.import::load_proteingroups_to_long_dt(proteingroups_file) %>%
-#'    autonomics.import::esetise_maxquant_dt(entity = 'proteingroup', quantity = 'normalized.ratio',
+#'    autonomics.import::maxquant_dt_to_sumexp(entity = 'proteingroup', quantity = 'normalized.ratio',
 #'                           sample_file, parameter_file)
 #'    autonomics.import::load_phosphosite_ratios_to_long_dt(phosphosites_file) %>%
-#'    autonomics.import::esetise_maxquant_dt(entity = 'phosphosite', quantity = 'normalized.ratio',
+#'    autonomics.import::maxquant_dt_to_sumexp(entity = 'phosphosite', quantity = 'normalized.ratio',
 #'                           sample_file, parameter_file)
 #'    autonomics.import::load_phosphosite_occupancies_to_long_dt(phosphosites_file) %>%
-#'    autonomics.import::esetise_maxquant_dt(entity = 'phosphosite', quantity = 'occupancy',
+#'    autonomics.import::maxquant_dt_to_sumexp(entity = 'phosphosite', quantity = 'occupancy',
 #'                           sample_file, parameter_file)
 #' }
 #' if (require(graumann.lfq)){
@@ -1109,13 +1109,13 @@ add_maxquant_sdata <- function(object, sample_file){
 #'    sample_file <- paste0(maxquant_dir,    '/sample_design.txt')
 #'    parameter_file <- paste0(maxquant_dir, '/parameters.txt')
 #'    DT <- autonomics.import::load_proteingroups_to_long_dt(proteingroups_file)
-#'    DT %>% autonomics.import::esetise_maxquant_dt(
+#'    DT %>% autonomics.import::maxquant_dt_to_sumexp(
 #'              entity = 'proteingroup', quantity = 'lfq.intensity', sample_file, parameter_file)
 #' }
 #' @importFrom data.table  data.table
 #' @importFrom magrittr    %<>%   %>%
 #' @export
-esetise_maxquant_dt <- function(
+maxquant_dt_to_sumexp <- function(
    DT,
    entity,
    quantity,
@@ -1138,7 +1138,7 @@ esetise_maxquant_dt <- function(
            # merge(proteingroups, phosphosites, all = TRUE) is used to avoid an all-NA-sample from being dropped.
            # But now full NA fetaures need to be dropped
 
-   # Make eset
+   # Make SummarizedExperiment
    feature_names <- DT$feature_id
    data_matrix   <- DT %>%
                     magrittr::extract(, !names(.) %in% annotation_cols, with = FALSE) %>%
@@ -1229,7 +1229,7 @@ load_proteingroups <- function(
                                                           log2_transform = log2_transform,
                                                           value_type     = value_type)
    DT[, feature_id := paste0('PG', formatC(feature_id, digits = max(floor(log10(feature_id))), flag = '0'))]
-   DT %>% autonomics.import::esetise_maxquant_dt(
+   DT %>% autonomics.import::maxquant_dt_to_sumexp(
              entity = 'proteingroup',
              quantity = value_type,
              sample_file = sample_file,
@@ -1268,7 +1268,7 @@ load_phosphosites <- function(
                                                                log2_transform    = log2_transform,
                                                                value_type        = value_type)
    DT[, feature_id := paste0('PS', formatC(feature_id, digits = max(floor(log10(feature_id))), flag = '0'))]
-   DT %>% esetise_maxquant_dt(
+   DT %>% maxquant_dt_to_sumexp(
              entity = 'phosphosite',
              quantity = value_type,
              sample_file,
@@ -1307,7 +1307,7 @@ load_phosphosite_occupancies <- function(
             proteingroups_file = proteingroups_file,
             log2_transform     = log2_transform)
    DT[, feature_id := paste0('PS', formatC(feature_id, digits = max(floor(log10(feature_id))), flag = '0'))]
-   DT %>% autonomics.import::esetise_maxquant_dt(
+   DT %>% autonomics.import::maxquant_dt_to_sumexp(
              entity         = 'phosphosite',
              quantity       = 'occupancy',
              sample_file    = sample_file,
