@@ -4,7 +4,7 @@
 \alias{maxquant_dt_to_sumexp}
 \title{Convert long data table into eset}
 \usage{
-maxquant_dt_to_sumexp(DT, entity, quantity, sample_file, parameter_file)
+maxquant_dt_to_sumexp(DT, entity, quantity, design_file, parameter_file)
 }
 \arguments{
 \item{DT}{long datatable}
@@ -13,7 +13,7 @@ maxquant_dt_to_sumexp(DT, entity, quantity, sample_file, parameter_file)
 
 \item{quantity}{quantity}
 
-\item{sample_file}{sample design file}
+\item{design_file}{sample design file}
 
 \item{parameter_file}{parameter file}
 }
@@ -22,30 +22,34 @@ Convert long data table into eset
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   maxquant_dir       <- system.file('extdata/maxquant', package = 'billing.differentiation.data')
-   sample_file        <- paste0(maxquant_dir, '/sample_design.txt')
+if (require(autonomics.data)){
+   maxquant_dir       <- system.file('extdata/stemcell.differentiation/maxquant', package = 'autonomics.data')
    proteingroups_file <- paste0(maxquant_dir, '/proteinGroups.txt')
    phosphosites_file  <- paste0(maxquant_dir, '/phospho (STY)Sites.txt')
    parameter_file     <- paste0(maxquant_dir, '/parameters.txt')
-
-   autonomics.import::load_proteingroups_to_long_dt(proteingroups_file) \%>\%
-   autonomics.import::maxquant_dt_to_sumexp(entity = 'proteingroup', quantity = 'normalized.ratio',
-                          sample_file, parameter_file)
-   autonomics.import::load_phosphosite_ratios_to_long_dt(phosphosites_file) \%>\%
-   autonomics.import::maxquant_dt_to_sumexp(entity = 'phosphosite', quantity = 'normalized.ratio',
-                          sample_file, parameter_file)
-   autonomics.import::load_phosphosite_occupancies_to_long_dt(phosphosites_file) \%>\%
-   autonomics.import::maxquant_dt_to_sumexp(entity = 'phosphosite', quantity = 'occupancy',
-                          sample_file, parameter_file)
+   design_file <- tempfile()
+   proteingroups_file \%>\% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE,
+                                                                   design_file = design_file)
+   DT <- proteingroups_file \%>\% autonomics.import::load_proteingroups_to_long_dt()
+   DT \%>\% autonomics.import::maxquant_dt_to_sumexp(
+             entity = 'proteingroup', quantity = 'normalized.ratio',
+             design_file, parameter_file)
+   DT <- phosphosites_file \%>\% autonomics.import::load_phosphosite_ratios_to_long_dt()
+   DT \%>\% autonomics.import::maxquant_dt_to_sumexp(
+             entity = 'phosphosite', quantity = 'normalized.ratio',
+             design_file, parameter_file)
+   DT <- autonomics.import::load_phosphosite_occupancies_to_long_dt(phosphosites_file)
+   DT \%>\% autonomics.import::maxquant_dt_to_sumexp(
+             entity = 'phosphosite', quantity = 'occupancy',
+             design_file, parameter_file)
 }
 if (require(graumann.lfq)){
    maxquant_dir <- system.file('extdata', package = 'graumann.lfq')
    proteingroups_file <- paste0(maxquant_dir, '/proteinGroups.txt')
-   sample_file <- paste0(maxquant_dir,    '/sample_design.txt')
+   design_file <- paste0(maxquant_dir,    '/sample_design.txt')
    parameter_file <- paste0(maxquant_dir, '/parameters.txt')
    DT <- autonomics.import::load_proteingroups_to_long_dt(proteingroups_file)
    DT \%>\% autonomics.import::maxquant_dt_to_sumexp(
-             entity = 'proteingroup', quantity = 'lfq.intensity', sample_file, parameter_file)
+             entity = 'proteingroup', quantity = 'lfq.intensity', design_file, parameter_file)
 }
 }

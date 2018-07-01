@@ -5,7 +5,7 @@
 \title{Load phosphosite ratios}
 \usage{
 load_phosphosites(phosphosites_file,
-  sample_file = paste0(dirname(phosphosites_file), "/sample_design.txt"),
+  design_file = paste0(dirname(phosphosites_file), "/sample_design.txt"),
   parameter_file = paste0(dirname(phosphosites_file), "/parameters.txt"),
   log2_transform = TRUE,
   value_type = autonomics.import::infer_maxquant_value_type(phosphosites_file))
@@ -13,7 +13,7 @@ load_phosphosites(phosphosites_file,
 \arguments{
 \item{phosphosites_file}{full path to "Phospho (STY)Sites.txt"}
 
-\item{sample_file}{full path to "sample_design.txt"}
+\item{design_file}{full path to "sample_design.txt"}
 
 \item{parameter_file}{full path to "parameters.txt"}
 

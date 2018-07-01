@@ -279,7 +279,7 @@ write_maxquant_design <- function(
                 sampleids %>%
                 autonomics.import::designify_maxquant_sampleids()   %>%
                 autonomics.import::infer_design_from_sampleids('.') %>%
-               (function(x) x$sample_id <- sampleids)
+               (function(x){x$sample_id <- sampleids; x})
              } else {
                 data.frame(sample_id = sampleids,
                            subgroup  = '',
@@ -289,7 +289,8 @@ write_maxquant_design <- function(
 
 
    # Sample file
-   if (is.null(design_file))  design_df %>% autonomics.import::write_design_file(design_file)
+   if (!is.null(design_file))  design %>% autonomics.import::write_design_file(design_file)
+   design
 
 }
 
@@ -323,20 +324,6 @@ create_sample_design_file <- function(...){
 }
 
 
-is_missing_or_empty_character <- function(x){
-   x == '' | is.na(x)
-}
-
-#' @importFrom magrittr %>%
-is_neither_missing_nor_empty_character <- function(x){
-   x %>% is_missing_or_empty_character() %>% magrittr::not()
-}
-
-#' @importFrom magrittr %>%
-all_are_missing_or_empty_character <- function(x){
-   x %>% is_missing_or_empty_character() %>% all()
-}
-
 #' Read maxquant design file
 #' @param design_file sample design file
 #' @return sample design datatable
@@ -359,21 +346,19 @@ read_maxquant_design <- function(design_file){
 
    # Load
    #assertive.files::assert_all_are_readable_files(design_file, warn_about_windows = FALSE)
-   sample_design <- autonomics.support::cfread(design_file,
-                                               colClasses = c(sample_id = 'character',
-                                                              subgroup  = 'character',
-                                                              replicate = 'character',
-                                                              block     = 'character'),
-                                               data.table = FALSE)
+   sample_design <- autonomics.support::cfread(design_file, data.table = FALSE)
+
    # Check contents
    assertive.strings::assert_all_are_non_empty_character(sample_design$sample_id)
    assertive.strings::assert_any_are_non_missing_nor_empty_character(sample_design$subgroup)
 
    # Remove variable block if all values empty
-   if (all_are_missing_or_empty_character(sample_design$block))   sample_design$block <- NULL
+   if ('block' %in% names(sample_design)){
+      if (autonomics.support::all_are_missing_or_empty_character(sample_design$block))   sample_design$block <- NULL
+   }
 
    # Create replicates if all absent.
-   if (all_are_missing_or_empty_character(sample_design$replicate)){
+   if (autonomics.support::all_are_missing_or_empty_character(sample_design$replicate)){
       sample_design %<>% dplyr::group_by_('subgroup')                   %>%
          dplyr::mutate(replicate = as.character(1:n())) %<>%
          dplyr::ungroup()                               %>%
@@ -433,6 +418,7 @@ write_exiqon_design <- function(
 
 #' Write metabolon design
 #' @param  file                   string: path to metabolon file
+#' @param  sheet                  character(1) or numeric(1): xls sheet
 #' @param  infer_from_sampleids   logical: whether to infer design from CLIENT_IDENTIFIER
 #' @param  design_file            string: path to design file
 #' @return design dataframe
@@ -440,17 +426,18 @@ write_exiqon_design <- function(
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
 #'                                   package = 'autonomics.data')
-#'    file %>% autonomics.import::write_metabolon_design()
-#'    file %>% autonomics.import::write_metabolon_design(infer_from_sampleids = TRUE)
+#'    file %>% autonomics.import::write_metabolon_design(sheet=2)
+#'    file %>% autonomics.import::write_metabolon_design(infer_from_sampleids = TRUE, sheet=2)
 #' }
 #' @importFrom magrittr %>%
 #' @export
 write_metabolon_design <- function(
    file,
+   sheet,
    infer_from_sampleids = FALSE,
    design_file  = NULL
 ){
-   sdata1 <- file %>% autonomics.import::load_metabolon_sdata()
+   sdata1 <- file %>% autonomics.import::load_metabolon_sdata(sheet = sheet)
    design_df <- data.frame(CLIENT_IDENTIFIER = sdata1$CLIENT_IDENTIFIER,
                            row.names         = sdata1$CLIENT_IDENTIFIER)
    if (infer_from_sampleids){
@@ -458,7 +445,11 @@ write_metabolon_design <- function(
    } else {
       design_df$sample_id <- sdata1$CLIENT_IDENTIFIER
       design_df$subgroup  <- sdata1$Group
-      design_df %<>% add_replicate_values()
+      missing_subgroups <- any(autonomics.support::is_missing_or_empty_character(design_df$subgroup))
+      if (!missing_subgroups){
+         design_df$subgroup %<>% autonomics.support::nameify_strings()
+         design_df %<>% add_replicate_values()
+      }
    }
    if (!is.null(design_file))  design_df %>% autonomics.import::write_design_file(design_file)
    design_df
@@ -519,7 +510,11 @@ write_soma_design <- function(
    } else {
       design_df$sample_id <- sdata1$SampleId
       design_df$subgroup  <- sdata1$SampleGroup
-      design_df %<>% add_replicate_values()
+      missing_subgroups <- any(autonomics.support::is_missing_or_empty_character(design_df$subgroup))
+      if (!missing_subgroups){
+         design_df$subgroup %<>% autonomics.support::nameify_strings()
+         design_df %<>% add_replicate_values()
+      }
    }
    if (!is.null(design_file)) design_df %>% autonomics.import::write_design_file(design_file)
    design_df

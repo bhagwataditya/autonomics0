@@ -2,7 +2,7 @@
 % Please edit documentation in R/load_maxquant.R
 \name{melt_wide_maxquant_dt}
 \alias{melt_wide_maxquant_dt}
-\title{Tidy max quant table}
+\title{Melt wide maxquant datatable}
 \usage{
 melt_wide_maxquant_dt(DT, log2_transform = TRUE, log2_offset = 0)
 }
@@ -14,13 +14,15 @@ melt_wide_maxquant_dt(DT, log2_transform = TRUE, log2_offset = 0)
 \item{log2_offset}{offset added to value before log2 transformation ()}
 }
 \description{
-Tidy max quant table
+Melt wide maxquant datatable
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   system.file('extdata/maxquant/proteinGroups.txt', package = 'billing.differentiation.data') \%>\%
-      load_proteingroups_to_wide_dt() \%>\% melt_wide_maxquant_dt() \%>\% print()
+if (require(autonomics.data)){
+   DT <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+                      package = 'autonomics.data') \%>\%
+         autonomics.import::load_proteingroups_to_wide_dt()
+   DT \%>\% melt_wide_maxquant_dt() \%>\% print()
 }
 if (require(graumann.lfq)){
   system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') \%>\%

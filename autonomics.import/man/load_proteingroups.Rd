@@ -5,7 +5,7 @@
 \title{Load proteingroup ratios/intensities}
 \usage{
 load_proteingroups(proteingroups_file,
-  sample_file = paste0(dirname(proteingroups_file), "/sample_design.txt"),
+  design_file = paste0(dirname(proteingroups_file), "/sample_design.txt"),
   parameter_file = paste0(dirname(proteingroups_file), "/parameters.txt"),
   log2_transform = TRUE,
   value_type = autonomics.import::infer_maxquant_value_type(proteingroups_file))
@@ -13,7 +13,7 @@ load_proteingroups(proteingroups_file,
 \arguments{
 \item{proteingroups_file}{full path to "proteinGroups.txt"}
 
-\item{sample_file}{full path to "sample_design.txt"}
+\item{design_file}{full path to "sample_design.txt"}
 
 \item{parameter_file}{full path to "parameters.txt"}
 
@@ -30,24 +30,37 @@ Load proteingroup ratios/intensities
 \examples{
 library(magrittr)
 if (require(autonomics.data)){
-   system.file('extdata/billing2016/proteinGroups.txt', package = 'autonomics.data') \%>\%
-   autonomics.import::load_proteingroups()
-}
-if (require(billing.differentiation.data)){
-   system.file('extdata/maxquant/proteinGroups.txt',
-                package = 'billing.differentiation.data') \%>\%
-   autonomics.import::load_proteingroups()
+
+   # STEM CELL COMPARISON
+   proteingroups_file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+                                      package = 'autonomics.data')
+   design_file <- tempfile()
+   autonomics.import::write_maxquant_design(proteingroups_file,
+      infer_from_sampleids = TRUE, design_file = design_file)
+   proteingroups_file \%>\% autonomics.import::load_proteingroups(design_file = design_file)
+
+   # STEM CELL DIFFERENTIATION
+   proteingroups_file <- system.file(
+      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+      package = 'autonomics.data')
+   design_file <- tempfile()
+   autonomics.import::write_maxquant_design(proteingroups_file,
+      design_file = design_file, infer_from_sampleids = TRUE)
+   proteingroups_file \%>\% autonomics.import::load_proteingroups(design_file = design_file)
 }
 if (require(billing.vesicles)){
-   system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') \%>\%
-   autonomics.import::load_proteingroups()
+   proteingroups_file <- system.file('extdata/proteinGroups.txt',
+                                      package = 'billing.vesicles')
+   proteingroups_file \%>\% autonomics.import::load_proteingroups()
 }
 if (require(graumann.lfq)){
-   system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') \%>\%
-   autonomics.import::load_proteingroups()
+   proteingroups_file <- system.file('extdata/proteinGroups.txt',
+                                      package = 'graumann.lfq') \%>\%
+   proteingroups_file \%>\% autonomics.import::load_proteingroups()
 }
 if (require(graumann.zebra)){
-   system.file('extdata/proteinGroups.txt', package = 'graumann.zebra') \%>\%
-   autonomics.import::load_proteingroups()
+   proteingroups_file <- system.file('extdata/proteinGroups.txt',
+                                      package = 'graumann.zebra')
+   proteingroups_file \%>\% autonomics.import::load_proteingroups()
 }
 }

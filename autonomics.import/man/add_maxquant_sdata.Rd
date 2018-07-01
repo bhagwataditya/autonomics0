@@ -4,12 +4,12 @@
 \alias{add_maxquant_sdata}
 \title{Add maxquant sdata}
 \usage{
-add_maxquant_sdata(object, sample_file)
+add_maxquant_sdata(object, design_file)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{sample_file}{sample file}
+\item{design_file}{sample file}
 }
 \value{
 sumexp with sdata added

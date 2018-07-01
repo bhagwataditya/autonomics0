@@ -224,7 +224,7 @@ load_soma <- function(
    # On sample quality
    if ('RowCheck'   %in% autonomics.import::svars(object)){
       message('')
-      autonomics.support::cmessage_df('%s', table(`Sample qualities` = autonomics.import::sdata(object)$RowCheck))
+      autonomics.support::cmessage_df('%s', table(`Sample qualities ("RowCheck")` = autonomics.import::sdata(object)$RowCheck))
       if (length(rm_sample_quality)  > 0)  object %<>% autonomics.import::filter_samples(!RowCheck %in% rm_sample_quality, verbose = TRUE)
    }
    # On feature type
@@ -236,7 +236,7 @@ load_soma <- function(
    # On feature quality
    if ('ColCheck'   %in% autonomics.import::fvars(object)){
       message('')
-      autonomics.support::cmessage_df('%s', table(`Feature qualities` = autonomics.import::fdata(object)$ColCheck))
+      autonomics.support::cmessage_df('%s', table(`Feature qualities ("ColCheck")` = autonomics.import::fdata(object)$ColCheck))
       if (length(rm_feature_quality) > 0)  object %<>% autonomics.import::filter_features(!ColCheck %in% rm_feature_quality, verbose = TRUE)
    }
 

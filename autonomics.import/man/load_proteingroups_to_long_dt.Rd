@@ -23,9 +23,11 @@ Load protein table
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-  system.file('extdata/maxquant/proteinGroups.txt', package = 'billing.differentiation.data') \%>\%
-     autonomics.import::load_proteingroups_to_long_dt() \%>\% str()
+if (require(autonomics.data)){
+  proteingroups_file <- system.file(
+     'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+     package = 'autonomics.data')
+  proteingroups_file \%>\% autonomics.import::load_proteingroups_to_long_dt() \%>\% str()
 }
 if (require(graumann.lfq)){
   system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') \%>\%

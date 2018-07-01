@@ -6,7 +6,7 @@
 \usage{
 load_phosphosite_occupancies(phosphosites_file,
   proteingroups_file = paste0(dirname(phosphosites_file),
-  "/proteinGroups.txt"), sample_file = paste0(dirname(phosphosites_file),
+  "/proteinGroups.txt"), design_file = paste0(dirname(phosphosites_file),
   "/sample_design.txt"), parameter_file = paste0(dirname(phosphosites_file),
   "/parameters.txt"), log2_transform = TRUE,
   value_type = autonomics.import::infer_maxquant_value_type(phosphosites_file))
@@ -16,7 +16,7 @@ load_phosphosite_occupancies(phosphosites_file,
 
 \item{proteingroups_file}{full path to "proteinGroups.txt"}
 
-\item{sample_file}{full path to "sample_design.txt"}
+\item{design_file}{full path to "sample_design.txt"}
 
 \item{parameter_file}{full path to "parameters.txt"}
 

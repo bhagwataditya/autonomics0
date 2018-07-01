@@ -7,11 +7,11 @@
 \alias{load_metabolon_file}
 \title{Load metabolon data}
 \usage{
-load_metabolon_sdata(file, sheet = 2)
+load_metabolon_sdata(file, sheet)
 
-load_metabolon_fdata(file, sheet = 2)
+load_metabolon_fdata(file, sheet)
 
-load_metabolon(file, design_file = NULL, sheet = 2, log2_transform = TRUE,
+load_metabolon(file, sheet = 2, design_file = NULL, log2_transform = TRUE,
   infer_design_from_sampleids = FALSE, add_kegg_pathways = FALSE,
   add_smiles = FALSE)
 

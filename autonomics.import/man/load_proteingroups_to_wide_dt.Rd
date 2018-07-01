@@ -19,40 +19,42 @@ Load proteingroups file into wide data.table
 require(magrittr)
 
 # NORMALIZED RATIOS
-if (require(billing.differentiation.data)){
-   system.file('extdata/maxquant/proteinGroups.txt', package = 'billing.differentiation.data') \%>\%
-      load_proteingroups_to_wide_dt() \%>\%
-      str()
+if (require(autonomics.data)){
+   proteingroups_file <- system.file(
+      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+       package = 'autonomics.data')
+   proteingroups_file \%>\% load_proteingroups_to_wide_dt() \%>\% dim()
 }
 
 # REPORTER INTENSITIES
 if (require(billing.vesicles)){
-   system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') \%>\%
-      load_proteingroups_to_wide_dt() \%>\%
-      str()
+   proteingroups_file <- system.file(
+      'extdata/proteinGroups.txt', package = 'billing.vesicles')
+   proteingroups_file \%>\% load_proteingroups_to_wide_dt() \%>\% dim()
 }
 
 # RAW RATIOS
 if (require(billing.differentiation.data)){
-   system.file('extdata/maxquant/proteinGroups.txt', package = 'billing.differentiation.data') \%>\%
-      load_proteingroups_to_wide_dt(value_type = 'raw.ratio') \%>\%
-      str()
+   proteingroups_file <- system.file(
+      'extdata/maxquant/proteinGroups.txt', package = 'billing.differentiation.data')
+   proteingroups_file \%>\% load_proteingroups_to_wide_dt(value_type = 'raw.ratio') \%>\% dim()
 }
 
 # LFQ INTENSITIES
 if (require(graumann.lfq)){
-   system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') \%>\%
-      load_proteingroups_to_wide_dt() \%>\%
-      str()
+   proteingroups_file <- system.file(
+      'extdata/proteinGroups.txt', package = 'graumann.lfq')
+   proteingroups_file \%>\% load_proteingroups_to_wide_dt() \%>\% dim()
 }
 
 # RAW INTENSITIES
 if (require(alnoubi.2017)){
-   system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017') \%>\%
-      load_proteingroups_to_wide_dt(value_type = 'raw.intensity') \%>\%
-      str()
-   system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017') \%>\%
-      load_proteingroups_to_wide_dt() \%>\%
-      str()
+   proteingroups_file <- system.file(
+      'extdata/proteinGroups.txt', package = 'alnoubi.2017')
+   proteingroups_file \%>\% load_proteingroups_to_wide_dt(value_type = 'raw.intensity') \%>\% dim()
+
+   proteingroups_file <- system.file(
+      'extdata/proteinGroups.txt', package = 'alnoubi.2017')
+   proteingroups_file \%>\% load_proteingroups_to_wide_dt() \%>\% dim()
 }
 }

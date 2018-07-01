@@ -22,10 +22,10 @@ Load phosphosites file into wide data.table
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   system.file('extdata/maxquant/phospho (STY)Sites.txt',
-                package = 'billing.differentiation.data') \%>\%
-      load_phosphosites_to_wide_dt() \%>\%
-      str()
+if (require(autonomics.data)){
+   phosphosites_file <- system.file(
+      'extdata/stemcell.differentiation/maxquant/phospho (STY)Sites.txt',
+       package = 'autonomics.data')
+   phosphosites_file \%>\% load_phosphosites_to_wide_dt() \%>\% dim()
 }
 }

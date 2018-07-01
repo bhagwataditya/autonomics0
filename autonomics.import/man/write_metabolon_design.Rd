@@ -4,11 +4,13 @@
 \alias{write_metabolon_design}
 \title{Write metabolon design}
 \usage{
-write_metabolon_design(file, infer_from_sampleids = FALSE,
+write_metabolon_design(file, sheet, infer_from_sampleids = FALSE,
   design_file = NULL)
 }
 \arguments{
 \item{file}{string: path to metabolon file}
+
+\item{sheet}{character(1) or numeric(1): xls sheet}
 
 \item{infer_from_sampleids}{logical: whether to infer design from CLIENT_IDENTIFIER}
 
@@ -24,7 +26,7 @@ Write metabolon design
 if (require(autonomics.data)){
    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
                                   package = 'autonomics.data')
-   file \%>\% autonomics.import::write_metabolon_design()
-   file \%>\% autonomics.import::write_metabolon_design(infer_from_sampleids = TRUE)
+   file \%>\% autonomics.import::write_metabolon_design(sheet=2)
+   file \%>\% autonomics.import::write_metabolon_design(infer_from_sampleids = TRUE, sheet=2)
 }
 }

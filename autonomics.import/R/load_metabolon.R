@@ -2,7 +2,7 @@
 #' @rdname load_metabolon
 #' @importFrom magrittr %>%
 #' @export
-load_metabolon_sdata <- function(file, sheet = 2){
+load_metabolon_sdata <- function(file, sheet){
 
    # Load sample data
    . <- NULL
@@ -24,7 +24,7 @@ load_metabolon_sdata <- function(file, sheet = 2){
 #' @rdname load_metabolon
 #' @importFrom magrittr %>%
 #' @export
-load_metabolon_fdata <- function(file, sheet=2){
+load_metabolon_fdata <- function(file, sheet){
    . <- NULL
    df <- file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
    sstart <- which(!is.na(df[1,]))[1]
@@ -71,8 +71,8 @@ load_metabolon_fdata <- function(file, sheet=2){
 #' @export
 load_metabolon <- function(
    file,
+   sheet = 2,
    design_file                 = NULL,
-   sheet                       = 2,
    log2_transform              = TRUE,
    infer_design_from_sampleids = FALSE,
    add_kegg_pathways           = FALSE,
@@ -108,7 +108,7 @@ load_metabolon <- function(
    autonomics.import::annotation(object) <- ''
 
    # Merge in design
-   design_df <- autonomics.import::write_metabolon_design(file, infer_from_sampleids = infer_design_from_sampleids)
+   design_df <- autonomics.import::write_metabolon_design(file, sheet = sheet, infer_from_sampleids = infer_design_from_sampleids)
    object %<>% autonomics.import::merge_sdata(design_df, by = 'CLIENT_IDENTIFIER')
    if (!is.null(design_file)){
       file_df <- autonomics.import::read_metabolon_design(design_file)
