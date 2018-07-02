@@ -26,3 +26,6 @@ standard deviation, as well as a completion fraction (number of \code{\link{NA}}
 Under the hood \code{\link[matrixStats]{rowMeans2}} and \code{\link[matrixStats]{rowSds}} or
 the \code{col} equivalent are used, all with \code{na.rm = TRUE}.
 }
+\details{
+For subgroups without replicates, \code{NA} is returned.
+}
