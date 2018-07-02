@@ -4,6 +4,8 @@
 #' standard deviation, as well as a completion fraction (number of \code{\link{NA}}/measurements.
 #' Under the hood \code{\link[matrixStats]{rowMeans2}} and \code{\link[matrixStats]{rowSds}} or
 #' the \code{col} equivalent are used, all with \code{na.rm = TRUE}.
+#' 
+#' For subgroups without replicates, \code{NA} is returned.
 #'
 #' @param object SummarizedExperiment, eSet, or EList
 #' @param MARGIN a vector giving the subscripts which the calculations will
@@ -48,21 +50,30 @@ mean_and_sd <- function(object, MARGIN = c(1, 2), by_subgroup = TRUE)
                      sub_object_exprs <- object %>%
                         autonomics.import::exprs() %>%
                         magrittr::extract(, subgroups == x)
-                     data.frame(
-                        sub_mean = sub_object_exprs %>%
+                     if(ncol(sub_object_exprs) == 1)
+                     {
+                       data.frame(
+                         sub_mean = repl(x, times = ncol(sub_object_exprs)),
+                         sub_sd   = repl(x, times = ncol(sub_object_exprs)),
+                         sub_cmpl = repl(x, times = ncol(sub_object_exprs))) %>%
+                         magrittr::set_colnames(
+                           paste0(x, c('__mean', '__sd', '__cmpl')))
+                     } else {
+                       data.frame(
+                         sub_mean = sub_object_exprs %>%
                            matrixStats::rowMeans2(na.rm = TRUE),
-                        sub_sd   = sub_object_exprs %>%
+                         sub_sd   = sub_object_exprs %>%
                            matrixStats::rowSds(na.rm = TRUE),
-                        sub_cmpl = sub_object_exprs %>%
+                         sub_cmpl = sub_object_exprs %>%
                            is.na() %>%
                            magrittr::not() %>%
                            matrixStats::rowSums2() %>%
                            magrittr::divide_by(
-                              sub_object_exprs %>%
-                                 ncol())) %>%
-                        magrittr::set_colnames(
-                           paste0(x, c('__mean', '__sd', '__cmpl'))) %>%
-                        return()
+                             sub_object_exprs %>%
+                               ncol())) %>%
+                         magrittr::set_colnames(
+                           paste0(x, c('__mean', '__sd', '__cmpl')))
+                     }
                   }
                ) %>%
                dplyr::bind_cols())
