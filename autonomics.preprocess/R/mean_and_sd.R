@@ -50,7 +50,7 @@ mean_and_sd <- function(object, MARGIN = c(1, 2), by_subgroup = TRUE)
                      sub_object_exprs <- object %>%
                         autonomics.import::exprs() %>%
                         magrittr::extract(, subgroups == x)
-                     if(ncol(sub_object_exprs) == 1)
+                     if(length(dim(sub_object_exprs)) < 2) 
                      {
                        data.frame(
                          sub_mean = repl(x, times = ncol(sub_object_exprs)),
