@@ -53,9 +53,9 @@ mean_and_sd <- function(object, MARGIN = c(1, 2), by_subgroup = TRUE)
                      if(length(dim(sub_object_exprs)) < 2) 
                      {
                        data.frame(
-                         sub_mean = rep(x, times = length(sub_object_exprs)),
-                         sub_sd   = rep(x, times = length(sub_object_exprs)),
-                         sub_cmpl = rep(x, times = length(sub_object_exprs))) %>%
+                         sub_mean = rep(NA, times = length(sub_object_exprs)),
+                         sub_sd   = rep(NA, times = length(sub_object_exprs)),
+                         sub_cmpl = rep(NA, times = length(sub_object_exprs))) %>%
                          magrittr::set_colnames(
                            paste0(x, c('__mean', '__sd', '__cmpl')))
                      } else {
