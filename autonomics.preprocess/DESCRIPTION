@@ -1,6 +1,6 @@
 Package: autonomics.preprocess
 Title: Functions for preprocessing of omics data
-Version: 0.4.3
+Version: 0.4.4
 Authors@R: c(person("Aditya", "Bhagwat", email = "adb2018@qatar-med.cornell.edu", role = c("aut", "cre")),
              person("Richard", "Cotton", email = "richierocks@gmail.com", role = "aut"),
              person("Johannes", "Graumann", email = "Johannes.Graumann@mpi-bn.mpg.de", role = "ctb"))
