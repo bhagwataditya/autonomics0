@@ -136,6 +136,27 @@ get_maxquant_reporter_intensities <- function(DT){
    values
 }
 
+#' @examples
+#' require(magrittr)
+#' file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
+#'          system.file(package = 'autonomics.data')
+#' DT <- file %>% data.table::fread()
+#' value_type <- autonomics.import::infer_maxquant_value_type(file)
+get_maxquant_peptides <- function(DT, value_type){
+   sample_ids <- DT %>% autonomics.import::get_maxquant_value_columns(value_type) %>% names()
+   peptide_columns <- sprintf('Razor + unique peptides %s', sample_ids %>% stringi::stri_replace_first_regex('\\[.+\\]', ''))
+   DT %>% magrittr::extract(, peptide_columns, with = FALSE) %>%
+          magrittr::set_names(sample_ids) %>%
+          magrittr::set_rownames(DT$id)
+          data.matrix()
+
+   names(DT) %>% magrittr::extract(stringi::stri_detect_fixed(., 'Razor + unique peptides ')) %>%
+   DT %>% autonomics.import::get_maxquant_value_columns(value_type) %>%
+          names() %>%
+          stringi::stri_replace_first_regex('\\[.+\\]', '') %>% table()
+}
+
+
 #' Extract raw intensities
 #' @param DT maxquant data.table
 #' @return raw intensity data.table
