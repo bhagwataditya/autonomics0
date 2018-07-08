@@ -136,27 +136,6 @@ get_maxquant_reporter_intensities <- function(DT){
    values
 }
 
-#' @examples
-#' require(magrittr)
-#' file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
-#'          system.file(package = 'autonomics.data')
-#' DT <- file %>% data.table::fread()
-#' value_type <- autonomics.import::infer_maxquant_value_type(file)
-get_maxquant_peptides <- function(DT, value_type){
-   sample_ids <- DT %>% autonomics.import::get_maxquant_value_columns(value_type) %>% names()
-   peptide_columns <- sprintf('Razor + unique peptides %s', sample_ids %>% stringi::stri_replace_first_regex('\\[.+\\]', ''))
-   DT %>% magrittr::extract(, peptide_columns, with = FALSE) %>%
-          magrittr::set_names(sample_ids) %>%
-          magrittr::set_rownames(DT$id)
-          data.matrix()
-
-   names(DT) %>% magrittr::extract(stringi::stri_detect_fixed(., 'Razor + unique peptides ')) %>%
-   DT %>% autonomics.import::get_maxquant_value_columns(value_type) %>%
-          names() %>%
-          stringi::stri_replace_first_regex('\\[.+\\]', '') %>% table()
-}
-
-
 #' Extract raw intensities
 #' @param DT maxquant data.table
 #' @return raw intensity data.table
@@ -370,6 +349,38 @@ get_maxquant_value_columns <- function(DT, value_type){
           raw.intensity           = DT %>% get_maxquant_raw_intensities()
    )
 }
+
+#' Get npeptides matrix
+#'
+#' Get feature x sample matrix with number of peptides
+#' @param DT data.table
+#' @param value_type maxquant value type
+#' @examples
+#' require(magrittr)
+#' file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
+#'          system.file(package = 'autonomics.data')
+#' DT <- file %>% data.table::fread()
+#' value_type <- autonomics.import::infer_maxquant_value_type(file)
+#' autonomics.import::get_maxquant_npeptides(DT, value_type) %>% str()
+#' @importFrom magrittr %>%
+#' @export
+get_maxquant_npeptides <- function(DT, value_type){
+
+   # Assert
+   assertive.types::assert_is_data.table(DT)
+   assertive.sets::assert_is_subset(value_type, autonomics.import::MAXQUANT_VALUE_TYPES)
+   assertive::assert_all_are_not_na(DT$id)
+
+   # Extract
+   sample_ids <- DT %>% autonomics.import::get_maxquant_value_columns(value_type) %>% names()
+   peptide_columns <- sprintf('Razor + unique peptides %s', sample_ids %>% stringi::stri_replace_first_regex('\\[.+\\]', ''))
+   DT %>% magrittr::extract(, peptide_columns, with = FALSE)  %>%
+          magrittr::set_names(sample_ids)                     %>%
+          data.matrix()                                       %>%
+          magrittr::set_rownames(paste0('PG', formatC(DT$id, digits = max(floor(log10(DT$id))), flag = '0')))
+}
+
+
 
 
 ################################################################################
