@@ -4,12 +4,12 @@
 \alias{extract_maxquant_exprs}
 \title{Extract maxquant exprs}
 \usage{
-extract_maxquant_exprs(file, what)
+extract_maxquant_exprs(file, quantity = "Intensity")
 }
 \arguments{
 \item{file}{full path to proteinGroups.txt}
 
-\item{what}{'ratios', 'normalized ratios', 'intensities', 'lfq intensities', or 'reporter intensities'}
+\item{quantity}{'Ratio', 'Ratio normalized', Intensity', 'LFQ intensity', 'Reporter intensity'}
 }
 \value{
 character vector with sample names
@@ -22,6 +22,19 @@ Extract maxquant exprs
  if (require(autonomics.data)){
    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
-   file \%>\% autonomics.import::extract_maxquant_exprs('intensities') \%>\% magrittr::extract(1:3, 1:3)
+   file \%>\% autonomics.import::extract_maxquant_exprs(quantity = 'Intensity') \%>\%
+            magrittr::extract(1:3, 1:3)
+}
+if (require(graumann.lfq)){
+   file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
+   file \%>\% autonomics.import::extract_maxquant_exprs('Intensity')     \%>\%
+            magrittr::extract(1:3, 1:3)
+   file \%>\% autonomics.import::extract_maxquant_exprs('LFQ intensity') \%>\%
+            magrittr::extract(1:3, 1:3)
+}
+if (require(billing.vesicles)){
+   file <- system.file('extdata/proteinGroups.txt', package = 'billing.vesicles')
+   file \%>\% autonomics.import::extract_maxquant_exprs('Reporter intensity') \%>\%
+            magrittr::extract(1:3, 1:3)
 }
 }

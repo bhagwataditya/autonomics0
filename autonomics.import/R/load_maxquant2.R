@@ -60,25 +60,6 @@ extract_maxquant_channels <- function(file){
 }
 
 
-#' Extract maxquant snames
-#' @param file full path to proteinGroups.txt
-#' @return character vector with sample names
-#' @examples
-#'  require(magrittr)
-#'  if (require(autonomics.data)){
-#'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
-#'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics.import::extract_maxquant_snames() %>% head()
-#' }
-#' @importFrom magrittr %>%
-#' @export
-extract_maxquant_snames <- function(file){
-   injections <- file %>% autonomics.import::extract_maxquant_injections()
-   channels   <- file %>% autonomics.import::extract_maxquant_channels()
-   injections %>% lapply(function(x) sprintf('%s[%s]', x, channels)) %>% unlist()
-}
-
-
 #' Extract maxquant fnames
 #' @param file full path to proteinGroups.txt
 #' @return character vector with sample names
@@ -102,169 +83,177 @@ extract_maxquant_fnames <- function(file){
 
 #' Extract maxquant intensity colnames
 #' @param file full path to proteinGroups.txt
+#' @param quantity 'Intensity', 'LFQ intensity', 'Reporter intensity'
 #' @return character vector with intensity column names
 #' @examples
 #'  require(magrittr)
 #'  if (require(autonomics.data)){
 #'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics.import::extract_maxquant_intensity_colnames() %>% head()
+#'    file %>% autonomics.import::extract_maxquant_intensity_colnames() %>% head(3)
+#'    file %>%
+#' }
+#' if (require(graumann.lfq)){
+#'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
+#'    file %>% autonomics.import::extract_maxquant_intensity_colnames() %>% head(3)
+#'    file %>% autonomics.import::extract_maxquant_intensity_colnames('LFQ intensity') %>% head(3)
+#' }
+#' if (require(billing.vesicles)){
+#'    file <- system.file('extdata/proteinGroups.txt', package = 'billing.vesicles')
+#'    file %>% autonomics.import::extract_maxquant_intensity_colnames('Reporter intensity') %>% head(3)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-extract_maxquant_intensity_colnames <- function(file){
+extract_maxquant_intensity_colnames <- function(file, quantity = 'Intensity'){
+
+   # Asser
+   assertive.files::assert_all_are_existing_files(file)
+   assertive.sets::assert_is_subset(quantity, c('Intensity', 'LFQ intensity', 'Reporter intensity'))
+
+   # Deduce injections and channels from unambiguous peptide columns
    injections <- file %>% autonomics.import::extract_maxquant_injections()
    channels   <- file %>% autonomics.import::extract_maxquant_channels()
-   injections %>% lapply(function(x) sprintf('Intensity %s %s', channels, x)) %>% unlist()
+
+   # Construct intensity colnames
+   intensity_colnames <- if (length(channels)==0){                      sprintf('%s %s',    quantity,           injections)
+                         } else {                  autonomics.support::vsprintf('%s %s %s', quantity, channels, injections) }
+
+   # Ensure identical order as in actual file
+   names(autonomics.support::cfread(file)) %>% magrittr::extract(. %in% intensity_colnames)
 }
 
 #' Extract maxquant ratio colnames
 #' @param file full path to proteinGroups.txt
-#' @param normalized logical
-#' @return character vector with intensity column names
+#' @param quantity 'Ratio' or 'Ratio normalized'
+#' @return character vector with ratio column names
 #' @examples
 #'  require(magrittr)
 #'  if (require(autonomics.data)){
 #'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics.import::extract_maxquant_ratio_colnames()
+#'    file %>% autonomics.import::extract_maxquant_ratio_colnames() %>% head()
 #' }
 #' @importFrom magrittr %>%
 #' @export
-extract_maxquant_ratio_colnames <- function(file, normalized = FALSE){
+extract_maxquant_ratio_colnames <- function(file, quantity){
+
+   assertive.sets::assert_is_subset(quantity, c('Ratio', 'Ratio normalized'))
+
+   # Deduce injections and channels from unambiguous peptide columns
    injections <- file %>% autonomics.import::extract_maxquant_injections()
    channels   <- file %>% autonomics.import::extract_maxquant_channels()
-   ratios <- character(0)
-   for (i in length(channels):2){
-      ratios %<>% c(sprintf('%s/%s', channels[i], channels[1:(i-1)]))
-   }
-   autonomics.support::vsprintf('Ratio %s%s %s',
-                                ratios, ifelse(normalized, ' normalized', ''), injections,
-                                first_slowest = FALSE)
-}
 
+   # Construct possible ratio colnames
+   possible_ratio_columns <- autonomics.support::vsprintf('Ratio %s/%s%s %s',
+                                                          channels,
+                                                          channels,
+                                                          if(quantity == 'Ratio normalized') ' normalized' else '',
+                                                          injections)
+   # Return actual colnames in correct order
+   file %>%
+   autonomics.support::cfread() %>%
+   names() %>%
+   magrittr::extract(. %in% possible_ratio_columns)
+}
 
 
 #' Extract maxquant exprs
 #' @param file full path to proteinGroups.txt
-#' @param what 'ratios', 'normalized ratios', 'intensities', 'lfq intensities', or 'reporter intensities'
+#' @param quantity 'Ratio', 'Ratio normalized', Intensity', 'LFQ intensity', 'Reporter intensity'
 #' @return character vector with sample names
 #' @examples
 #'  require(magrittr)
 #'  if (require(autonomics.data)){
 #'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics.import::extract_maxquant_exprs('intensities') %>% magrittr::extract(1:3, 1:3)
-#' }
-#' @importFrom magrittr %>%
-#' @export
-extract_maxquant_exprs <- function(file, what){
-
-   fnames1    <- file %>% autonomics.import::extract_maxquant_fnames()
-   snames1    <- file %>% autonomics.import::extract_maxquant_snames()
-   colnamefun <- switch(what,
-                       `intensities`       = autonomics.import::extract_maxquant_intensity_colnames,
-                       `normalized ratios` = function(file) autonomics.import::extract_maxquant_ratio_colnames(file, normalized = TRUE),
-                       `ratios`            = function(file) autonomics.import::extract_maxquant_ratio_colnames(file, normalized = FALSE))
-
-   file %>%
-   autonomics.support::cfread(select = colnamefun(.)) %>%
-   data.matrix() %>%
-   magrittr::set_rownames(fnames1) %>%
-   magrittr::set_colnames(snames1)
-}
-
-
-
-
-#' Load proteingroups snames
-#' @param file full path to proteinGroups.txt
-#' @examples
-#'  require(magrittr)
-#'  if (require(autonomics.data)){
-#'     file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt'  %>%
-#'              system.file(package = 'autonomics.data')
-#'     file %>% autonomics.import::infer_maxquant_type() %>% head()
+#'    file %>% autonomics.import::extract_maxquant_exprs(quantity = 'Intensity') %>%
+#'             magrittr::extract(1:3, 1:3)
 #' }
 #' if (require(graumann.lfq)){
-#'     file <- 'extdata/proteinGroups.txt'  %>%
-#'              system.file(package = 'graumann.lfq')
+#'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
+#'    file %>% autonomics.import::extract_maxquant_exprs('Intensity')     %>%
+#'             magrittr::extract(1:3, 1:3)
+#'    file %>% autonomics.import::extract_maxquant_exprs('LFQ intensity') %>%
+#'             magrittr::extract(1:3, 1:3)
+#' }
+#' if (require(billing.vesicles)){
+#'    file <- system.file('extdata/proteinGroups.txt', package = 'billing.vesicles')
+#'    file %>% autonomics.import::extract_maxquant_exprs('Reporter intensity') %>%
+#'             magrittr::extract(1:3, 1:3)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-infer_maxquant_value_pattern <- function(file){
-   cols <- file %>% autonomics.support::cfread() %>% names()
+extract_maxquant_exprs <- function(file, quantity = 'Intensity'){
 
-   # Normalized Ratios
-   pattern <- 'Ratio .+ normalized '
-   if (any(stringi::stri_detect_regex(cols, pattern)))  return(pattern)
+   # Assert
+   assertive.sets::assert_is_subset(quantity, c('Ratio', 'Ratio normalized', 'Intensity', 'LFQ intensity', 'Reporter intensity'))
 
-   # LFQ intensities
-   pattern <- 'LFQ intensity '
-   if (any(stringi::stri_detect_fixed(cols, pattern)))  return(pattern)
+   # Construct maxquant colnames
+   col_names <- if (quantity %in% c('Ratio', 'Ratio normalized')){ file %>% autonomics.import::extract_maxquant_ratio_colnames(quantity)
+                } else {                                           file %>% autonomics.import::extract_maxquant_intensity_colnames(quantity)
+                }
 
-   # Intensities
+   # Extract exprs matrix
+   exprs_mat <- file %>%
+                autonomics.support::cfread(select = col_names) %>%
+                data.matrix() %>%
+                magrittr::set_rownames(autonomics.import::extract_maxquant_fnames(file))
 
+   # Rename samples
+   if (quantity %in% c('Ratio', 'Ratio normalized')){
+     colnames(exprs_mat) %<>% stringi::stri_replace_first_regex('Ratio (./.) (?:normalized )?(.+)',   '$2[$1]')
+
+   } else {
+     # It is better to do it this way (rather than use a stri_replace_regex as for the ratios)
+     # because ' ' separators in sample names are difficult to differentiate from ' H' constructs
+     injections <- file %>% autonomics.import::extract_maxquant_injections()
+     channels   <- file %>% autonomics.import::extract_maxquant_channels()
+     colnames(exprs_mat) <- if (length(channels)==0) injections else autonomics.support::vsprintf('%s[%s]', injections, channels)
+   }
+
+   # Return
+   exprs_mat
 }
 
-#' Load proteingroups fnames
-#' @param file full path to proteinGroups.txt
+#' Extract maxquant fdata
+#' @param file path to proteinGroups.txt file
+#' @return dataframe
 #' @examples
-#'  require(magrittr)
-#'  if (require(autonomics.data)){
-#'    'extdata/stemcell.comparison/maxquant/proteinGroups.txt'  %>%
-#'     system.file(package = 'autonomics.data')                 %>%
-#'     autonomics.import::load_proteingroups_fnames()           %>%
-#'     head()
-#' }
-#' @importFrom magrittr %>%
-#' @export
-load_proteingroups_fnames <- function(file){
-   x <- file                                          %>%
-        autonomics.support::cfread()                  %>%
-        #magrittr::extract2('id')                     %>%
-        magrittr::extract2('Majority protein IDs')    %>%
-        stringi::stri_split_fixed(';')                %>%
-        vapply(extract, character(1), 1)
-   assertive::assert_has_no_duplicates(x)
-   x
-}
-
-#' Load proteingroups exprs
-#' @param file full path to proteinGroups.txt
-#' @param value_type value in autonomics.import::MAXQUANT_VALUE_TYPES
-#' @examples
-#'  require(magrittr)
-#'  if (require(autonomics.data)){
-#'
-#'    # Normalized Ratios
-#'    pattern <- 'Ratio (.+) normalized (.+)'
-#'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt'  %>%
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics.import::load_proteingroups_exprs(pattern) %>% str()
-#'
-#'    # Ratios
-#'    pattern <- 'Ratio .+ .'
 #' }
 #' @importFrom magrittr %>%
 #' @export
-load_proteingroups_exprs <- function(file, pattern){
-   dt <- file %>% autonomics.support::cfread()
-   fnames1 <- dt %>% magrittr::extract2('Majority protein IDs') %>%
-                     stringi::stri_split_fixed(';') %>%
-                     vapply(magrittr::extract, character(1), 1)
-   dt %>% magrittr::extract(, stringi::stri_detect_regex(names(.), pattern), with = FALSE) %>%
-          data.matrix() %>%
-          magrittr::set_rownames(fnames1)
+extract_proteingroups_fdata <- function(file){
+   file %>%
+   autonomics.support::cfread(select = c('Majority protein IDs', 'Gene names', 'Protein names')) %>%
+   data.frame(stringsAsFactors = FALSE) %>%
+   magrittr::set_rownames(autonomics.import::extract_maxquant_fnames(file))
 }
+
 
 #' Load proteingroups
 #' @param file full path to proteinGroups.txt
+#' @param quantity 'Ratio normalized', 'Ratio', 'Intensity', 'LFQ intensity', 'Reporter intensity'
+#' @param design_file full path to design file (created with write_maxquant_design)
 #' @examples
-#' file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
-#'                      package = 'autonomics.data')
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#'                         package = 'autonomics.data')
+#'    quantity <- 'Ratio normalized'
+#'    file %>%
+#' }
 #' @importFrom magrittr %>%
 #' @export
-load_proteingroups2 <- function(file){
-   DT <- autonomics.support::cfread(file)
+load_proteingroups2 <- function(file, quantity, design_file){
+
+   exprs_mat <- file %>% autonomics.import::extract_maxquant_exprs(quantity)
+   object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs = exprs_mat))
+   autonomics.import::fdata(object) <- file %>% autonomics.import::extract_proteingroups_fdata()
+   autonomics.import::sdata(object) <- file %>% autonomics.import::read_maxquant
+   object
+
 }

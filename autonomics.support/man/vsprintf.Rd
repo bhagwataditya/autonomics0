@@ -20,4 +20,8 @@ Vectorized sprintf
 \examples{
 vsprintf(fmt = '\%s.\%s', letters[1:3], 1:3)
 vsprintf(fmt = '\%s.\%s', letters[1:3], 1:3, first_slowest = FALSE)
+vsprintf('\%s [\%s]\%s', 
+         c("E(L).EM(M).BM(H).R1", "BM(L).E(M).EM(H).R2", "EM(L).BM(M).E(H).R3"), 
+         c("H/L", "H/M", "M/L"), 
+         '')
 }

@@ -4,15 +4,15 @@
 \alias{extract_maxquant_ratio_colnames}
 \title{Extract maxquant ratio colnames}
 \usage{
-extract_maxquant_ratio_colnames(file, normalized = FALSE)
+extract_maxquant_ratio_colnames(file, quantity)
 }
 \arguments{
 \item{file}{full path to proteinGroups.txt}
 
-\item{normalized}{logical}
+\item{quantity}{'Ratio' or 'Ratio normalized'}
 }
 \value{
-character vector with intensity column names
+character vector with ratio column names
 }
 \description{
 Extract maxquant ratio colnames
