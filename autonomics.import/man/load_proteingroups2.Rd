@@ -4,12 +4,17 @@
 \alias{load_proteingroups2}
 \title{Load proteingroups}
 \usage{
-load_proteingroups2(file, quantity)
+load_proteingroups2(file,
+  quantity = autonomics.import::infer_maxquant_quantity(file),
+  infer_design_from_sampleids = FALSE, design_file = NULL,
+  fasta_file = NULL, log2_transform = TRUE, log2_offset = 0)
 }
 \arguments{
 \item{file}{full path to proteinGroups.txt}
 
 \item{quantity}{'Ratio normalized', 'Ratio', 'Intensity', 'LFQ intensity', 'Reporter intensity'}
+
+\item{design_file}{full path to design file (created with write_maxquant_design)}
 }
 \description{
 Load proteingroups
@@ -19,7 +24,6 @@ require(magrittr)
 if (require(autonomics.data)){
    file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
                         package = 'autonomics.data')
-   quantity <- 'Ratio normalized'
-   file \%>\%
+   object <- file \%>\% autonomics.import::load_proteingroups2()
 }
 }
