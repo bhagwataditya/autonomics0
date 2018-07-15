@@ -89,11 +89,11 @@ filter_exiqon_features <- function(object, rm_ref_genes = TRUE, rm_spike = TRUE,
 
 
 #' Load exiqon file
-#' @param exiqon_file  string: path to exiqon txt file
-#' @param sample_file  NULL or string (path to sample file)
-#' @param infer_design logical: whether to infer design from samplesids
-#' @param rm_ref_genes logical: whether to rm reference genes
-#' @param rm_spike     logical: whether to rm spike-ins
+#' @param exiqon_file                  string: path to exiqon txt file
+#' @param sample_file                  NULL or string (path to sample file)
+#' @param infer_design_from_sampleids  logical: whether to infer design from samplesids
+#' @param rm_ref_genes                 logical: whether to rm reference genes
+#' @param rm_spike                     logical: whether to rm spike-ins
 #' @return eset
 #' @examples
 #' require(magrittr)
@@ -110,7 +110,7 @@ filter_exiqon_features <- function(object, rm_ref_genes = TRUE, rm_spike = TRUE,
 load_exiqon <- function(
    exiqon_file,
    sample_file  = NULL,
-   infer_design = TRUE,
+   infer_design_from_sampleids = TRUE,
    rm_ref_genes = TRUE,
    rm_spike     = TRUE
 ){
@@ -125,9 +125,9 @@ load_exiqon <- function(
   sample_cols  <- names(mir)    %in% autonomics.import::EXIQON_SAMPLE_COLS
 
   # Create components
-  feature_df   <- autonomics.import::load_exiqon_fdata(exiqon_file)
-  sample_df    <- autonomics.import::load_exiqon_sdata(exiqon_file)
-  exprs_mat    <- mir %>% magrittr::extract(!feature_rows, !sample_cols) %>% data.matrix() %>% t()
+  feature_df <- autonomics.import::load_exiqon_fdata(exiqon_file)
+  sample_df  <- autonomics.import::write_exiqon_design(exiqon_file, infer_from_sampleids = infer_design_from_sampleids)
+  exprs_mat  <- mir %>% magrittr::extract(!feature_rows, !sample_cols) %>% data.matrix() %>% t()
 
   # Create eset
   my_eset <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs = exprs_mat))
@@ -139,9 +139,6 @@ load_exiqon <- function(
      entity     = 'mirna',
      quantity   = 'ct',
      software   = 'genex')
-
-  # Standardize design
-  my_eset %>% autonomics.import::prepare_design(sampleid_var = 'sample_id', infer_design = infer_design)
 
   # Filter features
   my_eset %<>% autonomics.import::filter_exiqon_features(rm_ref_genes = rm_ref_genes,

@@ -10,15 +10,16 @@ load_exiqon_sdata(file)
 
 load_exiqon_fdata(file)
 
-load_exiqon(exiqon_file, sample_file = NULL, infer_design = TRUE,
-  rm_ref_genes = TRUE, rm_spike = TRUE)
+load_exiqon(exiqon_file, sample_file = NULL,
+  infer_design_from_sampleids = TRUE, rm_ref_genes = TRUE,
+  rm_spike = TRUE)
 }
 \arguments{
 \item{exiqon_file}{string: path to exiqon txt file}
 
 \item{sample_file}{NULL or string (path to sample file)}
 
-\item{infer_design}{logical: whether to infer design from samplesids}
+\item{infer_design_from_sampleids}{logical: whether to infer design from samplesids}
 
 \item{rm_ref_genes}{logical: whether to rm reference genes}
 
