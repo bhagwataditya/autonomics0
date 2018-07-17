@@ -1,5 +1,13 @@
 
-#' @rdname load_metabolon
+#' Load metabolon sdata
+#' @param file path to metabolon file
+#' @param sheet excell sheet number or name
+#' @return sample dataframe
+#' @examples
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+#'    file %>% load_metabolon_sdata(2) %>% extract(1:3, 1:3)
+#' }
 #' @importFrom magrittr %>%
 #' @export
 load_metabolon_sdata <- function(file, sheet){
@@ -11,7 +19,7 @@ load_metabolon_sdata <- function(file, sheet){
    fstart <- which(!is.na(df[,1]))[1]
    df %<>% magrittr::extract(1:fstart, (sstart+1):ncol(.)) %>%
            t() %>%
-           data.frame(stringsAsFactors = FALSE)            %>%
+           data.frame(stringsAsFactors = FALSE, check.names = FALSE)            %>%
            magrittr::set_names(df[[sstart]][1:fstart])     %>%
            magrittr::set_names(names(.) %>% stringi::stri_replace_first_fixed( 'Group   HMDB_ID', 'Group') %>% # recent metabolon files
                                             stringi::stri_replace_first_fixed('Sample   HMDB_ID', 'Group'))    # older metabolon files
@@ -21,7 +29,16 @@ load_metabolon_sdata <- function(file, sheet){
    df
 }
 
-#' @rdname load_metabolon
+
+#' Load metabolon fdata
+#' @param file path to metabolon file
+#' @param sheet excell sheet number or name
+#' @return sample dataframe
+#' @examples
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+#'    file %>% load_metabolon_fdata(2) %>% extract(1:3, 1:3)
+#' }
 #' @importFrom magrittr %>%
 #' @export
 load_metabolon_fdata <- function(file, sheet){
@@ -36,8 +53,35 @@ load_metabolon_fdata <- function(file, sheet){
           cbind(MCOMP_ID = rownames(.), .)
 }
 
+
+#' Load metabolon exprs
+#' @param file path to metabolon file
+#' @param sheet excell sheet number or name
+#' @return sample dataframe
+#' @examples
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+#'    file %>% load_metabolon_exprs(2) %>% extract(1:3, 1:3)
+#' }
+#' @importFrom magrittr %>%
+#' @export
+load_metabolon_exprs <- function(file, sheet){
+
+   df <- file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
+   sstart <- which(!is.na(df[1,]))[1]
+   fstart <- which(!is.na(df[,1]))[1]
+   sdata1 <- file %>% autonomics.import::load_metabolon_sdata(sheet = sheet)
+   fdata1 <- file %>% autonomics.import::load_metabolon_fdata(sheet = sheet)
+
+   df %>% magrittr::extract((fstart+1):nrow(.), (sstart+1):ncol(.)) %>%
+          data.matrix() %>%
+          magrittr::set_colnames(sdata1$CLIENT_IDENTIFIER) %>%
+          magrittr::set_rownames(fdata1$MCOMP_ID)
+}
+
+
 #' Load metabolon data
-#' @param file      metabolon xlsx file
+#' @param file                metabolon xlsx file
 #' @param design_file         NULL or character (sample design file)
 #' @param sheet               xls sheet name  or number
 #' @param log2_transform      logical: whether to log2 transform
@@ -63,7 +107,7 @@ load_metabolon_fdata <- function(file, sheet){
 #'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #'       # Merge in from sample file
 #'       design_file <- tempfile()
-#'       file %>% autonomics.import::write_metabolon_design(design_file, infer_from_sampleids = TRUE)
+#'       file %>% autonomics.import::write_metabolon_design(design_file = design_file, infer_from_sampleids = TRUE)
 #'       file %>% autonomics.import::load_metabolon(design_file = design_file) %>%
 #'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #' }
@@ -82,38 +126,20 @@ load_metabolon <- function(
    . <- NULL
 
    # Sheet
-   cur_sheet <- readxl::excel_sheets(file) %>%
-               (function(x){ names(x) <- x; x}) %>% magrittr::extract2(sheet)
+   all_sheets <- readxl::excel_sheets(file)
+   cur_sheet <- all_sheets %>% (function(x){ names(x) <- x; x}) %>% magrittr::extract2(sheet)
    autonomics.support::cmessage('Load  %s  %s', basename(file), cur_sheet)
 
-   # Get start points
-   df <- file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
-   sstart <- which(!is.na(df[1,]))[1]
-   fstart <- which(!is.na(df[,1]))[1]
-
-   # Load components
-   sdata1 <- autonomics.import::load_metabolon_sdata(file, sheet=sheet)
-   fdata1 <- autonomics.import::load_metabolon_fdata(file, sheet=sheet)
-   exprs1 <- df %>% magrittr::extract((fstart+1):nrow(.), (sstart+1):ncol(.)) %>%
-                    data.matrix() %>%
-                    magrittr::set_colnames(sdata1$CLIENT_IDENTIFIER) %>%
-                    magrittr::set_rownames(fdata1$MCOMP_ID)
-
-   # Wrap into SummarizedExperiment
-   object <- SummarizedExperiment::SummarizedExperiment(assays=list(exprs = exprs1))
-   if (log2_transform)   autonomics.import::exprs(object) %<>% log2()
-   autonomics.import::sdata(object)  <- sdata1
-   autonomics.import::fdata(object)  <- fdata1
+   # Load sumexp
+   object <- autonomics.import::load_omics(file                        = file,
+                                           sheet                       = sheet,
+                                           platform                    = 'metabolon',
+                                           log2_transform              = log2_transform,
+                                           design_file                 = design_file,
+                                           infer_design_from_sampleids = infer_design_from_sampleids,
+                                           sampleid_var                = 'CLIENT_IDENTIFIER')
    autonomics.import::prepro(object) <- list(assay='lcms', entity='metabolite', quantity='intensities', software='metabolon')
    autonomics.import::annotation(object) <- ''
-
-   # Merge in design
-   design_df <- autonomics.import::write_metabolon_design(file, sheet = sheet, infer_from_sampleids = infer_design_from_sampleids)
-   object %<>% autonomics.import::merge_sdata(design_df, by = 'CLIENT_IDENTIFIER')
-   if (!is.null(design_file)){
-      file_df <- autonomics.import::read_metabolon_design(design_file)
-      object %<>% autonomics.import::merge_sdata(file_df, by = 'CLIENT_IDENTIFIER')
-   }
 
    # Annotate
    if (add_kegg_pathways){

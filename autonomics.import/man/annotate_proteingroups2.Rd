@@ -4,10 +4,12 @@
 \alias{annotate_proteingroups2}
 \title{Annotate and deconvolute proteingroups SumExp}
 \usage{
-annotate_proteingroups2(object)
+annotate_proteingroups2(object, fasta_file = NULL)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
+
+\item{fasta_file}{path to fasta file}
 }
 \description{
 Steps:

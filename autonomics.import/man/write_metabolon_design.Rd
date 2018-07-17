@@ -4,7 +4,7 @@
 \alias{write_metabolon_design}
 \title{Write metabolon design}
 \usage{
-write_metabolon_design(file, sheet, infer_from_sampleids = FALSE,
+write_metabolon_design(file, sheet = 2, infer_from_sampleids = FALSE,
   design_file = NULL)
 }
 \arguments{
@@ -23,10 +23,17 @@ design dataframe
 Write metabolon design
 }
 \examples{
+require(magrittr)
 if (require(autonomics.data)){
    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
                                   package = 'autonomics.data')
-   file \%>\% autonomics.import::write_metabolon_design(sheet=2)
-   file \%>\% autonomics.import::write_metabolon_design(infer_from_sampleids = TRUE, sheet=2)
+   file \%>\% write_metabolon_design() \%>\% head()
+   file \%>\% write_metabolon_design() \%>\% head()
+   file \%>\% write_metabolon_design(infer_from_sampleids = TRUE) \%>\% head()
+}
+file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
+if (file.exists(file)){
+   file \%>\% write_metabolon_design() \%>\% head(3)
+   file \%>\% write_metabolon_design(infer_from_sampleids = TRUE) \%>\% head(3)
 }
 }

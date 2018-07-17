@@ -21,7 +21,14 @@ if (require(autonomics.data)){
    design_file <- tempfile()
    system.file('extdata/glutaminase/glutaminase.xlsx',
                 package = 'autonomics.data') \%>\%
-   autonomics.import::write_metabolon_design(design_file, infer_from_sampleids = TRUE)
-   design_file \%>\% read_metabolon_design()
+   autonomics.import::write_metabolon_design(design_file = design_file, infer_from_sampleids = TRUE)
+   design_file \%>\% read_metabolon_design() \%>\% head()
+}
+file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
+if (file.exists(file)){
+   design_file <- tempfile()
+   autonomics.import::write_metabolon_design(file, design_file = design_file,
+                                                   infer_from_sampleids = TRUE) \%>\% head()
+   design_file \%>\% read_metabolon_design() \%>\% head()
 }
 }
