@@ -73,11 +73,11 @@ validify_sample_ids <- function(x){
 #' @examples
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% load_metabolon_sdata(2) %>% extract(1:3, 1:3)
+#'    file %>% load_sdata_metabolon(2) %>% extract(1:3, 1:3)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-load_metabolon_sdata <- function(file, sheet){
+load_sdata_metabolon <- function(file, sheet){
 
    # Load sample data
    . <- NULL
@@ -116,16 +116,16 @@ METABOLONLIPIDS_SHEETS <- c('Lipid Class Concentrations',
 #' require(magrittr)
 #' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 #' if (file.exists(file)){
-#'    file %>% load_metabolonlipids_sdata('Lipid Class Concentrations') %>% head()
-#'    file %>% load_metabolonlipids_sdata(    'Species Concentrations') %>% head()
-#'    file %>% load_metabolonlipids_sdata( 'Fatty Acid Concentrations') %>% head()
-#'    file %>% load_metabolonlipids_sdata('Lipid Class Compositions')   %>% head()
-#'    file %>% load_metabolonlipids_sdata(    'Species Compositions')   %>% head()
-#'    file %>% load_metabolonlipids_sdata( 'Fatty Acid Compositions')   %>% head()
+#'    file %>% load_sdata_metabolonlipids('Lipid Class Concentrations') %>% head()
+#'    file %>% load_sdata_metabolonlipids(    'Species Concentrations') %>% head()
+#'    file %>% load_sdata_metabolonlipids( 'Fatty Acid Concentrations') %>% head()
+#'    file %>% load_sdata_metabolonlipids('Lipid Class Compositions')   %>% head()
+#'    file %>% load_sdata_metabolonlipids(    'Species Compositions')   %>% head()
+#'    file %>% load_sdata_metabolonlipids( 'Fatty Acid Compositions')   %>% head()
 #' }
 #' @importFrom magrittr %>%
 #' @export
-load_metabolonlipids_sdata <- function(file, sheet){
+load_sdata_metabolonlipids <- function(file, sheet){
    x <- file %>% readxl::read_excel(sheet = sheet)
    row1 <- which(x[[2]]=='Client Identifier')
    coln <- which(x[row1, ] == 'Unit')
@@ -145,17 +145,17 @@ load_metabolonlipids_sdata <- function(file, sheet){
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
 #'                         package = 'autonomics.data')
-#'    file %>% autonomics.import::load_soma_sdata() %>% head()
+#'    file %>% autonomics.import::load_sdata_somascan() %>% head()
 #' }
 #' if (require(atkin.2014)){
 #'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
 #'                         package = 'atkin.2014')
-#'    file %>% autonomics.import::load_soma_sdata() %>% head()
+#'    file %>% autonomics.import::load_sdata_somascan() %>% head()
 #' }
 #' @author Aditya Bhagwat
 #' @importFrom magrittr %>%
 #' @export
-load_soma_sdata <- function(file){
+load_sdata_somascan <- function(file){
    x <- file %>% autonomics.import::identify_soma_structure()
 
    file %>%
@@ -186,9 +186,9 @@ load_soma_sdata <- function(file){
 #' @export
 load_sdata <- function(file, sheet = NULL, platform){
    switch(platform,
-          metabolonlipids = load_metabolonlipids_sdata(file = file, sheet = sheet),
-          metabolon       = load_metabolon_sdata(file = file, sheet = sheet),
-          soma            = load_soma_sdata(file))
+          metabolonlipids = load_sdata_metabolonlipids(file = file, sheet = sheet),
+          metabolon       = load_sdata_metabolon(file = file, sheet = sheet),
+          soma            = load_sdata_somascan(file))
 }
 
 
@@ -203,11 +203,11 @@ load_sdata <- function(file, sheet = NULL, platform){
 #' @examples
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% load_metabolon_fdata(2) %>% extract(1:3, 1:3)
+#'    file %>% load_fdata_metabolon(2) %>% extract(1:3, 1:3)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-load_metabolon_fdata <- function(file, sheet){
+load_fdata_metabolon <- function(file, sheet){
    . <- NULL
    df <- file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
    sstart <- which(!is.na(df[1,]))[1]
@@ -230,16 +230,16 @@ load_metabolon_fdata <- function(file, sheet){
 #' require(magrittr)
 #' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 #' if (file.exists(file)){
-#'    file %>% load_metabolonlipids_fdata('Lipid Class Concentrations') %>% head()
-#'    file %>% load_metabolonlipids_fdata(    'Species Concentrations') %>% head()
-#'    file %>% load_metabolonlipids_fdata( 'Fatty Acid Concentrations') %>% head()
-#'    file %>% load_metabolonlipids_fdata('Lipid Class Compositions')   %>% head()
-#'    file %>% load_metabolonlipids_fdata(    'Species Compositions')   %>% head()
-#'    file %>% load_metabolonlipids_fdata( 'Fatty Acid Compositions')   %>% head()
+#'    file %>% load_fdata_metabolonlipids('Lipid Class Concentrations') %>% head()
+#'    file %>% load_fdata_metabolonlipids(    'Species Concentrations') %>% head()
+#'    file %>% load_fdata_metabolonlipids( 'Fatty Acid Concentrations') %>% head()
+#'    file %>% load_fdata_metabolonlipids('Lipid Class Compositions')   %>% head()
+#'    file %>% load_fdata_metabolonlipids(    'Species Compositions')   %>% head()
+#'    file %>% load_fdata_metabolonlipids( 'Fatty Acid Compositions')   %>% head()
 #' }
 #' @importFrom magrittr %>%
 #' @export
-load_metabolonlipids_fdata <- function(file, sheet){
+load_fdata_metabolonlipids <- function(file, sheet){
    all_sheets <- readxl::excel_sheets(file) %>% (function(x) x %>% magrittr::set_names(x))
 
    x <- file %>% readxl::read_excel(sheet = sheet)
@@ -261,17 +261,17 @@ load_metabolonlipids_fdata <- function(file, sheet){
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
 #'                         package = 'autonomics.data')
-#'    file %>% autonomics.import::load_soma_fdata() %>% head()
+#'    file %>% autonomics.import::load_fdata_soma() %>% head()
 #' }
 #' if (require(atkin.2014)){
 #'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
 #'                         package = 'atkin.2014')
-#'    file %>% autonomics.import::load_soma_fdata() %>% head()
+#'    file %>% autonomics.import::load_fdata_soma() %>% head()
 #' }
 #' @author Aditya Bhagwat
 #' @importFrom magrittr %>%
 #' @export
-load_soma_fdata <- function(file){
+load_fdata_soma <- function(file){
    x <- file %>% autonomics.import::identify_soma_structure()
 
    file %>%
@@ -304,9 +304,9 @@ load_soma_fdata <- function(file){
 #' @export
 load_fdata <- function(file, sheet = NULL, platform){
    switch(platform,
-          metabolonlipids = load_metabolonlipids_fdata(file = file, sheet = sheet),
-          metabolon       = load_metabolon_fdata(      file = file, sheet = sheet),
-          soma            = load_soma_fdata(file))
+          metabolonlipids = load_fdata_metabolonlipids(file = file, sheet = sheet),
+          metabolon       = load_fdata_metabolon(      file = file, sheet = sheet),
+          soma            = load_fdata_soma(file))
 }
 
 
@@ -321,17 +321,17 @@ load_fdata <- function(file, sheet = NULL, platform){
 #' @examples
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% load_metabolon_exprs(2) %>% extract(1:3, 1:3)
+#'    file %>% load_exprs_metabolon(2) %>% extract(1:3, 1:3)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-load_metabolon_exprs <- function(file, sheet){
+load_exprs_metabolon <- function(file, sheet){
 
    df <- file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
    sstart <- which(!is.na(df[1,]))[1]
    fstart <- which(!is.na(df[,1]))[1]
-   sdata1 <- file %>% autonomics.import::load_metabolon_sdata(sheet = sheet)
-   fdata1 <- file %>% autonomics.import::load_metabolon_fdata(sheet = sheet)
+   sdata1 <- file %>% autonomics.import::load_sdata_metabolon(sheet = sheet)
+   fdata1 <- file %>% autonomics.import::load_fdata_metabolon(sheet = sheet)
 
    df %>% magrittr::extract((fstart+1):nrow(.), (sstart+1):ncol(.)) %>%
       data.matrix() %>%
@@ -349,16 +349,16 @@ load_metabolon_exprs <- function(file, sheet){
 #' require(magrittr)
 #' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 #' if (file.exists(file)){
-#'    file %>% load_metabolonlipids_exprs('Lipid Class Concentrations') %>% extract(1:3,1:3)
-#'    file %>% load_metabolonlipids_exprs(    'Species Concentrations') %>% extract(1:3,1:3)
-#'    file %>% load_metabolonlipids_exprs( 'Fatty Acid Concentrations') %>% extract(1:3,1:3)
-#'    file %>% load_metabolonlipids_exprs('Lipid Class Compositions')   %>% extract(1:3,1:3)
-#'    file %>% load_metabolonlipids_exprs(    'Species Compositions')   %>% extract(1:3,1:3)
-#'    file %>% load_metabolonlipids_exprs( 'Fatty Acid Compositions')   %>% extract(1:3,1:3)
+#'    file %>% load_exprs_metabolonlipids('Lipid Class Concentrations') %>% extract(1:3,1:3)
+#'    file %>% load_exprs_metabolonlipids(    'Species Concentrations') %>% extract(1:3,1:3)
+#'    file %>% load_exprs_metabolonlipids( 'Fatty Acid Concentrations') %>% extract(1:3,1:3)
+#'    file %>% load_exprs_metabolonlipids('Lipid Class Compositions')   %>% extract(1:3,1:3)
+#'    file %>% load_exprs_metabolonlipids(    'Species Compositions')   %>% extract(1:3,1:3)
+#'    file %>% load_exprs_metabolonlipids( 'Fatty Acid Compositions')   %>% extract(1:3,1:3)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-load_metabolonlipids_exprs <- function(file, sheet){
+load_exprs_metabolonlipids <- function(file, sheet){
    all_sheets <- readxl::excel_sheets(file) %>% (function(x) x %>% magrittr::set_names(x))
 
    x <- file %>% readxl::read_excel(sheet = sheet)
@@ -384,20 +384,20 @@ load_metabolonlipids_exprs <- function(file, sheet){
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
 #'                         package = 'autonomics.data')
-#'    file %>% autonomics.import::load_soma_exprs()
+#'    file %>% autonomics.import::load_exprs_soma()
 #' }
 #' if (require(atkin.2014)){
 #'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
 #'                         package = 'atkin.2014')
-#'    file %>% autonomics.import::load_soma_exprs() %>% head()
+#'    file %>% autonomics.import::load_exprs_soma() %>% head()
 #' }
 #' @author Aditya Bhagwat
 #' @importFrom magrittr %>%
 #' @export
-load_soma_exprs <- function(file){
+load_exprs_soma <- function(file){
    x      <- file %>% autonomics.import::identify_soma_structure()
-   fdata1 <- file %>% autonomics.import::load_soma_fdata()
-   sdata1 <- file %>% autonomics.import::load_soma_sdata()
+   fdata1 <- file %>% autonomics.import::load_fdata_soma()
+   sdata1 <- file %>% autonomics.import::load_sdata_somascan()
 
    file %>%
       data.table::fread(header = FALSE, sep = '\t', fill = TRUE) %>%
@@ -429,9 +429,9 @@ load_soma_exprs <- function(file){
 #' @export
 load_exprs <- function(file, sheet = NULL, platform){
    switch(platform,
-          metabolonlipids = load_metabolonlipids_exprs(file = file, sheet = sheet),
-          metabolon       = load_metabolon_exprs(      file = file, sheet = sheet),
-          soma            = load_soma_exprs(file))
+          metabolonlipids = load_exprs_metabolonlipids(file = file, sheet = sheet),
+          metabolon       = load_exprs_metabolon(      file = file, sheet = sheet),
+          soma            = load_exprs_soma(file))
 }
 
 #===========================================
@@ -502,7 +502,7 @@ load_omics <- function(
 #' @param add_kegg_pathways   logical: whether to add KEGG pathways to fdata
 #' @param add_smiles          logical: whether to add SMILES to fdata
 #' @param ... (backward compatibility)
-#' @return SummarizedExperiment (load_metabolon) or dataframe (load_metabolon_sdata, load_metabolon_fdata)
+#' @return SummarizedExperiment (load_metabolon) or dataframe (load_sdata_metabolon, load_fdata_metabolon)
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){

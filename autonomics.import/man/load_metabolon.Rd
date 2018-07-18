@@ -26,7 +26,7 @@ load_metabolon(file, sheet = 2, design_file = NULL, log2_transform = TRUE,
 \item{...}{(backward compatibility)}
 }
 \value{
-SummarizedExperiment (load_metabolon) or dataframe (load_metabolon_sdata, load_metabolon_fdata)
+SummarizedExperiment (load_metabolon) or dataframe (load_sdata_metabolon, load_fdata_metabolon)
 }
 \description{
 Load metabolon data
