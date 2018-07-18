@@ -89,7 +89,7 @@ filter_exiqon_features <- function(object, rm_ref_genes = TRUE, rm_spike = TRUE,
 
 
 #' Load exiqon file
-#' @param exiqon_file                  string: path to exiqon txt file
+#' @param file                  string: path to exiqon txt file
 #' @param sample_file                  NULL or string (path to sample file)
 #' @param infer_design_from_sampleids  logical: whether to infer design from samplesids
 #' @param rm_ref_genes                 logical: whether to rm reference genes
@@ -98,17 +98,17 @@ filter_exiqon_features <- function(object, rm_ref_genes = TRUE, rm_spike = TRUE,
 #' @examples
 #' require(magrittr)
 #' if (require(subramanian.2016)){
-#'    exiqon_file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
 #'                                package = 'subramanian.2016')
-#'    exiqon_file %>% autonomics.import::load_exiqon()
-#'    exiqon_file %>% autonomics.import::load_exiqon(infer_design = FALSE)
-#'    exiqon_file %>% autonomics.import::load_exiqon_sdata() %>% head(1)
-#'    exiqon_file %>% autonomics.import::load_exiqon_fdata() %>% head(1)
+#'    file %>% autonomics.import::load_exiqon()
+#'    file %>% autonomics.import::load_exiqon(infer_design = FALSE)
+#'    file %>% autonomics.import::load_exiqon_sdata() %>% head(1)
+#'    file %>% autonomics.import::load_exiqon_fdata() %>% head(1)
 #' }
 #' @importFrom magrittr %>%
 #' @export
 load_exiqon <- function(
-   exiqon_file,
+   file,
    sample_file  = NULL,
    infer_design_from_sampleids = TRUE,
    rm_ref_genes = TRUE,
@@ -118,15 +118,15 @@ load_exiqon <- function(
    . <- NULL
 
   # Load from file
-   mir <- readxl::read_excel(exiqon_file) %>% as.data.frame() %>% magrittr::set_rownames(.$Exiqon)
+   mir <- readxl::read_excel(file) %>% as.data.frame() %>% magrittr::set_rownames(.$Exiqon)
 
   # Define feature rows and sample cols
   feature_rows <- rownames(mir) %in% autonomics.import::EXIQON_FEATURE_ROWS
   sample_cols  <- names(mir)    %in% autonomics.import::EXIQON_SAMPLE_COLS
 
   # Create components
-  feature_df <- autonomics.import::load_exiqon_fdata(exiqon_file)
-  sample_df  <- autonomics.import::write_exiqon_design(exiqon_file, infer_from_sampleids = infer_design_from_sampleids)
+  feature_df <- autonomics.import::load_exiqon_fdata(file)
+  sample_df  <- autonomics.import::write_exiqon_design(file, infer_from_sampleids = infer_design_from_sampleids)
   exprs_mat  <- mir %>% magrittr::extract(!feature_rows, !sample_cols) %>% data.matrix() %>% t()
 
   # Create eset
@@ -148,7 +148,7 @@ load_exiqon <- function(
 }
 
 
-load_exiqon_file <- function(...){
+load_file <- function(...){
    .Deprecated('load_exiqon')
    load_exiqon(...)
 }

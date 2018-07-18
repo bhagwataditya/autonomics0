@@ -26,15 +26,15 @@ Filter features on condition
 require(magrittr)
 if (require(autonomics.data)){
    autonomics.data::ALL \%>\%
-   autonomics.import::filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1') )
+   filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1') )
 
    autonomics.data::ALL \%>\%
-   autonomics.import::filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1'), verbose = TRUE)
+   filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1'), verbose = TRUE)
 
    autonomics.data::ALL \%>\%
-   autonomics.import::filter_features_("gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1')")
+   filter_features_("gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1')")
 
    autonomics.data::ALL \%>\%
-   autonomics.import::filter_features_("gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1')", verbose = TRUE)
+   filter_features_("gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1')", verbose = TRUE)
 }
 }

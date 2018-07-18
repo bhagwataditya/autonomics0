@@ -13,7 +13,7 @@ check_sumexp <- function(object){
       #----------------
    } else if (any(is.na(autonomics.import::sdata(object)$subgroup))){
       i <- i+1
-      msg <- sprinf("%s\n   %d. Complete 'subgroup': object$subgroup contains missing values", msg, i)
+      msg <- sprintf("%s\n   %d. Complete 'subgroup': object$subgroup contains missing values", msg, i)
    }
 
    # block var

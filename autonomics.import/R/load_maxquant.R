@@ -369,7 +369,7 @@ get_maxquant_npeptides <- function(DT, value_type){
    # Assert
    assertive.types::assert_is_data.table(DT)
    assertive.sets::assert_is_subset(value_type, autonomics.import::MAXQUANT_VALUE_TYPES)
-   assertive::assert_all_are_not_na(DT$id)
+   assertive.base::assert_all_are_not_na(DT$id)
 
    # Extract
    sample_ids <- DT %>% autonomics.import::get_maxquant_value_columns(value_type) %>% names()
@@ -1140,7 +1140,8 @@ add_maxquant_sdata <- function(object, design_file){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    maxquant_dir       <- system.file('extdata/stemcell.differentiation/maxquant', package = 'autonomics.data')
+#'    maxquant_dir       <- system.file('extdata/stemcell.differentiation/maxquant',
+#'                                       package = 'autonomics.data')
 #'    proteingroups_file <- paste0(maxquant_dir, '/proteinGroups.txt')
 #'    phosphosites_file  <- paste0(maxquant_dir, '/phospho (STY)Sites.txt')
 #'    parameter_file     <- paste0(maxquant_dir, '/parameters.txt')

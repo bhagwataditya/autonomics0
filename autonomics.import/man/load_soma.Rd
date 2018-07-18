@@ -59,8 +59,8 @@ if (require(autonomics.data)){
 
       # Specified through sample file
       design_file <- tempfile()
-      file \%>\% autonomics.import::write_design('soma', infer_from_sampleids = TRUE, design_file = design_file)
-      file \%>\% autonomics.import::load_soma(design_file = design_file) \%>\%
+      file \%>\% write_design('soma', infer_from_sampleids = TRUE, design_file = design_file)
+      file \%>\% load_soma(design_file = design_file) \%>\%
                autonomics.import::sdata() \%>\% head()
 }
 if (require(atkin.2014)){

@@ -23,7 +23,8 @@ Convert long data table into eset
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   maxquant_dir       <- system.file('extdata/stemcell.differentiation/maxquant', package = 'autonomics.data')
+   maxquant_dir       <- system.file('extdata/stemcell.differentiation/maxquant',
+                                      package = 'autonomics.data')
    proteingroups_file <- paste0(maxquant_dir, '/proteinGroups.txt')
    phosphosites_file  <- paste0(maxquant_dir, '/phospho (STY)Sites.txt')
    parameter_file     <- paste0(maxquant_dir, '/parameters.txt')

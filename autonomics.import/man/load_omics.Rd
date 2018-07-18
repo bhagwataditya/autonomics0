@@ -30,10 +30,10 @@ Load omics
  require(magrittr)
  if (require(autonomics.data)){
     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-    file \%>\% load_omics(2, 'metabolon')
+    file \%>\% load_omics(sheet=2, platform = 'metabolon')
  }
 file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 if (file.exists(file)){
-   file \%>\% load_omics('Lipid Class Concentrations', 'metabolonlipids')
+   file \%>\% load_omics(sheet = 'Lipid Class Concentrations', platform = 'metabolonlipids')
 }
 }

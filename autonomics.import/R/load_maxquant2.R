@@ -91,7 +91,6 @@ extract_maxquant_fnames <- function(file){
 #'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
 #'    file %>% autonomics.import::extract_maxquant_intensity_colnames() %>% head(3)
-#'    file %>%
 #' }
 #' if (require(graumann.lfq)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
@@ -228,6 +227,8 @@ extract_maxquant_exprs <- function(file, quantity = 'Intensity'){
 #' @importFrom magrittr %>%
 #' @export
 extract_maxquant_fdata <- function(file){
+   `Majority protein IDs` <- NULL
+
    file %>%
    autonomics.support::cfread(select = c('Majority protein IDs', 'Gene names', 'Protein names')) %>%
    magrittr::extract(, feature_id := `Majority protein IDs` %>% stringi::stri_split_fixed(';') %>% vapply(extract, character(1), 1)) %>%
@@ -261,9 +262,13 @@ infer_maxquant_quantity <- function(file){
 
 
 #' Load proteingroups
-#' @param file full path to proteinGroups.txt
-#' @param quantity 'Ratio normalized', 'Ratio', 'Intensity', 'LFQ intensity', 'Reporter intensity'
-#' @param design_file full path to design file (created with write_maxquant_design)
+#' @param file            path to proteinGroups.txt
+#' @param quantity       'Ratio normalized', 'Ratio', 'Intensity', 'LFQ intensity', 'Reporter intensity'
+#' @param infer_design_from_sampleids  logical: whether to infer design from sampleids
+#' @param design_file     path to design file (created with write_maxquant_design)
+#' @param fasta_file      path to uniprot fasta database
+#' @param log2_transform  logical: whether to log2 transform
+#' @param log2_offset     numeric: offset used in mapping: x -> log2(offset + x)
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
@@ -338,6 +343,7 @@ load_proteingroups2 <- function(
 #' @importFrom magrittr     %>%
 #' @export
 annotate_proteingroups2 <- function(object, fasta_file = NULL){
+   Uniprot <- NULL
 
    # rm existing annotation to avoid confusion
    autonomics.import::fdata(object)$`Gene names`    <- NULL

@@ -20,12 +20,12 @@ require(magrittr)
 if (require(autonomics.data)){
    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
                         package = 'autonomics.data')
-   file \%>\% autonomics.import::load_exprs_soma()
+   file \%>\% autonomics.import::load_exprs_soma() \%>\% extract(1:3, 1:3)
 }
 if (require(atkin.2014)){
    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
                         package = 'atkin.2014')
-   file \%>\% autonomics.import::load_exprs_soma() \%>\% head()
+   file \%>\% autonomics.import::load_exprs_soma() \%>\% extract(1:3, 1:3)
 }
 }
 \author{

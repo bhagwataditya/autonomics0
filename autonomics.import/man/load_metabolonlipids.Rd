@@ -12,9 +12,11 @@ load_metabolonlipids(file, sheet, log2_transform = TRUE, design_file = NULL,
 
 \item{sheet}{name of excel sheet (any value in METABOLONLIPIDS_SHEETS)}
 
+\item{log2_transform}{logical: whether to log2 transform}
+
 \item{design_file}{path to sample design file}
 
-\item{infer_from_sampleids}{logical}
+\item{infer_design_from_sampleids}{logical: whether to infer design from sampleids}
 }
 \value{
 SummarizedExperiment

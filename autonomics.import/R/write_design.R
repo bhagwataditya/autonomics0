@@ -110,6 +110,7 @@ infer_design_from_sampleids <- function(
 #' @importFrom magrittr %>%
 #' @export
 add_replicate_values <- function(design_df){
+   sample_id <- NULL
    design_df %>% data.table::data.table() %>%
                  magrittr::extract(, replicate := autonomics.support::get_unique_tails(sample_id), by = 'subgroup') %>%
                  data.frame(row.names = rownames(design_df), check.names = FALSE)
@@ -155,6 +156,7 @@ write_design_file <- function(design_df, design_file){
 #' Designify maxquant sampleids
 #' @param sampleids character vector
 #' @examples
+#' require(magrittr)
 #' sampleids <- c("STD(L).EM00(M).EM01(H).R1[H/L]",
 #'                "STD(L).EM00(M).EM01(H).R1[M/L]")
 #' sampleids %>% autonomics.import::designify_maxquant_sampleids()
@@ -417,6 +419,7 @@ write_exiqon_design <- function(
 
 #' Write design for metabolon, metabolonlipids, or soma data
 #' @param file                   string: path to metabolon file
+#' @param platform               'metabolon', 'metabolonlipids', or 'soma'
 #' @param sheet                  character(1) or numeric(1): xls sheet
 #' @param infer_from_sampleids   logical: whether to infer design from CLIENT_IDENTIFIER
 #' @param design_file            string: path to design file
@@ -525,7 +528,7 @@ write_design <- function(
 #'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
 #'                 package = 'autonomics.data')
 #'    design_file <- tempfile()
-#'    autonomics.import::write_design(file, 'soma', infer_from_sampleids = TRUE, design_file = design_file)
+#'    write_design(file, 'soma', infer_from_sampleids = TRUE, design_file = design_file)
 #'    read_design(design_file) %>% head()
 #' }
 #' @importFrom magrittr %<>%

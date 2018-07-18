@@ -13,6 +13,7 @@ designify_maxquant_sampleids(sampleids)
 Designify maxquant sampleids
 }
 \examples{
+require(magrittr)
 sampleids <- c("STD(L).EM00(M).EM01(H).R1[H/L]",
                "STD(L).EM00(M).EM01(H).R1[M/L]")
 sampleids \%>\% autonomics.import::designify_maxquant_sampleids()

@@ -13,9 +13,12 @@
 #'    billing.differentiation.data::protein.ratios %>% scomponents('subgroup')
 #'    billing.differentiation.data::protein.ratios %>% subgroup_components()
 #' }
-#' if (require(halama.2016)){
-#'    halama.2016::cell.metabolites  %>% scomponents('subgroup')
-#'    halama.2016::cell.metabolites  %>% subgroup_components()
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
+#'                         package = 'autonomics.data')
+#'    object <- autonomics.import::load_metabolon(file)
+#'    object  %>% scomponents('subgroup')
+#'    object  %>% subgroup_components()
 #' }
 #' if (require(subramanian.2016)){
 #'    subramanian.2016::metabolon    %>% scomponents('subgroup')

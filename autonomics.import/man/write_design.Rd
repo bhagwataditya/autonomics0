@@ -10,6 +10,8 @@ write_design(file, platform, infer_from_sampleids = FALSE,
 \arguments{
 \item{file}{string: path to metabolon file}
 
+\item{platform}{'metabolon', 'metabolonlipids', or 'soma'}
+
 \item{infer_from_sampleids}{logical: whether to infer design from CLIENT_IDENTIFIER}
 
 \item{design_file}{string: path to design file}

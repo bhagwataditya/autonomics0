@@ -1,3 +1,15 @@
+#=======================================
+# sampleid_varname & subgroup_varname
+#=======================================
+
+#' Get sampleid svar name
+#' @param platform 'metabolonlipids', 'metabolon', 'soma'
+#' @return string
+#' @examples
+#' sampleid_varname('metabolonlipids')
+#' sampleid_varname('metabolon')
+#' sampleid_varname('soma')
+#' @export
 sampleid_varname <- function(platform){
    switch(platform,
           metabolonlipids = 'Client Identifier',
@@ -5,6 +17,14 @@ sampleid_varname <- function(platform){
           soma            = 'SampleId')
 }
 
+#' Get subgroup svar name
+#' @param platform 'metabolonlipids', 'metabolon', 'soma'
+#' @return string
+#' @examples
+#' subgroup_varname('metabolonlipids')
+#' subgroup_varname('metabolon')
+#' subgroup_varname('soma')
+#' @export
 subgroup_varname <- function(platform){
    switch(platform,
           metabolonlipids = 'Group',
@@ -145,17 +165,17 @@ load_sdata_metabolonlipids <- function(file, sheet){
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
 #'                         package = 'autonomics.data')
-#'    file %>% autonomics.import::load_sdata_somascan() %>% head()
+#'    file %>% autonomics.import::load_sdata_soma() %>% head()
 #' }
 #' if (require(atkin.2014)){
 #'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
 #'                         package = 'atkin.2014')
-#'    file %>% autonomics.import::load_sdata_somascan() %>% head()
+#'    file %>% autonomics.import::load_sdata_soma() %>% head()
 #' }
 #' @author Aditya Bhagwat
 #' @importFrom magrittr %>%
 #' @export
-load_sdata_somascan <- function(file){
+load_sdata_soma <- function(file){
    x <- file %>% autonomics.import::identify_soma_structure()
 
    file %>%
@@ -188,7 +208,7 @@ load_sdata <- function(file, sheet = NULL, platform){
    switch(platform,
           metabolonlipids = load_sdata_metabolonlipids(file = file, sheet = sheet),
           metabolon       = load_sdata_metabolon(file = file, sheet = sheet),
-          soma            = load_sdata_somascan(file))
+          soma            = load_sdata_soma(file))
 }
 
 
@@ -384,12 +404,12 @@ load_exprs_metabolonlipids <- function(file, sheet){
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
 #'                         package = 'autonomics.data')
-#'    file %>% autonomics.import::load_exprs_soma()
+#'    file %>% autonomics.import::load_exprs_soma() %>% extract(1:3, 1:3)
 #' }
 #' if (require(atkin.2014)){
 #'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
 #'                         package = 'atkin.2014')
-#'    file %>% autonomics.import::load_exprs_soma() %>% head()
+#'    file %>% autonomics.import::load_exprs_soma() %>% extract(1:3, 1:3)
 #' }
 #' @author Aditya Bhagwat
 #' @importFrom magrittr %>%
@@ -397,7 +417,7 @@ load_exprs_metabolonlipids <- function(file, sheet){
 load_exprs_soma <- function(file){
    x      <- file %>% autonomics.import::identify_soma_structure()
    fdata1 <- file %>% autonomics.import::load_fdata_soma()
-   sdata1 <- file %>% autonomics.import::load_sdata_somascan()
+   sdata1 <- file %>% autonomics.import::load_sdata_soma()
 
    file %>%
       data.table::fread(header = FALSE, sep = '\t', fill = TRUE) %>%
@@ -450,11 +470,11 @@ load_exprs <- function(file, sheet = NULL, platform){
 #'  require(magrittr)
 #'  if (require(autonomics.data)){
 #'     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'     file %>% load_omics(2, 'metabolon')
+#'     file %>% load_omics(sheet=2, platform = 'metabolon')
 #'  }
 #' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 #' if (file.exists(file)){
-#'    file %>% load_omics('Lipid Class Concentrations', 'metabolonlipids')
+#'    file %>% load_omics(sheet = 'Lipid Class Concentrations', platform = 'metabolonlipids')
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -509,20 +529,20 @@ load_omics <- function(
 #'
 #'    # Loading metabolon file is easy
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% autonomics.import::load_metabolon()
+#'    file %>% load_metabolon()
 #'
 #'    # Three ways to specify sample design
 #'       # Use Group definition in metabolon file
-#'       file %>% autonomics.import::load_metabolon() %>%
+#'       file %>% load_metabolon() %>%
 #'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #'       # Infer from sample id values
-#'       file %>% autonomics.import::load_metabolon(infer_design_from_sampleids = TRUE) %>%
-#'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
+#'       file %>% load_metabolon(infer_design_from_sampleids = TRUE) %>%
+#'                autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #'       # Merge in from sample file
 #'       design_file <- tempfile()
-#'       file %>% autonomics.import::write_design('metabolon', infer_from_sampleids = TRUE, design_file = design_file)
-#'       file %>% autonomics.import::load_metabolon(design_file = design_file) %>%
-#'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
+#'       file %>% write_design('metabolon', infer_from_sampleids = TRUE, design_file = design_file)
+#'       file %>% load_metabolon(design_file = design_file) %>%
+#'                autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -572,10 +592,11 @@ load_metabolon <- function(
 #'
 #' Load data from metabolon complex lipid panel (clp) file
 #'
-#' @param file         path to metabolon lipids file
-#' @param sheet name of excel sheet (any value in METABOLONLIPIDS_SHEETS)
-#' @param design_file  path to sample design file
-#' @param infer_from_sampleids logical
+#' @param file            path to metabolon lipids file
+#' @param sheet           name of excel sheet (any value in METABOLONLIPIDS_SHEETS)
+#' @param log2_transform  logical: whether to log2 transform
+#' @param design_file     path to sample design file
+#' @param infer_design_from_sampleids  logical: whether to infer design from sampleids
 #' @return SummarizedExperiment
 #' @examples
 #' require(magrittr)
@@ -649,8 +670,8 @@ load_metabolonlipids <- function(
 #'
 #'       # Specified through sample file
 #'       design_file <- tempfile()
-#'       file %>% autonomics.import::write_design('soma', infer_from_sampleids = TRUE, design_file = design_file)
-#'       file %>% autonomics.import::load_soma(design_file = design_file) %>%
+#'       file %>% write_design('soma', infer_from_sampleids = TRUE, design_file = design_file)
+#'       file %>% load_soma(design_file = design_file) %>%
 #'                autonomics.import::sdata() %>% head()
 #' }
 #' if (require(atkin.2014)){
@@ -674,6 +695,7 @@ load_soma <- function(
    rm_na_svars                 = TRUE,
    rm_single_value_svars       = TRUE
 ){
+   SampleType <- RowCheck <- Type <- ColCheck <- NULL
 
    # Load sumexp
    object <- load_omics(file                        = file,

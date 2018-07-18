@@ -31,8 +31,8 @@ merge_sdata <- function(object, newdata, by, newdata_first = FALSE){
    # Assert
    assertive.sets::assert_is_subset(by, autonomics.import::svars(object))
    assertive.sets::assert_is_subset(by, names(newdata))
-   assertive::assert_all_are_non_missing_nor_empty_character(object    %>% autonomics.import::svalues(by) %>% as.character())
-   assertive::assert_all_are_non_missing_nor_empty_character(newdata %>% magrittr::extract2(by) %>% as.character())
+   assertive.strings::assert_all_are_non_missing_nor_empty_character(object    %>% autonomics.import::svalues(by) %>% as.character())
+   assertive.strings::assert_all_are_non_missing_nor_empty_character(newdata %>% magrittr::extract2(by) %>% as.character())
    assertive.sets::assert_are_set_equal(object %>% autonomics.import::svalues(by), newdata %>% magrittr::extract2(by))
 
    # Common variables
@@ -87,8 +87,8 @@ merge_fdata <- function(object, newdata, by, newdata_first = FALSE){
    # Assert
    assertive.sets::assert_is_subset(by, autonomics.import::fvars(object))
    assertive.sets::assert_is_subset(by, names(newdata))
-   assertive::assert_all_are_non_missing_nor_empty_character(object  %>% autonomics.import::fvalues(by) %>% as.character())
-   assertive::assert_all_are_non_missing_nor_empty_character(newdata %>% magrittr::extract2(by) %>% as.character())
+   assertive.strings::assert_all_are_non_missing_nor_empty_character(object  %>% autonomics.import::fvalues(by) %>% as.character())
+   assertive.strings::assert_all_are_non_missing_nor_empty_character(newdata %>% magrittr::extract2(by) %>% as.character())
    assertive.sets::assert_are_set_equal(object %>% autonomics.import::fvalues(by), newdata %>% magrittr::extract2(by))
 
    # Common variables

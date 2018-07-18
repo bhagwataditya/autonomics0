@@ -10,11 +10,19 @@ load_proteingroups2(file,
   fasta_file = NULL, log2_transform = TRUE, log2_offset = 0)
 }
 \arguments{
-\item{file}{full path to proteinGroups.txt}
+\item{file}{path to proteinGroups.txt}
 
 \item{quantity}{'Ratio normalized', 'Ratio', 'Intensity', 'LFQ intensity', 'Reporter intensity'}
 
-\item{design_file}{full path to design file (created with write_maxquant_design)}
+\item{infer_design_from_sampleids}{logical: whether to infer design from sampleids}
+
+\item{design_file}{path to design file (created with write_maxquant_design)}
+
+\item{fasta_file}{path to uniprot fasta database}
+
+\item{log2_transform}{logical: whether to log2 transform}
+
+\item{log2_offset}{numeric: offset used in mapping: x -> log2(offset + x)}
 }
 \description{
 Load proteingroups

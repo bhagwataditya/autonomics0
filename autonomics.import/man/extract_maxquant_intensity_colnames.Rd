@@ -23,7 +23,6 @@ Extract maxquant intensity colnames
    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
    file \%>\% autonomics.import::extract_maxquant_intensity_colnames() \%>\% head(3)
-   file \%>\%
 }
 if (require(graumann.lfq)){
    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')

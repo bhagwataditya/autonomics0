@@ -22,9 +22,11 @@ require(magrittr)
       subramanian.2016::metabolon \%>\%
       autonomics.import::add_kegg_pathways_to_fdata()
    }
-   if (require(halama.2016)){
-      halama.2016::cell.metabolites \%>\%
-      autonomics.import::add_kegg_pathways_to_fdata()
+   if (require(autonomics.data)){
+      file <- system.file('extdata/glutaminase/glutaminase.xlsx',
+                           package = 'autonomics.data')
+      object <- autonomics.import::load_metabolon(file)
+      autonomics.import::add_kegg_pathways_to_fdata(object)
    }
 }
 }
