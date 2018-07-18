@@ -26,11 +26,11 @@ phosophosites data.table
 Load datatable with phosphosite ratios
 }
 \examples{
-require(magrittr)
-if (require(billing.differentiation.data)){
-  system.file('extdata/maxquant/phospho (STY)Sites.txt',
-               package = 'billing.differentiation.data') \%>\%
-  load_phosphosite_ratios_to_long_dt() \%>\%
-  str()
-}
+# require(magrittr)
+# if (require(billing.differentiation.data)){
+#  system.file('extdata/maxquant/phospho (STY)Sites.txt',
+#               package = 'billing.differentiation.data') \%>\%
+#  load_phosphosite_ratios_to_long_dt() \%>\%
+#  str()
+#}
 }

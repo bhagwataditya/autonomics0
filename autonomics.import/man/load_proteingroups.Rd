@@ -28,39 +28,39 @@ data.table or ExpressionSet
 Load proteingroup ratios/intensities
 }
 \examples{
-library(magrittr)
-if (require(autonomics.data)){
-
-   # STEM CELL COMPARISON
-   proteingroups_file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
-                                      package = 'autonomics.data')
-   design_file <- tempfile()
-   autonomics.import::write_maxquant_design(proteingroups_file,
-      infer_from_sampleids = TRUE, design_file = design_file)
-   proteingroups_file \%>\% autonomics.import::load_proteingroups(design_file = design_file)
-
-   # STEM CELL DIFFERENTIATION
-   proteingroups_file <- system.file(
-      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
-      package = 'autonomics.data')
-   design_file <- tempfile()
-   autonomics.import::write_maxquant_design(proteingroups_file,
-      design_file = design_file, infer_from_sampleids = TRUE)
-   proteingroups_file \%>\% autonomics.import::load_proteingroups(design_file = design_file)
-}
-if (require(billing.vesicles)){
-   proteingroups_file <- system.file('extdata/proteinGroups.txt',
-                                      package = 'billing.vesicles')
-   proteingroups_file \%>\% autonomics.import::load_proteingroups()
-}
-if (require(graumann.lfq)){
-   proteingroups_file <- system.file('extdata/proteinGroups.txt',
-                                      package = 'graumann.lfq') \%>\%
-   proteingroups_file \%>\% autonomics.import::load_proteingroups()
-}
-if (require(graumann.zebra)){
-   proteingroups_file <- system.file('extdata/proteinGroups.txt',
-                                      package = 'graumann.zebra')
-   proteingroups_file \%>\% autonomics.import::load_proteingroups()
-}
+#library(magrittr)
+#if (require(autonomics.data)){
+#
+#   # STEM CELL COMPARISON
+#   proteingroups_file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#                                      package = 'autonomics.data')
+#   design_file <- tempfile()
+#   autonomics.import::write_maxquant_design(proteingroups_file,
+#      infer_from_sampleids = TRUE, design_file = design_file)
+#   proteingroups_file \%>\% autonomics.import::load_proteingroups(design_file = design_file)
+#
+#   # STEM CELL DIFFERENTIATION
+#   proteingroups_file <- system.file(
+#      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#      package = 'autonomics.data')
+#   design_file <- tempfile()
+#   autonomics.import::write_maxquant_design(proteingroups_file,
+#      design_file = design_file, infer_from_sampleids = TRUE)
+#   proteingroups_file \%>\% autonomics.import::load_proteingroups(design_file = design_file)
+#}
+#if (require(billing.vesicles)){
+#   proteingroups_file <- system.file('extdata/proteinGroups.txt',
+#                                      package = 'billing.vesicles')
+#   proteingroups_file \%>\% autonomics.import::load_proteingroups()
+#}
+#if (require(graumann.lfq)){
+#   proteingroups_file <- system.file('extdata/proteinGroups.txt',
+#                                      package = 'graumann.lfq') \%>\%
+#   proteingroups_file \%>\% autonomics.import::load_proteingroups()
+#}
+#if (require(graumann.zebra)){
+#   proteingroups_file <- system.file('extdata/proteinGroups.txt',
+#                                      package = 'graumann.zebra')
+#   proteingroups_file \%>\% autonomics.import::load_proteingroups()
+#}
 }

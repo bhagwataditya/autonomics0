@@ -22,6 +22,6 @@ Extract maxquant ratio colnames
  if (require(autonomics.data)){
    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
-   file \%>\% autonomics.import::extract_maxquant_ratio_colnames() \%>\% head()
+   file \%>\% extract_maxquant_ratio_colnames('Ratio') \%>\% head()
 }
 }

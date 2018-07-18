@@ -18,6 +18,7 @@ sample dataframe
 Load metabolon sdata
 }
 \examples{
+require(magrittr)
 if (require(autonomics.data)){
    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
    file \%>\% load_sdata_metabolon(2) \%>\% extract(1:3, 1:3)

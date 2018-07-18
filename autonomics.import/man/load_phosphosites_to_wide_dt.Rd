@@ -21,11 +21,11 @@ load_phosphosites_to_wide_dt(phosphosites_file,
 Load phosphosites file into wide data.table
 }
 \examples{
-require(magrittr)
-if (require(autonomics.data)){
-   phosphosites_file <- system.file(
-      'extdata/stemcell.differentiation/maxquant/phospho (STY)Sites.txt',
-       package = 'autonomics.data')
-   phosphosites_file \%>\% load_phosphosites_to_wide_dt() \%>\% dim()
-}
+# require(magrittr)
+# if (require(autonomics.data)){
+#   phosphosites_file <- system.file(
+#      'extdata/stemcell.differentiation/maxquant/phospho (STY)Sites.txt',
+#       package = 'autonomics.data')
+#   phosphosites_file \%>\% load_phosphosites_to_wide_dt() \%>\% dim()
+#}
 }

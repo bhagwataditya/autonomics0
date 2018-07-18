@@ -22,19 +22,19 @@ proteingroups data.table
 Load protein table
 }
 \examples{
-require(magrittr)
-if (require(autonomics.data)){
-  proteingroups_file <- system.file(
-     'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
-     package = 'autonomics.data')
-  proteingroups_file \%>\% autonomics.import::load_proteingroups_to_long_dt() \%>\% str()
-}
-if (require(graumann.lfq)){
-  system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') \%>\%
-     autonomics.import::load_proteingroups_to_long_dt() \%>\% str()
-}
-if (require(billing.vesicles)){
-  system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') \%>\%
-     autonomics.import::load_proteingroups_to_long_dt() \%>\% str()
-}
+# require(magrittr)
+# if (require(autonomics.data)){
+#  proteingroups_file <- system.file(
+#     'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#     package = 'autonomics.data')
+#  proteingroups_file \%>\% autonomics.import::load_proteingroups_to_long_dt() \%>\% str()
+#}
+#if (require(graumann.lfq)){
+#  system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') \%>\%
+#     autonomics.import::load_proteingroups_to_long_dt() \%>\% str()
+#}
+#if (require(billing.vesicles)){
+#  system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') \%>\%
+#     autonomics.import::load_proteingroups_to_long_dt() \%>\% str()
+#}
 }

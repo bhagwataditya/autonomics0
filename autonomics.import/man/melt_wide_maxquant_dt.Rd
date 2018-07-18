@@ -17,19 +17,19 @@ melt_wide_maxquant_dt(DT, log2_transform = TRUE, log2_offset = 0)
 Melt wide maxquant datatable
 }
 \examples{
-require(magrittr)
-if (require(autonomics.data)){
-   DT <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
-                      package = 'autonomics.data') \%>\%
-         autonomics.import::load_proteingroups_to_wide_dt()
-   DT \%>\% melt_wide_maxquant_dt() \%>\% print()
-}
-if (require(graumann.lfq)){
-  system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') \%>\%
-     load_proteingroups_to_wide_dt() \%>\% melt_wide_maxquant_dt() \%>\% print()
-}
-if (require(billing.vesicles)){
-  system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') \%>\%
-     load_proteingroups_to_wide_dt() \%>\% melt_wide_maxquant_dt() \%>\% print()
-}
+#require(magrittr)
+#if (require(autonomics.data)){
+#   DT <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#                      package = 'autonomics.data') \%>\%
+#         autonomics.import::load_proteingroups_to_wide_dt()
+#   DT \%>\% melt_wide_maxquant_dt() \%>\% print()
+#}
+#if (require(graumann.lfq)){
+#  system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') \%>\%
+#     load_proteingroups_to_wide_dt() \%>\% melt_wide_maxquant_dt() \%>\% print()
+#}
+#if (require(billing.vesicles)){
+#  system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') \%>\%
+#     load_proteingroups_to_wide_dt() \%>\% melt_wide_maxquant_dt() \%>\% print()
+#}
 }

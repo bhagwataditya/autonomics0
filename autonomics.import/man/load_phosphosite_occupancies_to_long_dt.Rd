@@ -28,11 +28,11 @@ datatable with phosphosite occupancies
 Load datatable with phosphosite occupancies
 }
 \examples{
-require(magrittr)
-if (require(billing.differentiation.data)){
-  system.file('extdata/maxquant/phospho (STY)Sites.txt',
-               package = 'billing.differentiation.data') \%>\%
-  load_phosphosite_occupancies_to_long_dt() \%>\%
-  str()
-}
+#require(magrittr)
+#if (require(billing.differentiation.data)){
+#  system.file('extdata/maxquant/phospho (STY)Sites.txt',
+#               package = 'billing.differentiation.data') \%>\%
+#  load_phosphosite_occupancies_to_long_dt() \%>\%
+#  str()
+#}
 }

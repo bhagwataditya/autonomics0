@@ -414,15 +414,22 @@ set_summary_attr <- function(x, y){
    return(x)
 }
 
+#' PROTEIN_VARS_MAXQUANT
 #' @export
 PROTEIN_VARS_MAXQUANT   <- c('id',         'Majority protein IDs', 'Protein names', 'Gene names', 'Fasta headers')
 
+
+#' PHOSPHO_VARS_MAXQUANT
 #'@export
 PHOSPHO_VARS_MAXQUANT   <- c('id',         'Protein group IDs', 'Proteins',           'Gene names', 'Positions within proteins', 'Phospho (STY) Probabilities', 'Sequence window', 'Amino acid', 'Fasta headers')
 
+
+#' PROTEIN_VARS_AUTONOMICS
 #' @export
 PROTEIN_VARS_AUTONOMICS <- c('feature_id', 'Uniprot accessions',   'Protein names', 'Gene names', 'Fasta headers')
 
+
+#' PHOSPHO_VARS_AUTONOMICS
 #'@export
 PHOSPHO_VARS_AUTONOMICS <- c('feature_id', 'Protein group IDs', 'Uniprot accessions', 'Gene names', 'Positions within proteins', 'Phospho (STY) Probabilities', 'Sequence window', 'Amino acid', 'Fasta headers')
 
@@ -528,47 +535,47 @@ rm_missing_id_values <- function(PG){
 #' @param proteingroups_file path to proteinGroups file
 #' @param value_type any value in names(VALUE_COLNAME_PATTERNS)
 #' @examples
-#' require(magrittr)
-#'
+#' #require(magrittr)
+#' #
 #' # NORMALIZED RATIOS
-#' if (require(autonomics.data)){
-#'    proteingroups_file <- system.file(
-#'       'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
-#'        package = 'autonomics.data')
-#'    proteingroups_file %>% load_proteingroups_to_wide_dt() %>% dim()
-#' }
+#' #if (require(autonomics.data)){
+#' #   proteingroups_file <- system.file(
+#' #      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#' #       package = 'autonomics.data')
+#' #   proteingroups_file %>% load_proteingroups_to_wide_dt() %>% dim()
+#' #}
 #'
 #' # REPORTER INTENSITIES
-#' if (require(billing.vesicles)){
-#'    proteingroups_file <- system.file(
-#'       'extdata/proteinGroups.txt', package = 'billing.vesicles')
-#'    proteingroups_file %>% load_proteingroups_to_wide_dt() %>% dim()
-#' }
+#' #if (require(billing.vesicles)){
+#' #   proteingroups_file <- system.file(
+#' #      'extdata/proteinGroups.txt', package = 'billing.vesicles')
+#' #   proteingroups_file %>% load_proteingroups_to_wide_dt() %>% dim()
+#' #}
 #'
 #' # RAW RATIOS
-#' if (require(billing.differentiation.data)){
-#'    proteingroups_file <- system.file(
-#'       'extdata/maxquant/proteinGroups.txt', package = 'billing.differentiation.data')
-#'    proteingroups_file %>% load_proteingroups_to_wide_dt(value_type = 'raw.ratio') %>% dim()
-#' }
+#' #if (require(billing.differentiation.data)){
+#' #   proteingroups_file <- system.file(
+#' #      'extdata/maxquant/proteinGroups.txt', package = 'billing.differentiation.data')
+#' #   proteingroups_file %>% load_proteingroups_to_wide_dt(value_type = 'raw.ratio') %>% dim()
+#' #}
 #'
 #' # LFQ INTENSITIES
-#' if (require(graumann.lfq)){
-#'    proteingroups_file <- system.file(
-#'       'extdata/proteinGroups.txt', package = 'graumann.lfq')
-#'    proteingroups_file %>% load_proteingroups_to_wide_dt() %>% dim()
-#' }
+#' #if (require(graumann.lfq)){
+#' #   proteingroups_file <- system.file(
+#' #      'extdata/proteinGroups.txt', package = 'graumann.lfq')
+#' #   proteingroups_file %>% load_proteingroups_to_wide_dt() %>% dim()
+#' #}
 #'
 #' # RAW INTENSITIES
-#' if (require(alnoubi.2017)){
-#'    proteingroups_file <- system.file(
-#'       'extdata/proteinGroups.txt', package = 'alnoubi.2017')
-#'    proteingroups_file %>% load_proteingroups_to_wide_dt(value_type = 'raw.intensity') %>% dim()
+#' #if (require(alnoubi.2017)){
+#' #   proteingroups_file <- system.file(
+#' #      'extdata/proteinGroups.txt', package = 'alnoubi.2017')
+#' #   proteingroups_file %>% load_proteingroups_to_wide_dt(value_type = 'raw.intensity') %>% dim()
 #'
-#'    proteingroups_file <- system.file(
-#'       'extdata/proteinGroups.txt', package = 'alnoubi.2017')
-#'    proteingroups_file %>% load_proteingroups_to_wide_dt() %>% dim()
-#' }
+#' #    proteingroups_file <- system.file(
+#' #      'extdata/proteinGroups.txt', package = 'alnoubi.2017')
+#' #   proteingroups_file %>% load_proteingroups_to_wide_dt() %>% dim()
+#' #}
 #' @importFrom data.table  data.table   :=
 #' @importFrom magrittr    %>%   %<>%
 #' @export
@@ -611,13 +618,13 @@ load_proteingroups_to_wide_dt <- function(
 #' @param min_loc_prob minimum localization probability
 #' @param remove_multiple_pg whether to phosphosites mapping to multiple protein groups (logical)
 #' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    phosphosites_file <- system.file(
-#'       'extdata/stemcell.differentiation/maxquant/phospho (STY)Sites.txt',
-#'        package = 'autonomics.data')
-#'    phosphosites_file %>% load_phosphosites_to_wide_dt() %>% dim()
-#' }
+#' # require(magrittr)
+#' # if (require(autonomics.data)){
+#' #   phosphosites_file <- system.file(
+#' #      'extdata/stemcell.differentiation/maxquant/phospho (STY)Sites.txt',
+#' #       package = 'autonomics.data')
+#' #   phosphosites_file %>% load_phosphosites_to_wide_dt() %>% dim()
+#' #}
 #' @importFrom data.table  data.table   :=
 #' @importFrom magrittr    %>%
 #' @export
@@ -674,21 +681,21 @@ load_phosphosites_to_wide_dt <- function(
 #' @param log2_transform logical
 #' @param log2_offset offset added to value before log2 transformation ()
 #' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    DT <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
-#'                       package = 'autonomics.data') %>%
-#'          autonomics.import::load_proteingroups_to_wide_dt()
-#'    DT %>% melt_wide_maxquant_dt() %>% print()
-#' }
-#' if (require(graumann.lfq)){
-#'   system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') %>%
-#'      load_proteingroups_to_wide_dt() %>% melt_wide_maxquant_dt() %>% print()
-#' }
-#' if (require(billing.vesicles)){
-#'   system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') %>%
-#'      load_proteingroups_to_wide_dt() %>% melt_wide_maxquant_dt() %>% print()
-#' }
+#' #require(magrittr)
+#' #if (require(autonomics.data)){
+#' #   DT <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#' #                      package = 'autonomics.data') %>%
+#' #         autonomics.import::load_proteingroups_to_wide_dt()
+#' #   DT %>% melt_wide_maxquant_dt() %>% print()
+#' #}
+#' #if (require(graumann.lfq)){
+#' #  system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') %>%
+#' #     load_proteingroups_to_wide_dt() %>% melt_wide_maxquant_dt() %>% print()
+#' #}
+#' #if (require(billing.vesicles)){
+#' #  system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') %>%
+#' #     load_proteingroups_to_wide_dt() %>% melt_wide_maxquant_dt() %>% print()
+#' #}
 #' @importFrom magrittr     %>%   %<>%
 #' @importFrom data.table   data.table   :=
 #' @export
@@ -735,21 +742,21 @@ melt_wide_maxquant_dt <- function(DT, log2_transform = TRUE, log2_offset = 0){
 #' @param log2_transform   whether to log2 transform
 #' @return proteingroups data.table
 #' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'   proteingroups_file <- system.file(
-#'      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
-#'      package = 'autonomics.data')
-#'   proteingroups_file %>% autonomics.import::load_proteingroups_to_long_dt() %>% str()
-#' }
-#' if (require(graumann.lfq)){
-#'   system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') %>%
-#'      autonomics.import::load_proteingroups_to_long_dt() %>% str()
-#' }
-#' if (require(billing.vesicles)){
-#'   system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') %>%
-#'      autonomics.import::load_proteingroups_to_long_dt() %>% str()
-#' }
+#' # require(magrittr)
+#' # if (require(autonomics.data)){
+#' #  proteingroups_file <- system.file(
+#' #     'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#' #     package = 'autonomics.data')
+#' #  proteingroups_file %>% autonomics.import::load_proteingroups_to_long_dt() %>% str()
+#' #}
+#' #if (require(graumann.lfq)){
+#' #  system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') %>%
+#' #     autonomics.import::load_proteingroups_to_long_dt() %>% str()
+#' #}
+#' #if (require(billing.vesicles)){
+#' #  system.file('extdata/proteinGroups.txt', package = 'billing.vesicles') %>%
+#' #     autonomics.import::load_proteingroups_to_long_dt() %>% str()
+#' #}
 #' @importFrom magrittr %>%
 #' @export
 load_proteingroups_to_long_dt <- function(
@@ -776,13 +783,13 @@ load_proteingroups_to_long_dt <- function(
 #' @param remove_multiple_pg whether to remove phosphosites mapping to multiple protein groups (logical)
 #' @return phosophosites data.table
 #' @examples
-#' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'   system.file('extdata/maxquant/phospho (STY)Sites.txt',
-#'                package = 'billing.differentiation.data') %>%
-#'   load_phosphosite_ratios_to_long_dt() %>%
-#'   str()
-#' }
+#' # require(magrittr)
+#' # if (require(billing.differentiation.data)){
+#' #  system.file('extdata/maxquant/phospho (STY)Sites.txt',
+#' #               package = 'billing.differentiation.data') %>%
+#' #  load_phosphosite_ratios_to_long_dt() %>%
+#' #  str()
+#' #}
 #' @importFrom magrittr %>%
 #' @export
 load_phosphosite_ratios_to_long_dt <- function(
@@ -824,13 +831,13 @@ load_phosphosite_ratios_to_long_dt <- function(
 #' @param min_loc_prob  minimum localization probability (numeric)
 #' @return datatable with phosphosite occupancies
 #' @examples
-#' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'   system.file('extdata/maxquant/phospho (STY)Sites.txt',
-#'                package = 'billing.differentiation.data') %>%
-#'   load_phosphosite_occupancies_to_long_dt() %>%
-#'   str()
-#' }
+#' #require(magrittr)
+#' #if (require(billing.differentiation.data)){
+#' #  system.file('extdata/maxquant/phospho (STY)Sites.txt',
+#' #               package = 'billing.differentiation.data') %>%
+#' #  load_phosphosite_occupancies_to_long_dt() %>%
+#' #  str()
+#' #}
 #' @importFrom data.table  data.table   :=
 #' @importFrom magrittr    %>%
 #' @export
@@ -1138,38 +1145,38 @@ add_maxquant_sdata <- function(object, design_file){
 #' @param design_file                sample design file
 #' @param parameter_file             parameter file
 #' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    maxquant_dir       <- system.file('extdata/stemcell.differentiation/maxquant',
-#'                                       package = 'autonomics.data')
-#'    proteingroups_file <- paste0(maxquant_dir, '/proteinGroups.txt')
-#'    phosphosites_file  <- paste0(maxquant_dir, '/phospho (STY)Sites.txt')
-#'    parameter_file     <- paste0(maxquant_dir, '/parameters.txt')
-#'    design_file <- tempfile()
-#'    proteingroups_file %>% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE,
-#'                                                                    design_file = design_file)
-#'    DT <- proteingroups_file %>% autonomics.import::load_proteingroups_to_long_dt()
-#'    DT %>% autonomics.import::maxquant_dt_to_sumexp(
-#'              entity = 'proteingroup', quantity = 'normalized.ratio',
-#'              design_file, parameter_file)
-#'    DT <- phosphosites_file %>% autonomics.import::load_phosphosite_ratios_to_long_dt()
-#'    DT %>% autonomics.import::maxquant_dt_to_sumexp(
-#'              entity = 'phosphosite', quantity = 'normalized.ratio',
-#'              design_file, parameter_file)
-#'    DT <- autonomics.import::load_phosphosite_occupancies_to_long_dt(phosphosites_file)
-#'    DT %>% autonomics.import::maxquant_dt_to_sumexp(
-#'              entity = 'phosphosite', quantity = 'occupancy',
-#'              design_file, parameter_file)
-#' }
-#' if (require(graumann.lfq)){
-#'    maxquant_dir <- system.file('extdata', package = 'graumann.lfq')
-#'    proteingroups_file <- paste0(maxquant_dir, '/proteinGroups.txt')
-#'    design_file <- paste0(maxquant_dir,    '/sample_design.txt')
-#'    parameter_file <- paste0(maxquant_dir, '/parameters.txt')
-#'    DT <- autonomics.import::load_proteingroups_to_long_dt(proteingroups_file)
-#'    DT %>% autonomics.import::maxquant_dt_to_sumexp(
-#'              entity = 'proteingroup', quantity = 'lfq.intensity', design_file, parameter_file)
-#' }
+#' #require(magrittr)
+#' #if (require(autonomics.data)){
+#' #   maxquant_dir       <- system.file('extdata/stemcell.differentiation/maxquant',
+#' #                                      package = 'autonomics.data')
+#' #   proteingroups_file <- paste0(maxquant_dir, '/proteinGroups.txt')
+#' #   phosphosites_file  <- paste0(maxquant_dir, '/phospho (STY)Sites.txt')
+#' #   parameter_file     <- paste0(maxquant_dir, '/parameters.txt')
+#' #   design_file <- tempfile()
+#' #   proteingroups_file %>% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE,
+#' #                                                                   design_file = design_file)
+#' #   DT <- proteingroups_file %>% autonomics.import::load_proteingroups_to_long_dt()
+#' #   DT %>% autonomics.import::maxquant_dt_to_sumexp(
+#' #             entity = 'proteingroup', quantity = 'normalized.ratio',
+#' #             design_file, parameter_file)
+#' #   DT <- phosphosites_file %>% autonomics.import::load_phosphosite_ratios_to_long_dt()
+#' #   DT %>% autonomics.import::maxquant_dt_to_sumexp(
+#' #             entity = 'phosphosite', quantity = 'normalized.ratio',
+#' #             design_file, parameter_file)
+#' #   DT <- autonomics.import::load_phosphosite_occupancies_to_long_dt(phosphosites_file)
+#' #   DT %>% autonomics.import::maxquant_dt_to_sumexp(
+#' #             entity = 'phosphosite', quantity = 'occupancy',
+#' #             design_file, parameter_file)
+#' #}
+#' #if (require(graumann.lfq)){
+#' #   maxquant_dir <- system.file('extdata', package = 'graumann.lfq')
+#' #   proteingroups_file <- paste0(maxquant_dir, '/proteinGroups.txt')
+#' #   design_file <- paste0(maxquant_dir,    '/sample_design.txt')
+#' #   parameter_file <- paste0(maxquant_dir, '/parameters.txt')
+#' #   DT <- autonomics.import::load_proteingroups_to_long_dt(proteingroups_file)
+#' #   DT %>% autonomics.import::maxquant_dt_to_sumexp(
+#' #             entity = 'proteingroup', quantity = 'lfq.intensity', design_file, parameter_file)
+#' #}
 #' @importFrom data.table  data.table
 #' @importFrom magrittr    %<>%   %>%
 #' @export
@@ -1246,41 +1253,41 @@ maxquant_dt_to_sumexp <- function(
 #' @param log2_transform      logical
 #' @param value_type          any value in autonomics.import::MAXQUANT_VALUE_TYPES
 #' @examples
-#' library(magrittr)
-#' if (require(autonomics.data)){
-#'
-#'    # STEM CELL COMPARISON
-#'    proteingroups_file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
-#'                                       package = 'autonomics.data')
-#'    design_file <- tempfile()
-#'    autonomics.import::write_maxquant_design(proteingroups_file,
-#'       infer_from_sampleids = TRUE, design_file = design_file)
-#'    proteingroups_file %>% autonomics.import::load_proteingroups(design_file = design_file)
-#'
-#'    # STEM CELL DIFFERENTIATION
-#'    proteingroups_file <- system.file(
-#'       'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
-#'       package = 'autonomics.data')
-#'    design_file <- tempfile()
-#'    autonomics.import::write_maxquant_design(proteingroups_file,
-#'       design_file = design_file, infer_from_sampleids = TRUE)
-#'    proteingroups_file %>% autonomics.import::load_proteingroups(design_file = design_file)
-#' }
-#' if (require(billing.vesicles)){
-#'    proteingroups_file <- system.file('extdata/proteinGroups.txt',
-#'                                       package = 'billing.vesicles')
-#'    proteingroups_file %>% autonomics.import::load_proteingroups()
-#' }
-#' if (require(graumann.lfq)){
-#'    proteingroups_file <- system.file('extdata/proteinGroups.txt',
-#'                                       package = 'graumann.lfq') %>%
-#'    proteingroups_file %>% autonomics.import::load_proteingroups()
-#' }
-#' if (require(graumann.zebra)){
-#'    proteingroups_file <- system.file('extdata/proteinGroups.txt',
-#'                                       package = 'graumann.zebra')
-#'    proteingroups_file %>% autonomics.import::load_proteingroups()
-#' }
+#' #library(magrittr)
+#' #if (require(autonomics.data)){
+#' #
+#' #   # STEM CELL COMPARISON
+#' #   proteingroups_file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#' #                                      package = 'autonomics.data')
+#' #   design_file <- tempfile()
+#' #   autonomics.import::write_maxquant_design(proteingroups_file,
+#' #      infer_from_sampleids = TRUE, design_file = design_file)
+#' #   proteingroups_file %>% autonomics.import::load_proteingroups(design_file = design_file)
+#' #
+#' #   # STEM CELL DIFFERENTIATION
+#' #   proteingroups_file <- system.file(
+#' #      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#' #      package = 'autonomics.data')
+#' #   design_file <- tempfile()
+#' #   autonomics.import::write_maxquant_design(proteingroups_file,
+#' #      design_file = design_file, infer_from_sampleids = TRUE)
+#' #   proteingroups_file %>% autonomics.import::load_proteingroups(design_file = design_file)
+#' #}
+#' #if (require(billing.vesicles)){
+#' #   proteingroups_file <- system.file('extdata/proteinGroups.txt',
+#' #                                      package = 'billing.vesicles')
+#' #   proteingroups_file %>% autonomics.import::load_proteingroups()
+#' #}
+#' #if (require(graumann.lfq)){
+#' #   proteingroups_file <- system.file('extdata/proteinGroups.txt',
+#' #                                      package = 'graumann.lfq') %>%
+#' #   proteingroups_file %>% autonomics.import::load_proteingroups()
+#' #}
+#' #if (require(graumann.zebra)){
+#' #   proteingroups_file <- system.file('extdata/proteinGroups.txt',
+#' #                                      package = 'graumann.zebra')
+#' #   proteingroups_file %>% autonomics.import::load_proteingroups()
+#' #}
 #' @return data.table or ExpressionSet
 #' @importFrom data.table   data.table   :=
 #' @importFrom magrittr     %>%

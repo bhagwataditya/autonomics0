@@ -1,11 +1,17 @@
+#' EXIQON PATTERN
 #' @export
 EXIQON_PATTERN <- '^(mmu|rno)[-](miR|let)[-]([0-9]+[a-z]?[-]?[0-9]?)([-][35]p)?$'
 
+
+#' EXIQON FEATURE ROWS
 #' @export
 EXIQON_FEATURE_ROWS <- c('#RefGenes', '#Spike',        '#MissDataFreq(%)')
 
+
+#' EXIQON SAMPLE COLS
 #' @export
 EXIQON_SAMPLE_COLS  <- c('Exiqon',    '#IPC-PlateID',  '#MissDataFreq(%)')
+
 
 #' @rdname load_exiqon
 #' @importFrom magrittr %>%

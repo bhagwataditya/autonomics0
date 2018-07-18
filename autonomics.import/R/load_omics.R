@@ -91,6 +91,7 @@ validify_sample_ids <- function(x){
 #' @param sheet excell sheet number or name
 #' @return sample dataframe
 #' @examples
+#' require(magrittr)
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
 #'    file %>% load_sdata_metabolon(2) %>% extract(1:3, 1:3)
@@ -221,6 +222,7 @@ load_sdata <- function(file, sheet = NULL, platform){
 #' @param sheet excell sheet number or name
 #' @return sample dataframe
 #' @examples
+#' require(magrittr)
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
 #'    file %>% load_fdata_metabolon(2) %>% extract(1:3, 1:3)
@@ -339,6 +341,7 @@ load_fdata <- function(file, sheet = NULL, platform){
 #' @param sheet excell sheet number or name
 #' @return sample dataframe
 #' @examples
+#' require(magrittr)
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
 #'    file %>% load_exprs_metabolon(2) %>% extract(1:3, 1:3)

@@ -130,7 +130,7 @@ extract_maxquant_intensity_colnames <- function(file, quantity = 'Intensity'){
 #'  if (require(autonomics.data)){
 #'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics.import::extract_maxquant_ratio_colnames() %>% head()
+#'    file %>% extract_maxquant_ratio_colnames('Ratio') %>% head()
 #' }
 #' @importFrom magrittr %>%
 #' @export
