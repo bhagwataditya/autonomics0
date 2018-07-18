@@ -48,7 +48,7 @@ if (require(autonomics.data)){
                          autonomics.import::sdata() \%>\% magrittr::extract(1:3, 1:5)
       # Merge in from sample file
       design_file <- tempfile()
-      file \%>\% autonomics.import::write_metabolon_design(design_file = design_file, infer_from_sampleids = TRUE)
+      file \%>\% autonomics.import::write_design('metabolon', infer_from_sampleids = TRUE, design_file = design_file)
       file \%>\% autonomics.import::load_metabolon(design_file = design_file) \%>\%
                          autonomics.import::sdata() \%>\% magrittr::extract(1:3, 1:5)
 }

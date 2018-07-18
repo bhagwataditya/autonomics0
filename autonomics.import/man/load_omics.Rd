@@ -5,7 +5,7 @@
 \title{Load omics}
 \usage{
 load_omics(file, sheet = 2, platform, log2_transform = TRUE,
-  design_file = NULL, infer_design_from_sampleids = FALSE, sampleid_var)
+  design_file = NULL, infer_design_from_sampleids = FALSE)
 }
 \arguments{
 \item{file}{path to omics data file}

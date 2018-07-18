@@ -1,3 +1,53 @@
+sampleid_varname <- function(platform){
+   switch(platform,
+          metabolonlipids = 'Client Identifier',
+          metabolon       = 'CLIENT_IDENTIFIER',
+          soma            = 'SampleId')
+}
+
+subgroup_varname <- function(platform){
+   switch(platform,
+          metabolonlipids = 'Group',
+          metabolon       = 'Group',
+          soma            = 'SampleGroup')
+}
+
+
+
+#==================================================
+# identify_structure
+#==================================================
+
+#' Identify soma structure
+#'
+#' Identify structure of soma file
+#'
+#' @param file adat file
+#' @return list(row, col, fvars, svars)
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'                         package = 'autonomics.data')
+#'    file %>% autonomics.import::identify_soma_structure()
+#' }
+#' if (require(atkin.2014)){
+#'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
+#'                         package = 'atkin.2014')
+#'    file %>% autonomics.import::identify_soma_structure()
+#' }
+#' @author Aditya Bhagwat
+#' @importFrom magrittr %>%
+#' @export
+identify_soma_structure <- function(file){
+   DT <- file %>% data.table::fread(header = FALSE, sep = '\t', fill = TRUE)
+   fvars <- DT[1 + which(DT$V1 == '^COL_DATA')] %>% unlist() %>% unname() %>% magrittr::extract(.!='') %>% magrittr::extract(2:length(.))
+   svars <- DT[1 + which(DT$V1 == '^ROW_DATA')] %>% unlist() %>% unname() %>% magrittr::extract(.!='') %>% magrittr::extract(2:length(.))
+   row <- length(fvars) + 2 + which(DT$V1 == '^TABLE_BEGIN')
+   col <- length(svars) + 2
+   list(row = row, col = col, fvars = fvars, svars = svars)
+}
+
 
 #' Validify sample/feature names
 #' @param x character vector with sample ids
@@ -86,6 +136,37 @@ load_metabolonlipids_sdata <- function(file, sheet){
       magrittr::set_rownames(.$`Client Identifier`)
 }
 
+
+#' Load soma sdata
+#' @param file string: path to adat file
+#' @return sample dataframe
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'                         package = 'autonomics.data')
+#'    file %>% autonomics.import::load_soma_sdata() %>% head()
+#' }
+#' if (require(atkin.2014)){
+#'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
+#'                         package = 'atkin.2014')
+#'    file %>% autonomics.import::load_soma_sdata() %>% head()
+#' }
+#' @author Aditya Bhagwat
+#' @importFrom magrittr %>%
+#' @export
+load_soma_sdata <- function(file){
+   x <- file %>% autonomics.import::identify_soma_structure()
+
+   file %>%
+      data.table::fread(header = FALSE, sep = '\t', fill = TRUE) %>%
+      magrittr::extract((x$row-1):nrow(.),  1:(x$col-2), with = FALSE)    %>%
+      magrittr::set_names(unlist(unname(.[1,])))                          %>%
+      magrittr::extract(-1, )                                             %>%
+      data.frame(row.names = .$SampleId)
+}
+
+
 #' Load sdata
 #' @param file path to omics data file
 #' @param sheet excel sheet number or name if applicable
@@ -106,7 +187,8 @@ load_metabolonlipids_sdata <- function(file, sheet){
 load_sdata <- function(file, sheet = NULL, platform){
    switch(platform,
           metabolonlipids = load_metabolonlipids_sdata(file = file, sheet = sheet),
-          metabolon       = load_metabolon_sdata(file = file, sheet = sheet))
+          metabolon       = load_metabolon_sdata(file = file, sheet = sheet),
+          soma            = load_soma_sdata(file))
 }
 
 
@@ -171,6 +253,38 @@ load_metabolonlipids_fdata <- function(file, sheet){
 }
 
 
+#' Load soma fdata
+#' @param file string: path to adat file
+#' @return feature dataframe
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'                         package = 'autonomics.data')
+#'    file %>% autonomics.import::load_soma_fdata() %>% head()
+#' }
+#' if (require(atkin.2014)){
+#'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
+#'                         package = 'atkin.2014')
+#'    file %>% autonomics.import::load_soma_fdata() %>% head()
+#' }
+#' @author Aditya Bhagwat
+#' @importFrom magrittr %>%
+#' @export
+load_soma_fdata <- function(file){
+   x <- file %>% autonomics.import::identify_soma_structure()
+
+   file %>%
+      data.table::fread(header = FALSE, sep = '\t', fill = TRUE)                  %>%
+      magrittr::extract((x$row-length(x$fvars)-1):(x$row-2),  (x$col-1):ncol(.))  %>%
+      t()                                                                         %>%
+      data.table::data.table()                                                    %>%
+      magrittr::set_names(unlist(unname(.[1,])))                                  %>%
+      magrittr::extract(-1, )                                                     %>%
+      data.frame(row.names = .$SeqId)
+}
+
+
 #' Load fdata
 #' @param file path to omics data file
 #' @param sheet excel sheet number or name if applicable
@@ -191,7 +305,8 @@ load_metabolonlipids_fdata <- function(file, sheet){
 load_fdata <- function(file, sheet = NULL, platform){
    switch(platform,
           metabolonlipids = load_metabolonlipids_fdata(file = file, sheet = sheet),
-          metabolon       = load_metabolon_fdata(      file = file, sheet = sheet))
+          metabolon       = load_metabolon_fdata(      file = file, sheet = sheet),
+          soma            = load_soma_fdata(file))
 }
 
 
@@ -261,6 +376,40 @@ load_metabolonlipids_exprs <- function(file, sheet){
 }
 
 
+#' Load soma exprs
+#' @param file string: path to adat file
+#' @return sample dataframe
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'                         package = 'autonomics.data')
+#'    file %>% autonomics.import::load_soma_exprs()
+#' }
+#' if (require(atkin.2014)){
+#'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
+#'                         package = 'atkin.2014')
+#'    file %>% autonomics.import::load_soma_exprs() %>% head()
+#' }
+#' @author Aditya Bhagwat
+#' @importFrom magrittr %>%
+#' @export
+load_soma_exprs <- function(file){
+   x      <- file %>% autonomics.import::identify_soma_structure()
+   fdata1 <- file %>% autonomics.import::load_soma_fdata()
+   sdata1 <- file %>% autonomics.import::load_soma_sdata()
+
+   file %>%
+      data.table::fread(header = FALSE, sep = '\t', fill = TRUE) %>%
+      magrittr::extract(x$row:nrow(.), (x$col):ncol(.))          %>%
+      t()                                                        %>%
+      data.matrix()                                              %>%
+      magrittr::set_rownames(fdata1$SeqId)                       %>%
+      magrittr::set_colnames(sdata1$SampleId)                    %>%
+      (function(x){class(x) <- 'numeric'; x})
+}
+
+
 #' Load exprs
 #' @param file path to omics data file
 #' @param sheet excel sheet number or name if applicable
@@ -281,7 +430,8 @@ load_metabolonlipids_exprs <- function(file, sheet){
 load_exprs <- function(file, sheet = NULL, platform){
    switch(platform,
           metabolonlipids = load_metabolonlipids_exprs(file = file, sheet = sheet),
-          metabolon       = load_metabolon_exprs(      file = file, sheet = sheet))
+          metabolon       = load_metabolon_exprs(      file = file, sheet = sheet),
+          soma            = load_soma_exprs(file))
 }
 
 #===========================================
@@ -314,8 +464,7 @@ load_omics <- function(
    platform,
    log2_transform              = TRUE,
    design_file                 = NULL,
-   infer_design_from_sampleids = FALSE,
-   sampleid_var
+   infer_design_from_sampleids = FALSE
 ){
    # Satisfy CHECK
    . <- NULL
@@ -332,11 +481,11 @@ load_omics <- function(
    autonomics.import::fdata(object)  <- fdata1
 
    # Merge in design
-   design_df <- autonomics.import::write_metabolon_design(file, sheet = sheet, infer_from_sampleids = infer_design_from_sampleids)
-   object %<>% autonomics.import::merge_sdata(design_df, by = sampleid_var)
+   design_df <- autonomics.import::write_design(file, platform = platform, infer_from_sampleids = infer_design_from_sampleids, sheet = sheet)
+   object %<>% autonomics.import::merge_sdata(design_df, by = sampleid_varname(platform))
    if (!is.null(design_file)){
-      file_df <- autonomics.import::read_metabolon_design(design_file)
-      object %<>% autonomics.import::merge_sdata(file_df, by = sampleid_var)
+      file_df <- autonomics.import::read_design(design_file)
+      object %<>% autonomics.import::merge_sdata(file_df, by = sampleid_varname(platform))
    }
 
    # Return
@@ -371,7 +520,7 @@ load_omics <- function(
 #'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #'       # Merge in from sample file
 #'       design_file <- tempfile()
-#'       file %>% autonomics.import::write_metabolon_design(design_file = design_file, infer_from_sampleids = TRUE)
+#'       file %>% autonomics.import::write_design('metabolon', infer_from_sampleids = TRUE, design_file = design_file)
 #'       file %>% autonomics.import::load_metabolon(design_file = design_file) %>%
 #'                          autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #' }
@@ -400,8 +549,7 @@ load_metabolon <- function(
                                            platform                    = 'metabolon',
                                            log2_transform              = log2_transform,
                                            design_file                 = design_file,
-                                           infer_design_from_sampleids = infer_design_from_sampleids,
-                                           sampleid_var                = 'CLIENT_IDENTIFIER')
+                                           infer_design_from_sampleids = infer_design_from_sampleids)
    autonomics.import::prepro(object) <- list(assay='lcms', entity='metabolite', quantity='intensities', software='metabolon')
    autonomics.import::annotation(object) <- ''
 
@@ -456,10 +604,120 @@ load_metabolonlipids <- function(
                                            platform                    = 'metabolonlipids',
                                            log2_transform              = log2_transform,
                                            design_file                 = design_file,
-                                           infer_design_from_sampleids = infer_design_from_sampleids,
-                                           sampleid_var                = 'Client Identifier')
+                                           infer_design_from_sampleids = infer_design_from_sampleids)
 
    # Return
    object
 }
 
+
+
+#' Load soma
+#'
+#' Loads data from soma file.
+#' Extracts sample_id definitions from 'SampleId'    column
+#' Extracts subgroup definitions  from 'SampleGroup' column when available.
+#' When not available, attempts to extract subgroup definitions from 'sample_id'column.
+#'
+#' @param file                         string: path to adat file
+#' @param design_file                  NULL or string:  path to sample file
+#' @param infer_design_from_sampleids  logical: whether to infer design from SampleId values
+#' @param log2_transform               logical: whether to log2 transform
+#' @param rm_sample_type               character vector: sample  types to be removed. Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').
+#' @param rm_feature_type              character vector: feature types to be removed. Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').
+#' @param rm_sample_quality            character vector: sample  qualities to be removed. Probably a subset of c('PASS', 'FLAG', 'FAIL')
+#' @param rm_feature_quality           character vector: feature qualities to be removed. Probably a subset of c('PASS', 'FLAG', 'FAIL')
+#' @param rm_na_svars                  logical: whether to rm NA svars
+#' @param rm_single_value_svars        logical: whether to rm single value svars
+#' @return SummarizedExperiment
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'
+#'    # Loading soma file is simple
+#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'                         package = 'autonomics.data')
+#'    file %>% autonomics.import::load_soma()
+#'
+#'    # Three ways to specify sample design
+#'       # Taken from 'SampleId' column in soma file
+#'       file %>% autonomics.import::load_soma() %>% autonomics.import::sdata() %>% head()
+#'
+#'       # Inferred from sample ids
+#'       file %>% autonomics.import::load_soma(infer_design = TRUE) %>%
+#'                autonomics.import::sdata() %>% head()
+#'
+#'       # Specified through sample file
+#'       design_file <- tempfile()
+#'       file %>% autonomics.import::write_design('soma', infer_from_sampleids = TRUE, design_file = design_file)
+#'       file %>% autonomics.import::load_soma(design_file = design_file) %>%
+#'                autonomics.import::sdata() %>% head()
+#' }
+#' if (require(atkin.2014)){
+#'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
+#'                         package = 'atkin.2014')
+#'    file %>% autonomics.import::load_soma()
+#'    file %>% autonomics.import::load_soma(rm_feature_quality = 'FAIL')
+#' }
+#' @author Aditya Bhagwat
+#' @importFrom magrittr %>%
+#' @export
+load_soma <- function(
+   file,
+   design_file                 = NULL,
+   infer_design_from_sampleids = FALSE,
+   log2_transform              = TRUE,
+   rm_sample_type              = character(0),
+   rm_feature_type             = character(0),
+   rm_sample_quality           = character(0),
+   rm_feature_quality          = character(0),
+   rm_na_svars                 = TRUE,
+   rm_single_value_svars       = TRUE
+){
+
+   # Load sumexp
+   object <- load_omics(file                        = file,
+                        platform                    = 'soma',
+                        log2_transform              = log2_transform,
+                        design_file                 = design_file,
+                        infer_design_from_sampleids = infer_design_from_sampleids)
+
+   autonomics.import::prepro(object) <- list(assay      = "somascan",
+                                             entity     = "epitope",
+                                             quantity   = "abundance",
+                                             software   = "somalogic",
+                                             parameters = list())
+   # Filter
+   # On Sample Type
+   if ('\nSampleType' %in% autonomics.import::svars(object)){
+      message('')
+      autonomics.support::cmessage_df('%s', table(`Sample types` = autonomics.import::sdata(object)$SampleType))
+      if (length(rm_sample_type) > 0)      object %<>% autonomics.import::filter_samples(!SampleType %in% rm_sample_type, verbose = TRUE)
+   }
+   # On sample quality
+   if ('RowCheck'   %in% autonomics.import::svars(object)){
+      message('')
+      autonomics.support::cmessage_df('%s', table(`Sample qualities ("RowCheck")` = autonomics.import::sdata(object)$RowCheck))
+      if (length(rm_sample_quality)  > 0)  object %<>% autonomics.import::filter_samples(!RowCheck %in% rm_sample_quality, verbose = TRUE)
+   }
+   # On feature type
+   if ('Type'       %in% autonomics.import::fvars(object)){
+      message('')
+      autonomics.support::cmessage_df('%s', table(`Type` = autonomics.import::fdata(object)$Type))
+      if (length(rm_feature_type)    > 0)  object %<>% autonomics.import::filter_features(!Type %in% rm_feature_type, verbose = TRUE)
+   }
+   # On feature quality
+   if ('ColCheck'   %in% autonomics.import::fvars(object)){
+      message('')
+      autonomics.support::cmessage_df('%s', table(`Feature qualities ("ColCheck")` = autonomics.import::fdata(object)$ColCheck))
+      if (length(rm_feature_quality) > 0)  object %<>% autonomics.import::filter_features(!ColCheck %in% rm_feature_quality, verbose = TRUE)
+   }
+
+   # Select vars
+   if (rm_na_svars)            autonomics.import::sdata(object) %<>% autonomics.support::rm_na_columns()
+   if (rm_single_value_svars)  autonomics.import::sdata(object) %<>% autonomics.support::rm_single_value_columns()
+
+   # Return
+   object
+
+}
