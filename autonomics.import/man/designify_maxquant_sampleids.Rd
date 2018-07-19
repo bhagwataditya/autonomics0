@@ -4,10 +4,13 @@
 \alias{designify_maxquant_sampleids}
 \title{Designify maxquant sampleids}
 \usage{
-designify_maxquant_sampleids(sampleids)
+designify_maxquant_sampleids(sampleids, sep = sampleids \%>\%
+  autonomics.import::infer_design_sep())
 }
 \arguments{
 \item{sampleids}{character vector}
+
+\item{sep}{string: design separator}
 }
 \description{
 Designify maxquant sampleids

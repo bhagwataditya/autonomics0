@@ -58,25 +58,26 @@ subgroup_varname <- function(platform){
 infer_design_sep <- function(sample_ids, possible_separators = c('.', ' ', '_'), verbose = TRUE){
    . <- NULL
    sep_freqs <- Map(function(x) stringi::stri_split_fixed(sample_ids, x), possible_separators)        %>%
-      lapply(function(x) x %>% vapply(length, integer(1)))                                  %>%
-      magrittr::extract( vapply(., autonomics.support::has_identical_values, logical(1)))   %>%
-      vapply(unique, integer(1))
+                lapply(function(x) x %>% vapply(length, integer(1)))                                  %>%
+                magrittr::extract( vapply(., autonomics.support::has_identical_values, logical(1)))   %>%
+                vapply(unique, integer(1))
 
    # No separator detected - return NULL
    if (all(sep_freqs==1)){
-      if (verbose)  autonomics.support::cmessage('No (consistent) separator. Returning NULL')
+      if (verbose)  autonomics.support::cmessage('%s: no (consistent) separator. Returning NULL', sample_ids[1])
       return(NULL)   # no separator detected
    }
 
    # Find best separator
    best_sep <- sep_freqs %>%
-      magrittr::extract(.!=1)  %>%
-      magrittr::extract(autonomics.support::is_max(vapply(., magrittr::extract, integer(1), 1)))   %>%
-      names()
+               magrittr::extract(.!=1)  %>%
+               magrittr::extract(autonomics.support::is_max(vapply(., magrittr::extract, integer(1), 1)))   %>%
+               names()
 
    # Ambiguous separator - return NULL
    if (length(best_sep)>1){
-      if (verbose)   autonomics.support::cmessage('No unambiguous separator (%s). Returning NULL',
+      if (verbose)   autonomics.support::cmessage('%s: %s separator? Returning NULL.',
+                                                  sample_ids[1],
                                                   paste0(sprintf("'%s'", best_sep), collapse = ' or '))
       return(NULL)  # ambiguous separator
    }
@@ -86,26 +87,18 @@ infer_design_sep <- function(sample_ids, possible_separators = c('.', ' ', '_'),
 }
 
 
-#' Convert sample IDs into sample design
-#' @param sample_ids         character vector with sampleids
-#' @param sep                string separator
-#' @param drop_common_parts  logical
+#' Infer design from (non-maxquant) sample ids
+#' @param sample_ids  character vector
+#' @param sep         string: design separator
 #' @examples
 #' require(magrittr)
-#' sample_ids <- c('PERM_NON.R1[H/L]', 'PERM_NON.R2[H/L]', 'PERM_NON.R3[H/L]', 'PERM_NON.R4[H/L]')
-#' sample_ids %>% infer_design_from_sampleids()
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon$sample_id %>%
-#'    autonomics.import::infer_design_from_sampleids()
-#' }
 #' sample_ids <- c("UT_10h_R1", "UT_10h_R2", "UT_10h_R3", "UT_10h_R4")
-#' sample_ids %>% autonomics.import::infer_design_from_sampleids()
+#' sample_ids %>% autonomics.import::infer_design_from_default_sampleids()
 #' @importFrom magrittr %>%
 #' @export
-infer_design_from_sampleids <- function(
+infer_design_from_default_sampleids <- function(
    sample_ids,
-   sep = sample_ids %>% autonomics.import::infer_design_sep(c('.', ' ', '_')),
-   drop_common_parts = FALSE
+   sep = sample_ids %>% autonomics.import::infer_design_sep(c('.', ' ', '_'))
 ){
 
    # Return dataframe with only sample ids if no separator could be infered
@@ -127,6 +120,50 @@ infer_design_from_sampleids <- function(
                      replicate = replicate_values,
                      row.names = sample_ids,
                      stringsAsFactors = FALSE))
+}
+
+
+#' Infer design from maxquant sample ids
+#' @param sample_ids  character vector
+#' @param sep         string: design separator
+#' @examples
+#' require(magrittr)
+#' sample_ids <- c("E(L).EM(M).BM(H).R1[M/L]", "E(L).EM(M).BM(H).R1[H/L]")
+#' sample_ids %>% infer_design_from_maxquant_sampleids()
+#' @importFrom magrittr %>%
+#' @export
+infer_design_from_maxquant_sampleids <- function(
+   sample_ids,
+   sep = sample_ids %>% autonomics.import::infer_design_sep(c('.', ' ', '_'))
+){
+   sample_ids %>%
+   autonomics.import::designify_maxquant_sampleids(sep = sep) %>%
+   autonomics.import::infer_design_from_sampleids(sep = sep) %>%
+   (function(x){x$sample_id <- rownames(x) <- sample_ids; x})
+}
+
+
+#' Infer design from sample ids
+#' @param sample_ids  character vector
+#' @param sep         string: design separator
+#' @param maxquant    logical: maxquant sample ids?
+#' @examples
+#' require(magrittr)
+#' sample_ids <- c("UT_10h_R1", "UT_10h_R2", "UT_10h_R3", "UT_10h_R4")
+#' sample_ids %>% autonomics.import::infer_design_from_sampleids()
+#'
+#' sample_ids <- c("E(L).EM(M).BM(H).R1[M/L]", "E(L).EM(M).BM(H).R1[H/L]")
+#' sample_ids %>% infer_design_from_sampleids(maxquant=TRUE)
+#' @importFrom magrittr %>%
+#' @export
+infer_design_from_sampleids <- function(
+   sample_ids,
+   sep = sample_ids %>% autonomics.import::infer_design_sep(c('.', ' ', '_')),
+   maxquant = FALSE
+){
+   if (maxquant){ sample_ids %>% autonomics.import::infer_design_from_maxquant_sampleids(sep = sep)
+   } else {       sample_ids %>% autonomics.import::infer_design_from_default_sampleids( sep = sep)
+   }
 }
 
 #========================================
@@ -194,9 +231,11 @@ add_replicate_values <- function(design_df){
 #' Write design for metabolon, metabolonlipids, or soma data
 #' @param file                   string: path to metabolon file
 #' @param platform               'metabolon', 'metabolonlipids', or 'soma'
-#' @param sheet                  character(1) or numeric(1): xls sheet
-#' @param infer_from_sampleids   logical: whether to infer design from CLIENT_IDENTIFIER
+#' @param infer_design_from_sampleids   logical: whether to infer design from CLIENT_IDENTIFIER
+#' @param design_sep             design separator
 #' @param design_file            string: path to design file
+#' @param sheet                  character(1) or numeric(1): xls sheet
+#' @param quantity               either NULL, or any of: 'Ratio', 'Ratio normalized', 'Intensities', 'LFQ intensities', 'Reporter intensities'
 #' @return design dataframe
 #' @examples
 #' require(magrittr)
@@ -206,7 +245,7 @@ add_replicate_values <- function(design_df){
 #'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
 #'    file %>% write_design('maxquant')
-#'    file %>% write_design('maxquant', infer_from_sampleids = TRUE)
+#'    file %>% write_design('maxquant', infer_design_from_sampleids = TRUE)
 #' }
 #'
 #' # METABOLON
@@ -215,14 +254,14 @@ add_replicate_values <- function(design_df){
 #'                                   package = 'autonomics.data')
 #'    file %>% write_design('metabolon') %>% head()
 #'    file %>% write_design('metabolon') %>% head()
-#'    file %>% write_design('metabolon', infer_from_sampleids = TRUE) %>% head()
+#'    file %>% write_design('metabolon', infer_design_from_sampleids = TRUE) %>% head()
 #' }
 #'
 #' # METABOLONLIPIDS
 #' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 #' if (file.exists(file)){
 #'    file %>% write_design('metabolonlipids') %>% head(3)
-#'    file %>% write_design('metabolonlipids', infer_from_sampleids = TRUE) %>% head(3)
+#'    file %>% write_design('metabolonlipids', infer_design_from_sampleids = TRUE) %>% head(3)
 #' }
 #'
 #' # SOMA
@@ -230,21 +269,25 @@ add_replicate_values <- function(design_df){
 #'    soma_file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
 #'                              package = 'autonomics.data')
 #'    soma_file %>% autonomics.import::write_design('soma')
-#'    soma_file %>% autonomics.import::write_design('soma', infer_from_sampleids = TRUE)
+#'    soma_file %>% autonomics.import::write_design('soma', infer_design_from_sampleids = TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @export
 write_design <- function(
    file,
    platform,
-   infer_from_sampleids = FALSE,
+   infer_design_from_sampleids = FALSE,
+   design_sep = NULL,
    design_file  = NULL,
    sheet = 2,
    quantity = if (platform=='maxquant') autonomics.import::infer_maxquant_quantity(file) else NULL
 ){
 
    # sdata
-   sdata1 <- autonomics.import::load_sdata(file = file, platform = platform, sheet = sheet, quantity = quantity)
+   sdata1 <- autonomics.import::load_sdata(file                        = file,
+                                           platform                    = platform,
+                                           sheet                       = sheet,
+                                           quantity                    = quantity)
    sampleid_var <- autonomics.import::sampleid_varname(platform)
    subgroup_var <- autonomics.import::subgroup_varname(platform)
 
@@ -254,10 +297,14 @@ write_design <- function(
                            check.names = FALSE) %>%
                 magrittr::set_names(names(.) %>% stringi::stri_replace_first_fixed('x', sampleid_var))
 
-   # Extend design
-   if (infer_from_sampleids){
-      if (platform == 'maxquant')   design_df[[sampleid_var]] %<>% autonomics.import::designify_maxquant_sampleids()
-      design_df %<>% cbind(autonomics.import::infer_design_from_sampleids(.[[sampleid_var]]))
+   # Infer subgroup from sampleids and add to design
+   if (infer_design_from_sampleids){
+      if (is.null(design_sep)) design_sep <- design_df[[sampleid_var]] %>% autonomics.import::infer_design_sep()
+      inferred_design <- design_df[[sampleid_var]] %>% autonomics.import::infer_design_from_sampleids(sep = design_sep, maxquant = platform=='maxquant')
+      design_df$sample_id <- NULL
+      design_df %<>% cbind(., inferred_design)
+
+   # Merge in design file
    } else {
       design_df$sample_id <- sdata1[[sampleid_var]]
       if (!is.null(subgroup_var)){
@@ -287,7 +334,7 @@ write_design <- function(
 #' @param file string: full path to protein groups file
 #' @param design_file        string: full path to sample design file
 #' @param value_type         string: any value in autonomics.import::MAXQUANT_VALUE_TYPES
-#' @param infer_from_sampleids       logical: should design be infered from sample ids (see details)
+#' @param infer_design_from_sampleids       logical: should design be infered from sample ids (see details)
 #' @param ... backward compatibility to deprecated functions
 #' @return sample design dataframe
 #' @examples
@@ -299,30 +346,30 @@ write_design <- function(
 #'       'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
 #'        package = 'autonomics.data')
 #'    file %>% write_maxquant_design()
-#'    file %>% write_maxquant_design(infer_from_sampleids = TRUE)
-#'    file %>% write_maxquant_design(infer_from_sampleids = TRUE, value_type = 'raw.intensity')
-#'    file %>% write_maxquant_design(infer_from_sampleids = TRUE, value_type = 'raw.ratio')
+#'    file %>% write_maxquant_design(infer_design_from_sampleids = TRUE)
+#'    file %>% write_maxquant_design(infer_design_from_sampleids = TRUE, value_type = 'raw.intensity')
+#'    file %>% write_maxquant_design(infer_design_from_sampleids = TRUE, value_type = 'raw.ratio')
 #' }
 #'
 #' # LFQ INTENSITIES
 #' if (require(graumann.lfq)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
 #'    file %>% autonomics.import::write_maxquant_design()
-#'    file %>% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE)
+#'    file %>% autonomics.import::write_maxquant_design(infer_design_from_sampleids = TRUE)
 #' }
 #'
 #' # UNLABELED INTENSITIES
 #' if (require(alnoubi.2017)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017')
 #'    file %>% autonomics.import::write_maxquant_design()
-#'    file %>% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE)
+#'    file %>% autonomics.import::write_maxquant_design(infer_design_from_sampleids = TRUE)
 #' }
 #'
 #' # REPORTER INTENSITIES
 #' if (require(billing.vesicles)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'billing.vesicles')
 #'    file %>% autonomics.import::write_maxquant_design()
-#'    file %>% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE)
+#'    file %>% autonomics.import::write_maxquant_design(infer_design_from_sampleids = TRUE)
 #' }
 #'
 #' @author Aditya Bhagwat
@@ -331,7 +378,7 @@ write_design <- function(
 write_maxquant_design <- function(
    file,
    value_type   = autonomics.import::infer_maxquant_value_type(file),
-   infer_from_sampleids = FALSE,
+   infer_design_from_sampleids = FALSE,
    design_file = NULL
 ){
 
@@ -346,7 +393,7 @@ write_maxquant_design <- function(
    sampleids <- DT %>% autonomics.import::get_maxquant_value_columns(value_type) %>% names()
 
    # Infer design and return
-   design <- if (infer_from_sampleids){
+   design <- if (infer_design_from_sampleids){
       sampleids %>%
          autonomics.import::designify_maxquant_sampleids()   %>%
          autonomics.import::infer_design_from_sampleids('.') %>%
@@ -383,7 +430,7 @@ write_maxquant_design <- function(
 #'                 package = 'autonomics.data')
 #'    design_file <- tempfile()
 #'    autonomics.import::write_design(
-#'       file, 'metabolon', infer_from_sampleids = TRUE, design_file = design_file)
+#'       file, 'metabolon', infer_design_from_sampleids = TRUE, design_file = design_file)
 #'    design_file %>% read_design() %>% head()
 #' }
 #'
@@ -401,7 +448,7 @@ write_maxquant_design <- function(
 #'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
 #'                 package = 'autonomics.data')
 #'    design_file <- tempfile()
-#'    write_design(file, 'soma', infer_from_sampleids = TRUE, design_file = design_file)
+#'    write_design(file, 'soma', infer_design_from_sampleids = TRUE, design_file = design_file)
 #'    read_design(design_file) %>% head()
 #' }
 #' @importFrom magrittr %<>%
@@ -513,7 +560,7 @@ read_maxquant_design <- function(design_file){
 
 #' Write exiqon design
 #' @param file            string: path to exiqon file
-#' @param infer_from_sampleids   logical: whether to infer design from sampleids
+#' @param infer_design_from_sampleids   logical: whether to infer design from sampleids
 #' @param design_file            string: path to sample file
 #' @return string: path to design file
 #' @examples
@@ -522,18 +569,18 @@ read_maxquant_design <- function(design_file){
 #'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
 #'                                package = 'subramanian.2016')
 #'    file %>% autonomics.import::write_exiqon_design()
-#'    file %>% autonomics.import::write_exiqon_design(infer_from_sampleids = TRUE)
+#'    file %>% autonomics.import::write_exiqon_design(infer_design_from_sampleids = TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @export
 write_exiqon_design <- function(
    file,
-   infer_from_sampleids = FALSE,
+   infer_design_from_sampleids = FALSE,
    design_file = NULL
 ){
    sampleids <- autonomics.import::load_exiqon_sdata(file)  %>%
                 magrittr::extract2('sample_id')
-   design_df <- if (infer_from_sampleids){
+   design_df <- if (infer_design_from_sampleids){
                    sampleids %>% autonomics.import::infer_design_from_sampleids()
                 } else {
                    return(data.frame(sample_id = sampleids,

@@ -25,10 +25,11 @@ Load sdata
  require(magrittr)
  if (require(autonomics.data)){
     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-    file \%>\% load_sdata(2, 'metabolon') \%>\% extract(1:3, 1:3)
+    file \%>\% load_sdata(platform = 'metabolon', sheet = 2) \%>\% extract(1:3, 1:3)
  }
 file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 if (file.exists(file)){
-   file \%>\% load_sdata('Lipid Class Concentrations', 'metabolonlipids') \%>\% head()
+   file \%>\% load_sdata(platform = 'metabolonlipids',
+                       sheet = 'Lipid Class Concentrations') \%>\% head()
 }
 }

@@ -6,8 +6,9 @@
 \usage{
 load_proteingroups(file,
   quantity = autonomics.import::infer_maxquant_quantity(file),
-  infer_design_from_sampleids = FALSE, design_file = NULL,
-  fasta_file = NULL, log2_transform = TRUE, log2_offset = 0)
+  infer_design_from_sampleids = FALSE, design_sep = NULL,
+  design_file = NULL, fasta_file = NULL, log2_transform = TRUE,
+  log2_offset = 0)
 }
 \arguments{
 \item{file}{path to proteinGroups.txt}
@@ -15,6 +16,8 @@ load_proteingroups(file,
 \item{quantity}{'Ratio normalized', 'Ratio', 'Intensity', 'LFQ intensity', 'Reporter intensity'}
 
 \item{infer_design_from_sampleids}{logical: whether to infer design from sampleids}
+
+\item{design_sep}{string: design separator}
 
 \item{design_file}{path to design file (created with write_maxquant_design)}
 
@@ -30,8 +33,20 @@ Load proteingroups
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
+
    file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
                         package = 'autonomics.data')
-   object <- file \%>\% autonomics.import::load_proteingroups()
+
+   # Loading a proteingroups file is easy.
+   # The sample design can be inferred from the sample ids
+      object <- file \%>\% load_proteingroups(infer_design_from_sampleids = TRUE)
+      object \%>\% sdata()
+
+   # Or it can be loaded through a sample file
+      design_file <- tempfile()
+      write_design(file, platform = 'maxquant', infer_design_from_sampleids = TRUE,
+                   design_file = design_file)
+      object <- load_proteingroups(file, design_file = design_file)
+      sdata(object)
 }
 }

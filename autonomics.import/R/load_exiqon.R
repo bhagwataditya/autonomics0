@@ -132,7 +132,7 @@ load_exiqon <- function(
 
   # Create components
   feature_df <- autonomics.import::load_exiqon_fdata(file)
-  sample_df  <- autonomics.import::write_exiqon_design(file, infer_from_sampleids = infer_design_from_sampleids)
+  sample_df  <- autonomics.import::write_exiqon_design(file, infer_design_from_sampleids = infer_design_from_sampleids)
   exprs_mat  <- mir %>% magrittr::extract(!feature_rows, !sample_cols) %>% data.matrix() %>% t()
 
   # Create eset

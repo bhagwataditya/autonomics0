@@ -12,14 +12,26 @@
 #' @param quantity string: which quantity to extract into exprs
 #' @param design_file path to design file
 #' @param log2_transform logical
+#' @param log2_offset offset in mapping x -> log2(x+offset)
 #' @param infer_design_from_sampleids logical
+#' @param design_sep string: design separator
 #' @return sample dataframe
 #' @examples
 #'  require(magrittr)
-#'  if (require(autonomics.data)){
-#'     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'     file %>% load_omics(sheet=2, platform = 'metabolon')
-#'  }
+#'
+#' # MAXQUANT
+#' file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#'                      package = 'autonomics.data')
+#' object <- file %>% load_omics(platform = 'maxquant',
+#'                               quantity = 'Ratio normalized',
+#'                               infer_design_from_sampleids = TRUE)
+#' # METABOLON
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+#'    file %>% load_omics(sheet=2, platform = 'metabolon')
+#' }
+#'
+#' # METABOLONLIPIDS
 #' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 #' if (file.exists(file)){
 #'    file %>% load_omics(sheet = 'Lipid Class Concentrations', platform = 'metabolonlipids')
@@ -29,11 +41,13 @@
 load_omics <- function(
    file,
    platform,
-   sheet = 2,
-   quantity = NULL,
+   sheet                       = 2,
+   quantity                    = NULL,
    log2_transform              = TRUE,
+   log2_offset                 = 0,
    design_file                 = NULL,
-   infer_design_from_sampleids = FALSE
+   infer_design_from_sampleids = FALSE,
+   design_sep                  = NULL
 ){
    # Satisfy CHECK
    . <- NULL
@@ -45,12 +59,15 @@ load_omics <- function(
 
    # Wrap into SummarizedExperiment
    object <- SummarizedExperiment::SummarizedExperiment(assays=list(exprs = exprs1))
-   if (log2_transform)   autonomics.import::exprs(object) %<>% log2()
+   if (log2_transform)   autonomics.import::exprs(object) %<>% (function(x)log2(x+log2_offset))
    autonomics.import::sdata(object)  <- sdata1
    autonomics.import::fdata(object)  <- fdata1
 
    # Merge in design
-   design_df <- autonomics.import::write_design(file, platform = platform, infer_from_sampleids = infer_design_from_sampleids, sheet = sheet)
+   design_df <- autonomics.import::write_design(file, platform                    = platform,
+                                                      infer_design_from_sampleids = infer_design_from_sampleids,
+                                                      design_sep                  = design_sep,
+                                                      sheet                       = sheet)
    object %<>% autonomics.import::merge_sdata(design_df, by = sampleid_varname(platform))
    if (!is.null(design_file)){
       file_df <- autonomics.import::read_design(design_file)
@@ -69,6 +86,7 @@ load_omics <- function(
 #' @param file            path to proteinGroups.txt
 #' @param quantity       'Ratio normalized', 'Ratio', 'Intensity', 'LFQ intensity', 'Reporter intensity'
 #' @param infer_design_from_sampleids  logical: whether to infer design from sampleids
+#' @param design_sep      string: design separator
 #' @param design_file     path to design file (created with write_maxquant_design)
 #' @param fasta_file      path to uniprot fasta database
 #' @param log2_transform  logical: whether to log2 transform
@@ -76,9 +94,21 @@ load_omics <- function(
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
+#'
 #'    file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
 #'                         package = 'autonomics.data')
-#'    object <- file %>% autonomics.import::load_proteingroups()
+#'
+#'    # Loading a proteingroups file is easy.
+#'    # The sample design can be inferred from the sample ids
+#'       object <- file %>% load_proteingroups(infer_design_from_sampleids = TRUE)
+#'       object %>% sdata()
+#'
+#'    # Or it can be loaded through a sample file
+#'       design_file <- tempfile()
+#'       write_design(file, platform = 'maxquant', infer_design_from_sampleids = TRUE,
+#'                    design_file = design_file)
+#'       object <- load_proteingroups(file, design_file = design_file)
+#'       sdata(object)
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -86,6 +116,7 @@ load_proteingroups <- function(
    file,
    quantity                    = autonomics.import::infer_maxquant_quantity(file),
    infer_design_from_sampleids = FALSE,
+   design_sep                  = NULL,
    design_file                 = NULL,
    fasta_file                  = NULL,
    log2_transform              = TRUE,
@@ -93,21 +124,14 @@ load_proteingroups <- function(
 ){
 
    # Load exprs
-   exprs_mat <- file %>% autonomics.import::load_exprs_maxquant(quantity)
-   if (log2_transform) exprs_mat %<>% (function(x) log2(log2_offset + x))
-
-   # Pack into Sumexp
-   object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs = exprs_mat))
-   autonomics.import::fdata(object) <- file %>% autonomics.import::load_fdata_maxquant()
-   autonomics.import::sdata(object) <- data.frame(sample_id = colnames(exprs_mat), row.names = colnames(exprs_mat))
-
-   # Merge in sample design
-   design_df <- autonomics.import::write_maxquant_design(file, infer_from_sampleids = infer_design_from_sampleids)
-   object %<>% autonomics.import::merge_sdata(design_df, by = 'sample_id')
-   if (!is.null(design_file)){
-      file_df <- autonomics.import::read_maxquant_design(design_file)
-      object %<>% autonomics.import::merge_sdata(file_df, by = 'sample_id')
-   }
+   object <- autonomics.import::load_omics(file                        = file,
+                                           platform                    = 'maxquant',
+                                           quantity                    = quantity,
+                                           log2_transform              = log2_transform,
+                                           log2_offset                 = log2_offset,
+                                           infer_design_from_sampleids = infer_design_from_sampleids,
+                                           design_sep                  = design_sep,
+                                           design_file                 = design_file)
 
    # Return
    return(object)
@@ -275,7 +299,9 @@ annotate_proteingroups2 <- function(object, fasta_file = NULL){
 #' @param design_file         NULL or character (sample design file)
 #' @param sheet               xls sheet name  or number
 #' @param log2_transform      logical: whether to log2 transform
+#' @param log2_offset         offset in mapping x -> log2(offset + x)
 #' @param infer_design_from_sampleids        logical: whether to infer design from sample ids
+#' @param design_sep          string: sample id separator
 #' @param add_kegg_pathways   logical: whether to add KEGG pathways to fdata
 #' @param add_smiles          logical: whether to add SMILES to fdata
 #' @param ... (backward compatibility)
@@ -297,7 +323,8 @@ annotate_proteingroups2 <- function(object, fasta_file = NULL){
 #'                autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #'       # Merge in from sample file
 #'       design_file <- tempfile()
-#'       file %>% write_design('metabolon', infer_from_sampleids = TRUE, design_file = design_file)
+#'       file %>% write_design('metabolon', infer_design_from_sampleids = TRUE,
+#'                              design_file = design_file)
 #'       file %>% load_metabolon(design_file = design_file) %>%
 #'                autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #' }
@@ -308,7 +335,9 @@ load_metabolon <- function(
    sheet = 2,
    design_file                 = NULL,
    log2_transform              = TRUE,
+   log2_offset                 = 0,
    infer_design_from_sampleids = FALSE,
+   design_sep                  = NULL,
    add_kegg_pathways           = FALSE,
    add_smiles                  = FALSE
 ){
@@ -325,8 +354,10 @@ load_metabolon <- function(
                                            sheet                       = sheet,
                                            platform                    = 'metabolon',
                                            log2_transform              = log2_transform,
+                                           log2_offset                 = log2_offset,
                                            design_file                 = design_file,
-                                           infer_design_from_sampleids = infer_design_from_sampleids)
+                                           infer_design_from_sampleids = infer_design_from_sampleids,
+                                           design_sep                  = design_sep)
    autonomics.import::prepro(object) <- list(assay='lcms', entity='metabolite', quantity='intensities', software='metabolon')
    autonomics.import::annotation(object) <- ''
 
@@ -356,8 +387,10 @@ load_metabolon <- function(
 #' @param file            path to metabolon lipids file
 #' @param sheet           name of excel sheet (any value in METABOLONLIPIDS_SHEETS)
 #' @param log2_transform  logical: whether to log2 transform
+#' @param log2_offset     numeric: offset in mapping x -> log2(offset + x)
 #' @param design_file     path to sample design file
 #' @param infer_design_from_sampleids  logical: whether to infer design from sampleids
+#' @param design_sep      string: sample id separator
 #' @return SummarizedExperiment
 #' @examples
 #' require(magrittr)
@@ -376,8 +409,10 @@ load_metabolonlipids <- function(
    file,
    sheet,
    log2_transform = TRUE,
+   log2_offset    = 0,
    design_file = NULL,
-   infer_design_from_sampleids = FALSE
+   infer_design_from_sampleids = FALSE,
+   design_sep = NULL
 ){
 
    # Load and Create
@@ -385,8 +420,10 @@ load_metabolonlipids <- function(
                                            sheet                       = sheet,
                                            platform                    = 'metabolonlipids',
                                            log2_transform              = log2_transform,
+                                           log2_offset                 = log2_offset,
                                            design_file                 = design_file,
-                                           infer_design_from_sampleids = infer_design_from_sampleids)
+                                           infer_design_from_sampleids = infer_design_from_sampleids,
+                                           design_sep                  = design_sep)
 
    # Return
    object
@@ -438,6 +475,7 @@ identify_soma_structure <- function(file){
 #' @param file                         string: path to adat file
 #' @param design_file                  NULL or string:  path to sample file
 #' @param infer_design_from_sampleids  logical: whether to infer design from SampleId values
+#' @param design_sep                   string: sample id separator
 #' @param log2_transform               logical: whether to log2 transform
 #' @param rm_sample_type               character vector: sample  types to be removed. Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').
 #' @param rm_feature_type              character vector: feature types to be removed. Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').
@@ -465,7 +503,7 @@ identify_soma_structure <- function(file){
 #'
 #'       # Specified through sample file
 #'       design_file <- tempfile()
-#'       file %>% write_design('soma', infer_from_sampleids = TRUE, design_file = design_file)
+#'       file %>% write_design('soma', infer_design_from_sampleids = TRUE, design_file = design_file)
 #'       file %>% load_soma(design_file = design_file) %>%
 #'                autonomics.import::sdata() %>% head()
 #' }
@@ -482,6 +520,7 @@ load_soma <- function(
    file,
    design_file                 = NULL,
    infer_design_from_sampleids = FALSE,
+   design_sep                  = NULL,
    log2_transform              = TRUE,
    rm_sample_type              = character(0),
    rm_feature_type             = character(0),
@@ -497,7 +536,8 @@ load_soma <- function(
                         platform                    = 'soma',
                         log2_transform              = log2_transform,
                         design_file                 = design_file,
-                        infer_design_from_sampleids = infer_design_from_sampleids)
+                        infer_design_from_sampleids = infer_design_from_sampleids,
+                        design_sep                  = design_sep)
 
    autonomics.import::prepro(object) <- list(assay      = "somascan",
                                              entity     = "epitope",

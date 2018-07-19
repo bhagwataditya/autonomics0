@@ -5,7 +5,7 @@
 \title{Load soma}
 \usage{
 load_soma(file, design_file = NULL, infer_design_from_sampleids = FALSE,
-  log2_transform = TRUE, rm_sample_type = character(0),
+  design_sep = NULL, log2_transform = TRUE, rm_sample_type = character(0),
   rm_feature_type = character(0), rm_sample_quality = character(0),
   rm_feature_quality = character(0), rm_na_svars = TRUE,
   rm_single_value_svars = TRUE)
@@ -16,6 +16,8 @@ load_soma(file, design_file = NULL, infer_design_from_sampleids = FALSE,
 \item{design_file}{NULL or string:  path to sample file}
 
 \item{infer_design_from_sampleids}{logical: whether to infer design from SampleId values}
+
+\item{design_sep}{string: sample id separator}
 
 \item{log2_transform}{logical: whether to log2 transform}
 
@@ -59,7 +61,7 @@ if (require(autonomics.data)){
 
       # Specified through sample file
       design_file <- tempfile()
-      file \%>\% write_design('soma', infer_from_sampleids = TRUE, design_file = design_file)
+      file \%>\% write_design('soma', infer_design_from_sampleids = TRUE, design_file = design_file)
       file \%>\% load_soma(design_file = design_file) \%>\%
                autonomics.import::sdata() \%>\% head()
 }

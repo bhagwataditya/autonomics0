@@ -5,8 +5,8 @@
 \title{Load omics}
 \usage{
 load_omics(file, platform, sheet = 2, quantity = NULL,
-  log2_transform = TRUE, design_file = NULL,
-  infer_design_from_sampleids = FALSE)
+  log2_transform = TRUE, log2_offset = 0, design_file = NULL,
+  infer_design_from_sampleids = FALSE, design_sep = NULL)
 }
 \arguments{
 \item{file}{path to omics data file}
@@ -19,9 +19,13 @@ load_omics(file, platform, sheet = 2, quantity = NULL,
 
 \item{log2_transform}{logical}
 
+\item{log2_offset}{offset in mapping x -> log2(x+offset)}
+
 \item{design_file}{path to design file}
 
 \item{infer_design_from_sampleids}{logical}
+
+\item{design_sep}{string: design separator}
 }
 \value{
 sample dataframe
@@ -31,10 +35,20 @@ Load omics
 }
 \examples{
  require(magrittr)
- if (require(autonomics.data)){
-    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-    file \%>\% load_omics(sheet=2, platform = 'metabolon')
- }
+
+# MAXQUANT
+file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+                     package = 'autonomics.data')
+object <- file \%>\% load_omics(platform = 'maxquant',
+                              quantity = 'Ratio normalized',
+                              infer_design_from_sampleids = TRUE)
+# METABOLON
+if (require(autonomics.data)){
+   file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+   file \%>\% load_omics(sheet=2, platform = 'metabolon')
+}
+
+# METABOLONLIPIDS
 file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 if (file.exists(file)){
    file \%>\% load_omics(sheet = 'Lipid Class Concentrations', platform = 'metabolonlipids')

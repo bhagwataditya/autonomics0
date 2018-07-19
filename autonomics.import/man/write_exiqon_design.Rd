@@ -4,12 +4,13 @@
 \alias{write_exiqon_design}
 \title{Write exiqon design}
 \usage{
-write_exiqon_design(file, infer_from_sampleids = FALSE, design_file = NULL)
+write_exiqon_design(file, infer_design_from_sampleids = FALSE,
+  design_file = NULL)
 }
 \arguments{
 \item{file}{string: path to exiqon file}
 
-\item{infer_from_sampleids}{logical: whether to infer design from sampleids}
+\item{infer_design_from_sampleids}{logical: whether to infer design from sampleids}
 
 \item{design_file}{string: path to sample file}
 }
@@ -25,6 +26,6 @@ if (require(subramanian.2016)){
    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
                                package = 'subramanian.2016')
    file \%>\% autonomics.import::write_exiqon_design()
-   file \%>\% autonomics.import::write_exiqon_design(infer_from_sampleids = TRUE)
+   file \%>\% autonomics.import::write_exiqon_design(infer_design_from_sampleids = TRUE)
 }
 }

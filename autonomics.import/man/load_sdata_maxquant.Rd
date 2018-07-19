@@ -9,6 +9,8 @@ load_sdata_maxquant(file,
 }
 \arguments{
 \item{file}{path to maxquant file}
+
+\item{quantity}{string: quantity to be used for exprs}
 }
 \value{
 sample dataframe

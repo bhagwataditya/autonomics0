@@ -111,24 +111,23 @@ infer_maxquant_quantity <- function(file){
 #'  if (require(autonomics.data)){
 #'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics.import::load_exprs_maxquant(quantity = 'Intensity') %>%
-#'             magrittr::extract(1:3, 1:3)
+#'    file %>% load_exprs_maxquant('Ratio')            %>% extract(1:3, 1:3)
+#'    file %>% load_exprs_maxquant('Ratio normalized') %>% extract(1:3, 1:3)
+#'    file %>% load_exprs_maxquant('Intensity')        %>% extract(1:3, 1:3)
+#'             extract(1:3, 1:3)
 #' }
 #' if (require(graumann.lfq)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-#'    file %>% autonomics.import::load_exprs_maxquant('Intensity')     %>%
-#'             magrittr::extract(1:3, 1:3)
-#'    file %>% autonomics.import::load_exprs_maxquant('LFQ intensity') %>%
-#'             magrittr::extract(1:3, 1:3)
+#'    file %>% load_exprs_maxquant('LFQ intensity') %>% extract(1:3, 1:3)
+#'    file %>% load_exprs_maxquant('Intensity')     %>% extract(1:3, 1:3)
 #' }
 #' if (require(billing.vesicles)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'billing.vesicles')
-#'    file %>% autonomics.import::load_exprs_maxquant('Reporter intensity') %>%
-#'             magrittr::extract(1:3, 1:3)
+#'    file %>% load_exprs_maxquant('Reporter intensity') %>% extract(1:3, 1:3)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-load_exprs_maxquant <- function(file, quantity = 'Intensity'){
+load_exprs_maxquant <- function(file, quantity){
 
    # Assert
    assertive.sets::assert_is_subset(quantity, c('Ratio', 'Ratio normalized', 'Intensity', 'LFQ intensity', 'Reporter intensity'))
@@ -140,21 +139,22 @@ load_exprs_maxquant <- function(file, quantity = 'Intensity'){
 
    # Extract exprs matrix
    exprs_mat <- file %>%
-      autonomics.support::cfread(select = col_names) %>%
-      data.matrix() %>%
-      magrittr::set_rownames(autonomics.import::load_fnames_maxquant(file))
+                autonomics.support::cfread(select = col_names) %>%
+                data.matrix() %>%
+                magrittr::set_rownames(autonomics.import::load_fnames_maxquant(file))
 
    # Rename samples
-   if (quantity %in% c('Ratio', 'Ratio normalized')){
-      colnames(exprs_mat) %<>% stringi::stri_replace_first_regex('Ratio (./.) (?:normalized )?(.+)',   '$2[$1]')
-
-   } else {
-      # It is better to do it this way (rather than use a stri_replace_regex as for the ratios)
-      # because ' ' separators in sample names are difficult to differentiate from ' H' constructs
-      injections <- file %>% autonomics.import::extract_maxquant_injections()
-      channels   <- file %>% autonomics.import::extract_maxquant_channels()
-      colnames(exprs_mat) <- if (length(channels)==0) injections else autonomics.support::vsprintf('%s[%s]', injections, channels)
-   }
+   colnames(exprs_mat) <- autonomics.import::load_snames_maxquant(file, quantity = quantity, infer_design_from_sampleids = FALSE)
+   # if (quantity %in% c('Ratio', 'Ratio normalized')){
+   #    colnames(exprs_mat) %<>% stringi::stri_replace_first_regex('Ratio (./.) (?:normalized )?(.+)',   '$2[$1]')
+   #
+   # } else {
+   #    # It is better to do it this way (rather than use a stri_replace_regex as for the ratios)
+   #    # because ' ' separators in sample names are difficult to differentiate from ' H' constructs
+   #    injections <- file %>% autonomics.import::extract_maxquant_injections()
+   #    channels   <- file %>% autonomics.import::extract_maxquant_channels()
+   #    colnames(exprs_mat) <- if (length(channels)==0) injections else autonomics.support::vsprintf('%s[%s]', injections, channels)
+   # }
 
    # Return
    exprs_mat
@@ -283,17 +283,23 @@ load_exprs_soma <- function(file){
 #'  require(magrittr)
 #'  if (require(autonomics.data)){
 #'     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'     file %>% load_exprs(2, 'metabolon') %>% extract(1:3, 1:3)
+#'     file %>% load_exprs('metabolon', sheet = 2) %>% extract(1:3, 1:3)
 #'  }
 #' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 #' if (file.exists(file)){
-#'    file %>% load_exprs('Lipid Class Concentrations', 'metabolonlipids') %>% extract(1:3, 1:3)
+#'    file %>% load_exprs('metabolonlipids', sheet = 'Lipid Class Concentrations') %>%
+#'             extract(1:3, 1:3)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-load_exprs <- function(file, sheet = NULL, quantity = NULL, platform){
+load_exprs <- function(
+   file,
+   platform,
+   sheet = NULL,
+   quantity = NULL
+){
    switch(platform,
-          maxquant        = file %>% load_exprs_maxquant(       quantity = quantity),
+          maxquant        = file %>% load_exprs_maxquant(quantity = quantity),
           metabolonlipids = file %>% load_exprs_metabolonlipids(sheet = sheet),
           metabolon       = file %>% load_exprs_metabolon(      sheet = sheet),
           soma            = file %>% load_exprs_soma())

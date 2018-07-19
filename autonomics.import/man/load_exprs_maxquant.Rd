@@ -4,7 +4,7 @@
 \alias{load_exprs_maxquant}
 \title{Load maxquant exprs}
 \usage{
-load_exprs_maxquant(file, quantity = "Intensity")
+load_exprs_maxquant(file, quantity)
 }
 \arguments{
 \item{file}{full path to proteinGroups.txt}
@@ -22,19 +22,18 @@ Load maxquant exprs
  if (require(autonomics.data)){
    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
-   file \%>\% autonomics.import::load_exprs_maxquant(quantity = 'Intensity') \%>\%
-            magrittr::extract(1:3, 1:3)
+   file \%>\% load_exprs_maxquant('Ratio')            \%>\% extract(1:3, 1:3)
+   file \%>\% load_exprs_maxquant('Ratio normalized') \%>\% extract(1:3, 1:3)
+   file \%>\% load_exprs_maxquant('Intensity')        \%>\% extract(1:3, 1:3)
+            extract(1:3, 1:3)
 }
 if (require(graumann.lfq)){
    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-   file \%>\% autonomics.import::load_exprs_maxquant('Intensity')     \%>\%
-            magrittr::extract(1:3, 1:3)
-   file \%>\% autonomics.import::load_exprs_maxquant('LFQ intensity') \%>\%
-            magrittr::extract(1:3, 1:3)
+   file \%>\% load_exprs_maxquant('LFQ intensity') \%>\% extract(1:3, 1:3)
+   file \%>\% load_exprs_maxquant('Intensity')     \%>\% extract(1:3, 1:3)
 }
 if (require(billing.vesicles)){
    file <- system.file('extdata/proteinGroups.txt', package = 'billing.vesicles')
-   file \%>\% autonomics.import::load_exprs_maxquant('Reporter intensity') \%>\%
-            magrittr::extract(1:3, 1:3)
+   file \%>\% load_exprs_maxquant('Reporter intensity') \%>\% extract(1:3, 1:3)
 }
 }

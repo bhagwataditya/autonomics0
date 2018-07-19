@@ -4,20 +4,25 @@
 \alias{write_design}
 \title{Write design for metabolon, metabolonlipids, or soma data}
 \usage{
-write_design(file, platform, infer_from_sampleids = FALSE,
-  design_file = NULL, sheet = 2, quantity = if (platform == "maxquant")
-  autonomics.import::infer_maxquant_quantity(file) else NULL)
+write_design(file, platform, infer_design_from_sampleids = FALSE,
+  design_sep = NULL, design_file = NULL, sheet = 2, quantity = if
+  (platform == "maxquant") autonomics.import::infer_maxquant_quantity(file) else
+  NULL)
 }
 \arguments{
 \item{file}{string: path to metabolon file}
 
 \item{platform}{'metabolon', 'metabolonlipids', or 'soma'}
 
-\item{infer_from_sampleids}{logical: whether to infer design from CLIENT_IDENTIFIER}
+\item{infer_design_from_sampleids}{logical: whether to infer design from CLIENT_IDENTIFIER}
+
+\item{design_sep}{design separator}
 
 \item{design_file}{string: path to design file}
 
 \item{sheet}{character(1) or numeric(1): xls sheet}
+
+\item{quantity}{either NULL, or any of: 'Ratio', 'Ratio normalized', 'Intensities', 'LFQ intensities', 'Reporter intensities'}
 }
 \value{
 design dataframe
@@ -33,7 +38,7 @@ if (require(autonomics.data)){
    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
    file \%>\% write_design('maxquant')
-   file \%>\% write_design('maxquant', infer_from_sampleids = TRUE)
+   file \%>\% write_design('maxquant', infer_design_from_sampleids = TRUE)
 }
 
 # METABOLON
@@ -42,14 +47,14 @@ if (require(autonomics.data)){
                                   package = 'autonomics.data')
    file \%>\% write_design('metabolon') \%>\% head()
    file \%>\% write_design('metabolon') \%>\% head()
-   file \%>\% write_design('metabolon', infer_from_sampleids = TRUE) \%>\% head()
+   file \%>\% write_design('metabolon', infer_design_from_sampleids = TRUE) \%>\% head()
 }
 
 # METABOLONLIPIDS
 file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 if (file.exists(file)){
    file \%>\% write_design('metabolonlipids') \%>\% head(3)
-   file \%>\% write_design('metabolonlipids', infer_from_sampleids = TRUE) \%>\% head(3)
+   file \%>\% write_design('metabolonlipids', infer_design_from_sampleids = TRUE) \%>\% head(3)
 }
 
 # SOMA
@@ -57,6 +62,6 @@ if (require(autonomics.data)){
    soma_file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
                              package = 'autonomics.data')
    soma_file \%>\% autonomics.import::write_design('soma')
-   soma_file \%>\% autonomics.import::write_design('soma', infer_from_sampleids = TRUE)
+   soma_file \%>\% autonomics.import::write_design('soma', infer_design_from_sampleids = TRUE)
 }
 }

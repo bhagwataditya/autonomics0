@@ -5,8 +5,8 @@
 \title{Load metabolon data}
 \usage{
 load_metabolon(file, sheet = 2, design_file = NULL, log2_transform = TRUE,
-  infer_design_from_sampleids = FALSE, add_kegg_pathways = FALSE,
-  add_smiles = FALSE)
+  log2_offset = 0, infer_design_from_sampleids = FALSE, design_sep = NULL,
+  add_kegg_pathways = FALSE, add_smiles = FALSE)
 }
 \arguments{
 \item{file}{metabolon xlsx file}
@@ -17,7 +17,11 @@ load_metabolon(file, sheet = 2, design_file = NULL, log2_transform = TRUE,
 
 \item{log2_transform}{logical: whether to log2 transform}
 
+\item{log2_offset}{offset in mapping x -> log2(offset + x)}
+
 \item{infer_design_from_sampleids}{logical: whether to infer design from sample ids}
+
+\item{design_sep}{string: sample id separator}
 
 \item{add_kegg_pathways}{logical: whether to add KEGG pathways to fdata}
 
@@ -48,7 +52,8 @@ if (require(autonomics.data)){
                autonomics.import::sdata() \%>\% magrittr::extract(1:3, 1:5)
       # Merge in from sample file
       design_file <- tempfile()
-      file \%>\% write_design('metabolon', infer_from_sampleids = TRUE, design_file = design_file)
+      file \%>\% write_design('metabolon', infer_design_from_sampleids = TRUE,
+                             design_file = design_file)
       file \%>\% load_metabolon(design_file = design_file) \%>\%
                autonomics.import::sdata() \%>\% magrittr::extract(1:3, 1:5)
 }

@@ -2,30 +2,26 @@
 % Please edit documentation in R/write_design.R
 \name{infer_design_from_sampleids}
 \alias{infer_design_from_sampleids}
-\title{Convert sample IDs into sample design}
+\title{Infer design from sample ids}
 \usage{
 infer_design_from_sampleids(sample_ids, sep = sample_ids \%>\%
-  autonomics.import::infer_design_sep(c(".", " ", "_")),
-  drop_common_parts = FALSE)
+  autonomics.import::infer_design_sep(c(".", " ", "_")), maxquant = FALSE)
 }
 \arguments{
-\item{sample_ids}{character vector with sampleids}
+\item{sample_ids}{character vector}
 
-\item{sep}{string separator}
+\item{sep}{string: design separator}
 
-\item{drop_common_parts}{logical}
+\item{maxquant}{logical: maxquant sample ids?}
 }
 \description{
-Convert sample IDs into sample design
+Infer design from sample ids
 }
 \examples{
 require(magrittr)
-sample_ids <- c('PERM_NON.R1[H/L]', 'PERM_NON.R2[H/L]', 'PERM_NON.R3[H/L]', 'PERM_NON.R4[H/L]')
-sample_ids \%>\% infer_design_from_sampleids()
-if (require(subramanian.2016)){
-   subramanian.2016::metabolon$sample_id \%>\%
-   autonomics.import::infer_design_from_sampleids()
-}
 sample_ids <- c("UT_10h_R1", "UT_10h_R2", "UT_10h_R3", "UT_10h_R4")
 sample_ids \%>\% autonomics.import::infer_design_from_sampleids()
+
+sample_ids <- c("E(L).EM(M).BM(H).R1[M/L]", "E(L).EM(M).BM(H).R1[H/L]")
+sample_ids \%>\% infer_design_from_sampleids(maxquant=TRUE)
 }

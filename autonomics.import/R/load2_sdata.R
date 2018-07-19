@@ -84,6 +84,7 @@ extract_maxquant_channels <- function(file){
 
 #' Designify maxquant sampleids
 #' @param sampleids character vector
+#' @param sep string: design separator
 #' @examples
 #' require(magrittr)
 #' sampleids <- c("STD(L).EM00(M).EM01(H).R1[H/L]",
@@ -98,12 +99,14 @@ extract_maxquant_channels <- function(file){
 #' sampleids %>% autonomics.import::designify_maxquant_sampleids()
 #' @importFrom magrittr %>%
 #' @export
-designify_maxquant_sampleids <- function(sampleids){
+designify_maxquant_sampleids <- function(
+   sampleids,
+   sep = sampleids %>% autonomics.import::infer_design_sep()
+){
 
    if (is.factor(sampleids)) sampleids %<>% as.character()
 
    # Break into parts         #pattern <- '(.*)\\.R\\((.+)\\)\\[(.+)\\]'
-   sep <- sampleids %>% autonomics.import::infer_design_sep()
    parts <- strsplit(sampleids, split = sep, fixed = TRUE)
    n <- length(parts[[1]])
 
@@ -112,8 +115,8 @@ designify_maxquant_sampleids <- function(sampleids){
    is_labeled <- parts %>% vapply(extract, character(1), n) %>% stringi::stri_detect_fixed('[') %>% any()
    if (is_labeled){
       label_values <- parts %>% vapply(extract, character(1), n) %>%
-         stringi::stri_extract_first_regex('(?<=\\[)(.+)(?=\\])')  %>%
-         strsplit(split = '/', fixed = TRUE)
+                                stringi::stri_extract_first_regex('(?<=\\[)(.+)(?=\\])')  %>%
+                                strsplit(split = '/', fixed = TRUE)
       replicate_values %<>% stringi::stri_replace_first_regex('(.+)(\\[.+\\])', '$1')
       replicate_values %<>% paste0('_', label_values %>% vapply(paste0, character(1), collapse = ''))
    }
@@ -143,19 +146,22 @@ designify_maxquant_sampleids <- function(sampleids){
 
 #' Load maxquant snames
 #' @param file path to maxquant file
+#' @param quantity string: which quantity from maxquant table to use as exprs
+#' @param rm_quantity_from_snames     logical: whether to rm quantity from snames
+#' @param infer_design_from_sampleids logical: whether to simplify snames for design inferral
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
 #'
-#'    file %>% load_snames_maxquant('Ratio')
-#'    file %>% load_snames_maxquant('Ratio', clean = TRUE)
-#'    file %>% load_snames_maxquant('Ratio', clean = TRUE, designify = TRUE)
+#'    file %>% load_snames_maxquant()
+#'    file %>% load_snames_maxquant(rm_quantity_from_snames = FALSE)
+#'    file %>% load_snames_maxquant(infer_design_from_sampleids = TRUE)
 #'
 #'    file %>% load_snames_maxquant('Intensity')
-#'    file %>% load_snames_maxquant('Intensity', clean = TRUE)
-#'    file %>% load_snames_maxquant('Intensity', clean = TRUE, designify = TRUE)
+#'    file %>% load_snames_maxquant('Intensity', rm_quantity_from_snames = FALSE)
+#'    file %>% load_snames_maxquant('Intensity', infer_design_from_sampleids = TRUE)
 #' }
 #' if (require(graumann.lfq)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
@@ -170,9 +176,9 @@ designify_maxquant_sampleids <- function(sampleids){
 #' @export
 load_snames_maxquant <- function(
    file,
-   quantity  = autonomics.import::infer_maxquant_quantity(file),
-   clean     = FALSE,
-   designify = FALSE
+   quantity                    = autonomics.import::infer_maxquant_quantity(file),
+   rm_quantity_from_snames     = TRUE,
+   infer_design_from_sampleids = FALSE
 ){
 
    # Extract
@@ -182,10 +188,10 @@ load_snames_maxquant <- function(
                         } else {
                            file %>% autonomics.import::extract_maxquant_intensity_colnames(quantity)
                         }
-   if (!clean) return(quantity_colnames)
+   if (!rm_quantity_from_snames) return(quantity_colnames)
 
-   # Clean
-   #------
+   # Rm quantity from snames
+   #------------------------
    # 'Ratio normalized' is spread out into 'Ratio H/L normalized'. This requires a separate approach.
    if (quantity %in% c('Ratio', 'Ratio normalized')){
       snames1 <- quantity_colnames %>% stringi::stri_replace_first_regex('Ratio (./.) (?:normalized )?(.+)',   '$2[$1]')
@@ -208,17 +214,22 @@ load_snames_maxquant <- function(
          snames1 <- autonomics.support::vsprintf('%s[%s]', injections, channels) %>% magrittr::extract(idx)
       }
    }
-   if (!designify) return(snames1)
 
    # Designify
    #----------
-   snames1 %>% autonomics.import::designify_maxquant_sampleids()
+   if (infer_design_from_sampleids)    snames1 %<>% autonomics.import::designify_maxquant_sampleids()
+
+   # Return
+   #-------
+   return(snames1)
+
 
 }
 
 
 #' Load maxquant sdata
-#' @param file path to maxquant file
+#' @param file                  path to maxquant file
+#' @param quantity              string: quantity to be used for exprs
 #' @return sample dataframe
 #' @examples
 #' require(magrittr)
@@ -237,8 +248,8 @@ load_sdata_maxquant <- function(
    file,
    quantity = autonomics.import::infer_maxquant_quantity(file)
 ){
-   data.frame(sample_id = file %>% autonomics.import::load_snames_maxquant(quantity, clean = TRUE)) %>%
-   magrittr::set_rownames(.$sample_id)
+   sampleids <- file %>% autonomics.import::load_snames_maxquant(quantity, infer_design_from_sampleids = FALSE)
+   data.frame(sample_id = sampleids, row.names = sampleids)
 }
 
 
@@ -360,20 +371,21 @@ load_sdata_soma <- function(file){
 #==========================================
 
 #' Load sdata
-#' @param file path to omics data file
+#' @param file      path to omics data file
 #' @param platform 'maxquant', 'metabolon', 'metabolonlipids', 'soma'
-#' @param sheet excel sheet number or name if applicable
-#' @param quantity string: which quantity should be extracted (only applicable for maxquant platform)
+#' @param sheet     excel sheet number or name if applicable
+#' @param quantity  string: which quantity should be extracted (only applicable for maxquant platform)
 #' @return sample dataframe
 #' @examples
 #'  require(magrittr)
 #'  if (require(autonomics.data)){
 #'     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'     file %>% load_sdata(2, 'metabolon') %>% extract(1:3, 1:3)
+#'     file %>% load_sdata(platform = 'metabolon', sheet = 2) %>% extract(1:3, 1:3)
 #'  }
 #' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 #' if (file.exists(file)){
-#'    file %>% load_sdata('Lipid Class Concentrations', 'metabolonlipids') %>% head()
+#'    file %>% load_sdata(platform = 'metabolonlipids',
+#'                        sheet = 'Lipid Class Concentrations') %>% head()
 #' }
 #' @importFrom magrittr %>%
 #' @export

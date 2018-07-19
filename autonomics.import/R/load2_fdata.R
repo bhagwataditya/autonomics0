@@ -157,11 +157,12 @@ load_fdata_soma <- function(file){
 #'  require(magrittr)
 #'  if (require(autonomics.data)){
 #'     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'     file %>% load_fdata(2, 'metabolon') %>% extract(1:3, 1:3)
+#'     file %>% load_fdata(platform = 'metabolon', sheet = 2) %>% extract(1:3, 1:3)
 #'  }
 #' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 #' if (file.exists(file)){
-#'    file %>% load_fdata('Lipid Class Concentrations', 'metabolonlipids') %>% head()
+#'    file %>% load_fdata(platform = 'metabolonlipids',
+#'                        sheet = 'Lipid Class Concentrations') %>% head()
 #' }
 #' @importFrom magrittr %>%
 #' @export

@@ -6,10 +6,16 @@
 \usage{
 load_snames_maxquant(file,
   quantity = autonomics.import::infer_maxquant_quantity(file),
-  clean = FALSE, designify = FALSE)
+  rm_quantity_from_snames = TRUE, infer_design_from_sampleids = FALSE)
 }
 \arguments{
 \item{file}{path to maxquant file}
+
+\item{quantity}{string: which quantity from maxquant table to use as exprs}
+
+\item{rm_quantity_from_snames}{logical: whether to rm quantity from snames}
+
+\item{infer_design_from_sampleids}{logical: whether to simplify snames for design inferral}
 }
 \description{
 Load maxquant snames
@@ -20,13 +26,13 @@ if (require(autonomics.data)){
    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
 
-   file \%>\% load_snames_maxquant('Ratio')
-   file \%>\% load_snames_maxquant('Ratio', clean = TRUE)
-   file \%>\% load_snames_maxquant('Ratio', clean = TRUE, designify = TRUE)
+   file \%>\% load_snames_maxquant()
+   file \%>\% load_snames_maxquant(rm_quantity_from_snames = FALSE)
+   file \%>\% load_snames_maxquant(infer_design_from_sampleids = TRUE)
 
    file \%>\% load_snames_maxquant('Intensity')
-   file \%>\% load_snames_maxquant('Intensity', clean = TRUE)
-   file \%>\% load_snames_maxquant('Intensity', clean = TRUE, designify = TRUE)
+   file \%>\% load_snames_maxquant('Intensity', rm_quantity_from_snames = FALSE)
+   file \%>\% load_snames_maxquant('Intensity', infer_design_from_sampleids = TRUE)
 }
 if (require(graumann.lfq)){
    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')

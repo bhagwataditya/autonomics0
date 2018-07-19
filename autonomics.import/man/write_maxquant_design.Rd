@@ -10,7 +10,7 @@
 \usage{
 write_maxquant_design(file,
   value_type = autonomics.import::infer_maxquant_value_type(file),
-  infer_from_sampleids = FALSE, design_file = NULL)
+  infer_design_from_sampleids = FALSE, design_file = NULL)
 
 create_maxquant_design_df(...)
 
@@ -25,7 +25,7 @@ create_sample_design_file(...)
 
 \item{value_type}{string: any value in autonomics.import::MAXQUANT_VALUE_TYPES}
 
-\item{infer_from_sampleids}{logical: should design be infered from sample ids (see details)}
+\item{infer_design_from_sampleids}{logical: should design be infered from sample ids (see details)}
 
 \item{design_file}{string: full path to sample design file}
 
@@ -47,30 +47,30 @@ if (require(autonomics.data)){
       'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
        package = 'autonomics.data')
    file \%>\% write_maxquant_design()
-   file \%>\% write_maxquant_design(infer_from_sampleids = TRUE)
-   file \%>\% write_maxquant_design(infer_from_sampleids = TRUE, value_type = 'raw.intensity')
-   file \%>\% write_maxquant_design(infer_from_sampleids = TRUE, value_type = 'raw.ratio')
+   file \%>\% write_maxquant_design(infer_design_from_sampleids = TRUE)
+   file \%>\% write_maxquant_design(infer_design_from_sampleids = TRUE, value_type = 'raw.intensity')
+   file \%>\% write_maxquant_design(infer_design_from_sampleids = TRUE, value_type = 'raw.ratio')
 }
 
 # LFQ INTENSITIES
 if (require(graumann.lfq)){
    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
    file \%>\% autonomics.import::write_maxquant_design()
-   file \%>\% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE)
+   file \%>\% autonomics.import::write_maxquant_design(infer_design_from_sampleids = TRUE)
 }
 
 # UNLABELED INTENSITIES
 if (require(alnoubi.2017)){
    file <- system.file('extdata/proteinGroups.txt', package = 'alnoubi.2017')
    file \%>\% autonomics.import::write_maxquant_design()
-   file \%>\% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE)
+   file \%>\% autonomics.import::write_maxquant_design(infer_design_from_sampleids = TRUE)
 }
 
 # REPORTER INTENSITIES
 if (require(billing.vesicles)){
    file <- system.file('extdata/proteinGroups.txt', package = 'billing.vesicles')
    file \%>\% autonomics.import::write_maxquant_design()
-   file \%>\% autonomics.import::write_maxquant_design(infer_from_sampleids = TRUE)
+   file \%>\% autonomics.import::write_maxquant_design(infer_design_from_sampleids = TRUE)
 }
 
 }

@@ -4,8 +4,9 @@
 \alias{load_metabolonlipids}
 \title{Load metabolonlipids}
 \usage{
-load_metabolonlipids(file, sheet, log2_transform = TRUE, design_file = NULL,
-  infer_design_from_sampleids = FALSE)
+load_metabolonlipids(file, sheet, log2_transform = TRUE, log2_offset = 0,
+  design_file = NULL, infer_design_from_sampleids = FALSE,
+  design_sep = NULL)
 }
 \arguments{
 \item{file}{path to metabolon lipids file}
@@ -14,9 +15,13 @@ load_metabolonlipids(file, sheet, log2_transform = TRUE, design_file = NULL,
 
 \item{log2_transform}{logical: whether to log2 transform}
 
+\item{log2_offset}{numeric: offset in mapping x -> log2(offset + x)}
+
 \item{design_file}{path to sample design file}
 
 \item{infer_design_from_sampleids}{logical: whether to infer design from sampleids}
+
+\item{design_sep}{string: sample id separator}
 }
 \value{
 SummarizedExperiment

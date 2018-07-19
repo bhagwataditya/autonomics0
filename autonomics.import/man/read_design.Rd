@@ -24,7 +24,7 @@ if (require(autonomics.data)){
                 package = 'autonomics.data')
    design_file <- tempfile()
    autonomics.import::write_design(
-      file, 'metabolon', infer_from_sampleids = TRUE, design_file = design_file)
+      file, 'metabolon', infer_design_from_sampleids = TRUE, design_file = design_file)
    design_file \%>\% read_design() \%>\% head()
 }
 
@@ -42,7 +42,7 @@ if (require(autonomics.data)){
    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
                 package = 'autonomics.data')
    design_file <- tempfile()
-   write_design(file, 'soma', infer_from_sampleids = TRUE, design_file = design_file)
+   write_design(file, 'soma', infer_design_from_sampleids = TRUE, design_file = design_file)
    read_design(design_file) \%>\% head()
 }
 }
