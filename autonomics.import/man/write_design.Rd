@@ -5,7 +5,8 @@
 \title{Write design for metabolon, metabolonlipids, or soma data}
 \usage{
 write_design(file, platform, infer_from_sampleids = FALSE,
-  design_file = NULL, sheet = 2)
+  design_file = NULL, sheet = 2, quantity = if (platform == "maxquant")
+  autonomics.import::infer_maxquant_quantity(file) else NULL)
 }
 \arguments{
 \item{file}{string: path to metabolon file}
@@ -26,6 +27,14 @@ Write design for metabolon, metabolonlipids, or soma data
 }
 \examples{
 require(magrittr)
+
+# MAXQUANT
+if (require(autonomics.data)){
+   file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
+            system.file(package = 'autonomics.data')
+   file \%>\% write_design('maxquant')
+   file \%>\% write_design('maxquant', infer_from_sampleids = TRUE)
+}
 
 # METABOLON
 if (require(autonomics.data)){

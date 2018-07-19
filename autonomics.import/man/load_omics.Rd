@@ -4,15 +4,18 @@
 \alias{load_omics}
 \title{Load omics}
 \usage{
-load_omics(file, sheet = 2, platform, log2_transform = TRUE,
-  design_file = NULL, infer_design_from_sampleids = FALSE)
+load_omics(file, platform, sheet = 2, quantity = NULL,
+  log2_transform = TRUE, design_file = NULL,
+  infer_design_from_sampleids = FALSE)
 }
 \arguments{
 \item{file}{path to omics data file}
 
+\item{platform}{'metabolon', 'metabolonlipids'}
+
 \item{sheet}{excel sheet number or name if applicable}
 
-\item{platform}{'metabolon', 'metabolonlipids'}
+\item{quantity}{string: which quantity to extract into exprs}
 
 \item{log2_transform}{logical}
 

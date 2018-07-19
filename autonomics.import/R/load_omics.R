@@ -1,470 +1,15 @@
-#=======================================
-# sampleid_varname & subgroup_varname
-#=======================================
-
-#' Get sampleid svar name
-#' @param platform 'metabolonlipids', 'metabolon', 'soma'
-#' @return string
-#' @examples
-#' sampleid_varname('metabolonlipids')
-#' sampleid_varname('metabolon')
-#' sampleid_varname('soma')
-#' @export
-sampleid_varname <- function(platform){
-   switch(platform,
-          metabolonlipids = 'Client Identifier',
-          metabolon       = 'CLIENT_IDENTIFIER',
-          soma            = 'SampleId')
-}
-
-#' Get subgroup svar name
-#' @param platform 'metabolonlipids', 'metabolon', 'soma'
-#' @return string
-#' @examples
-#' subgroup_varname('metabolonlipids')
-#' subgroup_varname('metabolon')
-#' subgroup_varname('soma')
-#' @export
-subgroup_varname <- function(platform){
-   switch(platform,
-          metabolonlipids = 'Group',
-          metabolon       = 'Group',
-          soma            = 'SampleGroup')
-}
 
 
-
-#==================================================
-# identify_structure
-#==================================================
-
-#' Identify soma structure
-#'
-#' Identify structure of soma file
-#'
-#' @param file adat file
-#' @return list(row, col, fvars, svars)
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
-#'                         package = 'autonomics.data')
-#'    file %>% autonomics.import::identify_soma_structure()
-#' }
-#' if (require(atkin.2014)){
-#'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
-#'                         package = 'atkin.2014')
-#'    file %>% autonomics.import::identify_soma_structure()
-#' }
-#' @author Aditya Bhagwat
-#' @importFrom magrittr %>%
-#' @export
-identify_soma_structure <- function(file){
-   DT <- file %>% data.table::fread(header = FALSE, sep = '\t', fill = TRUE)
-   fvars <- DT[1 + which(DT$V1 == '^COL_DATA')] %>% unlist() %>% unname() %>% magrittr::extract(.!='') %>% magrittr::extract(2:length(.))
-   svars <- DT[1 + which(DT$V1 == '^ROW_DATA')] %>% unlist() %>% unname() %>% magrittr::extract(.!='') %>% magrittr::extract(2:length(.))
-   row <- length(fvars) + 2 + which(DT$V1 == '^TABLE_BEGIN')
-   col <- length(svars) + 2
-   list(row = row, col = col, fvars = fvars, svars = svars)
-}
-
-
-#' Validify sample/feature names
-#' @param x character vector with sample ids
-#' @return character vector
-#' @importFrom magrittr %<>%
-#' @export
-validify_sample_ids <- function(x){
-   . <- NULL
-   selector <- substr(x,1,1) %in% 0:9
-   x[selector] %<>% paste0('s', .)
-   x
-}
-
-
-#==========================================
-# load_sdata
-#==========================================
-
-#' Load metabolon sdata
-#' @param file path to metabolon file
-#' @param sheet excell sheet number or name
-#' @return sample dataframe
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% load_sdata_metabolon(2) %>% extract(1:3, 1:3)
-#' }
-#' @importFrom magrittr %>%
-#' @export
-load_sdata_metabolon <- function(file, sheet){
-
-   # Load sample data
-   . <- NULL
-   df <- file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
-   sstart <- which(!is.na(df[1,]))[1]
-   fstart <- which(!is.na(df[,1]))[1]
-   df %<>% magrittr::extract(1:fstart, (sstart+1):ncol(.)) %>%
-      t() %>%
-      data.frame(stringsAsFactors = FALSE, check.names = FALSE)            %>%
-      magrittr::set_names(df[[sstart]][1:fstart])     %>%
-      magrittr::set_names(names(.) %>% stringi::stri_replace_first_fixed( 'Group   HMDB_ID', 'Group') %>% # recent metabolon files
-                             stringi::stri_replace_first_fixed('Sample   HMDB_ID', 'Group'))    # older metabolon files
-   df %<>% magrittr::set_rownames(.$CLIENT_IDENTIFIER)
-
-   # Return
-   df
-}
-
-
-#' Possible sheet values for metabolonlipids data
-#' @export
-METABOLONLIPIDS_SHEETS <- c('Lipid Class Concentrations',
-                            'Lipid Class Compositions',
-                            'Species Concentrations',
-                            'Species Compositions',
-                            'Fatty Acid Concentrations',
-                            'Fatty Acid Compositions')
-
-#' Load metabolonlipids sdata
-#'
-#' Load sdata from metabolon clp (complex lipid panel) file
-#' @param file  path to metabolon clp (complex lipid panel) file
-#' @param sheet name of excel sheet (any value in METABOLONLIPIDS_SHEETS)
-#' @return sample dataframe
-#' @examples
-#' require(magrittr)
-#' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
-#' if (file.exists(file)){
-#'    file %>% load_sdata_metabolonlipids('Lipid Class Concentrations') %>% head()
-#'    file %>% load_sdata_metabolonlipids(    'Species Concentrations') %>% head()
-#'    file %>% load_sdata_metabolonlipids( 'Fatty Acid Concentrations') %>% head()
-#'    file %>% load_sdata_metabolonlipids('Lipid Class Compositions')   %>% head()
-#'    file %>% load_sdata_metabolonlipids(    'Species Compositions')   %>% head()
-#'    file %>% load_sdata_metabolonlipids( 'Fatty Acid Compositions')   %>% head()
-#' }
-#' @importFrom magrittr %>%
-#' @export
-load_sdata_metabolonlipids <- function(file, sheet){
-   x <- file %>% readxl::read_excel(sheet = sheet)
-   row1 <- which(x[[2]]=='Client Identifier')
-   coln <- which(x[row1, ] == 'Unit')
-
-   x %>% magrittr::extract((1+row1):nrow(x), 1:coln) %>%
-      data.frame() %>%
-      magrittr::set_names(x[row1, 1:coln] %>% unname() %>% unlist()) %>%
-      magrittr::set_rownames(.$`Client Identifier`)
-}
-
-
-#' Load soma sdata
-#' @param file string: path to adat file
-#' @return sample dataframe
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
-#'                         package = 'autonomics.data')
-#'    file %>% autonomics.import::load_sdata_soma() %>% head()
-#' }
-#' if (require(atkin.2014)){
-#'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
-#'                         package = 'atkin.2014')
-#'    file %>% autonomics.import::load_sdata_soma() %>% head()
-#' }
-#' @author Aditya Bhagwat
-#' @importFrom magrittr %>%
-#' @export
-load_sdata_soma <- function(file){
-   x <- file %>% autonomics.import::identify_soma_structure()
-
-   file %>%
-      data.table::fread(header = FALSE, sep = '\t', fill = TRUE) %>%
-      magrittr::extract((x$row-1):nrow(.),  1:(x$col-2), with = FALSE)    %>%
-      magrittr::set_names(unlist(unname(.[1,])))                          %>%
-      magrittr::extract(-1, )                                             %>%
-      data.frame(row.names = .$SampleId)
-}
-
-
-#' Load sdata
-#' @param file path to omics data file
-#' @param sheet excel sheet number or name if applicable
-#' @param platform 'metabolon', 'metabolonlipids'
-#' @return sample dataframe
-#' @examples
-#'  require(magrittr)
-#'  if (require(autonomics.data)){
-#'     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'     file %>% load_sdata(2, 'metabolon') %>% extract(1:3, 1:3)
-#'  }
-#' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
-#' if (file.exists(file)){
-#'    file %>% load_sdata('Lipid Class Concentrations', 'metabolonlipids') %>% head()
-#' }
-#' @importFrom magrittr %>%
-#' @export
-load_sdata <- function(file, sheet = NULL, platform){
-   switch(platform,
-          metabolonlipids = load_sdata_metabolonlipids(file = file, sheet = sheet),
-          metabolon       = load_sdata_metabolon(file = file, sheet = sheet),
-          soma            = load_sdata_soma(file))
-}
-
-
-#============================================
-# load_fdata
-#============================================
-
-#' Load metabolon fdata
-#' @param file path to metabolon file
-#' @param sheet excell sheet number or name
-#' @return sample dataframe
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% load_fdata_metabolon(2) %>% extract(1:3, 1:3)
-#' }
-#' @importFrom magrittr %>%
-#' @export
-load_fdata_metabolon <- function(file, sheet){
-   . <- NULL
-   df <- file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
-   sstart <- which(!is.na(df[1,]))[1]
-   fstart <- which(!is.na(df[,1]))[1]
-   df %>% magrittr::extract((fstart+1):nrow(.), 1:sstart)                     %>%
-      as.data.frame(stringsAsFactors = FALSE)                             %>%
-      magrittr::set_names(df[fstart, 1:sstart] %>% unlist() %>% unname()) %>%
-      magrittr::set_rownames(paste0('M', .$COMP_ID))                      %>%
-      cbind(MCOMP_ID = rownames(.), .)
-}
-
-
-#' Load metabolonlipids fdata
-#'
-#' Load fdata from metabolon clp (complex lipid panel) file
-#' @param file path to metabolon clp (complex lipid panel) file
-#' @param sheet name of excel sheet (any value in METABOLONLIPIDS_SHEETS)
-#' @return feature dataframe
-#' @examples
-#' require(magrittr)
-#' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
-#' if (file.exists(file)){
-#'    file %>% load_fdata_metabolonlipids('Lipid Class Concentrations') %>% head()
-#'    file %>% load_fdata_metabolonlipids(    'Species Concentrations') %>% head()
-#'    file %>% load_fdata_metabolonlipids( 'Fatty Acid Concentrations') %>% head()
-#'    file %>% load_fdata_metabolonlipids('Lipid Class Compositions')   %>% head()
-#'    file %>% load_fdata_metabolonlipids(    'Species Compositions')   %>% head()
-#'    file %>% load_fdata_metabolonlipids( 'Fatty Acid Compositions')   %>% head()
-#' }
-#' @importFrom magrittr %>%
-#' @export
-load_fdata_metabolonlipids <- function(file, sheet){
-   all_sheets <- readxl::excel_sheets(file) %>% (function(x) x %>% magrittr::set_names(x))
-
-   x <- file %>% readxl::read_excel(sheet = sheet)
-   row1 <- which(x[[2]]=='Client Identifier')
-   coln <- which(x[row1, ] == 'Unit')
-   fnamesrow <- if (stringi::stri_detect_fixed(all_sheets[[sheet]], 'Lipid Class')) row1 else row1-1
-
-   data.frame(feature_id = x %>% magrittr::extract(fnamesrow, (coln+1):ncol(x)) %>% unname() %>% unlist(),
-              lipidclass = x %>% magrittr::extract(row1,      (coln+1):ncol(x)) %>% unname() %>% unlist()) %>%
-      magrittr::set_rownames(.$feature_id)
-}
-
-
-#' Load soma fdata
-#' @param file string: path to adat file
-#' @return feature dataframe
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
-#'                         package = 'autonomics.data')
-#'    file %>% autonomics.import::load_fdata_soma() %>% head()
-#' }
-#' if (require(atkin.2014)){
-#'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
-#'                         package = 'atkin.2014')
-#'    file %>% autonomics.import::load_fdata_soma() %>% head()
-#' }
-#' @author Aditya Bhagwat
-#' @importFrom magrittr %>%
-#' @export
-load_fdata_soma <- function(file){
-   x <- file %>% autonomics.import::identify_soma_structure()
-
-   file %>%
-      data.table::fread(header = FALSE, sep = '\t', fill = TRUE)                  %>%
-      magrittr::extract((x$row-length(x$fvars)-1):(x$row-2),  (x$col-1):ncol(.))  %>%
-      t()                                                                         %>%
-      data.table::data.table()                                                    %>%
-      magrittr::set_names(unlist(unname(.[1,])))                                  %>%
-      magrittr::extract(-1, )                                                     %>%
-      data.frame(row.names = .$SeqId)
-}
-
-
-#' Load fdata
-#' @param file path to omics data file
-#' @param sheet excel sheet number or name if applicable
-#' @param platform 'metabolon', 'metabolonlipids'
-#' @return sample dataframe
-#' @examples
-#'  require(magrittr)
-#'  if (require(autonomics.data)){
-#'     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'     file %>% load_fdata(2, 'metabolon') %>% extract(1:3, 1:3)
-#'  }
-#' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
-#' if (file.exists(file)){
-#'    file %>% load_fdata('Lipid Class Concentrations', 'metabolonlipids') %>% head()
-#' }
-#' @importFrom magrittr %>%
-#' @export
-load_fdata <- function(file, sheet = NULL, platform){
-   switch(platform,
-          metabolonlipids = load_fdata_metabolonlipids(file = file, sheet = sheet),
-          metabolon       = load_fdata_metabolon(      file = file, sheet = sheet),
-          soma            = load_fdata_soma(file))
-}
-
-
-#=============================================
-# load_exprs
-#=============================================
-
-#' Load metabolon exprs
-#' @param file path to metabolon file
-#' @param sheet excell sheet number or name
-#' @return sample dataframe
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% load_exprs_metabolon(2) %>% extract(1:3, 1:3)
-#' }
-#' @importFrom magrittr %>%
-#' @export
-load_exprs_metabolon <- function(file, sheet){
-
-   df <- file %>% readxl::read_excel(sheet = sheet, col_names = FALSE)
-   sstart <- which(!is.na(df[1,]))[1]
-   fstart <- which(!is.na(df[,1]))[1]
-   sdata1 <- file %>% autonomics.import::load_sdata_metabolon(sheet = sheet)
-   fdata1 <- file %>% autonomics.import::load_fdata_metabolon(sheet = sheet)
-
-   df %>% magrittr::extract((fstart+1):nrow(.), (sstart+1):ncol(.)) %>%
-      data.matrix() %>%
-      magrittr::set_colnames(sdata1$CLIENT_IDENTIFIER) %>%
-      magrittr::set_rownames(fdata1$MCOMP_ID)
-}
-
-#' Load metabolonlipids exprs
-#'
-#' Load exprs from metabolon clp (complex lipid panel) file
-#' @param file path to metabolon clp (complex lipid panel) file
-#' @param sheet name of excel sheet (any value in METABOLONLIPIDS_SHEETS)
-#' @return exprs matrix
-#' @examples
-#' require(magrittr)
-#' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
-#' if (file.exists(file)){
-#'    file %>% load_exprs_metabolonlipids('Lipid Class Concentrations') %>% extract(1:3,1:3)
-#'    file %>% load_exprs_metabolonlipids(    'Species Concentrations') %>% extract(1:3,1:3)
-#'    file %>% load_exprs_metabolonlipids( 'Fatty Acid Concentrations') %>% extract(1:3,1:3)
-#'    file %>% load_exprs_metabolonlipids('Lipid Class Compositions')   %>% extract(1:3,1:3)
-#'    file %>% load_exprs_metabolonlipids(    'Species Compositions')   %>% extract(1:3,1:3)
-#'    file %>% load_exprs_metabolonlipids( 'Fatty Acid Compositions')   %>% extract(1:3,1:3)
-#' }
-#' @importFrom magrittr %>%
-#' @export
-load_exprs_metabolonlipids <- function(file, sheet){
-   all_sheets <- readxl::excel_sheets(file) %>% (function(x) x %>% magrittr::set_names(x))
-
-   x <- file %>% readxl::read_excel(sheet = sheet)
-   row1 <- which(x[[2]]=='Client Identifier')
-   coln <- which(x[row1, ] == 'Unit')
-   fnamesrow <- if (stringi::stri_detect_fixed(all_sheets[[sheet]], 'Lipid Class')) row1 else row1-1
-   snames1 <- x[[2]][(1+row1):nrow(x)]
-
-   x %>% magrittr::extract((1+row1):nrow(x), (coln+1):ncol(x))  %>%
-      magrittr::set_names(x[fnamesrow, (coln+1):ncol(x)])    %>%
-      (function(y) {y[y=='.'] <- NA;  y})                     %>%
-      data.matrix()                                          %>%
-      magrittr::set_rownames(snames1)                        %>%
-      t()
-}
-
-
-#' Load soma exprs
-#' @param file string: path to adat file
-#' @return sample dataframe
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
-#'                         package = 'autonomics.data')
-#'    file %>% autonomics.import::load_exprs_soma() %>% extract(1:3, 1:3)
-#' }
-#' if (require(atkin.2014)){
-#'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
-#'                         package = 'atkin.2014')
-#'    file %>% autonomics.import::load_exprs_soma() %>% extract(1:3, 1:3)
-#' }
-#' @author Aditya Bhagwat
-#' @importFrom magrittr %>%
-#' @export
-load_exprs_soma <- function(file){
-   x      <- file %>% autonomics.import::identify_soma_structure()
-   fdata1 <- file %>% autonomics.import::load_fdata_soma()
-   sdata1 <- file %>% autonomics.import::load_sdata_soma()
-
-   file %>%
-      data.table::fread(header = FALSE, sep = '\t', fill = TRUE) %>%
-      magrittr::extract(x$row:nrow(.), (x$col):ncol(.))          %>%
-      t()                                                        %>%
-      data.matrix()                                              %>%
-      magrittr::set_rownames(fdata1$SeqId)                       %>%
-      magrittr::set_colnames(sdata1$SampleId)                    %>%
-      (function(x){class(x) <- 'numeric'; x})
-}
-
-
-#' Load exprs
-#' @param file path to omics data file
-#' @param sheet excel sheet number or name if applicable
-#' @param platform 'metabolon', 'metabolonlipids'
-#' @return sample dataframe
-#' @examples
-#'  require(magrittr)
-#'  if (require(autonomics.data)){
-#'     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'     file %>% load_exprs(2, 'metabolon') %>% extract(1:3, 1:3)
-#'  }
-#' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
-#' if (file.exists(file)){
-#'    file %>% load_exprs('Lipid Class Concentrations', 'metabolonlipids') %>% extract(1:3, 1:3)
-#' }
-#' @importFrom magrittr %>%
-#' @export
-load_exprs <- function(file, sheet = NULL, platform){
-   switch(platform,
-          metabolonlipids = load_exprs_metabolonlipids(file = file, sheet = sheet),
-          metabolon       = load_exprs_metabolon(      file = file, sheet = sheet),
-          soma            = load_exprs_soma(file))
-}
 
 #===========================================
-# load_omics
+# GENERIC
 #===========================================
 
 #' Load omics
 #' @param file path to omics data file
-#' @param sheet excel sheet number or name if applicable
 #' @param platform 'metabolon', 'metabolonlipids'
+#' @param sheet excel sheet number or name if applicable
+#' @param quantity string: which quantity to extract into exprs
 #' @param design_file path to design file
 #' @param log2_transform logical
 #' @param infer_design_from_sampleids logical
@@ -483,8 +28,9 @@ load_exprs <- function(file, sheet = NULL, platform){
 #' @export
 load_omics <- function(
    file,
-   sheet = 2,
    platform,
+   sheet = 2,
+   quantity = NULL,
    log2_transform              = TRUE,
    design_file                 = NULL,
    infer_design_from_sampleids = FALSE
@@ -493,9 +39,9 @@ load_omics <- function(
    . <- NULL
 
    # Load components
-   sdata1 <- file %>% autonomics.import::load_sdata(sheet = sheet, platform = platform)
-   fdata1 <- file %>% autonomics.import::load_fdata(sheet = sheet, platform = platform)
-   exprs1 <- file %>% autonomics.import::load_exprs(sheet = sheet, platform = platform)
+   sdata1 <- file %>% autonomics.import::load_sdata(platform = platform, sheet = sheet, quantity = quantity)
+   fdata1 <- file %>% autonomics.import::load_fdata(platform = platform, sheet = sheet)
+   exprs1 <- file %>% autonomics.import::load_exprs(platform = platform, sheet = sheet, quantity = quantity)
 
    # Wrap into SummarizedExperiment
    object <- SummarizedExperiment::SummarizedExperiment(assays=list(exprs = exprs1))
@@ -515,6 +61,214 @@ load_omics <- function(
    object
 }
 
+#=============================
+# MAXQUANT
+#=============================
+
+#' Load proteingroups
+#' @param file            path to proteinGroups.txt
+#' @param quantity       'Ratio normalized', 'Ratio', 'Intensity', 'LFQ intensity', 'Reporter intensity'
+#' @param infer_design_from_sampleids  logical: whether to infer design from sampleids
+#' @param design_file     path to design file (created with write_maxquant_design)
+#' @param fasta_file      path to uniprot fasta database
+#' @param log2_transform  logical: whether to log2 transform
+#' @param log2_offset     numeric: offset used in mapping: x -> log2(offset + x)
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#'                         package = 'autonomics.data')
+#'    object <- file %>% autonomics.import::load_proteingroups()
+#' }
+#' @importFrom magrittr %>%
+#' @export
+load_proteingroups <- function(
+   file,
+   quantity                    = autonomics.import::infer_maxquant_quantity(file),
+   infer_design_from_sampleids = FALSE,
+   design_file                 = NULL,
+   fasta_file                  = NULL,
+   log2_transform              = TRUE,
+   log2_offset                 = 0
+){
+
+   # Load exprs
+   exprs_mat <- file %>% autonomics.import::load_exprs_maxquant(quantity)
+   if (log2_transform) exprs_mat %<>% (function(x) log2(log2_offset + x))
+
+   # Pack into Sumexp
+   object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs = exprs_mat))
+   autonomics.import::fdata(object) <- file %>% autonomics.import::load_fdata_maxquant()
+   autonomics.import::sdata(object) <- data.frame(sample_id = colnames(exprs_mat), row.names = colnames(exprs_mat))
+
+   # Merge in sample design
+   design_df <- autonomics.import::write_maxquant_design(file, infer_from_sampleids = infer_design_from_sampleids)
+   object %<>% autonomics.import::merge_sdata(design_df, by = 'sample_id')
+   if (!is.null(design_file)){
+      file_df <- autonomics.import::read_maxquant_design(design_file)
+      object %<>% autonomics.import::merge_sdata(file_df, by = 'sample_id')
+   }
+
+   # Return
+   return(object)
+
+}
+
+
+#' Annotate and deconvolute proteingroups SumExp
+#'
+#' Steps:
+#' \enumerate{
+#'    \item Separates proteingroups into uniprot accessions.
+#'    \item Fetches up-to-date annotations for each from uniprot
+#'    \item Keeps best annotated entries (per proteingroup)
+#'    \item Collapses isoforms (per canonical accession)
+#'    \item Keeps first of redundant uniprot entries
+#'    \item Collapses paralogs (per protein group)
+#'    \item Merges annotations into fdata(object) and returns
+#' }
+#'
+#' @param object SummarizedExperiment
+#' @param fasta_file path to fasta file
+#' @examples
+#' \dontrun{
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- system.file('extdata/billing2016/proteinGroups.txt',
+#'                           package = 'autonomics.data') %>%
+#'              autonomics.import::load_proteingroups()
+#'    object %>% autonomics.import::fdata() %>% str()
+#'    object %>% autonomics.import::annotate_proteingroups() %>%
+#'               autonomics.import::fdata() %>% str()
+#' }
+#' }
+#' @importFrom data.table   data.table   :=
+#' @importFrom magrittr     %>%
+#' @export
+annotate_proteingroups2 <- function(object, fasta_file = NULL){
+   Uniprot <- NULL
+
+   # rm existing annotation to avoid confusion
+   autonomics.import::fdata(object)$`Gene names`    <- NULL
+   autonomics.import::fdata(object)$`Protein names` <- NULL
+   autonomics.import::fdata(object)$`Fasta headers` <- NULL
+
+   # Extract
+   fdata1 <- autonomics.import::fdata(object)               %>%
+      magrittr::set_colnames(colnames(.) %>% stringi::stri_replace_first_fixed('Majority protein IDs', 'Uniprot')) %>%
+      tidyr::separate_rows('Uniprot', sep = ';') %>%
+      data.table::data.table() %>%
+      magrittr::extract(, ('Canonical') := Uniprot %>% stringi::stri_replace_first_regex('[-][0-9]+$', ''))
+   n0 <- nrow(object)
+   n1 <- length(unique(fdata1$Uniprot))
+   n2 <- length(unique(fdata1$Canonical))
+   autonomics.support::cmessage('%d protein groups -> %d uniprot accessions -> %d canonical', n0, n1, n2)
+
+   # Annotate through uniprot.ws
+   if (is.null(fasta_file)){
+      autonomics.support::cmessage('Annotate with uniprot.ws')
+      dt <- unique(fdata1$`Canonical accessions`) %>% autonomics.annotate::annotate_uniprot()
+      fdata1 %<>% merge(dt, by.x = 'Canonical accessions', by.y = uniprot_var, all.x = TRUE)
+
+      # Or annotate through fasta file
+   } else {
+      fasta_list <- seqinr::read.fasta(fasta_file)
+
+      names <- fasta_list %>% (function(x)attr(x, 'name'))
+      sp_or_tr           <- names %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 1)
+      uniprot_accessions <- names %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2)
+      entry_names        <- names %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 3)
+
+      annotations <- fasta_list %>% vapply(function(x) attr(x, 'Annot'), character(1))
+      annotations[1:3] %>% stringi::stri_replace_first_fixed(paste0('>', names[1:3], ' '), '')
+
+   }
+
+   # Keep reviewed, drop unreviewed (per proteingroup)
+   autonomics.support::cmessage('Simplify proteingroups')
+   n0 <- nrow(fdata1)
+   fdata1 %<>% magrittr::extract(, .SD[reviewed == max(reviewed)], by = fid_var) %>% magrittr::extract(, reviewed:=NULL)
+   n1 <- nrow(fdata1)
+   autonomics.support::cmessage('\t%d -> %d: prefer reviewed (when available, per proteingroup)', n0, n1)
+
+   # Keep best (annotation) score (per protein group)
+   n0 <- nrow(fdata1)
+   fdata1 %<>% magrittr::extract(, .SD[score == max(score)],       by = fid_var) %>% magrittr::extract(, score:=NULL)
+   n1 <- nrow(fdata1)
+   autonomics.support::cmessage('\t%d -> %d: prefer best annotation score (per proteingroup)', n0, n1)
+
+   # Keep best go annotation (per protein group)
+   n0 <- nrow(fdata1)
+   fdata1  %>% magrittr::extract( is.na(goid), ngoid := 0)
+   fdata1  %>% magrittr::extract(!is.na(goid), ngoid := goid     %>% stringi::stri_count_fixed(';') %>% magrittr::add(1))
+   fdata1 %<>% magrittr::extract(, .SD[ngoid  == max(ngoid)   ], by = fid_var)
+   fdata1 %>%  magrittr::extract(, ngoid := NULL)
+   n1 <- nrow(fdata1)
+   autonomics.support::cmessage('\t%d -> %d: prefer best GO annotation (per protein group)', n0, n1)
+
+   # Keep best interpro annotated (per protein group)
+   n0 <- nrow(fdata1)
+   fdata1  %>% magrittr::extract( is.na(interpro), ninterpro := 0)
+   fdata1  %>% magrittr::extract(!is.na(interpro), ninterpro := interpro %>% stringi::stri_count_fixed(';') %>% magrittr::add(1))
+   fdata1 %<>% magrittr::extract(, .SD[ninterpro == max(ninterpro)], by = fid_var)
+   fdata1 %>%  magrittr::extract(, ninterpro := NULL)
+   n1 <- nrow(fdata1)
+   autonomics.support::cmessage('\t%d -> %d: prefer best interpro annotation (per protein group):', n0, n1)
+
+   # Collapse isoforms (per canonical accession)
+   n0 <- nrow(fdata1)
+   fdata1 %<>% magrittr::extract(, (uniprot_var):= paste0(get(uniprot_var), collapse = ';'), by = c(fid_var, 'Canonical accessions')) %>% unique()
+   n1 <- nrow(fdata1)
+   autonomics.support::cmessage('\t%d -> %d: Collapse isoforms (per canonical accession)', n0, n1)
+
+   # Keep those with "gene name" annotation (per protein group)
+   n0 <- nrow(fdata1)
+   fdata1[, ngene:=0]
+   fdata1[`Gene names` != '', ngene:=1]
+   fdata1 %<>% magrittr::extract(, .SD[ngene==max(ngene)], by = feature_id)
+   fdata1[, ngene:=NULL]
+   n1 <- nrow(fdata1)
+   autonomics.support::cmessage('\t%d -> %d: Prefer entries with gene names (per protein group)', n0, n1)
+
+   # Keep best existence values (per protein group)
+   n0 <- nrow(fdata1)
+   fdata1[, existence:=as.numeric(existence)]
+   fdata1 %<>% magrittr::extract(,.SD[existence==min(existence)], by = c(fid_var))
+   fdata1[, existence := NULL]
+   n1 <- nrow(fdata1)
+   autonomics.support::cmessage('\t%d -> %d: Keep entries with best uniprot existence score (per protein group)', n0, n1)
+
+   # Keep only first of redundant entries (per gene name)
+   n0 <- nrow(fdata1)
+   fdata1 %<>% magrittr::extract(, .SD[1], by = c(fid_var, 'Gene names'))
+   n1 <- nrow(fdata1)
+   autonomics.support::cmessage('\t%d -> %d: Keep only first of redundant uniprot entries  (per protein group and gene name)', n0, n1)
+
+   # Collapse paralogs (per protein group)
+   n0 <- nrow(fdata1)
+   fdata1 %<>% magrittr::extract(, (uniprot_var)          :=  get(uniprot_var)      %>% paste0(collapse = '; '),                             by = fid_var)
+   fdata1 %<>% magrittr::extract(, `Canonical accessions` := `Canonical accessions` %>% paste0(collapse = '; '),                             by = fid_var)
+   fdata1 %<>% magrittr::extract(, `Gene names`           := `Gene names`           %>% paste0(collapse = '; '),                             by = fid_var)
+   fdata1 %<>% magrittr::extract(,  keggid                :=  keggid                %>% paste0(collapse = '; '),                             by = fid_var)
+   fdata1 %<>% magrittr::extract(,  goid                  :=  goid                  %>% autonomics.support::uniquify_collapsed_strings(';'), by = fid_var)
+   fdata1 %<>% magrittr::extract(,  interpro              :=  interpro              %>% autonomics.support::uniquify_collapsed_strings(';'), by = fid_var)
+   fdata1 %<>% magrittr::extract(, `Protein names`        := `Protein names`        %>% autonomics.support::commonify_strings(),             by = fid_var)
+   fdata1 %<>% unique()
+   n1 <- nrow(fdata1)
+   autonomics.support::cmessage('\t%d -> %d: Collapse paralogs (per protein group) and commonify protein names', n0, n1)
+
+   # Merge back into object and return
+   autonomics.support::cmessage('Merge %d annotations into SummarizedExperiment with %d protein groups', n1, nrow(object))
+   fdata1 %<>% magrittr::extract(match(autonomics.import::fdata(object)$feature_id, .$feature_id), )
+   fdata1 %<>% data.frame(row.names = .$feature_id, check.names = FALSE)
+   autonomics.import::fdata(object) <- fdata1
+   object
+}
+
+
+#======================
+# METABOLON
+#======================
 
 #' Load metabolon data
 #' @param file                metabolon xlsx file
@@ -591,6 +345,10 @@ load_metabolon <- function(
 }
 
 
+#============================
+# METABOLONLIPIDS
+#============================
+
 #' Load metabolonlipids
 #'
 #' Load data from metabolon complex lipid panel (clp) file
@@ -634,6 +392,40 @@ load_metabolonlipids <- function(
    object
 }
 
+
+#==========================
+# SOMA
+#==========================
+
+#' Identify soma structure
+#'
+#' Identify structure of soma file
+#'
+#' @param file adat file
+#' @return list(row, col, fvars, svars)
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'                         package = 'autonomics.data')
+#'    file %>% autonomics.import::identify_soma_structure()
+#' }
+#' if (require(atkin.2014)){
+#'    file <- system.file('extdata/soma/WCQ-14-130_Set_A_RPT.HybMedNormCal_20140925.adat',
+#'                         package = 'atkin.2014')
+#'    file %>% autonomics.import::identify_soma_structure()
+#' }
+#' @author Aditya Bhagwat
+#' @importFrom magrittr %>%
+#' @export
+identify_soma_structure <- function(file){
+   DT <- file %>% data.table::fread(header = FALSE, sep = '\t', fill = TRUE)
+   fvars <- DT[1 + which(DT$V1 == '^COL_DATA')] %>% unlist() %>% unname() %>% magrittr::extract(.!='') %>% magrittr::extract(2:length(.))
+   svars <- DT[1 + which(DT$V1 == '^ROW_DATA')] %>% unlist() %>% unname() %>% magrittr::extract(.!='') %>% magrittr::extract(2:length(.))
+   row <- length(fvars) + 2 + which(DT$V1 == '^TABLE_BEGIN')
+   col <- length(svars) + 2
+   list(row = row, col = col, fvars = fvars, svars = svars)
+}
 
 
 #' Load soma

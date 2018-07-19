@@ -1292,7 +1292,7 @@ maxquant_dt_to_sumexp <- function(
 #' @importFrom data.table   data.table   :=
 #' @importFrom magrittr     %>%
 #' @export
-load_proteingroups <- function(
+old_load_proteingroups <- function(
    proteingroups_file,
    design_file    = paste0(dirname(proteingroups_file), '/sample_design.txt'),
    parameter_file = paste0(dirname(proteingroups_file), '/parameters.txt'),
@@ -1432,7 +1432,7 @@ utils::globalVariables(c('keggid', 'reviewed', 'ngene', 'feature_id', 'existence
 #' @importFrom data.table   data.table   :=
 #' @importFrom magrittr     %>%
 #' @export
-annotate_proteingroups <- function(object){
+old_annotate_proteingroups <- function(object){
 
    # rm existing annotation to avoid confusion
    autonomics.import::fdata(object)$`Gene names`    <- NULL

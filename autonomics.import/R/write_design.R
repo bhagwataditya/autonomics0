@@ -1,3 +1,39 @@
+#=======================================
+# sampleid_varname & subgroup_varname
+#=======================================
+
+#' Get sampleid svar name
+#' @param platform 'metabolonlipids', 'metabolon', 'soma'
+#' @return string
+#' @examples
+#' sampleid_varname('metabolonlipids')
+#' sampleid_varname('metabolon')
+#' sampleid_varname('soma')
+#' @export
+sampleid_varname <- function(platform){
+   switch(platform,
+          maxquant        = 'sample_id',
+          metabolonlipids = 'Client Identifier',
+          metabolon       = 'CLIENT_IDENTIFIER',
+          soma            = 'SampleId')
+}
+
+#' Get subgroup svar name
+#' @param platform 'metabolonlipids', 'metabolon', 'soma'
+#' @return string
+#' @examples
+#' subgroup_varname('metabolonlipids')
+#' subgroup_varname('metabolon')
+#' subgroup_varname('soma')
+#' @export
+subgroup_varname <- function(platform){
+   switch(platform,
+          maxquant        = NULL,
+          metabolonlipids = 'Group',
+          metabolon       = 'Group',
+          soma            = 'SampleGroup')
+}
+
 #==================================================
 # INFER DESIGN FROM SAMPLEIDS
 #==================================================
@@ -80,10 +116,10 @@ infer_design_from_sampleids <- function(
 
    # Extract subgroup and replicate
    subgroup_values  <- sample_ids %>% stringi::stri_split_fixed(sep) %>%
-      vapply(function(y) y %>% magrittr::extract(1:(length(y)-1)) %>%
-                paste0(collapse = sep), character(1))
+                                      vapply(function(y) y %>% magrittr::extract(1:(length(y)-1)) %>%
+                                                               paste0(collapse = sep), character(1))
    replicate_values <- sample_ids %>% stringi::stri_split_fixed(sep) %>%
-      vapply(function(y) y %>% magrittr::extract(length(y)), character(1))
+                                      vapply(function(y) y %>% magrittr::extract(length(y)), character(1))
 
    # Return df
    return(data.frame(sample_id = sample_ids,
@@ -91,29 +127,6 @@ infer_design_from_sampleids <- function(
                      replicate = replicate_values,
                      row.names = sample_ids,
                      stringsAsFactors = FALSE))
-}
-
-
-#' Add replicate values
-#'
-#' Replicate values are set to the unique sampleid tails within each subgroup
-#'
-#' @param design_df dataframe with columns 'sample_id' and 'subgroup'
-#' @return dataframe
-#' @examples
-#' require(magrittr)
-#' design_df <- data.frame(sample_id = c('E_1', 'E_2', 'E_3', 'EM_1', 'EM_2', 'EM_3'),
-#'                         subgroup  = c('E',   'E',   'E',   'EM',   'EM',   'EM')) %>%
-#'              magrittr::set_rownames(.$sample_id)
-#' design_df
-#' design_df %>% add_replicate_values()
-#' @importFrom magrittr %>%
-#' @export
-add_replicate_values <- function(design_df){
-   sample_id <- NULL
-   design_df %>% data.table::data.table() %>%
-                 magrittr::extract(, replicate := autonomics.support::get_unique_tails(sample_id), by = 'subgroup') %>%
-                 data.frame(row.names = rownames(design_df), check.names = FALSE)
 }
 
 #========================================
@@ -148,65 +161,121 @@ write_design_file <- function(design_df, design_file){
    return(invisible(design_file))
 }
 
+#=====================
+# ADD REPLICATE VALUES
+#=======================
 
-#==========================
-# MAXQUANT
-#==========================
-
-#' Designify maxquant sampleids
-#' @param sampleids character vector
+#' Add replicate values
+#'
+#' Replicate values are set to the unique sampleid tails within each subgroup
+#'
+#' @param design_df dataframe with columns 'sample_id' and 'subgroup'
+#' @return dataframe
 #' @examples
 #' require(magrittr)
-#' sampleids <- c("STD(L).EM00(M).EM01(H).R1[H/L]",
-#'                "STD(L).EM00(M).EM01(H).R1[M/L]")
-#' sampleids %>% autonomics.import::designify_maxquant_sampleids()
-#'
-#' sampleids <- c("Gel 11 1", "Gel 11 2", "Gel Ctrl 1")
-#' sampleids %>% autonomics.import::designify_maxquant_sampleids()
-#'
-#' sampleids <- c("ESC(0).NCM(1).CM(2).MV(3).EX(4).KIT(5).R1[0]",
-#'                "ESC(0).NCM(1).CM(2).MV(3).EX(4).KIT(5).R1[1]")
-#' sampleids %>% autonomics.import::designify_maxquant_sampleids()
+#' design_df <- data.frame(sample_id = c('E_1', 'E_2', 'E_3', 'EM_1', 'EM_2', 'EM_3'),
+#'                         subgroup  = c('E',   'E',   'E',   'EM',   'EM',   'EM')) %>%
+#'              magrittr::set_rownames(.$sample_id)
+#' design_df
+#' design_df %>% add_replicate_values()
 #' @importFrom magrittr %>%
 #' @export
-designify_maxquant_sampleids <- function(sampleids){
+add_replicate_values <- function(design_df){
+   sample_id <- NULL
+   design_df %>% data.table::data.table() %>%
+      magrittr::extract(, replicate := autonomics.support::get_unique_tails(sample_id), by = 'subgroup') %>%
+      data.frame(row.names = rownames(design_df), check.names = FALSE)
+}
 
-   # Break into parts         #pattern <- '(.*)\\.R\\((.+)\\)\\[(.+)\\]'
-   sep <- sampleids %>% autonomics.import::infer_design_sep()
-   parts <- strsplit(sampleids, split = sep, fixed = TRUE)
-   n <- length(parts[[1]])
+#========================================
+# WRITE DESIGN
+#========================================
 
-   # replicate values
-   replicate_values <- parts %>% vapply(extract, character(1), n)
-   is_labeled <- parts %>% vapply(extract, character(1), n) %>% stringi::stri_detect_fixed('[') %>% any()
-   if (is_labeled){
-      label_values <- parts %>% vapply(extract, character(1), n) %>%
-         stringi::stri_extract_first_regex('(?<=\\[)(.+)(?=\\])')  %>%
-         strsplit(split = '/', fixed = TRUE)
-      replicate_values %<>% stringi::stri_replace_first_regex('(.+)(\\[.+\\])', '$1')
-      replicate_values %<>% paste0('_', label_values %>% vapply(paste0, character(1), collapse = ''))
-   }
-   parts %<>% lapply(function(x)x %>% magrittr::extract(1:(length(x)-1)))
+#' Write design for metabolon, metabolonlipids, or soma data
+#' @param file                   string: path to metabolon file
+#' @param platform               'metabolon', 'metabolonlipids', or 'soma'
+#' @param sheet                  character(1) or numeric(1): xls sheet
+#' @param infer_from_sampleids   logical: whether to infer design from CLIENT_IDENTIFIER
+#' @param design_file            string: path to design file
+#' @return design dataframe
+#' @examples
+#' require(magrittr)
+#'
+#' # MAXQUANT
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
+#'             system.file(package = 'autonomics.data')
+#'    file %>% write_design('maxquant')
+#'    file %>% write_design('maxquant', infer_from_sampleids = TRUE)
+#' }
+#'
+#' # METABOLON
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
+#'                                   package = 'autonomics.data')
+#'    file %>% write_design('metabolon') %>% head()
+#'    file %>% write_design('metabolon') %>% head()
+#'    file %>% write_design('metabolon', infer_from_sampleids = TRUE) %>% head()
+#' }
+#'
+#' # METABOLONLIPIDS
+#' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
+#' if (file.exists(file)){
+#'    file %>% write_design('metabolonlipids') %>% head(3)
+#'    file %>% write_design('metabolonlipids', infer_from_sampleids = TRUE) %>% head(3)
+#' }
+#'
+#' # SOMA
+#' if (require(autonomics.data)){
+#'    soma_file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'                              package = 'autonomics.data')
+#'    soma_file %>% autonomics.import::write_design('soma')
+#'    soma_file %>% autonomics.import::write_design('soma', infer_from_sampleids = TRUE)
+#' }
+#' @importFrom magrittr %>%
+#' @export
+write_design <- function(
+   file,
+   platform,
+   infer_from_sampleids = FALSE,
+   design_file  = NULL,
+   sheet = 2,
+   quantity = if (platform=='maxquant') autonomics.import::infer_maxquant_quantity(file) else NULL
+){
 
-   # subgroup values
-   subgroup_values <- if (is_labeled){
-      parts %>% lapply(function(x){
-         cursample <- x %>% stringi::stri_replace_first_regex('(.+)\\(([HML0-9]+)\\)', '$1')
-         curname   <- x %>% stringi::stri_replace_first_regex('(.+)\\(([HML0-9]+)\\)', '$2')
-         cursample %>% magrittr::set_names(curname)
-      }) %>%
-         autonomics.support::vextract(label_values) %>%
-         vapply(paste0, character(1), collapse = '_')
+   # sdata
+   sdata1 <- autonomics.import::load_sdata(file = file, platform = platform, sheet = sheet, quantity = quantity)
+   sampleid_var <- autonomics.import::sampleid_varname(platform)
+   subgroup_var <- autonomics.import::subgroup_varname(platform)
+
+   # Construct design
+   design_df <- data.frame(x           = sdata1[[sampleid_var]],
+                           row.names   = sdata1[[sampleid_var]],
+                           check.names = FALSE) %>%
+                magrittr::set_names(names(.) %>% stringi::stri_replace_first_fixed('x', sampleid_var))
+
+   # Extend design
+   if (infer_from_sampleids){
+      if (platform == 'maxquant')   design_df[[sampleid_var]] %<>% autonomics.import::designify_maxquant_sampleids()
+      design_df %<>% cbind(autonomics.import::infer_design_from_sampleids(.[[sampleid_var]]))
    } else {
-      parts %>% vapply(paste0, character(1), collapse = '.')
+      design_df$sample_id <- sdata1[[sampleid_var]]
+      if (!is.null(subgroup_var)){
+         design_df$subgroup  <- sdata1[[subgroup_var]]
+         missing_subgroups <- any(autonomics.support::is_missing_or_empty_character(design_df$subgroup))
+         if (!missing_subgroups){
+            design_df$subgroup %<>% autonomics.support::nameify_strings()
+            design_df %<>% add_replicate_values()
+         }
+      }
    }
 
-   # sampleid values
-   long_sampleid_values <- sprintf('%s.%s', subgroup_values, replicate_values)
-   sampleid_values <- long_sampleid_values %>% stringi::stri_replace_first_regex('_[HML0-9]+', '')
-   idx <- sampleid_values %>% autonomics.support::cduplicated()
-   sampleid_values[idx] <- long_sampleid_values[idx]
-   sampleid_values
+   # Write to file
+   if (!is.null(design_file))  design_df %>% autonomics.import::write_design_file(design_file)
+
+   # Return
+   design_df
+
 }
 
 
@@ -278,16 +347,16 @@ write_maxquant_design <- function(
 
    # Infer design and return
    design <- if (infer_from_sampleids){
-                sampleids %>%
-                autonomics.import::designify_maxquant_sampleids()   %>%
-                autonomics.import::infer_design_from_sampleids('.') %>%
-               (function(x){x$sample_id <- sampleids; x})
-             } else {
-                data.frame(sample_id = sampleids,
-                           subgroup  = '',
-                           replicate = '',
-                           block     = '')
-             } %>% magrittr::set_rownames(sampleids)
+      sampleids %>%
+         autonomics.import::designify_maxquant_sampleids()   %>%
+         autonomics.import::infer_design_from_sampleids('.') %>%
+         (function(x){x$sample_id <- sampleids; x})
+   } else {
+      data.frame(sample_id = sampleids,
+                 subgroup  = '',
+                 replicate = '',
+                 block     = '')
+   } %>% magrittr::set_rownames(sampleids)
 
 
    # Sample file
@@ -295,6 +364,70 @@ write_maxquant_design <- function(
    design
 
 }
+
+
+#===================
+# read_design
+#===================
+
+
+#' Read design
+#' @param design_file string: path to design file
+#' @return sample dataframe
+#' @examples
+#' require(magrittr)
+#'
+#' # METABOLON
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
+#'                 package = 'autonomics.data')
+#'    design_file <- tempfile()
+#'    autonomics.import::write_design(
+#'       file, 'metabolon', infer_from_sampleids = TRUE, design_file = design_file)
+#'    design_file %>% read_design() %>% head()
+#' }
+#'
+#' # METABOLONLIPIDS
+#' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
+#' if (file.exists(file)){
+#'    design_file <- tempfile()
+#'    autonomics.import::write_design(
+#'       file, 'metabolonlipids', design_file = design_file) %>% head()
+#'    read_design(design_file) %>% head()
+#' }
+#'
+#' # SOMA
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'                 package = 'autonomics.data')
+#'    design_file <- tempfile()
+#'    write_design(file, 'soma', infer_from_sampleids = TRUE, design_file = design_file)
+#'    read_design(design_file) %>% head()
+#' }
+#' @importFrom magrittr %<>%
+#' @export
+read_design <- function(design_file){
+   design_df <- autonomics.support::cfread(design_file, data.table = FALSE)
+   design_df %<>% magrittr::set_rownames(.[[1]])
+   design_df
+}
+
+
+
+
+
+
+
+
+
+
+#==========================
+# MAXQUANT
+#==========================
+
+
+
+
 
 
 #'@rdname write_maxquant_design
@@ -413,131 +546,6 @@ write_exiqon_design <- function(
 }
 
 
-#===========================
-# write_design
-#===========================
-
-#' Write design for metabolon, metabolonlipids, or soma data
-#' @param file                   string: path to metabolon file
-#' @param platform               'metabolon', 'metabolonlipids', or 'soma'
-#' @param sheet                  character(1) or numeric(1): xls sheet
-#' @param infer_from_sampleids   logical: whether to infer design from CLIENT_IDENTIFIER
-#' @param design_file            string: path to design file
-#' @return design dataframe
-#' @examples
-#' require(magrittr)
-#'
-#' # METABOLON
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
-#'                                   package = 'autonomics.data')
-#'    file %>% write_design('metabolon') %>% head()
-#'    file %>% write_design('metabolon') %>% head()
-#'    file %>% write_design('metabolon', infer_from_sampleids = TRUE) %>% head()
-#' }
-#'
-#' # METABOLONLIPIDS
-#' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
-#' if (file.exists(file)){
-#'    file %>% write_design('metabolonlipids') %>% head(3)
-#'    file %>% write_design('metabolonlipids', infer_from_sampleids = TRUE) %>% head(3)
-#' }
-#'
-#' # SOMA
-#' if (require(autonomics.data)){
-#'    soma_file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
-#'                              package = 'autonomics.data')
-#'    soma_file %>% autonomics.import::write_design('soma')
-#'    soma_file %>% autonomics.import::write_design('soma', infer_from_sampleids = TRUE)
-#' }
-#' @importFrom magrittr %>%
-#' @export
-write_design <- function(
-   file,
-   platform,
-   infer_from_sampleids = FALSE,
-   design_file  = NULL,
-   sheet = 2
-){
-
-   # sdata
-   sdata1 <- autonomics.import::load_sdata(file = file, sheet = sheet, platform = platform)
-   sampleid_var <- sampleid_varname(platform)
-   subgroup_var <- subgroup_varname(platform)
-
-   # Construct design
-   design_df <- data.frame(x           = sdata1[[sampleid_var]],
-                           row.names   = sdata1[[sampleid_var]],
-                           check.names = FALSE) %>%
-                magrittr::set_names(names(.) %>% stringi::stri_replace_first_fixed('x', sampleid_var))
-
-   # Extend design
-   if (infer_from_sampleids){
-      design_df %<>% cbind(autonomics.import::infer_design_from_sampleids(.[[sampleid_var]]))
-   } else {
-      design_df$sample_id <- sdata1[[sampleid_var]]
-      design_df$subgroup  <- sdata1[[subgroup_var]]
-      missing_subgroups <- any(autonomics.support::is_missing_or_empty_character(design_df$subgroup))
-      if (!missing_subgroups){
-         design_df$subgroup %<>% autonomics.support::nameify_strings()
-         design_df %<>% add_replicate_values()
-      }
-   }
-
-   # Write to file
-   if (!is.null(design_file))  design_df %>% autonomics.import::write_design_file(design_file)
-
-   # Return
-   design_df
-
-}
-
-
-#===================
-# read_design
-#===================
-
-
-#' Read design
-#' @param design_file string: path to design file
-#' @return sample dataframe
-#' @examples
-#' require(magrittr)
-#'
-#' # METABOLON
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
-#'                 package = 'autonomics.data')
-#'    design_file <- tempfile()
-#'    autonomics.import::write_design(
-#'       file, 'metabolon', infer_from_sampleids = TRUE, design_file = design_file)
-#'    design_file %>% read_design() %>% head()
-#' }
-#'
-#' # METABOLONLIPIDS
-#' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
-#' if (file.exists(file)){
-#'    design_file <- tempfile()
-#'    autonomics.import::write_design(
-#'       file, 'metabolonlipids', design_file = design_file) %>% head()
-#'    read_design(design_file) %>% head()
-#' }
-#'
-#' # SOMA
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
-#'                 package = 'autonomics.data')
-#'    design_file <- tempfile()
-#'    write_design(file, 'soma', infer_from_sampleids = TRUE, design_file = design_file)
-#'    read_design(design_file) %>% head()
-#' }
-#' @importFrom magrittr %<>%
-#' @export
-read_design <- function(design_file){
-   design_df <- autonomics.support::cfread(design_file, data.table = FALSE)
-   design_df %<>% magrittr::set_rownames(.[[1]])
-   design_df
-}
 
 
 #====================
