@@ -37,10 +37,8 @@ if (require(autonomics.data)){
 if (require(graumann.lfq)){
    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
    file \%>\% load_snames_maxquant('Intensity')
-   file \%>\% load_snames_maxquant('Intensity', clean = TRUE)
-   file \%>\% load_snames_maxquant('Intensity', clean = TRUE, designify = TRUE)
+   file \%>\% load_snames_maxquant('Intensity', infer_design_from_sampleids = TRUE)
    file \%>\% load_snames_maxquant('LFQ intensity')
-   file \%>\% load_snames_maxquant('LFQ intensity', clean = TRUE)
-   file \%>\% load_snames_maxquant('LFQ intensity', clean = TRUE, designify = TRUE)
+   file \%>\% load_snames_maxquant('LFQ intensity', infer_design_from_sampleids = TRUE)
 }
 }
