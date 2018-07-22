@@ -19,12 +19,24 @@
 #' @examples
 #'  require(magrittr)
 #'
-#' # MAXQUANT
-#' file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
-#'                      package = 'autonomics.data')
-#' object <- file %>% load_omics(platform = 'maxquant',
-#'                               quantity = 'Ratio normalized',
-#'                               infer_design_from_sampleids = TRUE)
+#' # MAXQUANT: STEM CELL COMPARISON
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#'                         package = 'autonomics.data')
+#'    object <- file %>% load_omics(platform = 'maxquant',
+#'                                  quantity = 'Ratio normalized',
+#'                                  infer_design_from_sampleids = TRUE)
+#' }
+#'
+#' # MAXQUANT: STEM CELL DIFFERENTIATION
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#'                         package = 'autonomics.data')
+#'    object <- file %>% load_omics(platform = 'maxquant',
+#'                                  quantity = 'Ratio normalized',
+#'                                  infer_design_from_sampleids = TRUE)
+#' }
+#'
 #' # METABOLON
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
@@ -93,8 +105,9 @@ load_omics <- function(
 #' @param log2_offset     numeric: offset used in mapping: x -> log2(offset + x)
 #' @examples
 #' require(magrittr)
-#' if (require(autonomics.data)){
 #'
+#' # STEM CELL COMPARISON
+#' if (require(autonomics.data)){
 #'    file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
 #'                         package = 'autonomics.data')
 #'
@@ -110,6 +123,14 @@ load_omics <- function(
 #'       object <- load_proteingroups(file, design_file = design_file)
 #'       sdata(object)
 #' }
+#'
+#' # STEM CELL DIFFERENTIATION
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/stemcell.differentiation/maxquant/proteinGroups.txt' %>%
+#'             system.file(package = 'autonomics.data')
+#'    file %>% autonomics.import::load_proteingroups()
+#' }
+#'
 #' @importFrom magrittr %>%
 #' @export
 load_proteingroups <- function(

@@ -36,12 +36,24 @@ Load omics
 \examples{
  require(magrittr)
 
-# MAXQUANT
-file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
-                     package = 'autonomics.data')
-object <- file \%>\% load_omics(platform = 'maxquant',
-                              quantity = 'Ratio normalized',
-                              infer_design_from_sampleids = TRUE)
+# MAXQUANT: STEM CELL COMPARISON
+if (require(autonomics.data)){
+   file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+                        package = 'autonomics.data')
+   object <- file \%>\% load_omics(platform = 'maxquant',
+                                 quantity = 'Ratio normalized',
+                                 infer_design_from_sampleids = TRUE)
+}
+
+# MAXQUANT: STEM CELL DIFFERENTIATION
+if (require(autonomics.data)){
+   file <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+                        package = 'autonomics.data')
+   object <- file \%>\% load_omics(platform = 'maxquant',
+                                 quantity = 'Ratio normalized',
+                                 infer_design_from_sampleids = TRUE)
+}
+
 # METABOLON
 if (require(autonomics.data)){
    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
