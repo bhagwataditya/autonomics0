@@ -31,11 +31,10 @@ stemdiff.proteinratios <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
                            autonomics.import::filter_samples(subgroup %>% stringi::stri_detect_fixed('BLANK_') %>% magrittr::not())
                               # not interested in BLANK/STD ratios
 autonomics.import::sdata(stemdiff.proteinratios)
+stemdiff.proteinratios$subgroup %<>% factor(levels = levels(.)[c(2:length(.), 1)])   # Have BM00_STD as last level
 save(stemdiff.proteinratios, file = 'data/stemdiff.proteinratios.RData', compress = 'xz')
 stemdiff.proteinratios %>% autonomics.explore::plot_pca_samples()
 stemdiff.proteinratios %>% autonomics.plot::default_color_values(color_var = 'subgroup')
-
-
 
 # Glutaminase (METABOLON)
 #========================
