@@ -38,7 +38,7 @@ Load omics
 
 # MAXQUANT: STEM CELL COMPARISON
 if (require(autonomics.data)){
-   file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+   file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
                         package = 'autonomics.data')
    object <- file \%>\% load_omics(platform = 'maxquant',
                                  quantity = 'Ratio normalized',
@@ -47,7 +47,7 @@ if (require(autonomics.data)){
 
 # MAXQUANT: STEM CELL DIFFERENTIATION
 if (require(autonomics.data)){
-   file <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+   file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
                         package = 'autonomics.data')
    object <- file \%>\% load_omics(platform = 'maxquant',
                                  quantity = 'Ratio normalized',

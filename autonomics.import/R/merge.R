@@ -12,7 +12,7 @@
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'    object <- system.file('extdata/stemcomp/soma/stemcomp.adat',
 #'                           package = 'autonomics.data') %>%
 #'              autonomics.import::load_soma()
 #'    newdata <- autonomics.import::sdata(object) %>%
@@ -68,7 +68,7 @@ merge_sdata <- function(object, newdata, by, newdata_first = FALSE){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'    object <- system.file('extdata/stemcomp/soma/stemcomp.adat',
 #'                           package = 'autonomics.data') %>%
 #'              autonomics.import::load_soma()
 #'    newdata <- autonomics.import::fdata(object)           %>%

@@ -21,7 +21,7 @@ Load proteingroups file into wide data.table
 # NORMALIZED RATIOS
 #if (require(autonomics.data)){
 #   proteingroups_file <- system.file(
-#      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#      'extdata/stemdiff/maxquant/proteinGroups.txt',
 #       package = 'autonomics.data')
 #   proteingroups_file \%>\% load_proteingroups_to_wide_dt() \%>\% dim()
 #}

@@ -27,14 +27,18 @@ if (require(subramanian.2016)){
    object \%>\% autonomics.import::svar_has_two_components('subgroup')
    object \%>\% autonomics.import::subgroup_has_two_components()
 }
+
+# GLUTAMINASE (METABOLON)
 if (require(autonomics.data)){
    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
                         package = 'autonomics.data')
    object <- autonomics.import::load_metabolon(file)
    object \%>\% autonomics.import::subgroup_has_two_components()
 }
-if (require(billing.differentiation.data)){
-   billing.differentiation.data::protein.ratios \%>\%
-      autonomics.import::subgroup_has_two_components()
+
+# STEM CELL DIFFERENTIATION (MAXQUANT)
+if (require(autonomics.data)){
+   autonomics.data::stemdiff.proteinratios \%>\%
+   autonomics.import::subgroup_has_two_components()
 }
 }

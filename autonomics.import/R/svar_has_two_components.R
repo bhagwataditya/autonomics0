@@ -10,22 +10,34 @@
 #'    object %>% autonomics.import::svar_has_two_components('subgroup')
 #'    object %>% autonomics.import::subgroup_has_two_components()
 #' }
+#'
+#' # GLUTAMINASE (METABOLON)
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
 #'                         package = 'autonomics.data')
 #'    object <- autonomics.import::load_metabolon(file)
 #'    object %>% autonomics.import::subgroup_has_two_components()
 #' }
-#' if (require(billing.differentiation.data)){
-#'    billing.differentiation.data::protein.ratios %>%
-#'       autonomics.import::subgroup_has_two_components()
+#'
+#' # STEM CELL DIFFERENTIATION (MAXQUANT)
+#' if (require(autonomics.data)){
+#'    autonomics.data::stemdiff.proteinratios %>%
+#'    autonomics.import::subgroup_has_two_components()
 #' }
 #' @export
 svar_has_two_components <- function(object, svar){
-   object %>%
-   autonomics.import::scomponents(svar) %>%
-   ncol() %>%
-   magrittr::equals(2)
+
+   dt <- object %>% autonomics.import::scomponents(svar)
+
+   # FALSE if less than two columns
+   if (ncol(dt) < 1) return(FALSE)
+
+   # FALSE if only one V2 component per V1 component
+   if (nrow(dt[, .SD[.N>1], by = 'V1'])==0) return(FALSE)
+
+   # TRUE if dt has two components
+   return(ncol(dt)==2)
+
 }
 
 #' @rdname svar_has_two_components

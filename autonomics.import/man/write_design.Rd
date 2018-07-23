@@ -35,7 +35,7 @@ require(magrittr)
 
 # MAXQUANT
 if (require(autonomics.data)){
-   file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
+   file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
    file \%>\% write_design('maxquant')
    file \%>\% write_design('maxquant', infer_design_from_sampleids = TRUE)
@@ -59,7 +59,7 @@ if (file.exists(file)){
 
 # SOMA
 if (require(autonomics.data)){
-   soma_file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+   soma_file <- system.file('extdata/stemcomp/soma/stemcomp.adat',
                              package = 'autonomics.data')
    soma_file \%>\% autonomics.import::write_design('soma')
    soma_file \%>\% autonomics.import::write_design('soma', infer_design_from_sampleids = TRUE)

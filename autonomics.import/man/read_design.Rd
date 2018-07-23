@@ -39,7 +39,7 @@ if (file.exists(file)){
 
 # SOMA
 if (require(autonomics.data)){
-   file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+   file <- system.file('extdata/stemcomp/soma/stemcomp.adat',
                 package = 'autonomics.data')
    design_file <- tempfile()
    write_design(file, 'soma', infer_design_from_sampleids = TRUE, design_file = design_file)

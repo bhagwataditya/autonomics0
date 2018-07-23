@@ -18,7 +18,7 @@ Load soma exprs
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+   file <- system.file('extdata/stemcomp/soma/stemcomp.adat',
                         package = 'autonomics.data')
    file \%>\% autonomics.import::load_exprs_soma() \%>\% extract(1:3, 1:3)
 }

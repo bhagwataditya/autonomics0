@@ -44,7 +44,7 @@ require(magrittr)
 # LABELED RATIOS and INTENSITIES
 if (require(autonomics.data)){
    file <- system.file(
-      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+      'extdata/stemdiff/maxquant/proteinGroups.txt',
        package = 'autonomics.data')
    file \%>\% write_maxquant_design()
    file \%>\% write_maxquant_design(infer_design_from_sampleids = TRUE)

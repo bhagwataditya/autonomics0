@@ -35,10 +35,9 @@ require(magrittr)
 
 # STEM CELL COMPARISON
 if (require(autonomics.data)){
-   file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+   file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
                         package = 'autonomics.data')
 
-   # Loading a proteingroups file is easy.
    # The sample design can be inferred from the sample ids
       object <- file \%>\% load_proteingroups(infer_design_from_sampleids = TRUE)
       object \%>\% sdata()
@@ -53,9 +52,11 @@ if (require(autonomics.data)){
 
 # STEM CELL DIFFERENTIATION
 if (require(autonomics.data)){
-   file <- 'extdata/stemcell.differentiation/maxquant/proteinGroups.txt' \%>\%
+   file <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
-   file \%>\% autonomics.import::load_proteingroups()
+   object <- file \%>\% autonomics.import::load_proteingroups(
+                         infer_design_from_sampleids = TRUE)
+   sdata(object) \%>\% head()
 }
 
 }

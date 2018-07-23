@@ -20,7 +20,7 @@ Load maxquant exprs
 \examples{
  require(magrittr)
  if (require(autonomics.data)){
-   file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
+   file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
    file \%>\% load_exprs_maxquant('Ratio')            \%>\% extract(1:3, 1:3)
    file \%>\% load_exprs_maxquant('Ratio normalized') \%>\% extract(1:3, 1:3)

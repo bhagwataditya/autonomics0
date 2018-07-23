@@ -32,7 +32,7 @@ Load proteingroup ratios/intensities
 #if (require(autonomics.data)){
 #
 #   # STEM CELL COMPARISON
-#   proteingroups_file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#   proteingroups_file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
 #                                      package = 'autonomics.data')
 #   design_file <- tempfile()
 #   autonomics.import::write_maxquant_design(proteingroups_file,
@@ -41,7 +41,7 @@ Load proteingroup ratios/intensities
 #
 #   # STEM CELL DIFFERENTIATION
 #   proteingroups_file <- system.file(
-#      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#      'extdata/stemdiff/maxquant/proteinGroups.txt',
 #      package = 'autonomics.data')
 #   design_file <- tempfile()
 #   autonomics.import::write_maxquant_design(proteingroups_file,

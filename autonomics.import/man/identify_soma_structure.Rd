@@ -18,7 +18,7 @@ Identify structure of soma file
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+   file <- system.file('extdata/stemcomp/soma/stemcomp.adat',
                         package = 'autonomics.data')
    file \%>\% autonomics.import::identify_soma_structure()
 }

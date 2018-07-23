@@ -18,7 +18,7 @@ Extract injection values from maxquant file
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+   file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
                         package = 'autonomics.data')
    file \%>\% autonomics.import::extract_maxquant_injections()
 }

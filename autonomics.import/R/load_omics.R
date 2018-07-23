@@ -21,7 +21,7 @@
 #'
 #' # MAXQUANT: STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#'    file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
 #'                         package = 'autonomics.data')
 #'    object <- file %>% load_omics(platform = 'maxquant',
 #'                                  quantity = 'Ratio normalized',
@@ -30,7 +30,7 @@
 #'
 #' # MAXQUANT: STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#'    file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
 #'                         package = 'autonomics.data')
 #'    object <- file %>% load_omics(platform = 'maxquant',
 #'                                  quantity = 'Ratio normalized',
@@ -108,10 +108,9 @@ load_omics <- function(
 #'
 #' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#'    file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
 #'                         package = 'autonomics.data')
 #'
-#'    # Loading a proteingroups file is easy.
 #'    # The sample design can be inferred from the sample ids
 #'       object <- file %>% load_proteingroups(infer_design_from_sampleids = TRUE)
 #'       object %>% sdata()
@@ -126,9 +125,11 @@ load_omics <- function(
 #'
 #' # STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/stemcell.differentiation/maxquant/proteinGroups.txt' %>%
+#'    file <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics.import::load_proteingroups()
+#'    object <- file %>% autonomics.import::load_proteingroups(
+#'                          infer_design_from_sampleids = TRUE)
+#'    sdata(object) %>% head()
 #' }
 #'
 #' @importFrom magrittr %>%
@@ -464,7 +465,7 @@ load_metabolonlipids <- function(
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'    file <- system.file('extdata/stemcomp/soma/stemcomp.adat',
 #'                         package = 'autonomics.data')
 #'    file %>% autonomics.import::identify_soma_structure()
 #' }
@@ -510,7 +511,7 @@ identify_soma_structure <- function(file){
 #' if (require(autonomics.data)){
 #'
 #'    # Loading soma file is simple
-#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'    file <- system.file('extdata/stemcomp/soma/stemcomp.adat',
 #'                         package = 'autonomics.data')
 #'    file %>% autonomics.import::load_soma()
 #'

@@ -16,7 +16,7 @@ Get feature x sample matrix with number of peptides
 }
 \examples{
 require(magrittr)
-file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
+file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
          system.file(package = 'autonomics.data')
 DT <- file \%>\% data.table::fread()
 value_type <- autonomics.import::infer_maxquant_value_type(file)

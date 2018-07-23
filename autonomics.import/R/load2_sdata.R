@@ -26,7 +26,7 @@ validify_sample_ids <- function(x){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#'    file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
 #'                         package = 'autonomics.data')
 #'    file %>% autonomics.import::extract_maxquant_injections()
 #' }
@@ -54,7 +54,7 @@ extract_maxquant_injections <- function(file){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#'    file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
 #'                         package = 'autonomics.data')
 #'    file %>% autonomics.import::extract_maxquant_channels()
 #' }
@@ -152,7 +152,7 @@ designify_maxquant_sampleids <- function(
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
+#'    file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
 #'
 #'    file %>% load_snames_maxquant()
@@ -232,7 +232,7 @@ load_snames_maxquant <- function(
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
+#'    file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
 #'    file %>% load_sdata_maxquant()
 #' }
@@ -341,7 +341,7 @@ load_sdata_metabolonlipids <- function(file, sheet){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'    file <- system.file('extdata/stemcomp/soma/stemcomp.adat',
 #'                         package = 'autonomics.data')
 #'    file %>% autonomics.import::load_sdata_soma() %>% head()
 #' }

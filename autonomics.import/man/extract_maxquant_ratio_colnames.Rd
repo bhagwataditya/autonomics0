@@ -20,7 +20,7 @@ Extract maxquant ratio colnames
 \examples{
  require(magrittr)
  if (require(autonomics.data)){
-   file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
+   file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
    file \%>\% extract_maxquant_ratio_colnames('Ratio') \%>\% head()
 }

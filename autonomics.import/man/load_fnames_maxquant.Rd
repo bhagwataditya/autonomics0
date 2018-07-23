@@ -18,7 +18,7 @@ Load maxquant fnames
 \examples{
  require(magrittr)
  if (require(autonomics.data)){
-   file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' \%>\%
+   file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
    file \%>\% autonomics.import::load_fnames_maxquant() \%>\% head()
 }

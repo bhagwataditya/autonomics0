@@ -18,7 +18,7 @@ Load soma sdata
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+   file <- system.file('extdata/stemcomp/soma/stemcomp.adat',
                         package = 'autonomics.data')
    file \%>\% autonomics.import::load_sdata_soma() \%>\% head()
 }

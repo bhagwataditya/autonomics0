@@ -9,7 +9,7 @@
 #' @examples
 #'  require(magrittr)
 #'  if (require(autonomics.data)){
-#'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
+#'    file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
 #'    file %>% autonomics.import::extract_maxquant_intensity_colnames() %>% head(3)
 #' }
@@ -50,7 +50,7 @@ extract_maxquant_intensity_colnames <- function(file, quantity = 'Intensity'){
 #' @examples
 #'  require(magrittr)
 #'  if (require(autonomics.data)){
-#'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
+#'    file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
 #'    file %>% extract_maxquant_ratio_colnames('Ratio') %>% head()
 #' }
@@ -83,7 +83,7 @@ extract_maxquant_ratio_colnames <- function(file, quantity){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
+#'    file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
 #'    file %>% autonomics.import::infer_maxquant_quantity()
 #' }
@@ -109,7 +109,7 @@ infer_maxquant_quantity <- function(file){
 #' @examples
 #'  require(magrittr)
 #'  if (require(autonomics.data)){
-#'    file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
+#'    file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
 #'    file %>% load_exprs_maxquant('Ratio')            %>% extract(1:3, 1:3)
 #'    file %>% load_exprs_maxquant('Ratio normalized') %>% extract(1:3, 1:3)
@@ -242,7 +242,7 @@ load_exprs_metabolonlipids <- function(file, sheet){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcell.comparison/stemcell.comparison.adat',
+#'    file <- system.file('extdata/stemcomp/soma/stemcomp.adat',
 #'                         package = 'autonomics.data')
 #'    file %>% autonomics.import::load_exprs_soma() %>% extract(1:3, 1:3)
 #' }

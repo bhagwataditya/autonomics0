@@ -25,7 +25,7 @@ Load protein table
 # require(magrittr)
 # if (require(autonomics.data)){
 #  proteingroups_file <- system.file(
-#     'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#     'extdata/stemdiff/maxquant/proteinGroups.txt',
 #     package = 'autonomics.data')
 #  proteingroups_file \%>\% autonomics.import::load_proteingroups_to_long_dt() \%>\% str()
 #}

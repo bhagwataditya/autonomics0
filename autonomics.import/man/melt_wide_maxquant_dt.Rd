@@ -19,7 +19,7 @@ Melt wide maxquant datatable
 \examples{
 #require(magrittr)
 #if (require(autonomics.data)){
-#   DT <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#   DT <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
 #                      package = 'autonomics.data') \%>\%
 #         autonomics.import::load_proteingroups_to_wide_dt()
 #   DT \%>\% melt_wide_maxquant_dt() \%>\% print()

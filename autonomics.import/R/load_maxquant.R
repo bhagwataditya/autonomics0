@@ -357,7 +357,7 @@ get_maxquant_value_columns <- function(DT, value_type){
 #' @param value_type maxquant value type
 #' @examples
 #' require(magrittr)
-#' file <- 'extdata/stemcell.comparison/maxquant/proteinGroups.txt' %>%
+#' file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
 #'          system.file(package = 'autonomics.data')
 #' DT <- file %>% data.table::fread()
 #' value_type <- autonomics.import::infer_maxquant_value_type(file)
@@ -512,7 +512,7 @@ rm_contaminants <- function(PG){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    PG <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#'    PG <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
 #'                       package = 'autonomics.data') %>%
 #'          data.table::fread()
 #'    PG %>% dim()
@@ -521,7 +521,7 @@ rm_contaminants <- function(PG){
 #' @importFrom magrittr %<>% %>%
 #' @export
 rm_missing_id_values <- function(PG){
-   # rm missing id values (occurs in stemcell.differentiation)
+   # rm missing id values (occurs in stemdiff)
    # If not removed, dcast after melt is not possible.
    n0 <- nrow(PG)
    PG %<>% magrittr::extract(!is.na(.$id), )
@@ -540,7 +540,7 @@ rm_missing_id_values <- function(PG){
 #' # NORMALIZED RATIOS
 #' #if (require(autonomics.data)){
 #' #   proteingroups_file <- system.file(
-#' #      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#' #      'extdata/stemdiff/maxquant/proteinGroups.txt',
 #' #       package = 'autonomics.data')
 #' #   proteingroups_file %>% load_proteingroups_to_wide_dt() %>% dim()
 #' #}
@@ -587,7 +587,7 @@ load_proteingroups_to_wide_dt <- function(
    DT <- autonomics.support::cfread(proteingroups_file, colClasses = c(id = 'character'))
    tmp_summary_attr <- list(proteingroups_n = nrow(DT))
 
-   # rm missing id values (occurs instemcell.differentiation)
+   # rm missing id values (occurs instemdiff)
    # If not removed, dcast after melt is not possible.
    DT %<>% autonomics.import::rm_missing_id_values()
    tmp_summary_attr %<>% c(proteingroups_n_validid = nrow(DT))
@@ -621,7 +621,7 @@ load_proteingroups_to_wide_dt <- function(
 #' # require(magrittr)
 #' # if (require(autonomics.data)){
 #' #   phosphosites_file <- system.file(
-#' #      'extdata/stemcell.differentiation/maxquant/phospho (STY)Sites.txt',
+#' #      'extdata/stemdiff/maxquant/phospho (STY)Sites.txt',
 #' #       package = 'autonomics.data')
 #' #   phosphosites_file %>% load_phosphosites_to_wide_dt() %>% dim()
 #' #}
@@ -641,7 +641,7 @@ load_phosphosites_to_wide_dt <- function(
    DT <- autonomics.support::cfread(phosphosites_file, colClasses = c(id = 'character'))
    tmp_summary_attr <- list(phosphosites_n = nrow(DT))
 
-   # rm missing id values (occurs instemcell.differentiation)
+   # rm missing id values (occurs instemdiff)
    # If not removed, dcast after melt is not possible.
    DT %<>% autonomics.import::rm_missing_id_values()
    tmp_summary_attr %<>% c(phosphosites_n_validid = nrow(DT))
@@ -683,7 +683,7 @@ load_phosphosites_to_wide_dt <- function(
 #' @examples
 #' #require(magrittr)
 #' #if (require(autonomics.data)){
-#' #   DT <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#' #   DT <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
 #' #                      package = 'autonomics.data') %>%
 #' #         autonomics.import::load_proteingroups_to_wide_dt()
 #' #   DT %>% melt_wide_maxquant_dt() %>% print()
@@ -745,7 +745,7 @@ melt_wide_maxquant_dt <- function(DT, log2_transform = TRUE, log2_offset = 0){
 #' # require(magrittr)
 #' # if (require(autonomics.data)){
 #' #  proteingroups_file <- system.file(
-#' #     'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#' #     'extdata/stemdiff/maxquant/proteinGroups.txt',
 #' #     package = 'autonomics.data')
 #' #  proteingroups_file %>% autonomics.import::load_proteingroups_to_long_dt() %>% str()
 #' #}
@@ -1147,7 +1147,7 @@ add_maxquant_sdata <- function(object, design_file){
 #' @examples
 #' #require(magrittr)
 #' #if (require(autonomics.data)){
-#' #   maxquant_dir       <- system.file('extdata/stemcell.differentiation/maxquant',
+#' #   maxquant_dir       <- system.file('extdata/stemdiff/maxquant',
 #' #                                      package = 'autonomics.data')
 #' #   proteingroups_file <- paste0(maxquant_dir, '/proteinGroups.txt')
 #' #   phosphosites_file  <- paste0(maxquant_dir, '/phospho (STY)Sites.txt')
@@ -1257,7 +1257,7 @@ maxquant_dt_to_sumexp <- function(
 #' #if (require(autonomics.data)){
 #' #
 #' #   # STEM CELL COMPARISON
-#' #   proteingroups_file <- system.file('extdata/stemcell.comparison/maxquant/proteinGroups.txt',
+#' #   proteingroups_file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
 #' #                                      package = 'autonomics.data')
 #' #   design_file <- tempfile()
 #' #   autonomics.import::write_maxquant_design(proteingroups_file,
@@ -1266,7 +1266,7 @@ maxquant_dt_to_sumexp <- function(
 #' #
 #' #   # STEM CELL DIFFERENTIATION
 #' #   proteingroups_file <- system.file(
-#' #      'extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+#' #      'extdata/stemdiff/maxquant/proteinGroups.txt',
 #' #      package = 'autonomics.data')
 #' #   design_file <- tempfile()
 #' #   autonomics.import::write_maxquant_design(proteingroups_file,

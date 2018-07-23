@@ -15,7 +15,7 @@ Rm missing id values
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   PG <- system.file('extdata/stemcell.differentiation/maxquant/proteinGroups.txt',
+   PG <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
                       package = 'autonomics.data') \%>\%
          data.table::fread()
    PG \%>\% dim()
