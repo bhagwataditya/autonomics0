@@ -37,13 +37,22 @@ invert_collapsed_strings <- function(x, sep){
 #' @return eset with inverted ratios for specified subgroups
 #' @examples
 #' require(magrittr)
+#'
+#' # Stem cell comparison (MaxQuant)
+#' #--------------------------------
 #' if (require(autonomics.data)){
-#'    proteingroups_file <- system.file('extdata/billing2016/proteinGroups.txt',
-#'                                       package = 'autonomics.data')
-#'    object <- autonomics.import::load_proteingroups(proteingroups_file)
-#'    invert_subgroups <- unique(object$subgroup)
-#'    object$subgroup;  subgroup_frac <- '_'
-#'    object %>% autonomics.preprocess::invert_ratios(invert_subgroups, channel_frac, subgroup_frac)
+#'    file <- system.file('extdata/stemcellcomp/maxquant/proteinGroups.txt',
+#'                         package = 'autonomics.data')
+#'    file %>%
+#'    autonomics.import::load_proteingroups(infer_design_from_sampleids = TRUE) %>%
+#'    autonomics.import::sdata()
+#'
+#'    file %>%
+#'    autonomics.import::load_proteingroups(infer_design_from_sampleids = TRUE) %>%
+#'    autonomics.preprocess::invert_ratios(
+#'       invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'),
+#'       subgroup_frac    = '_') %>%
+#'    autonomics.import::sdata()
 #' }
 #' @importFrom dplyr     n
 #' @importFrom magrittr  %>%   %<>%
@@ -80,12 +89,17 @@ invert_ratios <- function(
   sdata1$subgroup %<>% as.character()
   sdata1$subgroup[selector] %<>% autonomics.preprocess::invert_collapsed_strings(subgroup_frac)
 
-  # Redefine replicates and sample names
+  # Invert label ratio in sample names
+  sdata1$sample_id %<>% as.character()
+  sdata1$sample_id[selector] %<>% stringi::stri_replace_first_regex('\\[(.+)\\/(.+)\\]', '[$2/$1]')
+
+  # Redefine replicates
   sdata1 %<>% dplyr::group_by_('subgroup') %>%    # must be character to allow mapping to shape in ggplot
                                 dplyr::mutate(replicate = as.character(seq_len(n()))) %>%
                                 dplyr::ungroup() %>%
                                 as.data.frame()
-  sdata1$sample_id <- paste0(object$subgroup, '.R', object$replicate)
+
+  # Update object
   autonomics.import::sdata(object)  <- sdata1
   autonomics.import::snames(object) <- sdata1$sample_id
 
