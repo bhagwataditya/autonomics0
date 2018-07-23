@@ -27,7 +27,7 @@ Get column variables from faceted ggplot object
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016 \%>\% magrittr::extract(1:9, )
+   object <- autonomics.data::stemcomp.proteinratios \%>\% magrittr::extract(1:9, )
    b <- object \%>\% autonomics.plot::plot_feature_profiles() \%>\% ggplot2::ggplot_build()
    b \%>\% autonomics.plot::gg_rowvars()
    b \%>\% autonomics.plot::gg_colvars()

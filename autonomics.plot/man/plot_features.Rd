@@ -87,20 +87,37 @@ Plot feature profiles / distributions
 \examples{
 require(magrittr)
 result_dir <- tempdir() \%T>\% message()
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016 \%>\% extract(1:10, )
+   object <- autonomics.data::stemcomp.proteinratios \%>\% extract(1:10, )
    object \%>\% autonomics.plot::plot_feature_distributions()
    object \%>\% autonomics.plot::plot_feature_profiles()
    object \%>\% autonomics.plot::plot_feature_boxes()
 
-   file <- paste0(result_dir, '/billing2016_distributions.pdf')
+   file <- paste0(result_dir, '/stemcomp_distributions.pdf')
    object \%>\% autonomics.plot::plot_feature_distributions(file = file)
 
-   file <- paste0(result_dir, '/billing2016_profiles.pdf')
+   file <- paste0(result_dir, '/stemcomp_profiles.pdf')
    object \%>\% autonomics.plot::plot_feature_profiles(file = file)
 
-   file <- paste0(result_dir, '/billing2016_boxes.pdf')
+   file <- paste0(result_dir, '/stemcomp_boxes.pdf')
    object \%>\% autonomics.plot::plot_feature_boxes(file = file)
+}
+
+# STEM CELL DIFFERENTIATION
+if (require(autonomics.data)){
+   object <- autonomics.data::stemdiff.proteinratios \%>\% extract(1:10, )
+   object \%>\% autonomics.plot::plot_feature_boxes()
+}
+if (require(billing.differentiation.data)){
+   object <- billing.differentiation.data::rna.voomcounts \%>\% extract(1:10, )
+   object \%>\% autonomics.plot::plot_feature_profiles(fvars = 'gene_name')
+   object \%>\% autonomics.plot::plot_feature_distributions(fvars = 'gene_name')
+   object \%>\% autonomics.plot::plot_feature_boxes(fvars = 'gene_name')
+
+   object <- billing.differentiation.data::protein.ratios \%>\% extract(1:10, )
+   object \%>\% autonomics.plot::plot_feature_boxes()
 }
 if (require(subramanian.2016)){
    subramanian.2016::metabolon[1:10, ] \%>\%
@@ -144,15 +161,7 @@ if (require(atkin.2014)){
                    x = 'time', color_var = 'condition', facet_var = 'subject_id',
                    group_var = 'subject_id', line = TRUE, fvar = 'TargetFullName', file = file)
 }
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts \%>\% extract(1:10, )
-   object \%>\% autonomics.plot::plot_feature_profiles(fvars = 'gene_name')
-   object \%>\% autonomics.plot::plot_feature_distributions(fvars = 'gene_name')
-   object \%>\% autonomics.plot::plot_feature_boxes(fvars = 'gene_name')
 
-   object <- billing.differentiation.data::protein.ratios \%>\% extract(1:10, )
-   object \%>\% autonomics.plot::plot_feature_boxes()
-}
 if (require(halama.2016)){
    object <- halama.2016::cell.metabolites[1:10, ]
    color_values <- c(Control = 'blue', Vehicle = 'green', `Concentration 1` = 'orange',

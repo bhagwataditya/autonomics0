@@ -15,6 +15,3 @@ default value of txt_var
 \description{
 Default txt var
 }
-\examples{
-require(magrittr)
-}

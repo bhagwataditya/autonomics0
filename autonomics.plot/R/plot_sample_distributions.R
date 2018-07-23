@@ -56,8 +56,12 @@ check_args_of_plot_sample_distributions <- function(object, x, facet_var, color_
 #'                              facet_var = 'sex', color_var = 'BT')
 #' }
 #' if (require(billing.differentiation.data)){
+#'    autonomics.data::stemdiff.proteinratios %>%
+#'    autonomics.plot::plot_sample_distributions()
+#'
 #'    billing.differentiation.data::protein.ratios %>%
-#'       plot_sample_distributions()
+#'    autonomics.plot::plot_sample_distributions()
+#'
 #'    billing.differentiation.data::rna.voomcounts %>%
 #'       plot_sample_distributions()
 #' }

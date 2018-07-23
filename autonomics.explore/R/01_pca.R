@@ -24,18 +24,22 @@
 #' ```
 #' @examples 
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::protein.ratios
+#' 
+#' # Stem cell differentiation (Max Quant)
+#' #--------------------------------------
+#' if (require(autonomics.data)){
+#'    autonomics.data::stemcelldiff %>% autonomics.explore::pca() %>% str()
+#' }
+#' 
+#' # Glutaminase (metabolon)
+#' #------------------------
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
+#'             system.file(package = 'autonomics.data')
+#'    object <- file %>% autonomics.import::load_metabolon()
 #'    object %>% autonomics.explore::pca() %>% str()
 #' }
-#' if (require(halama.2016)){
-#'    object <- halama.2016::cell.metabolites 
-#'    object %>% autonomics.explore::pca() %>% str()
-#' }
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    object %>% autonomics.explore::pca()  %>%  str()
-#' }
+#' 
 #' @seealso \code{\link[autonomics.explore]{sma}}, 
 #'          \code{\link[autonomics.explore]{lda}}, 
 #'          \code{\link[autonomics.explore]{pls}}
@@ -100,13 +104,19 @@ pca <- function(object, ndim = 2, ...){
 #' ```
 #' @examples 
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::protein.ratios
-#'    object %>% autonomics.explore::sma() %>% str()
+#' # Stem cell differentiation (Max Quant)
+#' #--------------------------------------
+#' if (require(autonomics.data)){
+#'    autonomics.data::stemcelldiff %>% autonomics.explore::sma() %>% str()
 #' }
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    object %>% autonomics.explore::sma()  %>%  str()
+#' 
+#' # Glutaminase (metabolon)
+#' #------------------------
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
+#'             system.file(package = 'autonomics.data')
+#'    object <- file %>% autonomics.import::load_metabolon()
+#'    object %>% autonomics.explore::sma() %>% str()
 #' }
 #' @references 
 #' Wouters et al (2003) Graphical exploration of gene expression data: a comparative study of 
@@ -178,17 +188,20 @@ sma <- function(object, na.impute = FALSE, ndim = 2, ...){
 #'       object %>% autonomics.explore::lda(ndim = 3) %>% str()
 #'    }
 #' }
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::protein.ratios
-#'    object %>% autonomics.explore::lda() %>% str()
+#' # Stem cell differentiation (Max Quant)
+#' #--------------------------------------
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    autonomics.data::stemcelldiff %>% autonomics.explore::lda() %>% str()
 #' }
-#' if (require(halama.2016)){
-#'    object <- halama.2016::cell.metabolites
+#' 
+#' # Glutaminase (metabolon)
+#' #------------------------
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
+#'             system.file(package = 'autonomics.data')
+#'    object <- file %>% autonomics.import::load_metabolon()
 #'    object %>% autonomics.explore::lda() %>% str()
-#' }
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    object %>% autonomics.explore::lda()  %>%  str()
 #' }
 #' @seealso \code{\link[autonomics.explore]{pca}}, 
 #'          \code{\link[autonomics.explore]{sma}}, 
@@ -252,14 +265,20 @@ lda <- function(object, na.impute = FALSE, ndim = 2,  ...){
 #' ```
 #' @examples 
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::protein.ratios
-#'    object %>% autonomics.explore::pls() %>% str()
+#' 
+#' # Stem cell differentiation (Max Quant)
+#' #--------------------------------------
+#' if (require(autonomics.data)){
+#'    autonomics.data::stemcelldiff %>% autonomics.explore::pls() %>% str()
 #' }
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    object %>% autonomics.explore::pls()  %>%  str()
-#'    object %>% autonomics.explore::pls(implementation = 'mixOmics::splsda') %>% str()
+#' 
+#' # Glutaminase (metabolon)
+#' #------------------------
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
+#'             system.file(package = 'autonomics.data')
+#'    object <- file %>% autonomics.import::load_metabolon()
+#'    object %>% autonomics.explore::pls() %>% str()
 #'    \dontrun{ # slow
 #'       object %>% autonomics.explore::pls(implementation = 'ropls::opls'     ) %>% str()
 #'    }
@@ -335,14 +354,21 @@ pls <- function(object, implementation = NULL, ndim = 2, ...){
 #' @return list(samples, features, var)
 #' @examples 
 #' require(magrittr)
+#' 
+#' # Stem cell differentiation (Max Quant)
+#' #--------------------------------------
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016
-#'    object %>% autonomics.explore::project(method = 'lda') %>% str()
+#'    autonomics.data::stemcelldiff %>% autonomics.explore::project() %>% str()
+#'    object %>% autonomics.explore::project() %>% str()
 #' }
-#' if (require(halama.2016)){
-#'    object <- halama.2016::cell.metabolites
-#'    object %>% autonomics.explore::project('lda') %>% str()
-#'    object %>% autonomics.explore::project('pca') %>% str()
+#' 
+#' # Glutaminase (metabolon)
+#' #------------------------
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
+#'             system.file(package = 'autonomics.data')
+#'    object <- file %>% autonomics.import::load_metabolon()
+#'    object %>% autonomics.explore::project() %>% str()
 #' }
 #' @seealso \code{\link[autonomics.explore]{pca}}, 
 #'          \code{\link[autonomics.explore]{sma}}, 

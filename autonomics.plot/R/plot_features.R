@@ -5,7 +5,7 @@
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016 %>% magrittr::extract(1:9, )
+#'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
 #'    b <- object %>% autonomics.plot::plot_feature_profiles() %>% ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_nrow()
 #'    b %>% autonomics.plot::gg_ncol()
@@ -33,14 +33,15 @@ gg_ncol <- function(b){
          length()
 }
 
-#' @title       Get x values
-#' @description Get x values from faceted ggplot object
+#' Get x values
+#'
+#' Get x values from faceted ggplot object
 #' @param b built ggplot (result of ggplot_build)
 #' @return x values
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016 %>% magrittr::extract(1:9, )
+#'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
 #'    b <- object %>% autonomics.plot::plot_feature_profiles() %>% ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_xvalues()
 #' }
@@ -54,14 +55,16 @@ gg_xvalues <- function(b){
          unique()
 }
 
-#' @title       Get x labels
-#' @description Get x labels from ggplot object
+#' Get x labels
+#'
+#' Get x labels from ggplot object
+#'
 #' @param b built ggplot (result of ggplot_build)
 #' @return x labels
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016 %>% magrittr::extract(1:9, )
+#'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
 #'    b <- object %>% autonomics.plot::plot_feature_profiles() %>% ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_xlabels()
 #' }
@@ -87,7 +90,7 @@ gg_xlabels <- function(b){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016 %>% magrittr::extract(1:9, )
+#'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
 #'    b <- object %>% autonomics.plot::plot_feature_profiles() %>% ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_rowvars()
 #'    b %>% autonomics.plot::gg_colvars()
@@ -164,17 +167,17 @@ gg_panelvar_width <- function(b){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016 %>% magrittr::extract(1:9, )
+#'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
 #'    b <- object %>% autonomics.plot::plot_feature_profiles() %>%
-#'         ggplot2::ggplot_build()
-#'    b %>% gg_aesvar(aesthetic = 'color')
-#'    b %>% gg_aesvar(aesthetic = 'x')
-#'    b %>% gg_aesvar(aesthetic = 'shape')
+#'                    ggplot2::ggplot_build()
+#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'color')
+#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'x')
+#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'shape')
 #'    b <- object %>% autonomics.plot::plot_feature_distributions() %>%
-#'         ggplot2::ggplot_build()
-#'    b %>% gg_aesvar(aesthetic = 'color')
-#'    b %>% gg_aesvar(aesthetic = 'x')
-#'    b %>% gg_aesvar(aesthetic = 'shape')
+#'                    ggplot2::ggplot_build()
+#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'color')
+#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'x')
+#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'shape')
 #' }
 #' if (require(atkin.2014)){
 #'    object <- atkin.2014::soma %>% magrittr::extract(1:10, )
@@ -220,9 +223,9 @@ gg_aesvar <- function(b, aesthetic){
 #' require(magrittr)
 #' require(Biobase)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016 %>% magrittr::extract(1:9, )
+#'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
 #'    b <- object %>% autonomics.plot::plot_feature_profiles() %>%
-#'         ggplot2::ggplot_build()
+#'                    ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_aeslevels(aesthetic = 'color')
 #'    b %>% autonomics.plot::gg_aeslevels(aesthetic = 'shape')
 #'    b %>% autonomics.plot::gg_aeslevels(aesthetic = 'x')
@@ -246,13 +249,13 @@ gg_aeslevels <- function(b, aesthetic){
 #' require(magrittr)
 #' require(SummarizedExperiment)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016 %>% magrittr::extract(1:9, )
+#'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
 #'    object %>% autonomics.plot::plot_feature_profiles()      %>%
-#'                 autonomics.plot::compute_feature_plot_dims()
+#'               autonomics.plot::compute_feature_plot_dims()
 #'    object %>% autonomics.plot::plot_feature_distributions() %>%
-#'                 autonomics.plot::compute_feature_plot_dims()
+#'               autonomics.plot::compute_feature_plot_dims()
 #'    object %>% autonomics.plot::plot_feature_boxes()         %>%
-#'                 autonomics.plot::compute_feature_plot_dims()
+#'               autonomics.plot::compute_feature_plot_dims()
 #' }
 #' if (require(atkin.2014)){
 #'    object <- atkin.2014::soma %>% magrittr::extract(1:10, )
@@ -400,20 +403,45 @@ feature_plot_labeller <- function(plot_df){
 #' @examples
 #' require(magrittr)
 #' result_dir <- tempdir() %T>% message()
+#'
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016 %>% extract(1:10, )
+#'    object <- autonomics.data::stemcomp.proteinratios %>% extract(1:10, )
 #'    object %>% autonomics.plot::plot_feature_distributions()
 #'    object %>% autonomics.plot::plot_feature_profiles()
 #'    object %>% autonomics.plot::plot_feature_boxes()
 #'
-#'    file <- paste0(result_dir, '/billing2016_distributions.pdf')
+#'    file <- paste0(result_dir, '/stemcomp_distributions.pdf')
 #'    object %>% autonomics.plot::plot_feature_distributions(file = file)
 #'
-#'    file <- paste0(result_dir, '/billing2016_profiles.pdf')
+#'    file <- paste0(result_dir, '/stemcomp_profiles.pdf')
 #'    object %>% autonomics.plot::plot_feature_profiles(file = file)
 #'
-#'    file <- paste0(result_dir, '/billing2016_boxes.pdf')
+#'    file <- paste0(result_dir, '/stemcomp_boxes.pdf')
 #'    object %>% autonomics.plot::plot_feature_boxes(file = file)
+#' }
+#'
+#' # STEM CELL DIFFERENTIATION
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemdiff.proteinratios %>% extract(1:10, )
+#'    object %>% autonomics.plot::plot_feature_boxes()
+#' }
+#' if (require(billing.differentiation.data)){
+#'    object <- billing.differentiation.data::rna.voomcounts %>% extract(1:10, )
+#'    object %>% autonomics.plot::plot_feature_profiles(fvars = 'gene_name')
+#'    object %>% autonomics.plot::plot_feature_distributions(fvars = 'gene_name')
+#'    object %>% autonomics.plot::plot_feature_boxes(fvars = 'gene_name')
+#' }
+#'
+#' # GLUTAMINASE
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::glutaminase[1:9, ]
+#'    color_values <- c(Control = 'blue', Vehicle = 'green', `Concentration 1` = 'orange',
+#'                     `Concentration 2` = 'red')
+#'    object$alpha <- object$TREATMENT %in% c(0,1)
+#'    object %>% autonomics.plot::plot_feature_boxes(
+#'                    x = 'TIME_POINT', color_var = 'GROUP_DESCRIPTION', color_values = color_values,
+#'                    alpha_var = 'alpha')
 #' }
 #' if (require(subramanian.2016)){
 #'    subramanian.2016::metabolon[1:10, ] %>%
@@ -457,24 +485,7 @@ feature_plot_labeller <- function(plot_df){
 #'                    x = 'time', color_var = 'condition', facet_var = 'subject_id',
 #'                    group_var = 'subject_id', line = TRUE, fvar = 'TargetFullName', file = file)
 #' }
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts %>% extract(1:10, )
-#'    object %>% autonomics.plot::plot_feature_profiles(fvars = 'gene_name')
-#'    object %>% autonomics.plot::plot_feature_distributions(fvars = 'gene_name')
-#'    object %>% autonomics.plot::plot_feature_boxes(fvars = 'gene_name')
 #'
-#'    object <- billing.differentiation.data::protein.ratios %>% extract(1:10, )
-#'    object %>% autonomics.plot::plot_feature_boxes()
-#' }
-#' if (require(halama.2016)){
-#'    object <- halama.2016::cell.metabolites[1:10, ]
-#'    color_values <- c(Control = 'blue', Vehicle = 'green', `Concentration 1` = 'orange',
-#'                     `Concentration 2` = 'red')
-#'    object$alpha <- object$TREATMENT %in% c(0,1)
-#'    object %>% autonomics.plot::plot_feature_boxes(
-#'                    x = 'TIME_POINT', color_var = 'GROUP_DESCRIPTION', color_values = color_values,
-#'                    alpha_var = 'alpha')
-#' }
 #'
 #' @author     Aditya Bhagwat
 #' @rdname plot_features

@@ -3,10 +3,18 @@
 #' @param fvars    fvars used to annotate each plot
 #' @param verbose  logical
 #' @examples
+#' require(magrittr)
+#'
+#' # STEM CELL COMPARISON (Max Quant)
 #' if (require(autonomics.data)){
-#'    require(magrittr)
-#'    object <- autonomics.data::billing2016
-#'    object %>% autonomics.plot::create_feature_plot_df(c('feature_id', 'Gene names')) %>% head()
+#'    autonomics.data::stemcomp.proteinratios %>%
+#'    autonomics.plot::create_feature_plot_df(c('feature_id', 'Gene names')) %>% head()
+#' }
+#'
+#' # STEM CELL DIFFERENTIATION (Max Quant)
+#' if (require(autonomics.data)){
+#'    autonomics.data::stemdiff.proteinratios %>%
+#'    autonomics.plot::create_feature_plot_df('Gene names') %>% head()
 #' }
 #' if (require(billing.differentiation.data)){
 #'    billing.differentiation.data::rna.voomcounts %>%

@@ -17,10 +17,14 @@ Default zero hline
 }
 \examples{
 require(magrittr)
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   autonomics.data::billing2016 \%>\%
-      autonomics.plot::default_zero_hline()
+   autonomics.data::stemcomp.proteinratios \%>\%
+   autonomics.plot::default_zero_hline()
 }
+
+# STEM CELL DIFFERENTIATION
 if (require(billing.differentiation.data)){
    billing.differentiation.data::rna.voomcounts \%>\%
       autonomics.plot::default_zero_hline()

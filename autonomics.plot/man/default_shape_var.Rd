@@ -17,9 +17,13 @@ default color_var
 }
 \examples{
 require(magrittr)
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   autonomics.data::billing2016 \%>\% default_shape_var()
+   autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_shape_var()
 }
+
+# STEM CELL DIFFERENTIATION
 if (require(billing.differentiation.data)){
   billing.differentiation.data::rna.voomcounts \%>\% default_shape_var()
 }

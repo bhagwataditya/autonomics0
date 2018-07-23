@@ -17,16 +17,24 @@ default feature_plots
 }
 \examples{
 require(magrittr)
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   autonomics.data::billing2016 \%>\% default_feature_plots()
+   autonomics.data::stemcomp.proteinratios \%>\%
+   autonomics.plot::default_feature_plots()
+
+   autonomics.data::stemcomp.soma \%>\%
+   autonomics.plot::default_feature_plots()
+}
+
+# STEM CELL DIFFERENTIATION
+if (require(autonomics.data)){
+   autonomics.data::stemdiff.proteinratios \%>\%
+   autonomics.plot::default_feature_plots()
 }
 if (require(billing.differentiation.data)){
-   billing.differentiation.data::protein.ratios \%>\%
-      default_feature_plots()
    billing.differentiation.data::rna.voomcounts \%>\%
       default_feature_plots()
 }
-if (require(atkin.2014)){
-   atkin.2014::soma \%>\% autonomics.plot::default_feature_plots()
-}
+
 }

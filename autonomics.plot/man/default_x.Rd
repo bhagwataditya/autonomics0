@@ -19,9 +19,13 @@ Default x
 }
 \examples{
 require(magrittr)
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   default_x(autonomics.data::billing2016)
+   autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_x()
 }
+
+# STEM CELL DIFFERENTIATION
 if (require(billing.differentiation.data)){
   billing.differentiation.data::rna.voomcounts \%>\% default_x()
 }

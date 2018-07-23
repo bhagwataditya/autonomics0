@@ -16,13 +16,13 @@ Compute appropriate feature plot dims
 require(magrittr)
 require(SummarizedExperiment)
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016 \%>\% magrittr::extract(1:9, )
+   object <- autonomics.data::stemcomp.proteinratios \%>\% magrittr::extract(1:9, )
    object \%>\% autonomics.plot::plot_feature_profiles()      \%>\%
-                autonomics.plot::compute_feature_plot_dims()
+              autonomics.plot::compute_feature_plot_dims()
    object \%>\% autonomics.plot::plot_feature_distributions() \%>\%
-                autonomics.plot::compute_feature_plot_dims()
+              autonomics.plot::compute_feature_plot_dims()
    object \%>\% autonomics.plot::plot_feature_boxes()         \%>\%
-                autonomics.plot::compute_feature_plot_dims()
+              autonomics.plot::compute_feature_plot_dims()
 }
 if (require(atkin.2014)){
    object <- atkin.2014::soma \%>\% magrittr::extract(1:10, )

@@ -22,6 +22,32 @@
 #' @param legend.position   character
 #' @examples 
 #' require(magrittr)
+#' 
+#' # Stem cell comparison (Max Quant)
+#' #--------------------------------------
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcellcomp
+#'    object %>% autonomics.explore::plot_pca_samples(txt_var = 'replicate')
+#' }
+#' 
+#' # Stem cell differentiation (Max Quant)
+#' #--------------------------------------
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcelldiff
+#'    object %>% autonomics.explore::plot_pca_samples()
+#' }
+#' 
+#' # Glutaminase (metabolon)
+#' #------------------------
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
+#'             system.file(package = 'autonomics.data')
+#'    object <- file %>% autonomics.import::load_metabolon()
+#'    object %>% autonomics.explore::pls() %>% str()
+#'    \dontrun{ # slow
+#'       object %>% autonomics.explore::pls(implementation = 'ropls::opls'     ) %>% str()
+#'    }
+#' }
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::billing2016
 #'    object %>% autonomics.explore::plot_pca_samples()

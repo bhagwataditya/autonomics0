@@ -21,9 +21,9 @@ Get levels of variable mapped to aesthetic
 require(magrittr)
 require(Biobase)
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016 \%>\% magrittr::extract(1:9, )
+   object <- autonomics.data::stemcomp.proteinratios \%>\% magrittr::extract(1:9, )
    b <- object \%>\% autonomics.plot::plot_feature_profiles() \%>\%
-        ggplot2::ggplot_build()
+                   ggplot2::ggplot_build()
    b \%>\% autonomics.plot::gg_aeslevels(aesthetic = 'color')
    b \%>\% autonomics.plot::gg_aeslevels(aesthetic = 'shape')
    b \%>\% autonomics.plot::gg_aeslevels(aesthetic = 'x')
