@@ -32,9 +32,10 @@
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
 #'                         package = 'autonomics.data')
-#'    object <- file %>% load_omics(platform = 'maxquant',
-#'                                  quantity = 'Ratio normalized',
-#'                                  infer_design_from_sampleids = TRUE)
+#'    object <- file %>% autonomics.import::load_omics(
+#'                          platform = 'maxquant',
+#'                          quantity = 'Ratio normalized',
+#'                          infer_design_from_sampleids = TRUE)
 #' }
 #'
 #' # METABOLON
@@ -84,6 +85,14 @@ load_omics <- function(
    if (!is.null(design_file)){
       file_df <- autonomics.import::read_design(design_file)
       object %<>% autonomics.import::merge_sdata(file_df, by = sampleid_varname(platform))
+   }
+
+   # Order on subgroup (and replicate)
+   subgroup_values  <- object %>% autonomics.import::svalues('subgroup')
+   replicate_values <- object %>% autonomics.import::svalues('replicate')
+   if (!is.null(subgroup_values)){
+      if (!is.null(replicate_values)){ object %<>% magrittr::extract(, order(subgroup_values, replicate_values))
+      } else {                         object %<>% magrittr::extract(, order(subgroup_values))}
    }
 
    # Return

@@ -49,9 +49,10 @@ if (require(autonomics.data)){
 if (require(autonomics.data)){
    file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
                         package = 'autonomics.data')
-   object <- file \%>\% load_omics(platform = 'maxquant',
-                                 quantity = 'Ratio normalized',
-                                 infer_design_from_sampleids = TRUE)
+   object <- file \%>\% autonomics.import::load_omics(
+                         platform = 'maxquant',
+                         quantity = 'Ratio normalized',
+                         infer_design_from_sampleids = TRUE)
 }
 
 # METABOLON
