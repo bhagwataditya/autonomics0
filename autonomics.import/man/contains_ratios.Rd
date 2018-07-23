@@ -17,6 +17,17 @@ Does object contain ratio values?
 }
 \examples{
 require(magrittr)
+
+# STEM CELL COMPARISON
+if (require(autonomics.data)){
+   autonomics.data::stemcomp.proteinratios \%>\%
+   autonomics.import::contains_ratios()
+
+   autonomics.data::stemcomp.soma \%>\%
+   autonomics.import::contains_ratios()
+}
+
+# STEM CELL DIFFERENTIATION
 if (require(billing.differentiation.data)){
    billing.differentiation.data::protein.ratios \%>\%
       autonomics.import::contains_ratios()

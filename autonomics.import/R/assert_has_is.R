@@ -79,6 +79,17 @@ contains_prepro <- function(object){
 #' @return logical
 #' @examples
 #' require(magrittr)
+#'
+#' # STEM CELL COMPARISON
+#' if (require(autonomics.data)){
+#'    autonomics.data::stemcomp.proteinratios %>%
+#'    autonomics.import::contains_ratios()
+#'
+#'    autonomics.data::stemcomp.soma %>%
+#'    autonomics.import::contains_ratios()
+#' }
+#'
+#' # STEM CELL DIFFERENTIATION
 #' if (require(billing.differentiation.data)){
 #'    billing.differentiation.data::protein.ratios %>%
 #'       autonomics.import::contains_ratios()
@@ -89,7 +100,7 @@ contains_prepro <- function(object){
 contains_ratios <- function(object){
    autonomics.import::assert_is_valid_eset(object)
    if (autonomics.import::contains_prepro(object)){
-      autonomics.import::prepro(object)$quantity %in% c('raw.ratio', 'normalized.ratio', 'occupancy')
+      autonomics.import::prepro(object)$quantity %in% c('Ratio', 'Ratio normalized', 'occupancy')
    } else {
       FALSE
    }

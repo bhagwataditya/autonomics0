@@ -155,6 +155,12 @@ load_proteingroups <- function(
                                            design_sep                  = design_sep,
                                            design_file                 = design_file)
 
+   # Add prepro info
+   autonomics.import::prepro(object) <- list(assay    = 'lcms',
+                                             entity   = 'proteingroup',
+                                             quantity = quantity,
+                                             software = 'maxquant')
+
    # Return
    return(object)
 
