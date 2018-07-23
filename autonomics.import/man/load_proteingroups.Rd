@@ -56,7 +56,7 @@ if (require(autonomics.data)){
             system.file(package = 'autonomics.data')
    object <- file \%>\% autonomics.import::load_proteingroups(
                          infer_design_from_sampleids = TRUE)
-   sdata(object) \%>\% head()
+   sdata(object) \%>\% str()
 }
 
 }

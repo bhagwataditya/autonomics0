@@ -138,7 +138,7 @@ load_omics <- function(
 #'             system.file(package = 'autonomics.data')
 #'    object <- file %>% autonomics.import::load_proteingroups(
 #'                          infer_design_from_sampleids = TRUE)
-#'    sdata(object) %>% head()
+#'    sdata(object) %>% str()
 #' }
 #'
 #' @importFrom magrittr %>%
@@ -163,6 +163,24 @@ load_proteingroups <- function(
                                            infer_design_from_sampleids = infer_design_from_sampleids,
                                            design_sep                  = design_sep,
                                            design_file                 = design_file)
+
+   # Intuify samples based on subgroup and replicate
+   subgroup_values  <- object %>% autonomics.import::svalues('subgroup')
+   replicate_values <- object %>% autonomics.import::svalues('replicate')
+                    # If not specified as argument: infer sep from sampleids
+   design_sep %<>% (function(x) if (is.null(x)) object %>% autonomics.import::snames() %>% autonomics.import::infer_design_sep() else x) %>%
+                   # If not inferrable from sampleids: set sep to '.'
+                   (function(x) if (is.null(x)) '.' else x)
+   ok <- !is.null( subgroup_values) &
+         !is.null(replicate_values) &
+          all(assertive.strings::is_non_missing_nor_empty_character(as.character(subgroup_values)))  &
+          all(assertive.strings::is_non_missing_nor_empty_character(as.character(replicate_values))) &
+          assertive.properties::has_no_duplicates(paste0(subgroup_values, '.', replicate_values))
+   if (ok){
+      new_sampleids <- paste0(subgroup_values, '.', replicate_values)
+      autonomics.import::snames(object) <- new_sampleids
+      autonomics.import::sdata(object)$sample_id <- new_sampleids
+   }
 
    # Add prepro info
    autonomics.import::prepro(object) <- list(assay    = 'lcms',
