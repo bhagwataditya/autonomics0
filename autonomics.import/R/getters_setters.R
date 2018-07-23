@@ -192,9 +192,10 @@ setGeneric('fdata',                                                           fu
 #' @rdname fdata
 #' @importFrom magrittr %>%
 setMethod(        'fdata',  signature('SummarizedExperiment'),                function(object){
-   object@elementMetadata@listData %>%
-      as.data.frame(check.names = FALSE,
-                    row.names = object@elementMetadata@rownames)})
+                                                                                 object@elementMetadata@listData %>%
+                                                                                 as.data.frame(check.names      = FALSE,
+                                                                                               row.names        = object@elementMetadata@rownames,
+                                                                                               stringsAsFactors = FALSE)})
 # NOTES: (1) as.data.frame(object@elementMetadata) doesn't handle check.names correctly!
 #        (2) SummarizedExperiment::rowData returns a DataFrame (which is not generic to e.g. EList objects)
 #' @rdname fdata
@@ -443,8 +444,9 @@ setMethod('sdata',  signature('EList'),                function(object){ object$
 #' @rdname sdata
 #' @importFrom magrittr %>%
 setMethod('sdata',  signature('SummarizedExperiment'), function(object){ object@colData@listData %>%
-                                                                         as.data.frame(check.names = FALSE,
-                                                                         row.names = object@colData@rownames) })
+                                                                         as.data.frame(check.names      = FALSE,
+                                                                                       row.names        = object@colData@rownames,
+                                                                                       stringsAsFactors = FALSE) })
 # NOTES: (1) "as.data.frame(object@colData)" doesn't handle check.names correctly!
 #        (2)  SummarizedExperiment::colData returns a DataFrame, which is not generic (to e.g. EList)
 

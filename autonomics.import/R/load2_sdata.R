@@ -247,7 +247,7 @@ load_sdata_maxquant <- function(
    quantity = autonomics.import::infer_maxquant_quantity(file)
 ){
    sampleids <- file %>% autonomics.import::load_snames_maxquant(quantity, infer_design_from_sampleids = FALSE)
-   data.frame(sample_id = sampleids, row.names = sampleids)
+   data.frame(sample_id = sampleids, row.names = sampleids, stringsAsFactors = FALSE)
 }
 
 
@@ -325,7 +325,7 @@ load_sdata_metabolonlipids <- function(file, sheet){
    coln <- which(x[row1, ] == 'Unit')
 
    x %>% magrittr::extract((1+row1):nrow(x), 1:coln) %>%
-      data.frame() %>%
+      data.frame(stringsAsFactors = FALSE) %>%
       magrittr::set_names(x[row1, 1:coln] %>% unname() %>% unlist()) %>%
       magrittr::set_rownames(.$`Client Identifier`)
 }
@@ -360,7 +360,7 @@ load_sdata_soma <- function(file){
             magrittr::extract((x$row-1):nrow(.),  1:(x$col-2), with = FALSE)    %>%
             magrittr::set_names(unlist(unname(.[1,])))                          %>%
             magrittr::extract(-1, )                                             %>%
-            data.frame(row.names = .$SampleId)
+            data.frame(row.names = .$SampleId, stringsAsFactors = FALSE)
 }
 
 

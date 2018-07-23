@@ -10,12 +10,14 @@ stemcomp.proteinratios <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
                            autonomics.preprocess::invert_ratios(
                               invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'), 
                               subgroup_frac = '_')
+stemcomp.proteinratios %>% autonomics.import::sdata() %>% str()
 save(stemcomp.proteinratios, file = 'data/stemcomp.proteinratios.RData', compress = 'xz')
 
 # SOMA
 stemcomp.soma <- 'extdata/stemcomp/soma/stemcomp.adat'      %>% 
                   system.file(package = 'autonomics.data')  %>%
                   autonomics.import::load_soma()
+stemcomp.soma %>% autonomics.import::sdata() %>% str()
 save(stemcomp.soma, file = 'data/stemcomp.soma.RData', compress = 'xz')
 
 
@@ -30,10 +32,13 @@ stemdiff.proteinratios <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
                               # ony interested in ./STD(L) ratios
                            autonomics.import::filter_samples(subgroup %>% stringi::stri_detect_fixed('BLANK_') %>% magrittr::not())
                               # not interested in BLANK/STD ratios
-autonomics.import::sdata(stemdiff.proteinratios)
-stemdiff.proteinratios$subgroup %<>% factor(levels = levels(.)[c(2:length(.), 1)])   # Have BM00_STD as last level
+autonomics.import::sdata(stemdiff.proteinratios) %>% str()
+stemdiff.proteinratios$subgroup %<>% factor(c('EM00_STD', 'EM01_STD', 'EM02_STD', 'EM05_STD','EM15_STD', 'EM30_STD', 'BM00_STD'))
+stemdiff.proteinratios %<>% autonomics.import::arrange_samples(subgroup)
+
 save(stemdiff.proteinratios, file = 'data/stemdiff.proteinratios.RData', compress = 'xz')
 stemdiff.proteinratios %>% autonomics.explore::plot_pca_samples()
+stemdiff.proteinratios %>% autonomics.plot::plot_sample_distributions()
 stemdiff.proteinratios %>% autonomics.plot::default_color_values(color_var = 'subgroup')
 
 # Glutaminase (METABOLON)

@@ -292,9 +292,10 @@ write_design <- function(
    subgroup_var <- autonomics.import::subgroup_varname(platform)
 
    # Construct design
-   design_df <- data.frame(x           = sdata1[[sampleid_var]],
-                           row.names   = sdata1[[sampleid_var]],
-                           check.names = FALSE) %>%
+   design_df <- data.frame(x                = sdata1[[sampleid_var]],
+                           row.names        = sdata1[[sampleid_var]],
+                           check.names      = FALSE,
+                           stringsAsFactors = FALSE) %>%
                 magrittr::set_names(names(.) %>% stringi::stri_replace_first_fixed('x', sampleid_var))
 
    # Infer subgroup from sampleids and add to design
