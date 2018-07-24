@@ -4,10 +4,13 @@
 \alias{impute}
 \title{Impute}
 \usage{
-impute(object)
+impute(object, random_seed = NULL)
 }
 \arguments{
 \item{object}{SummarizedExperiment, eSet, or EList}
+
+\item{random_seed}{Integer used with \code{\link[R.utils]{withSeed}} for reproducible
+imputation (the used \code{\link[imputeLCMD]{impute.QRILC}} implys random draws from a distribution)}
 }
 \value{
 updated object
