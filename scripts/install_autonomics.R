@@ -11,9 +11,20 @@ install_if_not_available <- function(x){
 }
 
 check_version_compatibility <- function(){
-   
-   install.packages('assertive.reflection')
- 
+  if(utils::packageVersion('ggplot2') > package_version('2.2.1'))
+  {
+    warning("'autonomics' is currently incompatible with 'ggplot2' > v2.2.1. Downgrading.")
+    devtools::install_version('ggplot2', version = '2.2.1')
+  }
+  
+  if(packageVersion('ggstance') > package_version('0.3'))
+  {
+    warning("'autonomics' is currently incompatible with 'ggstance' > v0.3 (which depends on 'ggplot2' v3.0). Downgrading.")
+    devtools::install_version('ggstance', version = '0.3')
+  } 
+  
+   #install.packages('assertive.reflection')
+   #  
    # 13 May 2018:   fixed  
    # 29 April 2018: data.table is not installing (smoothly) in R3.5.0 on windows
    #   - The binary is not yet available on CRAN
@@ -28,11 +39,11 @@ check_version_compatibility <- function(){
 
 install_autonomics <- function(){
    
-   # Check version compatibility
-   check_version_compatibility()
-   
    # devtools
    install_if_not_available('devtools')
+
+   # Check version compatibility
+   check_version_compatibility()
 
    # autonomics.data & autonomics.support
    devtools::install_github('bhagwataditya/autonomics/autonomics.data',       repos = biocinstallRepos(), upgrade_dependencies = FALSE)
@@ -60,6 +71,7 @@ install_autonomics <- function(){
    # autonomics
    devtools::install_github('bhagwataditya/autonomics/autonomics',            repos = biocinstallRepos(), upgrade_dependencies = FALSE)
 
+   check_version_compatibility()
 }
 
 install_autonomics()

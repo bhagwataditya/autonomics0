@@ -61,3 +61,14 @@ switchr::makeManifest(
 
 # Update everything (also already present) --------------------------------
 BiocInstaller::biocLite(checkBuilt = TRUE, ask = FALSE)
+
+# Downgrade ggplot2 to autonomics compatibility ---------------------------
+if(packageVersion('ggplot2') > package_version('2.2.1'))
+{
+  devtools::install_version('ggplot2', version = '2.2.1')
+}
+
+if(packageVersion('ggstance') > package_version('0.3'))
+{
+  devtools::install_version('ggstance', version = '0.3')
+}
