@@ -30,8 +30,11 @@ stemdiff.proteinratios <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
                            autonomics.import::load_proteingroups(infer_design_from_sampleids = TRUE)           %>% 
                            autonomics.import::filter_samples(subgroup %>% stringi::stri_detect_fixed('_STD'))  %>% 
                               # ony interested in ./STD(L) ratios
-                           autonomics.import::filter_samples(subgroup %>% stringi::stri_detect_fixed('BLANK_') %>% magrittr::not())
+                           autonomics.import::filter_samples(subgroup %>% stringi::stri_detect_fixed('BLANK_') %>% magrittr::not()) %>% 
                               # not interested in BLANK/STD ratios
+                           autonomics.preprocess::invnorm() %>% 
+                           autonomics.preprocess::filter_features_nonzero_in_some_sample()
+
 autonomics.import::sdata(stemdiff.proteinratios) %>% str()
 stemdiff.proteinratios$subgroup %<>% factor(c('EM00_STD', 'EM01_STD', 'EM02_STD', 'EM05_STD','EM15_STD', 'EM30_STD', 'BM00_STD'))
 stemdiff.proteinratios %<>% autonomics.import::arrange_samples(subgroup)

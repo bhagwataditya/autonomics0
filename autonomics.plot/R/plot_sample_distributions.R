@@ -55,13 +55,13 @@ check_args_of_plot_sample_distributions <- function(object, x, facet_var, color_
 #'    plot_sample_distributions(object = ALL, x = 'cod',
 #'                              facet_var = 'sex', color_var = 'BT')
 #' }
-#' if (require(billing.differentiation.data)){
+#'
+#' # STEM CELL DIFFERENTIATION
+#' if (require(autonomics.data)){
 #'    autonomics.data::stemdiff.proteinratios %>%
 #'    autonomics.plot::plot_sample_distributions()
-#'
-#'    billing.differentiation.data::protein.ratios %>%
-#'    autonomics.plot::plot_sample_distributions()
-#'
+#' }
+#' if (require(billing.differentiation.data)){
 #'    billing.differentiation.data::rna.voomcounts %>%
 #'       plot_sample_distributions()
 #' }
@@ -69,9 +69,11 @@ check_args_of_plot_sample_distributions <- function(object, x, facet_var, color_
 #'    object <- subramanian.2016::metabolon
 #'    object %>% plot_sample_distributions()
 #' }
-#' if (require(halama.2016)){
-#'    object <- halama.2016::cell.metabolites
-#'    object %>% autonomics.plot::plot_sample_distributions(
+#'
+#' # GLUTMINASE
+#' if (require(autonomics.data)){
+#'    autonomics.data::glutaminase %>%
+#'    autonomics.plot::plot_sample_distributions(
 #'       color_var    = 'GROUP_DESCRIPTION',
 #'       color_values = c(Control = 'gray94', Vehicle = 'darkgrey',
 #'                       `Concentration 1` = 'green', `Concentration 2` = 'forestgreen')

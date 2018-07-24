@@ -23,13 +23,13 @@
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    # Simple plot
-#'      autonomics.plot::plot_sample_distributions2(autonomics.data::billing2016)
+#'      autonomics.plot::plot_sample_distributions2(autonomics.data::stemcomp.proteinratios)
 #'    # Same thing vertical
-#'      plot_sample_distributions2(autonomics.data::billing2016, horizontal = FALSE)
+#'      plot_sample_distributions2(autonomics.data::stemcomp.proteinratios, horizontal = FALSE)
 #'    # More complex using facetting
 #'      plot_sample_distributions2(
-#'         object = autonomics.data::billing2016,
-#'         2^autonomics.import::exprs(autonomics.data::billing2016),
+#'         object = autonomics.data::stemcomp.proteinratios,
+#'         2^autonomics.import::exprs(autonomics.data::stemcomp.proteinratios),
 #'         facet2_var = c('Logarithmized', 'Raw'))
 #'    # Yet more crazy explicitly marking the feature with the maximum value
 #'      plot_sample_distributions2(
