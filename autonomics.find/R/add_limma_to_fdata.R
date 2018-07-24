@@ -34,11 +34,17 @@ merge_limma_matrices <- function(limma_matrices){
 #' \href{https://support.bioconductor.org/p/4932/}{explained by Gordon Smyth on Bioconductor Support}.
 #' @examples
 #' library(magrittr)
+#' 
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    autonomics.data::billing2016 %>%
-#'    autonomics.find::add_limma_to_fdata() %>% autonomics.import::fdata() %>%
-#'    extract2('bonf.BM_EM') %>% is_less_than(0.05) %>% sum(na.rm = TRUE)
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% autonomics.find::add_limma_to_fdata() %>% 
+#'               autonomics.import::fdata() %>%
+#'               extract2('bonf.BM_EM') %>% 
+#'               is_less_than(0.05) %>% 
+#'               sum(na.rm = TRUE)
 #' }
+#' 
 #' if (require(subramanian.2016)){
 #'    object <- subramanian.2016::metabolon
 #'    object %>% autonomics.find::add_limma_to_fdata() %>% autonomics.import::fvars()
