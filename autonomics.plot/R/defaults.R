@@ -22,8 +22,10 @@ make_gg_colors <- function(factor_levels) {
 #'    object <- subramanian.2016::metabolon
 #'    object %>% autonomics.plot::make_composite_colors()
 #' }
-#' if (require(halama.2016)){
-#'    object <- halama.2016::cell.metabolites
+#'
+#' # GLUTAMINASE
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::glutaminase
 #'    object %>% autonomics.plot::make_composite_colors()
 #' }
 #' @importFrom magrittr %>%
@@ -100,11 +102,15 @@ make_composite_colors <- function(
 #' if (require(subramanian.2016)){
 #'    subramanian.2016::metabolon %>% autonomics.plot::default_color_values()
 #' }
-#' if (require(halama.2016)){
-#'    halama.2016::cell.metabolites %>% autonomics.plot::default_color_values()
+#'
+#' # GLUTAMINASE
+#' if (require(autonomics.data)){
+#'    autonomics.data::glutaminase %>% autonomics.plot::default_color_values()
 #' }
-#' if (require(billing.differentiation.data)){
-#'    billing.differentiation.data::protein.ratios %>% autonomics.plot::default_color_values()
+#'
+#' # STEM CELL DIFFERENTIATION
+#' if (require(autonomics.data)){
+#'    autonomics.data::stemdiff.proteinratios %>% autonomics.plot::default_color_values()
 #' }
 #' @importFrom magrittr %>%
 #' @export

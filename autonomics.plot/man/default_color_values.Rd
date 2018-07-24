@@ -23,10 +23,14 @@ require(magrittr)
 if (require(subramanian.2016)){
    subramanian.2016::metabolon \%>\% autonomics.plot::default_color_values()
 }
-if (require(halama.2016)){
-   halama.2016::cell.metabolites \%>\% autonomics.plot::default_color_values()
+
+# GLUTAMINASE
+if (require(autonomics.data)){
+   autonomics.data::glutaminase \%>\% autonomics.plot::default_color_values()
 }
-if (require(billing.differentiation.data)){
-   billing.differentiation.data::protein.ratios \%>\% autonomics.plot::default_color_values()
+
+# STEM CELL DIFFERENTIATION
+if (require(autonomics.data)){
+   autonomics.data::stemdiff.proteinratios \%>\% autonomics.plot::default_color_values()
 }
 }

@@ -24,8 +24,10 @@ if (require(subramanian.2016)){
    object <- subramanian.2016::metabolon
    object \%>\% autonomics.plot::make_composite_colors()
 }
-if (require(halama.2016)){
-   object <- halama.2016::cell.metabolites
+
+# GLUTAMINASE
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase
    object \%>\% autonomics.plot::make_composite_colors()
 }
 }

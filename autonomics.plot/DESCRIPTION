@@ -39,7 +39,6 @@ Suggests:
     autonomics.data,
     billing.differentiation.data,
     Biobase,
-    halama.2016,
     subramanian.2016,
     SummarizedExperiment
 License: GPL-3

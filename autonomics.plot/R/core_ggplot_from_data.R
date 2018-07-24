@@ -42,32 +42,38 @@
 #' requireNamespace('ggplot2')
 #' requireNamespace('ggstance')
 #' if (require(autonomics.data)){
+#'
 #'    # Just the basics ...
-#'    autonomics.plot::core_ggplot_from_data(autonomics.data::ALL[, 1:30])
+#'    core_ggplot_from_data(autonomics.data::ALL[, 1:30])
+#'
 #'    # Add a 'geom' layer
-#'    autonomics.plot::core_ggplot_from_data(autonomics.data::ALL[, 1:30]) +
-#'      ggplot2::geom_violin()
+#'    core_ggplot_from_data(autonomics.data::ALL[, 1:30]) + ggplot2::geom_violin()
+#'
 #'    # (Nearly) same thing, but horizontal and filled ...
-#'    autonomics.plot::core_ggplot_from_data(autonomics.data::ALL[, 1:15], fill_var = 'sex', horizontal = TRUE) +
-#'      ggstance::geom_violinh()
+#'    core_ggplot_from_data(autonomics.data::ALL[, 1:15], fill_var = 'sex', horizontal = TRUE) +
+#'    ggstance::geom_violinh()
+#'
 #'    # Combine 2 'data sets', separating them by fill (augmenting the data on-the-fly)
-#'    autonomics.plot::core_ggplot_from_data(
+#'    core_ggplot_from_data(
 #'      autonomics.data::ALL[, 1:15], autonomics.data::ALL[, 16:30],
 #'      color_var = NULL,
 #'      fill_var = c('A', 'B')) +
 #'      ggplot2::geom_boxplot()
+#'
 #'    # Combine 2 'data sets', separating them by facetting
-#'    autonomics.plot::core_ggplot_from_data(
+#'    core_ggplot_from_data(
 #'      autonomics.data::ALL[, 1:30], autonomics.data::ALL[, 31:60],
 #'      facet2_var = c('A', 'B'), horizontal = TRUE) +
 #'      ggstance::geom_boxploth()
+#'
 #'    # Combine with further facetting ... using sdata ...
-#'    autonomics.data::core_ggplot_from_data(
+#'    core_ggplot_from_data(
 #'      autonomics.data::ALL[, 1:15], autonomics.data::ALL[, 16:30],
 #'      facet1_var = 'sex', facet2_var = c('A', 'B'), horizontal = TRUE) +
 #'      ggstance::geom_boxploth()
+#'
 #'    # Combine with further facetting ... using on-the-fly augmentation (only) ...
-#'    autonomics.plot::core_ggplot_from_data(
+#'    core_ggplot_from_data(
 #'      autonomics.data::ALL[, 1:15], autonomics.data::ALL[, 16:30],
 #'      facet1_var = c('C', 'D'), facet2_var = c('A', 'B'), horizontal = TRUE) +
 #'      ggstance::geom_boxploth()
