@@ -115,9 +115,17 @@ if (require(billing.differentiation.data)){
    object \%>\% autonomics.plot::plot_feature_profiles(fvars = 'gene_name')
    object \%>\% autonomics.plot::plot_feature_distributions(fvars = 'gene_name')
    object \%>\% autonomics.plot::plot_feature_boxes(fvars = 'gene_name')
+}
 
-   object <- billing.differentiation.data::protein.ratios \%>\% extract(1:10, )
-   object \%>\% autonomics.plot::plot_feature_boxes()
+# GLUTAMINASE
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase[1:9, ]
+   color_values <- c(Control = 'blue', Vehicle = 'green', `Concentration 1` = 'orange',
+                    `Concentration 2` = 'red')
+   object$alpha <- object$TREATMENT \%in\% c(0,1)
+   object \%>\% autonomics.plot::plot_feature_boxes(
+                   x = 'TIME_POINT', color_var = 'GROUP_DESCRIPTION', color_values = color_values,
+                   alpha_var = 'alpha')
 }
 if (require(subramanian.2016)){
    subramanian.2016::metabolon[1:10, ] \%>\%
@@ -162,15 +170,6 @@ if (require(atkin.2014)){
                    group_var = 'subject_id', line = TRUE, fvar = 'TargetFullName', file = file)
 }
 
-if (require(halama.2016)){
-   object <- halama.2016::cell.metabolites[1:10, ]
-   color_values <- c(Control = 'blue', Vehicle = 'green', `Concentration 1` = 'orange',
-                    `Concentration 2` = 'red')
-   object$alpha <- object$TREATMENT \%in\% c(0,1)
-   object \%>\% autonomics.plot::plot_feature_boxes(
-                   x = 'TIME_POINT', color_var = 'GROUP_DESCRIPTION', color_values = color_values,
-                   alpha_var = 'alpha')
-}
 
 }
 \author{

@@ -32,13 +32,14 @@
 #'         2^autonomics.import::exprs(autonomics.data::stemcomp.proteinratios),
 #'         facet2_var = c('Logarithmized', 'Raw'))
 #'    # Yet more crazy explicitly marking the feature with the maximum value
+#'      object <- autonomics.data::stemcomp.proteinratios
 #'      plot_sample_distributions2(
-#'         object = autonomics.data::billing2016,
-#'         2^autonomics.import::exprs(autonomics.data::billing2016),
+#'         object,
+#'         2^autonomics.import::exprs(object),
 #'         facet2_var = c('Logarithmized', 'Raw'),
 #'         displayed_features =
-#'            autonomics.import::exprs(autonomics.data::billing2016) %>%
-#'            magrittr::equals(autonomics.import::exprs(autonomics.data::billing2016) %>%
+#'            autonomics.import::exprs(object) %>%
+#'            magrittr::equals(autonomics.import::exprs(object) %>%
 #'                             max(na.rm = TRUE)) %>%
 #'            which(arr.ind = TRUE) %>%
 #'            magrittr::extract(,'row'))
