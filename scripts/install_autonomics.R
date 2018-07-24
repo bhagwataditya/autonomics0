@@ -11,13 +11,17 @@ install_if_not_available <- function(x){
 }
 
 check_version_compatibility <- function(){
-  if(utils::packageVersion('ggplot2') > package_version('2.2.1'))
+  if(
+    'ggplot2' %in% utils::installed.packages() &&
+    utils::packageVersion('ggplot2') > package_version('2.2.1'))
   {
     warning("'autonomics' is currently incompatible with 'ggplot2' > v2.2.1. Downgrading.")
     devtools::install_version('ggplot2', version = '2.2.1')
   }
   
-  if(packageVersion('ggstance') > package_version('0.3'))
+  if(
+    'ggstance' %in% utils::installed.packages() &&
+    utils::packageVersion('ggstance') > package_version('0.3'))
   {
     warning("'autonomics' is currently incompatible with 'ggstance' > v0.3 (which depends on 'ggplot2' v3.0). Downgrading.")
     devtools::install_version('ggstance', version = '0.3')
