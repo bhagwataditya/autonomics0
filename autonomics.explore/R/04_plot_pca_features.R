@@ -63,33 +63,41 @@ extract_top_and_bottom <- function(object, n = 16){
 #' @param ...              passed to plot_projection_features
 #' @examples
 #' require(magrittr)
+#' # STEM CELL COMPARISON
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% autonomics.explore::plot_pca_features(n=9)
+#'    object %>% autonomics.explore::plot_pca_features(feature_plot = 'bars')
+#' }
+#' 
+#' # STEM CELL DIFFERENTIATION
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    object %>% autonomics.explore::plot_pca_features(n=9)
+#'    object %>% autonomics.explore::plot_pca_features(dim=2, n=9)
+#'    object %>% autonomics.explore::plot_pca_features()
+#' }
+#' 
+#' # GLUTAMINASE
+#' if (require(autonomics.data)){
+#'    autonomics.data::glutaminase %>% autonomics.explore::plot_pca_features(
+#'       color_var    = 'GROUP_DESCRIPTION', 
+#'       color_values = c(Control = 'orange', Vehicle = 'red', `Concentration 1` = 'green', 
+#'                       `Concentration 2` = 'blue'))
+#' }
+#' 
 #' if (require(subramanian.2016)){
 #'    object <- subramanian.2016::metabolon
 #'    object %>% autonomics.explore::plot_pca_features(feature_plot = 'boxes')
 #'    object %>% autonomics.explore::plot_pls_features(feature_plot = 'boxes')
 #'    object %>% autonomics.explore::plot_lda_features(feature_plot = 'boxes')
 #' }
-#' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016
-#'    object %>% autonomics.explore::plot_pca_features(n=9)
-#'    object %>% autonomics.explore::plot_pca_features(feature_plot = 'bars')
-#' }
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::protein.ratios
-#'    object %>% autonomics.explore::plot_pca_features(n=9)
-#'    object %>% autonomics.explore::plot_pca_features(dim=2, n=9)
-#'    object %>% autonomics.explore::plot_pca_features()
-#' }
+#' 
 #' if (require(atkin.2014)){
 #'    object <- atkin.2014::soma
 #'    object %>% autonomics.explore::plot_pca_features()
 #' }
-#' if (require(halama.2016)){
-#'    halama.2016::cell.metabolites %>% autonomics.explore::plot_pca_features(
-#'       color_var    = 'GROUP_DESCRIPTION', 
-#'       color_values = c(Control = 'orange', Vehicle = 'red', `Concentration 1` = 'green', 
-#'                       `Concentration 2` = 'blue'))
-#' }
+#' 
 #' @importFrom magrittr  %>%
 #' @export
 plot_projection_features <- function(

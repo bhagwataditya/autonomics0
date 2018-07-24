@@ -41,36 +41,43 @@ layout_sample_projections_and_features <- function(feature_plot){
 #' require(magrittr)
 #' result_dir <- tempdir() %T>% message()
 #' \dontrun{
-#' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016
-#'    object %>% autonomics.explore::plot_pca_samples_and_features()
-#'    object %>% autonomics.explore::plot_pca_samples_and_features(
-#'                  feature_plot = 'distributions')
-#'    object %>% autonomics.explore::plot_pca_samples_and_features(
-#'                  feature_plot = 'distributions', na.impute = TRUE)
-#'    object %>% autonomics.explore::plot_pca_samples_and_features(
-#'                  result_dir = result_dir)
-#'    object %>% autonomics.explore::plot_pca_samples_and_features(
-#'                  result_dir = result_dir, feature_plot = 'bars')
-#' }
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    object %>% autonomics.explore::plot_pca_samples_and_features(n = 4)
-#'    object %>% autonomics.explore::plot_lda_samples_and_features(n = 4)
-#'    
-#'    object %>% autonomics.explore::plot_pca_samples_and_features(
-#'                  color_var = 'condition', feature_plot = 'boxes')
-#' }
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts
-#'    object %>% autonomics.explore::plot_pca_samples_and_features()
-#' }
-#' if (require(halama.2016)){
-#'    halama.2016::cell.metabolites %>% autonomics.explore::plot_pca_samples_and_features(
-#'       color_var    = 'GROUP_DESCRIPTION', 
-#'       color_values = c(Control = 'orange', Vehicle = 'red', `Concentration 1` = 'green', 
-#'                       `Concentration 2` = 'blue'))
-#' }
+#' 
+#'      # STEM CELL COMPARISON
+#'      if (require(autonomics.data)){
+#'         object <- autonomics.data::stemcomp.proteinratios
+#'         object %>% autonomics.explore::plot_pca_samples_and_features()
+#'         object %>% autonomics.explore::plot_pca_samples_and_features(
+#'                       feature_plot = 'distributions')
+#'         object %>% autonomics.explore::plot_pca_samples_and_features(
+#'                       feature_plot = 'distributions', na.impute = TRUE)
+#'         object %>% autonomics.explore::plot_pca_samples_and_features(
+#'                       result_dir = result_dir)
+#'         object %>% autonomics.explore::plot_pca_samples_and_features(
+#'                       result_dir = result_dir, feature_plot = 'bars')
+#'      }
+#'      
+#'      # STEM CELL DIFFERENTIATION
+#'      if (require(billing.differentiation.data)){
+#'         object <- billing.differentiation.data::rna.voomcounts
+#'         object %>% autonomics.explore::plot_pca_samples_and_features()
+#'      }
+#'      
+#'      # GLUTAMINASE
+#'      if (require(autonomics.data)){
+#'         autonomics.data::glutaminase %>% autonomics.explore::plot_pca_samples_and_features(
+#'            color_var    = 'GROUP_DESCRIPTION',
+#'            color_values = c(Control = 'orange', Vehicle = 'red', `Concentration 1` = 'green',
+#'                            `Concentration 2` = 'blue'))
+#'      }
+#'      
+#'      if (require(subramanian.2016)){
+#'         object <- subramanian.2016::metabolon
+#'         object %>% autonomics.explore::plot_pca_samples_and_features(n = 4)
+#'         object %>% autonomics.explore::plot_lda_samples_and_features(n = 4)
+#'      
+#'         object %>% autonomics.explore::plot_pca_samples_and_features(
+#'                       color_var = 'condition', feature_plot = 'boxes')
+#'      }
 #' }
 #' @importFrom magrittr   %>%
 #' @export

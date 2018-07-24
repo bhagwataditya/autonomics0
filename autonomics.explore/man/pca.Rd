@@ -35,18 +35,19 @@ NIPALS:    X = T*P'   (no further decomposition of scores, so SMA not possible)
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::protein.ratios
+
+# STEM CELL DIFFERENTIATION
+if (require(autonomics.data)){
+   object <- autonomics.data::stemdiff.proteinratios
    object \%>\% autonomics.explore::pca() \%>\% str()
 }
-if (require(halama.2016)){
-   object <- halama.2016::cell.metabolites 
+
+# GLUTAMINASE
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase
    object \%>\% autonomics.explore::pca() \%>\% str()
 }
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
-   object \%>\% autonomics.explore::pca()  \%>\%  str()
-}
+
 }
 \seealso{
 \code{\link[autonomics.explore]{sma}},

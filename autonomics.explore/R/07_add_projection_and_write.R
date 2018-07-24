@@ -46,27 +46,34 @@ write_projected_features <- function(object, result_dir, method = 'pca'){
 #' @examples
 #' require(magrittr)
 #' result_dir <- tempdir() %T>% message()
+#' 
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016 
+#'    object <- autonomics.data::stemcomp.proteinratios
 #'    object %>% autonomics.explore::add_and_write_pca(result_dir = result_dir)
 #' }
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    object %>% add_and_write_pca(result_dir = result_dir, color_var = 'condition')
-#' }
+#' 
+#' # STEM CELL DIFFERENTIATION
 #' if (require(billing.differentiation.data)){
 #'    require(magrittr)
 #'    result_dir <- tempdir() %T>% message()
 #'    billing.differentiation.data::rna.voomcounts %>% 
 #'       autonomics.explore::add_and_write_pca(result_dir = result_dir)
 #' }
-#' if (require(halama.2016)){
+#' 
+#' # GLUTAMINASE
+#' if (require(autonomics.data)){
 #'    result_dir <- tempdir() %T>% message()
-#'    halama.2016::cell.metabolites %>% autonomics.explore::add_and_write_pca(
+#'    autonomics.data::glutaminase %>% autonomics.explore::add_and_write_pca(
 #'       result_dir   = result_dir,
 #'       color_var    = 'GROUP_DESCRIPTION', 
 #'       color_values = c(Control = 'orange', Vehicle = 'red', `Concentration 1` = 'green', 
 #'                       `Concentration 2` = 'blue'))
+#' }
+#'                       
+#' if (require(subramanian.2016)){
+#'    object <- subramanian.2016::metabolon
+#'    object %>% add_and_write_pca(result_dir = result_dir, color_var = 'condition')
 #' }
 #' @importFrom magrittr   %>%  %<>%
 #' @export

@@ -171,8 +171,8 @@
 # #    object %>% autonomics.explore::plot_pca_samples(
 # #               color_var ='time', split_var = 'condition')
 # # }
-# # if (require(halama.2016)){
-# #    halama.2016::cell.metabolites %>% autonomics.explore::plot_pca_samples(
+# # if (require(autonomics.data)){
+# #    autonomics.data::glutaminase %>% autonomics.explore::plot_pca_samples(
 # #       color_var    = 'GROUP_DESCRIPTION',
 # #       color_values = c(Control = 'orange', Vehicle = 'red', `Concentration 1` = 'green',
 # #                       `Concentration 2` = 'blue'))

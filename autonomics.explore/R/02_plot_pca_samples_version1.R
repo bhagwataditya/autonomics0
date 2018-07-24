@@ -11,8 +11,8 @@
 #' @param group_var svar mapped to group_var
 #' @examples 
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::protein.ratios
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemdiff.proteinratios
 #'    
 #'    autonomics.explore::pca(object) %>% 
 #'    autonomics.explore::make_projected_samples_df(
@@ -111,13 +111,17 @@ make_sample_scores_title <- function(object, method){
 #'    object %>% autonomics.explore::plot_pca_samples1(
 #'                  color_var = 'condition', size_var = 'time', split_var = 'condition')
 #' }
+#' 
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016
+#'    object <- autonomics.data::stemcomp.proteinratios
 #'    object %>% autonomics.explore::plot_pca_samples1()
 #'    object %>% autonomics.explore::plot_lda_samples1()
 #' }
+#' 
+#' # STEM CELL DIFFERENTIATION
 #' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::protein.ratios
+#'    object <- autonomics.data::stemdiff.proteinratios
 #'    object %>% autonomics.explore::plot_pca_samples1()
 #'    object %>% autonomics.explore::plot_lda_samples1()
 #'    object %>% autonomics.explore::plot_pls_samples1()

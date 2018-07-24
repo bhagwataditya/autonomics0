@@ -29,24 +29,27 @@ Returns \code{LDA} sample scores, feature loadings, and discriminant variances.
 }
 \examples{
 require(magrittr)
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016
+   object <- autonomics.data::stemcomp.proteinratios
    object \%>\% autonomics.explore::lda() \%>\% str()
    \dontrun{ # Fails, as max dim length(subgroup) - 1
       object \%>\% autonomics.explore::lda(ndim = 3) \%>\% str()
    }
 }
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::protein.ratios
+
+# STEM CELL DIFFERENTIATION
+require(magrittr)
+if (require(autonomics.data)){
+   object <- autonomics.data::stemdiff.proteinratios
    object \%>\% autonomics.explore::lda() \%>\% str()
 }
-if (require(halama.2016)){
-   object <- halama.2016::cell.metabolites
+
+# GLUTAMINASE
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase
    object \%>\% autonomics.explore::lda() \%>\% str()
-}
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
-   object \%>\% autonomics.explore::lda()  \%>\%  str()
 }
 }
 \seealso{

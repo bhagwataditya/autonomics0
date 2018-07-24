@@ -25,18 +25,15 @@
 #' @examples 
 #' require(magrittr)
 #' 
-#' # Stem cell differentiation (Max Quant)
-#' #--------------------------------------
+#' # STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcelldiff %>% autonomics.explore::pca() %>% str()
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    object %>% autonomics.explore::pca() %>% str()
 #' }
 #' 
-#' # Glutaminase (metabolon)
-#' #------------------------
+#' # GLUTAMINASE
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
-#'             system.file(package = 'autonomics.data')
-#'    object <- file %>% autonomics.import::load_metabolon()
+#'    object <- autonomics.data::glutaminase
 #'    object %>% autonomics.explore::pca() %>% str()
 #' }
 #' 
@@ -104,18 +101,16 @@ pca <- function(object, ndim = 2, ...){
 #' ```
 #' @examples 
 #' require(magrittr)
-#' # Stem cell differentiation (Max Quant)
-#' #--------------------------------------
+#' 
+#' # STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcelldiff %>% autonomics.explore::sma() %>% str()
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    object %>% autonomics.explore::sma() %>% str()
 #' }
 #' 
-#' # Glutaminase (metabolon)
-#' #------------------------
+#' # GLUTAMINASE
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
-#'             system.file(package = 'autonomics.data')
-#'    object <- file %>% autonomics.import::load_metabolon()
+#'    object <- autonomics.data::glutaminase
 #'    object %>% autonomics.explore::sma() %>% str()
 #' }
 #' @references 
@@ -181,26 +176,26 @@ sma <- function(object, na.impute = FALSE, ndim = 2, ...){
 #' ```
 #' @examples 
 #' require(magrittr)
+#' 
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016
+#'    object <- autonomics.data::stemcomp.proteinratios
 #'    object %>% autonomics.explore::lda() %>% str()
 #'    \dontrun{ # Fails, as max dim length(subgroup) - 1
 #'       object %>% autonomics.explore::lda(ndim = 3) %>% str()
 #'    }
 #' }
-#' # Stem cell differentiation (Max Quant)
-#' #--------------------------------------
+#' 
+#' # STEM CELL DIFFERENTIATION
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcelldiff %>% autonomics.explore::lda() %>% str()
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    object %>% autonomics.explore::lda() %>% str()
 #' }
 #' 
-#' # Glutaminase (metabolon)
-#' #------------------------
+#' # GLUTAMINASE
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
-#'             system.file(package = 'autonomics.data')
-#'    object <- file %>% autonomics.import::load_metabolon()
+#'    object <- autonomics.data::glutaminase
 #'    object %>% autonomics.explore::lda() %>% str()
 #' }
 #' @seealso \code{\link[autonomics.explore]{pca}}, 
@@ -266,18 +261,15 @@ lda <- function(object, na.impute = FALSE, ndim = 2,  ...){
 #' @examples 
 #' require(magrittr)
 #' 
-#' # Stem cell differentiation (Max Quant)
-#' #--------------------------------------
+#' # STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcelldiff %>% autonomics.explore::pls() %>% str()
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    object %>% autonomics.explore::pls() %>% str()
 #' }
 #' 
-#' # Glutaminase (metabolon)
-#' #------------------------
+#' # GLUTAMINASE
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
-#'             system.file(package = 'autonomics.data')
-#'    object <- file %>% autonomics.import::load_metabolon()
+#'    object <- autonomics.data::glutaminase
 #'    object %>% autonomics.explore::pls() %>% str()
 #'    \dontrun{ # slow
 #'       object %>% autonomics.explore::pls(implementation = 'ropls::opls'     ) %>% str()
@@ -355,19 +347,15 @@ pls <- function(object, implementation = NULL, ndim = 2, ...){
 #' @examples 
 #' require(magrittr)
 #' 
-#' # Stem cell differentiation (Max Quant)
-#' #--------------------------------------
+#' # STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcelldiff %>% autonomics.explore::project() %>% str()
+#'    object <- autonomics.data::stemdiff.proteinratios
 #'    object %>% autonomics.explore::project() %>% str()
 #' }
 #' 
-#' # Glutaminase (metabolon)
-#' #------------------------
+#' # GLUTAMINASE
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
-#'             system.file(package = 'autonomics.data')
-#'    object <- file %>% autonomics.import::load_metabolon()
+#'    object <- autonomics.data::glutaminase
 #'    object %>% autonomics.explore::project() %>% str()
 #' }
 #' @seealso \code{\link[autonomics.explore]{pca}}, 

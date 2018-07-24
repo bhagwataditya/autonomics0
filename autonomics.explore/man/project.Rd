@@ -26,14 +26,17 @@ Return sample scores, feature loadings, and component variances.
 }
 \examples{
 require(magrittr)
+
+# STEM CELL DIFFERENTIATION
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016
-   object \%>\% autonomics.explore::project(method = 'lda') \%>\% str()
+   object <- autonomics.data::stemdiff.proteinratios
+   object \%>\% autonomics.explore::project() \%>\% str()
 }
-if (require(halama.2016)){
-   object <- halama.2016::cell.metabolites
-   object \%>\% autonomics.explore::project('lda') \%>\% str()
-   object \%>\% autonomics.explore::project('pca') \%>\% str()
+
+# GLUTAMINASE
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase
+   object \%>\% autonomics.explore::project() \%>\% str()
 }
 }
 \seealso{

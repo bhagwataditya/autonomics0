@@ -29,14 +29,17 @@ Returns \code{PLS} sample scores, feature loadings, and latent variable variance
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::protein.ratios
+
+# STEM CELL DIFFERENTIATION
+if (require(autonomics.data)){
+   object <- autonomics.data::stemdiff.proteinratios
    object \%>\% autonomics.explore::pls() \%>\% str()
 }
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
-   object \%>\% autonomics.explore::pls()  \%>\%  str()
-   object \%>\% autonomics.explore::pls(implementation = 'mixOmics::splsda') \%>\% str()
+
+# GLUTAMINASE
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase
+   object \%>\% autonomics.explore::pls() \%>\% str()
    \dontrun{ # slow
       object \%>\% autonomics.explore::pls(implementation = 'ropls::opls'     ) \%>\% str()
    }

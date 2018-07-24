@@ -38,13 +38,16 @@ if (require(billing.differentiation.data)){
    billing.differentiation.data::rna.voomcounts \%>\%
       autonomics.explore::plot_sample_distrs_n_pca('rna.voomcounts')
 }
-if (require(halama.2016)){
-   halama.2016::cell.metabolites \%>\% autonomics.explore::plot_sample_distrs_n_pca(
+
+# GLUTAMINASE
+if (require(autonomics.data)){
+   autonomics.data::glutaminase \%>\% autonomics.explore::plot_sample_distrs_n_pca(
       descr = 'custom colors',
       color_var    = 'GROUP_DESCRIPTION',
       color_values = c(Control = 'orange', Vehicle = 'red', `Concentration 1` = 'green',
                       `Concentration 2` = 'blue'))
 }
+
 if (require(subramanian.2016)){
    subramanian.2016::metabolon \%>\% 
    autonomics.explore::plot_sample_distrs_n_pca()

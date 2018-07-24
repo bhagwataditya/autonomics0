@@ -33,8 +33,8 @@ Make datatable to plot PCA, LDA, or PLS sample scores
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::protein.ratios
+if (require(autonomics.data)){
+   object <- autonomics.data::stemdiff.proteinratios
    
    autonomics.explore::pca(object) \%>\% 
    autonomics.explore::make_projected_samples_df(

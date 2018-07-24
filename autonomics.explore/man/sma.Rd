@@ -35,13 +35,17 @@ Returns \code{SMA} sample scores, feature loadings, and component variances.
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::protein.ratios
+
+# STEM CELL DIFFERENTIATION
+if (require(autonomics.data)){
+   object <- autonomics.data::stemdiff.proteinratios
    object \%>\% autonomics.explore::sma() \%>\% str()
 }
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
-   object \%>\% autonomics.explore::sma()  \%>\%  str()
+
+# GLUTAMINASE
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase
+   object \%>\% autonomics.explore::sma() \%>\% str()
 }
 }
 \references{

@@ -23,33 +23,9 @@
 #' @examples 
 #' require(magrittr)
 #' 
-#' # Stem cell comparison (Max Quant)
-#' #--------------------------------------
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::stemcellcomp
-#'    object %>% autonomics.explore::plot_pca_samples(txt_var = 'replicate')
-#' }
-#' 
-#' # Stem cell differentiation (Max Quant)
-#' #--------------------------------------
-#' if (require(autonomics.data)){
-#'    object <- autonomics.data::stemcelldiff
-#'    object %>% autonomics.explore::plot_pca_samples()
-#' }
-#' 
-#' # Glutaminase (metabolon)
-#' #------------------------
-#' if (require(autonomics.data)){
-#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>% 
-#'             system.file(package = 'autonomics.data')
-#'    object <- file %>% autonomics.import::load_metabolon()
-#'    object %>% autonomics.explore::pls() %>% str()
-#'    \dontrun{ # slow
-#'       object %>% autonomics.explore::pls(implementation = 'ropls::opls'     ) %>% str()
-#'    }
-#' }
-#' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016
+#'    object <- autonomics.data::stemcomp.proteinratios
 #'    object %>% autonomics.explore::plot_pca_samples()
 #'    object %>% autonomics.explore::plot_pca_samples(dims = c(3,4))
 #'    
@@ -58,6 +34,19 @@
 #'        facet_var = c('OK PCA', 'Not so nice LDA', 'Nice SMA', 'Very nice PLS'),
 #'        nrow = 2)
 #' }
+#' 
+#' # STEM CELL DIFFERENTIATION
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    object %>% autonomics.explore::plot_pca_samples()
+#' }
+#' 
+#' # GLUTAMINASE
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::glutaminase
+#'    object %>% autonomics.explore::plot_pca_samples()
+#' }
+#' 
 #' @author Aditya Bhagwat, Johannes Graumann
 #' @importFrom data.table   data.table   :=
 #' @importFrom magrittr %>% %<>%

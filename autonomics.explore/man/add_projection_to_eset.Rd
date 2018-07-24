@@ -42,17 +42,22 @@ if (require(subramanian.2016)){
    subramanian.2016::metabolon \%>\% autonomics.explore::add_lda_to_eset()
    subramanian.2016::metabolon \%>\% autonomics.explore::add_pls_to_eset()
 }
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016 
+   object <- autonomics.data::stemcomp.proteinratios
    object \%>\% autonomics.explore::add_pca_to_eset(ndim = 3)
-   object \%<>\% add_pca_to_eset()
+   object \%<>\% autonomics.explore::add_pca_to_eset()
    object \%>\% autonomics.import::svars()
    object \%>\% autonomics.import::fvars()
 }
+
+# STEM CELL DIFFERENTIATION
 if (require(billing.differentiation.data)){
    object <- billing.differentiation.data::rna.voomcounts
    object \%>\% autonomics.explore::add_pca_to_eset()
 }
+
 if (require(atkin.2014)){
    object <- atkin.2014::soma 
    object \%>\% autonomics.explore::add_pca_to_eset()
