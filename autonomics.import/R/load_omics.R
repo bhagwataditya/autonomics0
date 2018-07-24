@@ -112,6 +112,9 @@ load_omics <- function(
 #' @param fasta_file      path to uniprot fasta database
 #' @param log2_transform  logical: whether to log2 transform
 #' @param log2_offset     numeric: offset used in mapping: x -> log2(offset + x)
+#' @param rm_reverse      logical: whether to rm reverse features
+#' @param rm_contaminants logical: whether to rm contaminant features
+#' @param rm_na_features  logical: whether to rm features which are NA, NaN or 0 in all samples
 #' @examples
 #' require(magrittr)
 #'
@@ -151,10 +154,13 @@ load_proteingroups <- function(
    design_file                 = NULL,
    fasta_file                  = NULL,
    log2_transform              = TRUE,
-   log2_offset                 = 0
+   log2_offset                 = 0,
+   rm_reverse_features         = TRUE,
+   rm_contaminant_features     = TRUE,
+   rm_na_features              = TRUE
 ){
 
-   # Load exprs
+   # Load
    object <- autonomics.import::load_omics(file                        = file,
                                            platform                    = 'maxquant',
                                            quantity                    = quantity,
@@ -164,7 +170,14 @@ load_proteingroups <- function(
                                            design_sep                  = design_sep,
                                            design_file                 = design_file)
 
-   # Intuify samples based on subgroup and replicate
+   # Filter features
+   object %<>% autonomics.import::filter_features(!is.na(feature_id), verbose = TRUE) # Max Quant earlier version had bug that created corrupted lines without feature_id columns
+   if (rm_reverse_features)      object %<>% autonomics.import::filter_features(Reverse != '+',     verbose = TRUE)
+   if (rm_contaminant_features)  object %<>% autonomics.import::filter_features(Contaminant != '+', verbose = TRUE)
+   if (rm_na_features)           object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample(verbose = TRUE)
+
+
+   # Intuify snames
    subgroup_values  <- object %>% autonomics.import::svalues('subgroup')
    replicate_values <- object %>% autonomics.import::svalues('replicate')
                     # If not specified as argument: infer sep from sampleids
@@ -182,7 +195,7 @@ load_proteingroups <- function(
       autonomics.import::sdata(object)$sample_id <- new_sampleids
    }
 
-   # Add prepro info
+   # Add prepro
    autonomics.import::prepro(object) <- list(assay    = 'lcms',
                                              entity   = 'proteingroup',
                                              quantity = quantity,

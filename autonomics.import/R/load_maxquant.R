@@ -457,7 +457,7 @@ rename_maxquant_annotation_columns <- function(DT){
 #' @importFrom data.table   data.table   :=
 #' @importFrom magrittr     %<>%   %>%
 #' @export
-rm_reverse <- function(PG){
+rm_reverse_dt <- function(PG){
    # Satisfy CHECK
    Reverse <- NULL
 
@@ -480,7 +480,7 @@ CONTAMINANT_FIELD_RX <- '(?i)(?:potential )?contaminant(?-i)'
 #' @param PG maxquant dataframe
 #' @importFrom magrittr  %<>%   %>%
 #' @export
-rm_contaminants <- function(PG){
+rm_contaminants_dt <- function(PG){
 
    # What is the name of the contaminant variable
    fields <- colnames(PG)
@@ -593,11 +593,11 @@ load_proteingroups_to_wide_dt <- function(
    tmp_summary_attr %<>% c(proteingroups_n_validid = nrow(DT))
 
    # rm contaminants
-   DT %<>% autonomics.import::rm_contaminants()
+   DT %<>% autonomics.import::rm_contaminants_dt()
    tmp_summary_attr %<>% c(proteingroups_n_rmcontaminants = nrow(DT))
 
    # rm reverse
-   DT %<>% autonomics.import::rm_reverse()
+   DT %<>% autonomics.import::rm_reverse_dt()
    tmp_summary_attr %<>% c(proteingroups_n_rmreverse = nrow(DT))
 
    # Extract relevant value_type
@@ -647,11 +647,11 @@ load_phosphosites_to_wide_dt <- function(
    tmp_summary_attr %<>% c(phosphosites_n_validid = nrow(DT))
 
    # rm contaminants
-   DT %<>% rm_contaminants()
+   DT %<>% rm_contaminants_dt()
    tmp_summary_attr %<>% c(phosphosites_n_rmcontaminants = nrow(DT))
 
    # rm reverse
-   DT %<>% rm_reverse()
+   DT %<>% rm_reverse_dt()
    tmp_summary_attr %<>% c(phosphosites_n_rmreverse      = nrow(DT))
 
    # rm unreliable localization probabilities

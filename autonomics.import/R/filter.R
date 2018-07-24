@@ -4,7 +4,7 @@
 filter_features_ <- function(x, condition, verbose = FALSE){
    idx <- lazyeval::lazy_eval(condition, autonomics.import::fdata(x))
    idx <- idx & !is.na(idx)
-   if (verbose) message('Retain ', sum(idx), '/', length(idx), ' features: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
+   if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' features: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
    x[idx, ]
 }
 
@@ -116,7 +116,7 @@ filter_features_min_expr <- function(object, min_expr){
 filter_samples_ <- function(x, condition, verbose = FALSE){
    idx <- lazyeval::lazy_eval(condition, autonomics.import::sdata(x))
    idx <- idx & !is.na(idx)
-   if (verbose) if (verbose) message('Retain ', sum(idx), '/', length(idx), ' features: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
+   if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' features: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
    x %<>% magrittr::extract(, idx)
    autonomics.import::sdata(x) %<>% droplevels()
    x

@@ -8,7 +8,8 @@ load_proteingroups(file,
   quantity = autonomics.import::infer_maxquant_quantity(file),
   infer_design_from_sampleids = FALSE, design_sep = NULL,
   design_file = NULL, fasta_file = NULL, log2_transform = TRUE,
-  log2_offset = 0)
+  log2_offset = 0, rm_reverse_features = TRUE,
+  rm_contaminant_features = TRUE, rm_na_features = TRUE)
 }
 \arguments{
 \item{file}{path to proteinGroups.txt}
@@ -26,6 +27,12 @@ load_proteingroups(file,
 \item{log2_transform}{logical: whether to log2 transform}
 
 \item{log2_offset}{numeric: offset used in mapping: x -> log2(offset + x)}
+
+\item{rm_na_features}{logical: whether to rm features which are NA, NaN or 0 in all samples}
+
+\item{rm_reverse}{logical: whether to rm reverse features}
+
+\item{rm_contaminants}{logical: whether to rm contaminant features}
 }
 \description{
 Load proteingroups

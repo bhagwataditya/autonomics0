@@ -32,15 +32,38 @@ load_fnames_maxquant <- function(file){
 #'             system.file(package = 'autonomics.data')
 #'    file %>% autonomics.import::load_fdata_maxquant() %>% head()
 #' }
+#' @importFrom data.table data.table :=
 #' @importFrom magrittr %>%
 #' @export
 load_fdata_maxquant <- function(file){
+
    `Majority protein IDs` <- NULL
 
-   file %>% autonomics.support::cfread(select = c('Majority protein IDs', 'Gene names', 'Protein names')) %>%
-            magrittr::extract(, feature_id := `Majority protein IDs` %>% stringi::stri_split_fixed(';') %>% vapply(extract, character(1), 1)) %>%
-            data.frame(stringsAsFactors = FALSE, check.names = FALSE, row.names = .$feature_id) %>%
-            autonomics.support::pull_columns('feature_id')
+   # Read
+   dt <- file %>% autonomics.support::cfread()
+
+   # Establish fvar names
+   pattern <- '(?i)(?:potential )?contaminant(?-i)' # Contaminant -> Potential contaminant
+   contaminant_var <- names(dt) %>% magrittr::extract(stringi::stri_detect_regex(., pattern))
+   fdata_cols <- c('Majority protein IDs', 'Gene names', 'Protein names', 'Reverse', contaminant_var)
+
+   # Process
+   dt %>% magrittr::extract(, intersect(names(.), fdata_cols), with = FALSE) %>%
+
+          # Standardize Contaminant varname
+          magrittr::set_names(names(.) %>% stringi::stri_replace_first_regex(pattern, 'Contaminant')) %>%
+
+          # Replace NA with empty string
+          # when all values are missing, fread reads this in as a numeric column with all NAs
+          magrittr::extract(, Reverse     := Reverse     %>% (function(x){ x[is.na(x)] <- ''; x})) %>%
+          magrittr::extract(, Contaminant := Contaminant %>% (function(x){ x[is.na(x)] <- ''; x})) %>%
+
+          # Define feature_id
+          magrittr::extract(, feature_id := `Majority protein IDs` %>% stringi::stri_split_fixed(';') %>% vapply(extract, character(1), 1)) %>%
+
+          # Convert into dataframe
+          data.frame(stringsAsFactors = FALSE, check.names = FALSE, row.names = .$feature_id) %>%
+          autonomics.support::pull_columns('feature_id')
 }
 
 
