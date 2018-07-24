@@ -32,12 +32,12 @@ load_fnames_maxquant <- function(file){
 #'             system.file(package = 'autonomics.data')
 #'    file %>% autonomics.import::load_fdata_maxquant() %>% head()
 #' }
-#' @importFrom data.table data.table :=
-#' @importFrom magrittr %>%
+#' @importFrom data.table  data.table :=
+#' @importFrom magrittr    %>%
 #' @export
 load_fdata_maxquant <- function(file){
 
-   `Majority protein IDs` <- NULL
+   `Majority protein IDs` <- Reverse <- Contaminant <- NULL
 
    # Read
    dt <- file %>% autonomics.support::cfread()

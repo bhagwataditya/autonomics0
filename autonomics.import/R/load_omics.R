@@ -112,8 +112,8 @@ load_omics <- function(
 #' @param fasta_file      path to uniprot fasta database
 #' @param log2_transform  logical: whether to log2 transform
 #' @param log2_offset     numeric: offset used in mapping: x -> log2(offset + x)
-#' @param rm_reverse      logical: whether to rm reverse features
-#' @param rm_contaminants logical: whether to rm contaminant features
+#' @param rm_reverse_features      logical: whether to rm reverse features
+#' @param rm_contaminant_features logical: whether to rm contaminant features
 #' @param rm_na_features  logical: whether to rm features which are NA, NaN or 0 in all samples
 #' @examples
 #' require(magrittr)
@@ -159,6 +159,8 @@ load_proteingroups <- function(
    rm_contaminant_features     = TRUE,
    rm_na_features              = TRUE
 ){
+   # Satisfy CHECK
+   Reverse <- Contaminant <- NULL
 
    # Load
    object <- autonomics.import::load_omics(file                        = file,

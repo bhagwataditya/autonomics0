@@ -28,11 +28,11 @@ load_proteingroups(file,
 
 \item{log2_offset}{numeric: offset used in mapping: x -> log2(offset + x)}
 
+\item{rm_reverse_features}{logical: whether to rm reverse features}
+
+\item{rm_contaminant_features}{logical: whether to rm contaminant features}
+
 \item{rm_na_features}{logical: whether to rm features which are NA, NaN or 0 in all samples}
-
-\item{rm_reverse}{logical: whether to rm reverse features}
-
-\item{rm_contaminants}{logical: whether to rm contaminant features}
 }
 \description{
 Load proteingroups
