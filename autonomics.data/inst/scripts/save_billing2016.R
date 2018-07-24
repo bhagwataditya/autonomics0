@@ -9,15 +9,17 @@ stemcomp.proteinratios <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
                            autonomics.import::load_proteingroups(infer_design_from_sampleids = TRUE) %>% 
                            autonomics.preprocess::invert_ratios(
                               invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'), 
-                              subgroup_frac = '_')
-stemcomp.proteinratios %>% autonomics.import::sdata() %>% str()
+                              subgroup_frac = '_') %>% 
+                           autonomics.find::add_limma_to_fdata()
 save(stemcomp.proteinratios, file = 'data/stemcomp.proteinratios.RData', compress = 'xz')
 
 # SOMA
 stemcomp.soma <- 'extdata/stemcomp/soma/stemcomp.adat'      %>% 
                   system.file(package = 'autonomics.data')  %>%
-                  autonomics.import::load_soma()
-stemcomp.soma %>% autonomics.import::sdata() %>% str()
+                  autonomics.import::load_soma()            %>%
+                  autonomics.find::add_limma_to_fdata(contrasts = c(E_EM  = 'E - EM', 
+                                                                    E_BM  = 'E - BM', 
+                                                                    EM_BM = 'EM - BM'))
 save(stemcomp.soma, file = 'data/stemcomp.soma.RData', compress = 'xz')
 
 
@@ -32,11 +34,15 @@ stemdiff.proteinratios <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
                               # ony interested in ./STD(L) ratios
                            autonomics.import::filter_samples(subgroup %>% stringi::stri_detect_fixed('BLANK_') %>% magrittr::not()) %>% 
                               # not interested in BLANK/STD ratios
-                           autonomics.preprocess::invnorm()
-
-autonomics.import::sdata(stemdiff.proteinratios) %>% str()
-stemdiff.proteinratios$subgroup %<>% factor(c('EM00_STD', 'EM01_STD', 'EM02_STD', 'EM05_STD','EM15_STD', 'EM30_STD', 'BM00_STD'))
-stemdiff.proteinratios %<>% autonomics.import::arrange_samples(subgroup)
+                           autonomics.preprocess::invnorm() %>% 
+                          (function(x){x$subgroup  %<>% stringi::stri_replace_first_fixed('_STD', '')
+                                       x$sample_id %<>% stringi::stri_replace_first_fixed('_STD', '')
+                                       autonomics.import::snames(x)    %<>% stringi::stri_replace_first_fixed('_STD', '')
+                                       x$subgroup %<>% factor(c('EM00', 'EM01', 'EM02', 'EM05','EM15', 'EM30', 'BM00'))
+                                       x %<>% autonomics.import::arrange_samples(subgroup)
+                                       x
+                           }) %>% 
+                           autonomics.find::add_limma_to_fdata(contrasts = autonomics.find::make_ref_contrasts(.))
 
 save(stemdiff.proteinratios, file = 'data/stemdiff.proteinratios.RData', compress = 'xz')
 stemdiff.proteinratios %>% autonomics.explore::plot_pca_samples()
