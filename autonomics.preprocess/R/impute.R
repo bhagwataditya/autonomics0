@@ -89,6 +89,7 @@ impute <- function(
   
   # Reassemble & Return
   autonomics.import::exprs(object) <- impute_result
+  autonomics.import::assert_is_valid_eset(object)
   return(object)
 }
 
