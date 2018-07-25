@@ -4,10 +4,19 @@
 \alias{impute}
 \title{Impute}
 \usage{
-impute(object)
+impute(object, method = c("none", "missForest", "impute.minDet",
+  "impute.minProb", "impute.QRILC"), random_seed = NULL, ...)
 }
 \arguments{
 \item{object}{SummarizedExperiment, eSet, or EList}
+
+\item{method}{Imputation method employed. See Section 'Details'.}
+
+\item{random_seed}{Integer used with \code{\link[R.utils]{withSeed}} for reproducible
+imputation (the used \code{\link[imputeLCMD]{impute.QRILC}} implys random draws from a distribution)}
+
+\item{...}{Parameters handed on to the imputation methods.}
+>>>>>>> 3d4f6f1... Expand impute to accept several methodologies;
 }
 \value{
 updated object
@@ -18,5 +27,8 @@ They are well imputed with the QRILC (quantile regression imputation of left cen
 }
 \details{
 See \href{https://cran.r-project.org/package=imputeLCMD}{imputeLCMD package on CRAN}
-See \href{https://www.biorxiv.org/content/early/2017/08/17/171967}{Wei et al. 2017}
+
+The function under the performs no imutation if \code{method = 'none'}, uses
+ \code{\link[missForest]{missForest}} if \code{method = 'missForest'} and the parameter-named
+ methods from \pkg{imputeLCMD} in all other cases.
 }
