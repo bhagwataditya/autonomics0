@@ -68,33 +68,34 @@ This function visualizes the top features for the specified contrast.
 }
 \examples{
 require(magrittr)
-# A max quant eset
+
+# STEMCELL COMPARISON
   file <- tempfile() \%>\% paste0('.pdf') \%T>\% message()
   if (require(autonomics.data)){
-     object <- autonomics.data::billing2016 \%>\%
-                 autonomics.find::add_limma_to_fdata()
-     contrast <- c(BM_E = 'BM_E')
-     object \%>\% 
-        autonomics.find::plot_top_features(
-           contrast = contrast, direction = 'neg', feature_plot = 'hbars', file = file)
-     object \%>\% 
-        autonomics.find::plot_top_features(
-           contrast = contrast, direction = 'neg', feature_plot = 'bars',  file = file)
-     object \%>\% 
-        autonomics.find::plot_top_features(
-           contrast = contrast, direction = 'neg', feature_plot = 'profiles', file = file)
-     object \%>\% 
-        autonomics.find::plot_top_features(
-           contrast = contrast, direction = 'neg', feature_plot = 'distributions', file = file)
-     object \%>\% 
-        autonomics.find::plot_top_features(
-           contrast = contrast, direction = 'neg', feature_plot = 'boxes', file = file)
-     object \%>\% 
-        autonomics.find::plot_top_features(
-           contrast = contrast, direction = 'both', feature_plot = 'boxes', file = file)
-     object \%>\% 
-        autonomics.find::plot_top_features(
-           direction  = 'neg', x = 'subgroup', file = file)
+     object <- autonomics.data::stemcomp.proteinratios
+     contrasts <- object \%>\% autonomics.find::default_contrasts()
+     object \%<>\% autonomics.find::add_limma_to_fdata()
+     object \%>\% plot_top_features(contrast = contrasts[1], feature_plot = 'hbars', file = file)
+     object \%>\% plot_top_features(contrast = contrasts[1], feature_plot = 'bars', file = file)
+     object \%>\% plot_top_features(contrast = contrasts[1], feature_plot = 'profiles', file = file)
+     object \%>\% plot_top_features(contrast = contrasts[1], feature_plot = 'distributions', file = file)
+     object \%>\% plot_top_features(contrast = contrasts[1], feature_plot = 'boxes', file = file)
+     object \%>\% plot_top_features(direction  = 'neg', x = 'subgroup', file = file)
+  }
+
+# GLUTAMINASE
+  if (require(autonomics.data)){
+     object <- autonomics.data::glutaminase
+     object \%>\% autonomics.find::plot_top_features(
+                   contrast       = halama.2016::contrasts[1],
+                   top_definition = 'bonf < 0.05',
+                   direction      = 'both',
+        color_var      = 'GROUP_DESCRIPTION',
+      # color_values   = c(Control = 'red', Vehicle = 'orange',
+      #                   `Concentration 1` = 'green', `Concentration 2` = 'forestgreen'),
+        x              = 'TIME_POINT',
+        feature_plot   = 'boxes', 
+        file = file)
   }
 
 # A somascan eset
@@ -140,19 +141,6 @@ if (require(billing.differentiation.data)){
    object \%>\% autonomics.find::plot_top_features(contrast = contrast)
 }
 
-if (require(halama.2016)){
-  object <- halama.2016::cell.metabolites
-  object \%>\% autonomics.find::plot_top_features(
-     contrast       = halama.2016::contrasts[1],
-     top_definition = 'bonf < 0.05',
-     direction      = 'both',
-     color_var      = 'GROUP_DESCRIPTION',
-   # color_values   = c(Control = 'red', Vehicle = 'orange',
-   #                   `Concentration 1` = 'green', `Concentration 2` = 'forestgreen'),
-     x              = 'TIME_POINT',
-     feature_plot   = 'boxes', 
-     file = file)
-}
 
 }
 \author{

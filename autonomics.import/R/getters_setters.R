@@ -70,7 +70,7 @@ setReplaceMethod("annotation", signature("EList",                "character"), f
 
 
 #=================================================================================================
-#' Get/Set contrasts
+#' Get/Set contrast definitions
 #' @param object SummarizedExperiment
 #' @param value named contrast vector
 #' @return updated object
@@ -78,32 +78,41 @@ setReplaceMethod("annotation", signature("EList",                "character"), f
 #' require(magrittr)
 #' if (require(subramanian.2016)){
 #'    object <- subramanian.2016::metabolon
-#'    contrasts <- subramanian.2016::contrasts.metabolon
-#'    autonomics.import::contrasts(object)
-#'    autonomics.import::contrasts(object) <- contrasts
+#'    contrastdefs <- subramanian.2016::contrasts.metabolon
+#'    autonomics.import::contrastdefs(object)                      # getter
+#'    autonomics.import::contrastdefs(object) <- contrastdefs    # setter (conventional)
+#'    autonomics.import::set_contrastdefs(object, contrastdefs)  # setter (piping)
 #' }
-#' @rdname contrasts
+#' @rdname contrastdefs
 
 # Set
 #====
-#' @rdname contrasts
+#' @rdname contrastdefs
 #' @export
-setGeneric("contrasts<-",                                                     function(object, value)  standardGeneric("contrasts<-") )
+setGeneric("contrastdefs<-",                                                     function(object, value)  standardGeneric("contrastdefs<-") )
 
-#' @rdname contrasts
-setReplaceMethod("contrasts", signature("SummarizedExperiment", "character"), function(object, value){ S4Vectors::metadata(object)$contrasts <- value; object})
+#' @rdname contrastdefs
+setReplaceMethod("contrastdefs", signature("SummarizedExperiment", "character"), function(object, value){ S4Vectors::metadata(object)$contrastdefs <- value; object})
 
-#' @rdname contrasts
-setReplaceMethod("contrasts", signature("SummarizedExperiment", "NULL"),      function(object, value){object})
+#' @rdname contrastdefs
+setReplaceMethod("contrastdefs", signature("SummarizedExperiment", "NULL"),      function(object, value){object})
+
+#' @rdname contrastdefs
+#' @export
+set_contrastdefs <- function(object, value){
+   autonomics.import::contrastdefs(object) <- value
+   object
+}
+
 
 # Get
 #====
-#' @rdname contrasts
+#' @rdname contrastdefs
 #' @export
-setGeneric("contrasts",                                    function(object)   standardGeneric("contrasts") )
+setGeneric("contrastdefs",                                    function(object)   standardGeneric("contrastdefs") )
 
-#' @rdname contrasts
-setMethod("contrasts", signature("SummarizedExperiment"),  function(object) S4Vectors::metadata(object)$contrasts )
+#' @rdname contrastdefs
+setMethod("contrastdefs", signature("SummarizedExperiment"),  function(object) S4Vectors::metadata(object)$contrastdefs )
 
 
 

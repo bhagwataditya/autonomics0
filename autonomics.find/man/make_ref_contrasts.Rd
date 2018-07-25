@@ -17,19 +17,21 @@ Make reference contrasts
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   billing.differentiation.data::protein.ratios \%>\% 
-      autonomics.find::make_ref_contrasts() \%>\% data.frame()
+
+# STEMCELL DIFFERENTIATION
+if (require(autonomics.data)){
+   object <- autonomics.data::stemdiff.proteinratios
+   object \%>\% autonomics.find::make_ref_contrasts() \%>\% data.frame()
 }
+
+# GLUTAMINASE
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase
+   object \%>\% autonomics.find::make_ref_contrasts() \%>\% data.frame()
+}
+
 if (require(subramanian.2016)){
    subramanian.2016::metabolon \%>\%  
-      autonomics.find::make_ref_contrasts() \%>\% data.frame()
-}
-if (require(halama.2016)){
-   halama.2016::cell.metabolites \%>\% autonomics.find::make_ref_contrasts() \%>\% data.frame()
-   halama.2016::cell.metabolites \%>\% 
-      autonomics.import::filter_samples(GROUP_DESCRIPTION != 'Control') \%>\% 
-      autonomics.find::make_ref_contrasts() \%>\% 
-      data.frame()
+   autonomics.find::make_ref_contrasts() \%>\% data.frame()
 }
 }

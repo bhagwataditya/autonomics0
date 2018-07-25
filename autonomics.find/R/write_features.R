@@ -3,26 +3,28 @@ utils::globalVariables('.')
 
 #' Write top features for specified contrast
 #'
-#' @param object        eset
+#' @param object          SummarizedExperiment
 #' @param design          design matrix
 #' @param contrast        see \code{analyze_eset}
 #' @param direction       any value in autonomics.find::DIRECTIONS
 #' @param top_definition  top definition
 #' @param result_dir      directory
 #' @examples
+#' require(magrittr)
+#' 
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    require(magrittr)
-#'    object <- autonomics.data::billing2016
-#'    contrast <- object %>% autonomics.find::default_contrasts() %>% extract(1)
-#'    object %<>% autonomics.find::add_limma_to_fdata(contrasts = contrast)
-#'    direction <- 'neg'
-#'    top_definition <- autonomics.find::default_top_definition(object)
-#'    result_dir = tempdir()
-#'    autonomics.find::write_top_features(object, contrast = contrast,
-#'       direction = direction, top_definition = top_definition, result_dir = result_dir)
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    result_dir <- tempdir() %T>% message()
+#'    object %>% autonomics.find::write_top_features(
+#'                  contrast       = c(BM_E = 'BM_E'),
+#'                  direction      = 'neg', 
+#'                  top_definition = 'fdr < 0.5', 
+#'                  result_dir     = result_dir)
 #' }
+#' 
+#' # STEM CELL DIFFERENTIATION
 #' if (require(billing.differentiation.data)){
-#'    require(magrittr)
 #'    object <- billing.differentiation.data::rna.voomcounts
 #'    result_dir <- tempdir() %T>% message()
 #'    object %>% autonomics.find::write_top_features(
@@ -52,8 +54,8 @@ write_top_features <- function(
    assertive.sets::assert_is_subset(direction, autonomics.find::DIRECTIONS)
 
    # Keep top portion of eSet (corresponds with ora query!)
-   object %<>% select_fvars_and_filter_samples(design, contrast)
-   object %<>% filter_n_arrange_top_features(names(contrast), top_definition, direction)
+   object %<>% autonomics.find::select_fvars_and_filter_samples(design, contrast)
+   object %<>% autonomics.find::filter_n_arrange_top_features(names(contrast), top_definition, direction)
 
    # Return if eset empty
    if (nrow(object) == 0){
@@ -115,29 +117,35 @@ write_all_features <- function(object, result_dir){
 #' @param result_dir     dir where to save results
 #' @examples
 #' require(magrittr)
+#' 
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    object  <- autonomics.data::billing2016 %>% 
-#'                 autonomics.find::add_limma_to_fdata()
-#'    contrasts <- autonomics.find::default_contrasts(object)
-#'    top_definition <- object %>% autonomics.find::default_top_definition()
-#'    result_dir <- tempdir()
-#'    autonomics.find::write_features(object, contrasts = contrasts,
-#'                                    top_definition = top_definition, result_dir = result_dir)
+#'    object  <- autonomics.data::stemcomp.proteinratios
+#'    result_dir <- tempdir() %T>% message()
+#'    object %>% autonomics.find::write_features(
+#'                  contrasts      =  c(BM_E = 'BM_E', BM_EM = 'BM_EM', EM_E = 'EM_E'),
+#'                  top_definition = 'fdr < 0.05', 
+#'                  result_dir     =  result_dir)
 #' }
 #' @importFrom magrittr  %>%
 #' @export
 write_features <- function(
    object,
-   design = create_design_matrix(object),
+   design = autonomics.find::create_design_matrix(object),
    contrasts,
    top_definition,
    result_dir
 ){
-   object %>% write_all_features(result_dir)
+   object %>% autonomics.find::write_all_features(result_dir)
    for (i in seq_along(contrasts)){
       cur_contrast <- contrasts[i]
       for (direction in c('neg', 'pos')){
-         write_top_features(object, design, cur_contrast, direction = direction, top_definition, result_dir = result_dir)
+         object %>% autonomics.find::write_top_features(
+                       design         = design, 
+                       contrast       = cur_contrast, 
+                       direction      = direction, 
+                       top_definition = top_definition, 
+                       result_dir     = result_dir)
       }
    }
 }

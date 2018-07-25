@@ -19,12 +19,15 @@ Select relevant fvars
 }
 \examples{
 require(magrittr)
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016
-   contrasts <- object \%>\% autonomics.find::default_contrasts() \%>\% 
-                magrittr::extract(1:2)
-   object \%<>\% add_limma_to_fdata(contrasts = contrasts)
-   object \%>\% autonomics.find::select_relevant_fvars(names(contrasts))
+   object <- autonomics.data::stemcomp.proteinratios
+   contrasts <- object \%>\% autonomics.find::default_contrasts()
+   object \%<>\% autonomics.find::add_limma_to_fdata(contrasts = contrasts)
+   object \%>\% autonomics.import::fvars() \%>\% length()
+   object \%>\% autonomics.find::select_relevant_fvars(names(contrasts[1:2])) \%>\% 
+              autonomics.import::fvars() \%>\% length()
 }
 if (require(billing.differentiation.data)){
    object <- billing.differentiation.data::rna.voomcounts

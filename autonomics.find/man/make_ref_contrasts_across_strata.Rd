@@ -21,25 +21,31 @@ Make ref contrasts for selected variable across strata of other variables
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   dt  <- billing.differentiation.data::protein.ratios \%>\% autonomics.import::subgroup_components()
-   sep <- billing.differentiation.data::protein.ratios \%>\% autonomics.import::subgroup_sep()
+
+# STEM CELL DIFFERENTIATION
+if (require(autonomics.data)){
+   object <- autonomics.data::stemdiff.proteinratios
+   dt  <- object \%>\% autonomics.import::subgroup_components()
+   sep <- object \%>\% autonomics.import::subgroup_sep()
    autonomics.find::make_ref_contrasts_across_strata(1, dt, sep)
 }
+
+# GLUTAMINASE
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase
+   dt  <- object \%>\% autonomics.import::subgroup_components()
+   sep <- object \%>\% autonomics.import::subgroup_sep()
+   autonomics.find::make_ref_contrasts_across_strata(1, dt, sep)
+   autonomics.find::make_ref_contrasts_across_strata(2, dt, sep)
+}
+
 if (require(subramanian.2016)){
    dt  <- subramanian.2016::metabolon  \%>\%  autonomics.import::subgroup_components()
    sep <- subramanian.2016::metabolon  \%>\%  autonomics.import::subgroup_sep()
    autonomics.find::make_ref_contrasts_across_strata(1, dt, sep)
    autonomics.find::make_ref_contrasts_across_strata(2, dt, sep)
 }
-if (require(halama.2016)){
-   object <- halama.2016::cell.metabolites \%>\% 
-             autonomics.import::filter_samples(GROUP_DESCRIPTION != 'Control')
-   dt  <- object \%>\% autonomics.import::subgroup_components()
-   sep <- object \%>\% autonomics.import::subgroup_sep()
-   autonomics.find::make_ref_contrasts_across_strata(1, dt, sep)
-   autonomics.find::make_ref_contrasts_across_strata(2, dt, sep)
-}
+
 if (require(graumann.lfq)){
    dt <- graumann.lfq::lfq.intensities \%>\% autonomics.import::subgroup_components()
    sep <- graumann.lfq::lfq.intensities \%>\% autonomics.import::subgroup_sep()

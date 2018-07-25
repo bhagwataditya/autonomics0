@@ -45,7 +45,7 @@ load_fdata_maxquant <- function(file){
    # Establish fvar names
    pattern <- '(?i)(?:potential )?contaminant(?-i)' # Contaminant -> Potential contaminant
    contaminant_var <- names(dt) %>% magrittr::extract(stringi::stri_detect_regex(., pattern))
-   fdata_cols <- c('Majority protein IDs', 'Gene names', 'Protein names', 'Reverse', contaminant_var)
+   fdata_cols <- c('Majority protein IDs', 'id', 'Gene names', 'Protein names', 'Reverse', contaminant_var)
 
    # Process
    dt %>% magrittr::extract(, intersect(names(.), fdata_cols), with = FALSE) %>%

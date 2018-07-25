@@ -27,8 +27,6 @@ is_valid_contrast <- function(contrast, design){
 #' @param  design    design matrix
 #' @param  verbose   whether or not to report
 #' @return subset of contrasts
-#' @examples
-#' require(magrittr)
 #' @importFrom magrittr             %>%
 #' @export
 select_valid_contrasts <- function(contrasts, design, verbose = TRUE){
@@ -45,10 +43,12 @@ select_valid_contrasts <- function(contrasts, design, verbose = TRUE){
 #' @return validified contrasts
 #' @examples
 #' require(magrittr)
+#' 
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    object  <- autonomics.data::billing2016
+#'    object  <- autonomics.data::stemcomp.proteinratios
 #'    design <- autonomics.find::create_design_matrix(object)
-#'    contrasts <- autonomics.find::default_contrasts(object)
+#'    contrasts <- autonomics.find::make_ref_contrasts(object)
 #'    contrasts %>% autonomics.find::validify_contrasts(design)
 #' }
 #' @importFrom magrittr   %>%    %<>%

@@ -2,6 +2,7 @@
 
 export(DIRECTIONS)
 export(add_limma_to_fdata)
+export(aggregate_strata)
 export(are_relevant_samples)
 export(are_top_features)
 export(arrange_features_by_rank)

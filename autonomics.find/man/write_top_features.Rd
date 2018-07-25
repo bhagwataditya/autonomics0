@@ -9,7 +9,7 @@ write_top_features(object, design = create_design_matrix(object), contrast,
   top_definition = default_top_definition(object), result_dir = NULL)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 
 \item{design}{design matrix}
 
@@ -25,19 +25,21 @@ write_top_features(object, design = create_design_matrix(object), contrast,
 Write top features for specified contrast
 }
 \examples{
+require(magrittr)
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   require(magrittr)
-   object <- autonomics.data::billing2016
-   contrast <- object \%>\% autonomics.find::default_contrasts() \%>\% extract(1)
-   object \%<>\% autonomics.find::add_limma_to_fdata(contrasts = contrast)
-   direction <- 'neg'
-   top_definition <- autonomics.find::default_top_definition(object)
-   result_dir = tempdir()
-   autonomics.find::write_top_features(object, contrast = contrast,
-      direction = direction, top_definition = top_definition, result_dir = result_dir)
+   object <- autonomics.data::stemcomp.proteinratios
+   result_dir <- tempdir() \%T>\% message()
+   object \%>\% autonomics.find::write_top_features(
+                 contrast       = c(BM_E = 'BM_E'),
+                 direction      = 'neg', 
+                 top_definition = 'fdr < 0.5', 
+                 result_dir     = result_dir)
 }
+
+# STEM CELL DIFFERENTIATION
 if (require(billing.differentiation.data)){
-   require(magrittr)
    object <- billing.differentiation.data::rna.voomcounts
    result_dir <- tempdir() \%T>\% message()
    object \%>\% autonomics.find::write_top_features(

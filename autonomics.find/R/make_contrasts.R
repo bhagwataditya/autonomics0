@@ -8,12 +8,16 @@
 #' @param ref_levels reference levels (character vector)
 #' @examples
 #' require(magrittr) 
-#' if (require(billing.differentiation.data)){
-#'    dt  <- billing.differentiation.data::protein.ratios %>% autonomics.import::subgroup_components()
-#'    sep <- billing.differentiation.data::protein.ratios %>% autonomics.import::subgroup_sep()
+#' 
+#' # STEMCELL DIFFERENTIATION
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    dt  <- object %>% autonomics.import::subgroup_components()
+#'    sep <- object %>% autonomics.import::subgroup_sep()
 #'    autonomics.find::make_ref_contrasts_within_stratum(dt, sep, 1)
 #'    
 #' }
+#' 
 #' if (require(subramanian.2016)){
 #'    dt  <- subramanian.2016::metabolon %>% autonomics.import::subgroup_components()
 #'    sep <- subramanian.2016::metabolon %>% autonomics.import::subgroup_sep()
@@ -45,6 +49,11 @@ make_ref_contrasts_within_stratum <- function(
    data.table::data.table(name = name, term = term)
 }
 
+#' Aggregate strata
+#' @param  x character vector
+#' @return string 
+#' @importFrom magrittr %>% 
+#' @export
 aggregate_strata <- function(x){
    sprintf('(%s)/%d', x, length(x)) %>% paste0(collapse = ' + ')
 }
@@ -58,25 +67,31 @@ aggregate_strata <- function(x){
 #' @return data.table(name = contrast name, contrast = contrast formula)
 #' @examples
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    dt  <- billing.differentiation.data::protein.ratios %>% autonomics.import::subgroup_components()
-#'    sep <- billing.differentiation.data::protein.ratios %>% autonomics.import::subgroup_sep()
+#' 
+#' # STEM CELL DIFFERENTIATION
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    dt  <- object %>% autonomics.import::subgroup_components()
+#'    sep <- object %>% autonomics.import::subgroup_sep()
 #'    autonomics.find::make_ref_contrasts_across_strata(1, dt, sep)
 #' }
+#' 
+#' # GLUTAMINASE
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::glutaminase
+#'    dt  <- object %>% autonomics.import::subgroup_components()
+#'    sep <- object %>% autonomics.import::subgroup_sep()
+#'    autonomics.find::make_ref_contrasts_across_strata(1, dt, sep)
+#'    autonomics.find::make_ref_contrasts_across_strata(2, dt, sep)
+#' }
+#' 
 #' if (require(subramanian.2016)){
 #'    dt  <- subramanian.2016::metabolon  %>%  autonomics.import::subgroup_components()
 #'    sep <- subramanian.2016::metabolon  %>%  autonomics.import::subgroup_sep()
 #'    autonomics.find::make_ref_contrasts_across_strata(1, dt, sep)
 #'    autonomics.find::make_ref_contrasts_across_strata(2, dt, sep)
 #' }
-#' if (require(halama.2016)){
-#'    object <- halama.2016::cell.metabolites %>% 
-#'              autonomics.import::filter_samples(GROUP_DESCRIPTION != 'Control')
-#'    dt  <- object %>% autonomics.import::subgroup_components()
-#'    sep <- object %>% autonomics.import::subgroup_sep()
-#'    autonomics.find::make_ref_contrasts_across_strata(1, dt, sep)
-#'    autonomics.find::make_ref_contrasts_across_strata(2, dt, sep)
-#' }
+#' 
 #' if (require(graumann.lfq)){
 #'    dt <- graumann.lfq::lfq.intensities %>% autonomics.import::subgroup_components()
 #'    sep <- graumann.lfq::lfq.intensities %>% autonomics.import::subgroup_sep()
@@ -91,12 +106,12 @@ make_ref_contrasts_across_strata <- function(component, dt, sep){
    
    extract_ref_level <- function(x) as.character(x) %>% magrittr::extract(1)
    ref_levels <- dt %>% vapply(extract_ref_level, character(1))
-   dt %>% magrittr::extract(, make_ref_contrasts_within_stratum(.SD, sep, component, ref_levels), 
+   dt %>% magrittr::extract(, autonomics.find::make_ref_contrasts_within_stratum(.SD, sep, component, ref_levels), 
                               by = eval(names(dt)[-component]), 
                              .SDcols = names(dt)) %>% 
-          magrittr::extract(, list(contrast = aggregate_strata(term)), 
-                              by = 'name') %>% 
-          magrittr::extract(order(name))
+          magrittr::extract(, list(contrast = autonomics.find::aggregate_strata(term)), 
+                              by = 'name') #%>% 
+          #magrittr::extract(order(name))
 }
 
 #' Make reference contrasts
@@ -104,20 +119,22 @@ make_ref_contrasts_across_strata <- function(component, dt, sep){
 #' @return named character vector
 #' @examples
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    billing.differentiation.data::protein.ratios %>% 
-#'       autonomics.find::make_ref_contrasts() %>% data.frame()
+#' 
+#' # STEMCELL DIFFERENTIATION
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    object %>% autonomics.find::make_ref_contrasts() %>% data.frame()
 #' }
+#' 
+#' # GLUTAMINASE
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::glutaminase
+#'    object %>% autonomics.find::make_ref_contrasts() %>% data.frame()
+#' }
+#' 
 #' if (require(subramanian.2016)){
 #'    subramanian.2016::metabolon %>%  
-#'       autonomics.find::make_ref_contrasts() %>% data.frame()
-#' }
-#' if (require(halama.2016)){
-#'    halama.2016::cell.metabolites %>% autonomics.find::make_ref_contrasts() %>% data.frame()
-#'    halama.2016::cell.metabolites %>% 
-#'       autonomics.import::filter_samples(GROUP_DESCRIPTION != 'Control') %>% 
-#'       autonomics.find::make_ref_contrasts() %>% 
-#'       data.frame()
+#'    autonomics.find::make_ref_contrasts() %>% data.frame()
 #' }
 #' @importFrom  data.table  data.table
 #' @importFrom  magrittr    %>% 
@@ -125,7 +142,7 @@ make_ref_contrasts_across_strata <- function(component, dt, sep){
 make_ref_contrasts <- function(object){
    dt  <- object  %>%  autonomics.import::subgroup_components()
    sep <- object  %>%  autonomics.import::subgroup_sep()
-   1:ncol(dt) %>% lapply(make_ref_contrasts_across_strata, dt, sep) %>% 
+   1:ncol(dt) %>% lapply(autonomics.find::make_ref_contrasts_across_strata, dt, sep) %>% 
                          data.table::rbindlist() %>% 
                         (function(x){
                            if (nrow(x)==0){  character(0)

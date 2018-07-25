@@ -21,12 +21,16 @@ Make reference contrasts for selected variable within stratum of other variables
 }
 \examples{
 require(magrittr) 
-if (require(billing.differentiation.data)){
-   dt  <- billing.differentiation.data::protein.ratios \%>\% autonomics.import::subgroup_components()
-   sep <- billing.differentiation.data::protein.ratios \%>\% autonomics.import::subgroup_sep()
+
+# STEMCELL DIFFERENTIATION
+if (require(autonomics.data)){
+   object <- autonomics.data::stemdiff.proteinratios
+   dt  <- object \%>\% autonomics.import::subgroup_components()
+   sep <- object \%>\% autonomics.import::subgroup_sep()
    autonomics.find::make_ref_contrasts_within_stratum(dt, sep, 1)
    
 }
+
 if (require(subramanian.2016)){
    dt  <- subramanian.2016::metabolon \%>\% autonomics.import::subgroup_components()
    sep <- subramanian.2016::metabolon \%>\% autonomics.import::subgroup_sep()

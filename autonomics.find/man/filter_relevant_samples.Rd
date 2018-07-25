@@ -21,8 +21,9 @@ filter_relevant_samples(object, design = create_design_matrix(object),
 Filter relevant samples
 }
 \examples{
+require(magrittr)
+
 if (require(autonomics.data)){
-   library(magrittr)
    object <- autonomics.data::ALL
    unique(object$subgroup)
    contrasts <- c(M_F = '(TM+BM)/2 - (TF+BF)/2', B_T = '(BM+BF)/2 - (TM+TF)/2')
@@ -30,12 +31,15 @@ if (require(autonomics.data)){
    object \%>\%  autonomics.find::are_relevant_samples(contrasts = contrasts)
    object \%>\%  autonomics.find::filter_relevant_samples(contrasts = contrasts)
 }
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016
+   object <- autonomics.data::stemcomp.proteinratios
    contrasts <- object$subgroup[1]
    object \%>\% autonomics.find::are_relevant_samples(contrasts = contrasts)
    object \%>\% autonomics.find::filter_relevant_samples(contrasts = contrasts)
 }
+
 if (require(billing.differentiation.data)){
    object <- billing.differentiation.data::rna.voomcounts
    object \%>\% dim()

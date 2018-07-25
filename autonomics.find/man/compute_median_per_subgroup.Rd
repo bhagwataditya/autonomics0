@@ -14,8 +14,10 @@ Compute median per subgroup
 }
 \examples{
 require(magrittr)
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016
+   object <- autonomics.data::stemcomp.proteinratios
    object \%>\% autonomics.find::compute_median_per_subgroup() \%>\% head()
 }
 if (require(subramanian.2016)){

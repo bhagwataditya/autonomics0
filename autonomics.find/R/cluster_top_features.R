@@ -7,8 +7,10 @@ utils::globalVariables('.')
 #' @param object    eSet
 #' @examples
 #' require(magrittr)
+#' 
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016
+#'    object <- autonomics.data::stemcomp.proteinratios
 #'    object %>% autonomics.find::compute_median_per_subgroup() %>% head()
 #' }
 #' if (require(subramanian.2016)){
@@ -35,7 +37,9 @@ compute_median_per_subgroup <- function(object){
                          list(median = stats::median(value, na.rm = TRUE),
                               mad    = stats::mad(value,   na.rm = TRUE)),
                          by = list(feature_id, subgroup)) %>%
-                 data.table::dcast.data.table(feature_id ~ subgroup, value.var = 'median')
+                 data.table::dcast.data.table(feature_id ~ subgroup, value.var = 'median') %>% 
+                 data.table::setkeyv('feature_id') %>% 
+                 magrittr::extract(autonomics.import::fnames(object))
 
   sg_exprs_mat <- sg_exprs_dt                 %>%
                   magrittr::extract(, -1, with = FALSE) %>%

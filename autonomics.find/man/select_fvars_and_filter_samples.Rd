@@ -2,7 +2,7 @@
 % Please edit documentation in R/select_fvars_and_filter_samples.R
 \name{select_fvars_and_filter_samples}
 \alias{select_fvars_and_filter_samples}
-\title{Select portion of eset relevant to contrasts}
+\title{Select portion of SummarizedExperiment relevant to contrasts}
 \usage{
 select_fvars_and_filter_samples(object, design = create_design_matrix(object),
   contrasts)
@@ -18,15 +18,18 @@ select_fvars_and_filter_samples(object, design = create_design_matrix(object),
 Filtered eSet
 }
 \description{
-Select portion of eset relevant to contrasts
+Select portion of SummarizedExperiment relevant to contrasts
 }
 \examples{
+require(magrittr)
+
+# STEM CELL COMPARISON   
 if (require(autonomics.data)){
-   require(magrittr)
-   object <- autonomics.data::billing2016 \%>\% autonomics.find::add_limma_to_fdata()
+   object <- autonomics.data::stemcomp.proteinratios \%>\% autonomics.find::add_limma_to_fdata()
    contrasts <- object \%>\% autonomics.find::default_contrasts() \%>\% magrittr::extract(1)
    object \%>\% autonomics.find::select_fvars_and_filter_samples(contrasts = contrasts)
 }
+
 if (require(billing.differentiation.data)){
    object <- billing.differentiation.data::rna.voomcounts
    object \%>\% dim()

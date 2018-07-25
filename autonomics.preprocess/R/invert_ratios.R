@@ -41,18 +41,16 @@ invert_collapsed_strings <- function(x, sep){
 #' # Stem cell comparison (MaxQuant)
 #' #--------------------------------
 #' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcellcomp/maxquant/proteinGroups.txt',
+#'    file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
 #'                         package = 'autonomics.data')
-#'    file %>%
-#'    autonomics.import::load_proteingroups(infer_design_from_sampleids = TRUE) %>%
-#'    autonomics.import::sdata()
+#'    object <- file %>%
+#'              autonomics.import::load_proteingroups(infer_design_from_sampleids = TRUE)
+#'    object %>% autonomics.import::sdata()
 #'
-#'    file %>%
-#'    autonomics.import::load_proteingroups(infer_design_from_sampleids = TRUE) %>%
-#'    autonomics.preprocess::invert_ratios(
-#'       invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'),
-#'       subgroup_frac    = '_') %>%
-#'    autonomics.import::sdata()
+#'    object %>% autonomics.preprocess::invert_ratios(
+#'                  invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'),
+#'                  subgroup_frac    = '_') %>%
+#'               autonomics.import::sdata()
 #' }
 #' @importFrom dplyr     n
 #' @importFrom magrittr  %>%   %<>%
@@ -90,14 +88,13 @@ invert_ratios <- function(
   sdata1$subgroup[selector] %<>% autonomics.preprocess::invert_collapsed_strings(subgroup_frac)
 
   # Invert label ratio in sample names
-  sdata1$sample_id %<>% as.character()
-  sdata1$sample_id[selector] %<>% stringi::stri_replace_first_regex('\\[(.+)\\/(.+)\\]', '[$2/$1]')
+  sdata1$sample_id <- paste0(sdata1$subgroup, '.', sdata1$replicate)
 
-  # Redefine replicates
-  sdata1 %<>% dplyr::group_by_('subgroup') %>%    # must be character to allow mapping to shape in ggplot
-                                dplyr::mutate(replicate = as.character(seq_len(n()))) %>%
-                                dplyr::ungroup() %>%
-                                as.data.frame()
+  # # Redefine replicates
+  # sdata1 %<>% dplyr::group_by_('subgroup') %>%    # must be character to allow mapping to shape in ggplot
+  #                               dplyr::mutate(replicate = as.character(seq_len(n()))) %>%
+  #                               dplyr::ungroup() %>%
+  #                               as.data.frame()
 
   # Update object
   autonomics.import::sdata(object)  <- sdata1

@@ -19,6 +19,3 @@ subset of contrasts
 \description{
 Select valid contrasts
 }
-\examples{
-require(magrittr)
-}

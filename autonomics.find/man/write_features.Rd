@@ -4,8 +4,8 @@
 \alias{write_features}
 \title{Write feature tables to file}
 \usage{
-write_features(object, design = create_design_matrix(object), contrasts,
-  top_definition, result_dir)
+write_features(object, design = autonomics.find::create_design_matrix(object),
+  contrasts, top_definition, result_dir)
 }
 \arguments{
 \item{object}{eset}
@@ -23,13 +23,14 @@ Write feature tables to file
 }
 \examples{
 require(magrittr)
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   object  <- autonomics.data::billing2016 \%>\% 
-                autonomics.find::add_limma_to_fdata()
-   contrasts <- autonomics.find::default_contrasts(object)
-   top_definition <- object \%>\% autonomics.find::default_top_definition()
-   result_dir <- tempdir()
-   autonomics.find::write_features(object, contrasts = contrasts,
-                                   top_definition = top_definition, result_dir = result_dir)
+   object  <- autonomics.data::stemcomp.proteinratios
+   result_dir <- tempdir() \%T>\% message()
+   object \%>\% autonomics.find::write_features(
+                 contrasts      =  c(BM_E = 'BM_E', BM_EM = 'BM_EM', EM_E = 'EM_E'),
+                 top_definition = 'fdr < 0.05', 
+                 result_dir     =  result_dir)
 }
 }

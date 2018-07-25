@@ -10,6 +10,7 @@ stemcomp.proteinratios <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
                            autonomics.preprocess::invert_ratios(
                               invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'), 
                               subgroup_frac = '_') %>% 
+                           autonomics.import::set_contrastdefs(c( EM_E =  'EM_E', BM_E =  'BM_E', BM_EM = 'BM_EM')) %>% 
                            autonomics.find::add_limma_to_fdata()
 save(stemcomp.proteinratios, file = 'data/stemcomp.proteinratios.RData', compress = 'xz')
 
@@ -17,9 +18,7 @@ save(stemcomp.proteinratios, file = 'data/stemcomp.proteinratios.RData', compres
 stemcomp.soma <- 'extdata/stemcomp/soma/stemcomp.adat'      %>% 
                   system.file(package = 'autonomics.data')  %>%
                   autonomics.import::load_soma()            %>%
-                  autonomics.find::add_limma_to_fdata(contrasts = c(E_EM  = 'E - EM', 
-                                                                    E_BM  = 'E - BM', 
-                                                                    EM_BM = 'EM - BM'))
+                  autonomics.find::add_limma_to_fdata(contrasts = c(EM_E  = 'EM-E', BM_E  = 'BM-E', BM_EM = 'BM-EM'))
 save(stemcomp.soma, file = 'data/stemcomp.soma.RData', compress = 'xz')
 
 
@@ -42,7 +41,8 @@ stemdiff.proteinratios <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
                                        x %<>% autonomics.import::arrange_samples(subgroup)
                                        x
                            }) %>% 
-                           autonomics.find::add_limma_to_fdata(contrasts = autonomics.find::make_ref_contrasts(.))
+                           autonomics.import::set_contrastdefs(autonomics.find::make_ref_contrasts(.)) %>% 
+                           autonomics.find::add_limma_to_fdata()
 
 save(stemdiff.proteinratios, file = 'data/stemdiff.proteinratios.RData', compress = 'xz')
 stemdiff.proteinratios %>% autonomics.explore::plot_pca_samples()
@@ -53,8 +53,10 @@ stemdiff.proteinratios %>% autonomics.plot::default_color_values(color_var = 'su
 #========================
 
 glutaminase <- 'extdata/glutaminase/glutaminase.xlsx'     %>% 
-                          system.file(package = 'autonomics.data')  %>% 
-                          autonomics.import::load_metabolon()
+                system.file(package = 'autonomics.data')  %>% 
+                autonomics.import::load_metabolon()       %>% 
+                autonomics.import::set_contrastdefs(autonomics.find::make_ref_contrasts(.)) %>% 
+                autonomics.find::add_limma_to_fdata()
 save(glutaminase, file = 'data/glutaminase.RData', compress = 'xz')
 
 

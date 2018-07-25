@@ -174,9 +174,9 @@ load_proteingroups <- function(
 
    # Filter features
    object %<>% autonomics.import::filter_features(!is.na(feature_id), verbose = TRUE) # Max Quant earlier version had bug that created corrupted lines without feature_id columns
-   if (rm_reverse_features)      object %<>% autonomics.import::filter_features(Reverse != '+',     verbose = TRUE)
-   if (rm_contaminant_features)  object %<>% autonomics.import::filter_features(Contaminant != '+', verbose = TRUE)
-   if (rm_na_features)           object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample(verbose = TRUE)
+   if (rm_reverse_features){      object %<>% autonomics.import::filter_features(Reverse != '+',     verbose = TRUE); autonomics::fdata(object)$Reverse     <- NULL }
+   if (rm_contaminant_features){  object %<>% autonomics.import::filter_features(Contaminant != '+', verbose = TRUE); autonomics::fdata(object)$Contaminant <- NULL }
+   if (rm_na_features)            object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample(verbose = TRUE)
 
 
    # Intuify snames

@@ -49,9 +49,9 @@ validify_contrast_names <- function(x){
 default_contrasts <- function(object){
    
    # If contrasts present in object, use these
-   if (!is.null(autonomics.import::contrasts(object))){
-      autonomics.support::cmessage('\t\tUse contrasts in autonomics.import::contrasts(object)')
-      return(autonomics.import::contrasts(object))
+   if (!is.null(autonomics.import::contrastdefs(object))){
+      autonomics.support::cmessage('\t\tUse contrasts in autonomics.import::contrastdefs(object)')
+      return(autonomics.import::contrastdefs(object))
    }
 
    # Extract subgroup levels

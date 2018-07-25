@@ -52,12 +52,20 @@ fit_contrasts <- function(fit, contrasts, design){
 #' #if (require(atkin.2014)){
 #' #   results <- atkin.2014::soma  %>%  autonomics.find::run_limma()
 #' #}
+#' 
+#' # STEM CELL DIFFERENTIATION
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    contrasts <- autonomics.find::make_ref_contrasts(object)
+#'    object %>% autonomics.find::run_limma(contrasts[1:2]) %>% 
+#'               extract2('bonf')       %>%
+#'               extract(, 'EM01_EM00') %>% 
+#'               is_less_than(0.05)     %>% 
+#'               sum(na.rm=TRUE)
+#'
+#' }
 #' if (require(billing.differentiation.data)){
 #'    contrasts <- billing.differentiation.data::contrasts
-#'
-#'    billing.differentiation.data::protein.ratios %>%
-#'       autonomics.find::run_limma(contrasts[c(-1,-3)]) %>% extract2('bonf') %>%
-#'       extract(, 'EM01_0') %>% is_less_than(0.05) %>% sum(na.rm=TRUE)
 #'
 #'    billing.differentiation.data::rna.counts %>%
 #'       autonomics.import::logcpm() %>%
