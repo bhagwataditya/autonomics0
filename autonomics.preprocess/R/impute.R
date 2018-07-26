@@ -21,16 +21,16 @@
 #' @export
 impute <- function(
   object,
-  method = c('none', 'missForest', 'impute.minDet', 'impute.minProb', 'impute.QRILC'),
+  method = c('none', 'missForest', 'impute.MinDet', 'impute.MinProb', 'impute.QRILC'),
   random_seed = NULL,
   ...)
 {
 # Check prerequisites -----------------------------------------------------
   autonomics.import::assert_is_valid_eset(object)
-  method %<>%
-    match.arg(
-      choices = c('none', 'missForest', 'impute.MinDet', 'impute.MinProb', 'impute.QRILC'),
-      several.ok = FALSE)
+  assertive.types::assert_is_a_string(method)
+  assertive.sets::assert_is_subset(
+    method,
+    c('none', 'missForest', 'impute.MinDet', 'impute.MinProb', 'impute.QRILC'))
   if(!is.null(random_seed))
   {
     assertive.types::assert_is_a_number(random_seed)
