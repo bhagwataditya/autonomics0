@@ -4,8 +4,9 @@
 \alias{load_exiqon}
 \title{Load exiqon data}
 \usage{
-load_exiqon(file, design_file = NULL, log2_transform = TRUE,
-  log2_offset = 0, infer_design_from_sampleids = FALSE, design_sep = NULL,
+load_exiqon(file, design_file = NULL, log2_transform = NULL,
+  log2_offset = NULL, infer_design_from_sampleids = FALSE,
+  design_sep = NULL, mean_center = TRUE, flip_sign = TRUE,
   rm_ref_features = TRUE, rm_spike_features = TRUE)
 }
 \arguments{
@@ -20,6 +21,10 @@ load_exiqon(file, design_file = NULL, log2_transform = TRUE,
 \item{infer_design_from_sampleids}{logical: whether to infer design from sample ids}
 
 \item{design_sep}{string: sample id separator}
+
+\item{mean_center}{logical: whether to mean_center exprs}
+
+\item{flip_sign}{logical: whether to flip sign}
 
 \item{rm_ref_features}{logical}
 

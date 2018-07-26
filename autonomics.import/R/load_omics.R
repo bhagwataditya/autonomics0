@@ -110,6 +110,8 @@ load_omics <- function(
 #' @param log2_offset         offset in mapping x -> log2(offset + x)
 #' @param infer_design_from_sampleids  logical: whether to infer design from sample ids
 #' @param design_sep          string: sample id separator
+#' @param mean_center         logical: whether to mean_center exprs
+#' @param flip_sign           logical: whether to flip sign
 #' @param rm_ref_features     logical
 #' @param rm_spike_features   logical
 #' @return SummarizedExperiment
@@ -134,10 +136,12 @@ load_omics <- function(
 load_exiqon <- function(
    file,
    design_file                 = NULL,
-   log2_transform              = TRUE,
-   log2_offset                 = 0,
+   log2_transform              = NULL,
+   log2_offset                 = NULL,
    infer_design_from_sampleids = FALSE,
    design_sep                  = NULL,
+   mean_center                 = TRUE,
+   flip_sign                   = TRUE,
    rm_ref_features             = TRUE,
    rm_spike_features           = TRUE
 ){
@@ -147,7 +151,7 @@ load_exiqon <- function(
    # Load sumexp
    object <- autonomics.import::load_omics(file                        = file,
                                            platform                    = 'exiqon',
-                                           log2_transform              = log2_transform,
+                                           log2_transform              = FALSE,
                                            log2_offset                 = log2_offset,
                                            design_file                 = design_file,
                                            infer_design_from_sampleids = infer_design_from_sampleids,
@@ -162,6 +166,21 @@ load_exiqon <- function(
    if (rm_spike_features){
       object %<>% autonomics.import::filter_features(`#Spike`   ==0, verbose = TRUE)
       autonomics.import::fdata(object)$`#Spike` <- NULL
+   }
+
+   # Mean center
+   if (mean_center){
+      autonomics.support::cmessage('\t\tMean center')
+      autonomics.import::exprs(object) %<>% (function(x){
+                                                sample_means <- x %>% (function(y){y[y>32] <- NA; y}) %>% colMeans(na.rm = TRUE)
+                                                x %>% sweep(2, sample_means)
+                                             })
+   }
+
+   # Flip sign
+   if (flip_sign){
+      autonomics.support::cmessage('\t\tFlip sign')
+      object %<>% (function(x){autonomics.import::exprs(x) %<>% magrittr::multiply_by(-1); x})
    }
 
    # Return
