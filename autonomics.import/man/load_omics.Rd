@@ -11,7 +11,7 @@ load_omics(file, platform, sheet = 2, quantity = NULL,
 \arguments{
 \item{file}{path to omics data file}
 
-\item{platform}{'metabolon', 'metabolonlipids'}
+\item{platform}{'exiqon', 'maxquant', 'metabolon', 'metabolonlipids', 'soma'}
 
 \item{sheet}{excel sheet number or name if applicable}
 
@@ -36,16 +36,16 @@ Load omics
 \examples{
  require(magrittr)
 
-# MAXQUANT: STEM CELL COMPARISON
-if (require(autonomics.data)){
-   file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
-                        package = 'autonomics.data')
-   object <- file \%>\% load_omics(platform = 'maxquant',
-                                 quantity = 'Ratio normalized',
-                                 infer_design_from_sampleids = TRUE)
+# EXIQON
+if (require(subramanian.2016)){
+   file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+                        package = 'subramanian.2016')
+   file \%>\% autonomics.import::load_omics(
+               platform = 'exiqon',
+               infer_design_from_sampleids = TRUE)
 }
 
-# MAXQUANT: STEM CELL DIFFERENTIATION
+# PROTEINGROUPS
 if (require(autonomics.data)){
    file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
                         package = 'autonomics.data')

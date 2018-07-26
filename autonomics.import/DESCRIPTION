@@ -42,7 +42,8 @@ Imports:
     stringr, 
     S4Vectors,
     SummarizedExperiment, 
-    tidyr
+    tidyr, 
+    tidyselect
 Suggests:
     alnoubi.2017,
     atkin.2014,

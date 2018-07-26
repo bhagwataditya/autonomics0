@@ -6,29 +6,29 @@
 #===========================================
 
 #' Load omics
-#' @param file path to omics data file
-#' @param platform 'metabolon', 'metabolonlipids'
-#' @param sheet excel sheet number or name if applicable
-#' @param quantity string: which quantity to extract into exprs
+#' @param file        path to omics data file
+#' @param platform   'exiqon', 'maxquant', 'metabolon', 'metabolonlipids', 'soma'
+#' @param sheet       excel sheet number or name if applicable
+#' @param quantity    string: which quantity to extract into exprs
 #' @param design_file path to design file
-#' @param log2_transform logical
-#' @param log2_offset offset in mapping x -> log2(x+offset)
+#' @param log2_transform  logical
+#' @param log2_offset     offset in mapping x -> log2(x+offset)
 #' @param infer_design_from_sampleids logical
-#' @param design_sep string: design separator
+#' @param design_sep                  string: design separator
 #' @return sample dataframe
 #' @examples
 #'  require(magrittr)
 #'
-#' # MAXQUANT: STEM CELL COMPARISON
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
-#'                         package = 'autonomics.data')
-#'    object <- file %>% load_omics(platform = 'maxquant',
-#'                                  quantity = 'Ratio normalized',
-#'                                  infer_design_from_sampleids = TRUE)
+#' # EXIQON
+#' if (require(subramanian.2016)){
+#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+#'                         package = 'subramanian.2016')
+#'    file %>% autonomics.import::load_omics(
+#'                platform = 'exiqon',
+#'                infer_design_from_sampleids = TRUE)
 #' }
 #'
-#' # MAXQUANT: STEM CELL DIFFERENTIATION
+#' # PROTEINGROUPS
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
 #'                         package = 'autonomics.data')
@@ -98,6 +98,76 @@ load_omics <- function(
    # Return
    object
 }
+
+#=============================
+# EXIQON
+#=============================
+
+#' Load exiqon data
+#' @param file                exiqon xlsx file
+#' @param design_file         NULL or character (sample design file)
+#' @param log2_transform      logical: whether to log2 transform
+#' @param log2_offset         offset in mapping x -> log2(offset + x)
+#' @param infer_design_from_sampleids  logical: whether to infer design from sample ids
+#' @param design_sep          string: sample id separator
+#' @param rm_ref_features     logical
+#' @param rm_spike_features   logical
+#' @return SummarizedExperiment
+#' @examples
+#' require(magrittr)
+#' if (require(subramanian.2016)){
+#'
+#'    # Load exiqon
+#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+#'                         package = 'subramanian.2016')
+#'    file %>% load_exiqon(infer_design_from_sampleids = TRUE)
+#'
+#'    # Load exiqon with design file
+#'    design_file <- tempfile()
+#'    file %>% write_design('exiqon', infer_design_from_sampleids = TRUE,
+#'                                    design_file = design_file)
+#'    file %>% load_exiqon(design_file = design_file) %>%
+#'             autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
+#' }
+#' @importFrom magrittr %>%
+#' @export
+load_exiqon <- function(
+   file,
+   design_file                 = NULL,
+   log2_transform              = TRUE,
+   log2_offset                 = 0,
+   infer_design_from_sampleids = FALSE,
+   design_sep                  = NULL,
+   rm_ref_features             = TRUE,
+   rm_spike_features           = TRUE
+){
+   # Satisfy CHECK
+   . <- `#RefGenes` <- `#Spike` <- NULL
+
+   # Load sumexp
+   object <- autonomics.import::load_omics(file                        = file,
+                                           platform                    = 'exiqon',
+                                           log2_transform              = log2_transform,
+                                           log2_offset                 = log2_offset,
+                                           design_file                 = design_file,
+                                           infer_design_from_sampleids = infer_design_from_sampleids,
+                                           design_sep                  = design_sep)
+   autonomics.import::prepro(object) <- list(assay = 'exiqon', entity = 'mirna', quantity = 'ct', software = 'genex')
+
+   # Filter features
+   if (rm_ref_features){
+      object %<>% autonomics.import::filter_features(`#RefGenes`==0, verbose = TRUE)
+      autonomics.import::fdata(object)$`#RefGenes` <- NULL
+   }
+   if (rm_spike_features){
+      object %<>% autonomics.import::filter_features(`#Spike`   ==0, verbose = TRUE)
+      autonomics.import::fdata(object)$`#Spike` <- NULL
+   }
+
+   # Return
+   object
+}
+
 
 #=============================
 # MAXQUANT
@@ -174,10 +244,17 @@ load_proteingroups <- function(
 
    # Filter features
    object %<>% autonomics.import::filter_features(!is.na(feature_id), verbose = TRUE) # Max Quant earlier version had bug that created corrupted lines without feature_id columns
-   if (rm_reverse_features){      object %<>% autonomics.import::filter_features(Reverse != '+',     verbose = TRUE); autonomics::fdata(object)$Reverse     <- NULL }
-   if (rm_contaminant_features){  object %<>% autonomics.import::filter_features(Contaminant != '+', verbose = TRUE); autonomics::fdata(object)$Contaminant <- NULL }
-   if (rm_na_features)            object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample(verbose = TRUE)
-
+   if (rm_reverse_features){
+      object %<>% autonomics.import::filter_features(Reverse != '+',     verbose = TRUE)
+      autonomics.import::fdata(object)$Reverse     <- NULL
+   }
+   if (rm_contaminant_features){
+      object %<>% autonomics.import::filter_features(Contaminant != '+', verbose = TRUE)
+      autonomics.import::fdata(object)$Contaminant <- NULL
+   }
+   if (rm_na_features){
+      object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample(verbose = TRUE)
+   }
 
    # Intuify snames
    subgroup_values  <- object %>% autonomics.import::svalues('subgroup')
@@ -360,6 +437,7 @@ annotate_proteingroups2 <- function(object, fasta_file = NULL){
 }
 
 
+
 #======================
 # METABOLON
 #======================
@@ -374,8 +452,7 @@ annotate_proteingroups2 <- function(object, fasta_file = NULL){
 #' @param design_sep          string: sample id separator
 #' @param add_kegg_pathways   logical: whether to add KEGG pathways to fdata
 #' @param add_smiles          logical: whether to add SMILES to fdata
-#' @param ... (backward compatibility)
-#' @return SummarizedExperiment (load_metabolon) or dataframe (load_sdata_metabolon, load_fdata_metabolon)
+#' @return SummarizedExperiment
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
@@ -498,6 +575,7 @@ load_metabolonlipids <- function(
    # Return
    object
 }
+
 
 
 #==========================

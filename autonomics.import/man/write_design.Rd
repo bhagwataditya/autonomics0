@@ -33,6 +33,14 @@ Write design for metabolon, metabolonlipids, or soma data
 \examples{
 require(magrittr)
 
+# EXIQON
+if (require(subramanian.2016)){
+   file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+                        package = 'subramanian.2016')
+   file \%>\% write_design('exiqon')
+   file \%>\% write_design('exiqon', infer_design_from_sampleids = TRUE)
+}
+
 # MAXQUANT
 if (require(autonomics.data)){
    file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%

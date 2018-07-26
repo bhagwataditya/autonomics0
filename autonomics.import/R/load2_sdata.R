@@ -16,8 +16,36 @@ validify_sample_ids <- function(x){
 
 
 
+
+#========
+# EXIQON
+#========
+
+#' Load exiqon sdata
+#' @param file      path to exiqon xls file
+#' @return sample dataframe
+#' @examples
+#'  require(magrittr)
+#'  if (require(subramanian.2016)){
+#'     file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+#'                          package = 'subramanian.2016')
+#'     file %>% autonomics.import::load_sdata_exiqon()
+#'  }
+#' @importFrom magrittr %>%
+#' @export
+load_sdata_exiqon <- function(file){
+
+   Exiqon <- sample_id <- NULL
+
+   file %>% readxl::read_excel()      %>%
+            dplyr::select(sample_id = Exiqon, tidyselect::matches('^#')) %>%
+            dplyr::filter(sample_id %>% stringi::stri_detect_regex('^#') %>% magrittr::not()) %>%
+            data.frame(stringsAsFactors = FALSE, check.names = FALSE, row.names = .$sample_id)
+}
+
+
 #=====================
-# LOAD_SDATA_MAXQUANT
+# MAXQUANT
 #=====================
 
 #' Extract injection values from maxquant file
@@ -252,7 +280,7 @@ load_sdata_maxquant <- function(
 
 
 #==========================================
-# LOAD_SDATA_METABOLON
+# METABOLON
 #==========================================
 
 #' Load metabolon sdata
@@ -288,7 +316,7 @@ load_sdata_metabolon <- function(file, sheet){
 
 
 #==========================================
-# LOAD_SDATA_METABOLONLIPIDS
+# METABOLONLIPIDS
 #==========================================
 
 #' Possible sheet values for metabolonlipids data
@@ -332,7 +360,7 @@ load_sdata_metabolonlipids <- function(file, sheet){
 
 
 #==========================================
-# LOAD_SDATA_SOMA
+# SOMA
 #==========================================
 
 #' Load soma sdata
@@ -365,21 +393,32 @@ load_sdata_soma <- function(file){
 
 
 #==========================================
-# LOAD_SDATA GENERIC
+# GENERIC
 #==========================================
 
 #' Load sdata
 #' @param file      path to omics data file
-#' @param platform 'maxquant', 'metabolon', 'metabolonlipids', 'soma'
+#' @param platform 'exiqon', 'maxquant', 'metabolon', 'metabolonlipids', 'soma'
 #' @param sheet     excel sheet number or name if applicable
 #' @param quantity  string: which quantity should be extracted (only applicable for maxquant platform)
 #' @return sample dataframe
 #' @examples
-#'  require(magrittr)
-#'  if (require(autonomics.data)){
-#'     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'     file %>% load_sdata(platform = 'metabolon', sheet = 2) %>% extract(1:3, 1:3)
+#' require(magrittr)
+#'
+#' # EXIQON
+#'  if (require(subramanian.2016)){
+#'     file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+#'                          package = 'subramanian.2016')
+#'     file %>% autonomics.import::load_sdata('exiqon')
 #'  }
+#'
+#' # METABOLON
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+#'    file %>% load_sdata(platform = 'metabolon', sheet = 2) %>% extract(1:3, 1:3)
+#' }
+#'
+#' # METABOLONLIPIDS
 #' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 #' if (file.exists(file)){
 #'    file %>% load_sdata(platform = 'metabolonlipids',
@@ -389,8 +428,10 @@ load_sdata_soma <- function(file){
 #' @export
 load_sdata <- function(file, platform, sheet = NULL, quantity = NULL){
    switch(platform,
+          exiqon          = file %>% load_sdata_exiqon(),
           maxquant        = file %>% load_sdata_maxquant(quantity = quantity),
           metabolonlipids = file %>% load_sdata_metabolonlipids(sheet = sheet),
           metabolon       = file %>% load_sdata_metabolon(sheet = sheet),
           soma            = file %>% load_sdata_soma())
 }
+

@@ -26,11 +26,9 @@ load_metabolon(file, sheet = 2, design_file = NULL, log2_transform = TRUE,
 \item{add_kegg_pathways}{logical: whether to add KEGG pathways to fdata}
 
 \item{add_smiles}{logical: whether to add SMILES to fdata}
-
-\item{...}{(backward compatibility)}
 }
 \value{
-SummarizedExperiment (load_metabolon) or dataframe (load_sdata_metabolon, load_fdata_metabolon)
+SummarizedExperiment
 }
 \description{
 Load metabolon data

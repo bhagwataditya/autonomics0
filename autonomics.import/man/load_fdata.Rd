@@ -9,7 +9,7 @@ load_fdata(file, platform, sheet = NULL)
 \arguments{
 \item{file}{path to omics data file}
 
-\item{platform}{'maxquant', 'metabolon', 'metabolonlipids', 'soma'}
+\item{platform}{'exiqon', 'maxquant', 'metabolon', 'metabolonlipids', 'soma'}
 
 \item{sheet}{excel sheet number or name if applicable}
 }
@@ -21,10 +21,21 @@ Load fdata
 }
 \examples{
  require(magrittr)
- if (require(autonomics.data)){
-    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-    file \%>\% load_fdata(platform = 'metabolon', sheet = 2) \%>\% extract(1:3, 1:3)
- }
+
+# EXIQON
+if (require(subramanian.2016)){
+   file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+                        package = 'subramanian.2016')
+   file \%>\% autonomics.import::load_fdata('exiqon')
+}
+
+# METABOLON
+if (require(autonomics.data)){
+   file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+   file \%>\% load_fdata(platform = 'metabolon', sheet = 2) \%>\% extract(1:3, 1:3)
+}
+
+# METABOLONLIPIDS
 file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 if (file.exists(file)){
    file \%>\% load_fdata(platform = 'metabolonlipids',

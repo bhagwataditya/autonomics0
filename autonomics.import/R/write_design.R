@@ -3,7 +3,7 @@
 #=======================================
 
 #' Get sampleid svar name
-#' @param platform 'metabolonlipids', 'metabolon', 'soma'
+#' @param platform  'exiqon', 'maxquant', 'metabolonlipids', 'metabolon', 'soma'
 #' @return string
 #' @examples
 #' sampleid_varname('metabolonlipids')
@@ -12,6 +12,7 @@
 #' @export
 sampleid_varname <- function(platform){
    switch(platform,
+          exiqon          = 'sample_id',
           maxquant        = 'sample_id',
           metabolonlipids = 'Client Identifier',
           metabolon       = 'CLIENT_IDENTIFIER',
@@ -19,7 +20,7 @@ sampleid_varname <- function(platform){
 }
 
 #' Get subgroup svar name
-#' @param platform 'metabolonlipids', 'metabolon', 'soma'
+#' @param platform   'exiqon', 'maxquant', 'metabolonlipids', 'metabolon', 'soma'
 #' @return string
 #' @examples
 #' subgroup_varname('metabolonlipids')
@@ -28,6 +29,7 @@ sampleid_varname <- function(platform){
 #' @export
 subgroup_varname <- function(platform){
    switch(platform,
+          exiqon          = NULL,
           maxquant        = NULL,
           metabolonlipids = 'Group',
           metabolon       = 'Group',
@@ -240,6 +242,14 @@ add_replicate_values <- function(design_df){
 #' @examples
 #' require(magrittr)
 #'
+#' # EXIQON
+#' if (require(subramanian.2016)){
+#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+#'                         package = 'subramanian.2016')
+#'    file %>% write_design('exiqon')
+#'    file %>% write_design('exiqon', infer_design_from_sampleids = TRUE)
+#' }
+#'
 #' # MAXQUANT
 #' if (require(autonomics.data)){
 #'    file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
@@ -308,7 +318,10 @@ write_design <- function(
    # Merge in design file
    } else {
       design_df$sample_id <- sdata1[[sampleid_var]]
-      if (!is.null(subgroup_var)){
+      if (is.null(subgroup_var)){
+         design_df$subgroup <- ''
+         design_df$replicate <- ''
+      } else {
          design_df$subgroup  <- sdata1[[subgroup_var]]
          missing_subgroups <- any(autonomics.support::is_missing_or_empty_character(design_df$subgroup))
          if (!missing_subgroups){
@@ -554,44 +567,44 @@ read_maxquant_design <- function(design_file){
 }
 
 
-#========================
-# EXIQON
-#========================
-
-
-#' Write exiqon design
-#' @param file            string: path to exiqon file
-#' @param infer_design_from_sampleids   logical: whether to infer design from sampleids
-#' @param design_file            string: path to sample file
-#' @return string: path to design file
-#' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
-#'                                package = 'subramanian.2016')
-#'    file %>% autonomics.import::write_exiqon_design()
-#'    file %>% autonomics.import::write_exiqon_design(infer_design_from_sampleids = TRUE)
-#' }
-#' @importFrom magrittr %>%
-#' @export
-write_exiqon_design <- function(
-   file,
-   infer_design_from_sampleids = FALSE,
-   design_file = NULL
-){
-   sampleids <- autonomics.import::load_exiqon_sdata(file)  %>%
-                magrittr::extract2('sample_id')
-   design_df <- if (infer_design_from_sampleids){
-                   sampleids %>% autonomics.import::infer_design_from_sampleids()
-                } else {
-                   return(data.frame(sample_id = sampleids,
-                                     subgroup  = '',
-                                     replicate = '',
-                                     block     = ''))
-                }
-   if (!is.null(design_file)) design_df %>% autonomics.import::write_design_file(design_file)
-   return(design_df)
-}
+# #========================
+# # EXIQON
+# #========================
+#
+#
+# #' Write exiqon design
+# #' @param file            string: path to exiqon file
+# #' @param infer_design_from_sampleids   logical: whether to infer design from sampleids
+# #' @param design_file            string: path to sample file
+# #' @return string: path to design file
+# #' @examples
+# #' require(magrittr)
+# #' if (require(subramanian.2016)){
+# #'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+# #'                                package = 'subramanian.2016')
+# #'    file %>% autonomics.import::write_exiqon_design()
+# #'    file %>% autonomics.import::write_exiqon_design(infer_design_from_sampleids = TRUE)
+# #' }
+# #' @importFrom magrittr %>%
+# #' @export
+# write_exiqon_design <- function(
+#    file,
+#    infer_design_from_sampleids = FALSE,
+#    design_file = NULL
+# ){
+#    sampleids <- autonomics.import::load_exiqon_sdata(file)  %>%
+#                 magrittr::extract2('sample_id')
+#    design_df <- if (infer_design_from_sampleids){
+#                    sampleids %>% autonomics.import::infer_design_from_sampleids()
+#                 } else {
+#                    return(data.frame(sample_id = sampleids,
+#                                      subgroup  = '',
+#                                      replicate = '',
+#                                      block     = ''))
+#                 }
+#    if (!is.null(design_file)) design_df %>% autonomics.import::write_design_file(design_file)
+#    return(design_df)
+# }
 
 
 

@@ -1,3 +1,33 @@
+#=======
+# EXIQON
+#=======
+
+#' Load exiqon exprs
+#' @param file path to exiqon data file
+#' @return numeric matrix
+#' @examples
+#' require(magrittr)
+#' if (require(subramanian.2016)){
+#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+#'                         package = 'subramanian.2016')
+#'    file %>% autonomics.import::load_exprs_exiqon()
+#' }
+#' @importFrom magrittr %>%
+#' @export
+load_exprs_exiqon <- function(file){
+   Exiqon <- NULL
+
+   file %>% readxl::read_excel()      %>%
+            dplyr::filter(Exiqon %>% stringi::stri_detect_regex('^#') %>% magrittr::not()) %>%
+            dplyr::select(tidyselect::matches('^[^#]')) %>%
+           (function(x) x[, 2:ncol(x)]  %>%
+                        data.matrix()   %>%
+                        t()             %>%
+                        magrittr::set_colnames(x$Exiqon)
+           )
+
+}
+
 #============================
 # MAXQUANT
 #============================
@@ -275,16 +305,28 @@ load_exprs_soma <- function(file){
 
 #' Load exprs
 #' @param file path to omics data file
-#' @param platform 'metabolon', 'metabolonlipids'
+#' @param platform  'exiqon', 'maxquant', 'metabolon', 'metabolonlipids', 'soma'
 #' @param sheet excel sheet number or name (if applicable)
 #' @param quantity string: quantity to be loaded as exprs (if applicable)
 #' @return sample dataframe
 #' @examples
-#'  require(magrittr)
-#'  if (require(autonomics.data)){
-#'     file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'     file %>% load_exprs('metabolon', sheet = 2) %>% extract(1:3, 1:3)
-#'  }
+#'
+#' # EXIQON
+#' require(magrittr)
+#' if (require(subramanian.2016)){
+#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+#'                         package = 'subramanian.2016')
+#'    file %>% autonomics.import::load_exprs('exiqon')
+#' }
+#'
+#' # METABOLON
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+#'    file %>% load_exprs('metabolon', sheet = 2) %>% extract(1:3, 1:3)
+#' }
+#'
+#' # METABOLON LIPIDS
 #' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
 #' if (file.exists(file)){
 #'    file %>% load_exprs('metabolonlipids', sheet = 'Lipid Class Concentrations') %>%
@@ -299,6 +341,7 @@ load_exprs <- function(
    quantity = NULL
 ){
    switch(platform,
+          exiqon          = file %>% load_exprs_exiqon(),
           maxquant        = file %>% load_exprs_maxquant(quantity = quantity),
           metabolonlipids = file %>% load_exprs_metabolonlipids(sheet = sheet),
           metabolon       = file %>% load_exprs_metabolon(      sheet = sheet),

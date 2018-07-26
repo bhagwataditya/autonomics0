@@ -7,7 +7,7 @@
 subgroup_varname(platform)
 }
 \arguments{
-\item{platform}{'metabolonlipids', 'metabolon', 'soma'}
+\item{platform}{'exiqon', 'maxquant', 'metabolonlipids', 'metabolon', 'soma'}
 }
 \value{
 string
