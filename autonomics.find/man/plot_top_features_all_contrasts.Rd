@@ -75,17 +75,15 @@ if (require(atkin.2014)){
                    color_var = 'condition', facet_var = 'subject_id',
                    fvars = 'TargetFullName')
 }
-if (require(halama.2016)){
-  object <- halama.2016::cell.metabolites
+# GLUTAMINASE
+if (require(autonomics.data)){
+  object <- autonomics.data::glutaminase
   result_dir <- tempdir() \%T>\% message()
   object \%>\% autonomics.find::plot_top_features_all_contrasts(
-     contrast = halama.2016::contrasts[1],
-     top_definition = 'fdr < 0.05',
-     color_var = 'GROUP_DESCRIPTION',
-     color_values = c(Control = 'red', Vehicle = 'orange',
-                      `Concentration 1` = 'green', `Concentration 2` = 'forestgreen'),
-     x = 'TIME_POINT',
-     feature_plot = 'boxes',
-     result_dir = result_dir)
+                contrasts      = autonomics.import::contrastdefs(.)[1:2],
+                top_definition = 'fdr < 0.05',
+                x              = 'TIME_POINT',
+                feature_plot   = 'boxes',
+                result_dir     = result_dir)
 }
 }

@@ -5,8 +5,6 @@
 #' @param confounders confounding svars
 #' @export
 #' @importFrom magrittr %>% %<>%
-#' @examples
-#' require(magrittr)
 plot_confounder_effects <- function(
    object,
    confounders = character(),

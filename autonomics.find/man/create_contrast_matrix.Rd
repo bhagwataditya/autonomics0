@@ -18,12 +18,15 @@ contrast matrix
 Create contrast matrix
 }
 \examples{
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
    require(magrittr)
-   autonomics.data::billing2016 \%>\% 
-      autonomics.find::create_design_matrix() \%>\% 
-      autonomics.find::create_contrast_matrix()
+   autonomics.data::stemcomp.proteinratios   \%>\% 
+   autonomics.find::create_design_matrix()   \%>\% 
+   autonomics.find::create_contrast_matrix()
 }
+
 if (require(billing.differentiation.data)){
    billing.differentiation.data::rna.voomcounts \%>\% 
       autonomics.find::create_design_matrix() \%>\% 

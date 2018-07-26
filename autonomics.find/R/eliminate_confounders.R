@@ -4,8 +4,6 @@
 #' @return object with confounder effects removed
 #' @importFrom magrittr   %>%   %<>%
 #' @export
-#' @examples 
-#' require(magrittr)
 eliminate_confounders <- function(
    object, 
    confounders = character()

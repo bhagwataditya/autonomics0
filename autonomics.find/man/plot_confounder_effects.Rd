@@ -19,6 +19,3 @@ plot_confounder_effects(object, confounders = character(), fvars,
 \description{
 Plot confounder effects
 }
-\examples{
-require(magrittr)
-}

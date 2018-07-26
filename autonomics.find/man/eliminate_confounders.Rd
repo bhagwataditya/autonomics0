@@ -17,6 +17,3 @@ object with confounder effects removed
 \description{
 Eliminate confounders
 }
-\examples{
-require(magrittr)
-}

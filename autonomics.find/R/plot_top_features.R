@@ -123,13 +123,11 @@ format_sigbvalues <- function(object, contrast){
 #'   file <- tempfile() %>% paste0('.pdf') %T>% message()
 #'   if (require(autonomics.data)){
 #'      object <- autonomics.data::stemcomp.proteinratios
-#'      contrasts <- object %>% autonomics.find::default_contrasts()
-#'      object %<>% autonomics.find::add_limma_to_fdata()
-#'      object %>% plot_top_features(contrast = contrasts[1], feature_plot = 'hbars', file = file)
-#'      object %>% plot_top_features(contrast = contrasts[1], feature_plot = 'bars', file = file)
-#'      object %>% plot_top_features(contrast = contrasts[1], feature_plot = 'profiles', file = file)
-#'      object %>% plot_top_features(contrast = contrasts[1], feature_plot = 'distributions', file = file)
-#'      object %>% plot_top_features(contrast = contrasts[1], feature_plot = 'boxes', file = file)
+#'      object %>% plot_top_features(feature_plot = 'hbars',         file = file)
+#'      object %>% plot_top_features(feature_plot = 'bars',          file = file)
+#'      object %>% plot_top_features(feature_plot = 'profiles',      file = file)
+#'      object %>% plot_top_features(feature_plot = 'distributions', file = file)
+#'      object %>% plot_top_features(feature_plot = 'boxes',         file = file)
 #'      object %>% plot_top_features(direction  = 'neg', x = 'subgroup', file = file)
 #'   }
 #'
@@ -137,15 +135,11 @@ format_sigbvalues <- function(object, contrast){
 #'   if (require(autonomics.data)){
 #'      object <- autonomics.data::glutaminase
 #'      object %>% autonomics.find::plot_top_features(
-#'                    contrast       = halama.2016::contrasts[1],
-#'                    top_definition = 'bonf < 0.05',
-#'                    direction      = 'both',
-#'         color_var      = 'GROUP_DESCRIPTION',
-#'       # color_values   = c(Control = 'red', Vehicle = 'orange',
-#'       #                   `Concentration 1` = 'green', `Concentration 2` = 'forestgreen'),
+#'         top_definition = 'bonf < 0.05',
+#'         direction      = 'both',
 #'         x              = 'TIME_POINT',
 #'         feature_plot   = 'boxes', 
-#'         file = file)
+#'         file           = file)
 #'   }
 #'
 #' # A somascan eset
@@ -316,18 +310,16 @@ plot_top_features <- function(
 #'                    color_var = 'condition', facet_var = 'subject_id',
 #'                    fvars = 'TargetFullName')
 #' }
-#'if (require(halama.2016)){
-#'   object <- halama.2016::cell.metabolites
+#' # GLUTAMINASE
+#' if (require(autonomics.data)){
+#'   object <- autonomics.data::glutaminase
 #'   result_dir <- tempdir() %T>% message()
 #'   object %>% autonomics.find::plot_top_features_all_contrasts(
-#'      contrast = halama.2016::contrasts[1],
-#'      top_definition = 'fdr < 0.05',
-#'      color_var = 'GROUP_DESCRIPTION',
-#'      color_values = c(Control = 'red', Vehicle = 'orange',
-#'                       `Concentration 1` = 'green', `Concentration 2` = 'forestgreen'),
-#'      x = 'TIME_POINT',
-#'      feature_plot = 'boxes',
-#'      result_dir = result_dir)
+#'                 contrasts      = autonomics.import::contrastdefs(.)[1:2],
+#'                 top_definition = 'fdr < 0.05',
+#'                 x              = 'TIME_POINT',
+#'                 feature_plot   = 'boxes',
+#'                 result_dir     = result_dir)
 #'}
 #' @importFrom magrittr  %>%
 #' @export

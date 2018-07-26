@@ -17,18 +17,27 @@ Default contrasts
 }
 \examples{
 require(magrittr)
+
+# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   autonomics.data::billing2016 \%>\% autonomics.find::default_contrasts()
+   object <- autonomics.data::stemcomp.proteinratios 
+   object \%>\% autonomics.find::default_contrasts()
 }
+
+# STEM CELL DIFFERENTIATION
 if (require(billing.differentiation.data)){
    billing.differentiation.data::rna.voomcounts \%>\%
       autonomics.find::default_contrasts() \%>\% data.frame()
 }
-if (require(halama.2016)){
-   halama.2016::cell.metabolites \%>\%
-      autonomics.import::filter_samples(TREATMENT != 0) \%>\%
-      autonomics.find::default_contrasts() \%>\% data.frame()
+
+# GLUTAMINASE
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase
+   object \%>\% autonomics.import::filter_samples(TREATMENT != 0)  \%>\%
+              autonomics.find::default_contrasts()               \%>\% 
+              data.frame()
 }
+
 if (require(subramanian.2016)){
    subramanian.2016::metabolon \%>\%
       autonomics.find::default_contrasts() \%>\%

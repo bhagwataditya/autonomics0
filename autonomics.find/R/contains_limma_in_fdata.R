@@ -3,11 +3,11 @@
 #' @return logical
 #' @examples
 #' require(magrittr)
+#' 
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios
 #'    object %>% autonomics.find::contains_limma_in_fdata()
-#'    object %>% autonomics.find::add_limma_to_fdata() %>% 
-#'               autonomics.find::contains_limma_in_fdata()
 #' }
 #' if (require(billing.differentiation.data)){
 #'    billing.differentiation.data::rna.voomcounts %>% 

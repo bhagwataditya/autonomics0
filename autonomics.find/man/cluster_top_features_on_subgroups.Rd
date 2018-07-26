@@ -50,7 +50,7 @@ if (require(autonomics.data)){
    object <- autonomics.data::billing2016
    object$subgroup
    contrasts <- c(BM_E = 'BM_E', BM_EM = 'BM_EM', EM_E = 'EM_E')
-   object \%>\% cluster_top_features_on_subgroups(
+   object \%>\% autonomics.find::cluster_top_features_on_subgroups(
                    contrasts  = contrasts,
                    result_dir = result_dir,
                    n          = 500)

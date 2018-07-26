@@ -133,7 +133,7 @@ filter_n_arrange_top_features <- function(object, contrast_name, top_definition,
 #' @examples
 #' library(magrittr)
 #' if (require(autonomics.data)){
-#'    autonomics.data::billing2016               %>% 
+#'    autonomics.data::stemcomp.proteinratios               %>% 
 #'       autonomics.find::add_limma_to_fdata()   %>% 
 #'       autonomics.find::filter_significant_features()
 #' }

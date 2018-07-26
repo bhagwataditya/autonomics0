@@ -40,7 +40,6 @@ Suggests:
    autonomics.data, 
    billing.differentiation.data,
    graumann.lfq,
-   halama.2016,
    subramanian.2016,
    statmod, 
    testthat

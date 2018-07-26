@@ -73,13 +73,11 @@ require(magrittr)
   file <- tempfile() \%>\% paste0('.pdf') \%T>\% message()
   if (require(autonomics.data)){
      object <- autonomics.data::stemcomp.proteinratios
-     contrasts <- object \%>\% autonomics.find::default_contrasts()
-     object \%<>\% autonomics.find::add_limma_to_fdata()
-     object \%>\% plot_top_features(contrast = contrasts[1], feature_plot = 'hbars', file = file)
-     object \%>\% plot_top_features(contrast = contrasts[1], feature_plot = 'bars', file = file)
-     object \%>\% plot_top_features(contrast = contrasts[1], feature_plot = 'profiles', file = file)
-     object \%>\% plot_top_features(contrast = contrasts[1], feature_plot = 'distributions', file = file)
-     object \%>\% plot_top_features(contrast = contrasts[1], feature_plot = 'boxes', file = file)
+     object \%>\% plot_top_features(feature_plot = 'hbars',         file = file)
+     object \%>\% plot_top_features(feature_plot = 'bars',          file = file)
+     object \%>\% plot_top_features(feature_plot = 'profiles',      file = file)
+     object \%>\% plot_top_features(feature_plot = 'distributions', file = file)
+     object \%>\% plot_top_features(feature_plot = 'boxes',         file = file)
      object \%>\% plot_top_features(direction  = 'neg', x = 'subgroup', file = file)
   }
 
@@ -87,15 +85,11 @@ require(magrittr)
   if (require(autonomics.data)){
      object <- autonomics.data::glutaminase
      object \%>\% autonomics.find::plot_top_features(
-                   contrast       = halama.2016::contrasts[1],
-                   top_definition = 'bonf < 0.05',
-                   direction      = 'both',
-        color_var      = 'GROUP_DESCRIPTION',
-      # color_values   = c(Control = 'red', Vehicle = 'orange',
-      #                   `Concentration 1` = 'green', `Concentration 2` = 'forestgreen'),
+        top_definition = 'bonf < 0.05',
+        direction      = 'both',
         x              = 'TIME_POINT',
         feature_plot   = 'boxes', 
-        file = file)
+        file           = file)
   }
 
 # A somascan eset

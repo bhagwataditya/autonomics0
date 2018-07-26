@@ -4,10 +4,11 @@
 #' @return design matrix
 #' @examples
 #' require(magrittr)
+#' 
+#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    autonomics.data::billing2016            %>%
-#'    autonomics.find::create_design_matrix() %>% 
-#'    magrittr::extract(1:3,)
+#'    autonomics.data::stemcomp.proteinratios  %>%
+#'    autonomics.find::create_design_matrix()
 #' }
 #' if (require(billing.differentiation.data)){
 #'    billing.differentiation.data::rna.voomcounts %>% 

@@ -7,7 +7,7 @@
 filter_top_features_per_contrast(object, n = 1000)
 }
 \arguments{
-\item{object}{eSet}
+\item{object}{SummarizedExperiment}
 
 \item{n}{number of top features to select.
 Actual number of features in returned eset will be lower,
@@ -19,7 +19,7 @@ Filter top significant features per contrast
 \examples{
 library(magrittr)
 if (require(autonomics.data)){
-   autonomics.data::billing2016 \%>\%
+   autonomics.data::stemcomp.proteinratios \%>\% 
    autonomics.find::filter_top_features_per_contrast()
 }
 }

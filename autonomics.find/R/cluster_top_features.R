@@ -51,14 +51,14 @@ compute_median_per_subgroup <- function(object){
 
 
 #' Filter top significant features per contrast
-#' @param object   eSet
-#' @param n          number of top features to select.
-#'                   Actual number of features in returned eset will be lower,
-#'                   due to overlaps of top features among contrasts.
+#' @param object  SummarizedExperiment
+#' @param n       number of top features to select.
+#'                Actual number of features in returned eset will be lower,
+#'                due to overlaps of top features among contrasts.
 #' @examples
 #' library(magrittr)
 #' if (require(autonomics.data)){
-#'    autonomics.data::billing2016 %>%
+#'    autonomics.data::stemcomp.proteinratios %>% 
 #'    autonomics.find::filter_top_features_per_contrast()
 #' }
 #' @importFrom data.table   data.table   :=
@@ -250,7 +250,7 @@ cluster_features_on_subgroups <- function(
 #'    object <- autonomics.data::billing2016
 #'    object$subgroup
 #'    contrasts <- c(BM_E = 'BM_E', BM_EM = 'BM_EM', EM_E = 'EM_E')
-#'    object %>% cluster_top_features_on_subgroups(
+#'    object %>% autonomics.find::cluster_top_features_on_subgroups(
 #'                    contrasts  = contrasts,
 #'                    result_dir = result_dir,
 #'                    n          = 500)
