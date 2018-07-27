@@ -110,10 +110,11 @@ load_omics <- function(
 #' @param log2_offset         offset in mapping x -> log2(offset + x)
 #' @param infer_design_from_sampleids  logical: whether to infer design from sample ids
 #' @param design_sep          string: sample id separator
-#' @param mean_center         logical: whether to mean_center exprs
-#' @param flip_sign           logical: whether to flip sign
 #' @param rm_ref_features     logical
 #' @param rm_spike_features   logical
+#' @param mean_center         logical: whether to mean_center exprs
+#' @param flip_sign           logical: whether to flip sign
+#' @param subtract_refgroup
 #' @return SummarizedExperiment
 #' @examples
 #' require(magrittr)
@@ -140,10 +141,12 @@ load_exiqon <- function(
    log2_offset                 = NULL,
    infer_design_from_sampleids = FALSE,
    design_sep                  = NULL,
+   rm_ref_features             = TRUE,
+   rm_spike_features           = TRUE,
    mean_center                 = TRUE,
    flip_sign                   = TRUE,
-   rm_ref_features             = TRUE,
-   rm_spike_features           = TRUE
+   subtract_refgroup           = FALSE,
+   refgroup                    = NULL
 ){
    # Satisfy CHECK
    . <- `#RefGenes` <- `#Spike` <- NULL
@@ -181,6 +184,13 @@ load_exiqon <- function(
    if (flip_sign){
       autonomics.support::cmessage('\t\tFlip sign')
       object %<>% (function(x){autonomics.import::exprs(x) %<>% magrittr::multiply_by(-1); x})
+   }
+
+   # Subtract median reference exprs
+   if (subtract_refgroup){
+      if (is.null(refgroup))  refgroup <- autonomics.import::sdata(object)$subgroup[1]
+      autonomics.support::cmessage("\t\tSubtract '%s' median", refgroup)
+      object %<>% autonomics.preprocess::subtract_median_ref_exprs(ref = refgroup)
    }
 
    # Return
