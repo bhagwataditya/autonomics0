@@ -7,7 +7,7 @@
 load_phosphosites(phosphosites_file,
   sample_file = paste0(dirname(phosphosites_file), "/sample_design.txt"),
   parameter_file = paste0(dirname(phosphosites_file), "/parameters.txt"),
-  log2_transform = TRUE,
+  log2_transform = TRUE, min_loc_prob = 0,
   value_type = autonomics.import::infer_maxquant_value_type(phosphosites_file))
 }
 \arguments{
@@ -18,6 +18,8 @@ load_phosphosites(phosphosites_file,
 \item{parameter_file}{full path to "parameters.txt"}
 
 \item{log2_transform}{logical}
+
+\item{min_loc_prob}{minimum localization probability}
 
 \item{value_type}{any value in autonomics.import::MAXQUANT_VALUE_TYPES}
 }

@@ -1,6 +1,6 @@
 Package: autonomics.import
 Title: Import omics data from various platforms
-Version: 0.3.12
+Version: 0.3.13
 Authors@R: c(person("Aditya",   "Bhagwat",  email = "adb2018@qatar-med.cornell.edu", role = c("aut", "cre")), 
              person("Johannes", "Graumann", email = "jog2030@qatar-med.cornell.edu", role = "ctb"), 
              person("Shahina",  "Hayat",    email = "shh2026@qatar-med.cornell.edu", role = "ctb"),
@@ -61,4 +61,4 @@ Suggests:
     subramanian.2016
 biocViews:
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0

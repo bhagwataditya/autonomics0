@@ -696,7 +696,7 @@ load_proteingroups_to_wide_dt <- function(
 load_phosphosites_to_wide_dt <- function(
    phosphosites_file,
    value_type         = infer_maxquant_value_type(phosphosites_file),
-   min_loc_prob       = 0.75,
+   min_loc_prob       = 0,
    remove_multiple_pg = FALSE
 ){
    # Satisfy CHECK
@@ -841,7 +841,7 @@ load_phosphosite_ratios_to_long_dt <- function(
    phosphosites_file,
    value_type         = infer_maxquant_value_type(phosphosites_file),
    log2_transform     = TRUE,
-   min_loc_prob       = 0.75,
+   min_loc_prob       = 0,
    remove_multiple_pg = FALSE
 ){
    output <- load_phosphosites_to_wide_dt(phosphosites_file = phosphosites_file,
@@ -891,7 +891,7 @@ load_phosphosite_occupancies_to_long_dt <- function(
    proteingroups_file = paste0(dirname(phosphosites_file), '/proteinGroups.txt'),
    value_type         = infer_maxquant_value_type(proteingroups_file),
    log2_transform     = TRUE,
-   min_loc_prob       = 0.75
+   min_loc_prob       = 0
 ){
    # Satisfy CHECK
    `Protein group IDs` <- feature_id <- sample <- value <- protein.value <- phospho.value <- NULL
@@ -1456,6 +1456,7 @@ load_proteingroups <- function(
 #' @param sample_file         full path to "sample_design.txt"
 #' @param parameter_file      full path to "parameters.txt"
 #' @param log2_transform      logical
+#' @param min_loc_prob        minimum localization probability
 #' @param value_type          any value in autonomics.import::MAXQUANT_VALUE_TYPES
 #' @examples
 #' require(magrittr)
@@ -1472,6 +1473,7 @@ load_phosphosites <- function(
    sample_file       = paste0(dirname(phosphosites_file), '/sample_design.txt'),
    parameter_file    = paste0(dirname(phosphosites_file), '/parameters.txt'),
    log2_transform    = TRUE,
+   min_loc_prob      = 0,
    value_type        = autonomics.import::infer_maxquant_value_type(phosphosites_file)
 ){
    # Satisfy CHECK
@@ -1480,6 +1482,7 @@ load_phosphosites <- function(
    assertive.files::assert_all_are_existing_files(c(phosphosites_file, sample_file, parameter_file))
    DT <- autonomics.import::load_phosphosite_ratios_to_long_dt(phosphosites_file = phosphosites_file,
                                                                log2_transform    = log2_transform,
+                                                               min_loc_prob      = min_loc_prob,
                                                                value_type        = value_type)
    DT[, feature_id := paste0('PS', formatC(feature_id, digits = max(floor(log10(feature_id))), flag = '0'))]
    DT %>% esetise_maxquant_dt(
@@ -1496,6 +1499,7 @@ load_phosphosites <- function(
 #' @param sample_file         full path to "sample_design.txt"
 #' @param parameter_file      full path to "parameters.txt"
 #' @param log2_transform      logical
+#' @param min_loc_prob        minimum localization probability
 #' @param value_type          any value in autonomics.import::MAXQUANT_VALUE_TYPES
 #' @examples
 #' require(magrittr)
@@ -1513,12 +1517,14 @@ load_phosphosite_occupancies <- function(
    sample_file        = paste0(dirname(phosphosites_file), '/sample_design.txt'),
    parameter_file     = paste0(dirname(phosphosites_file), '/parameters.txt'),
    log2_transform     = TRUE,
+   min_loc_prob       = 0,
    value_type         = infer_maxquant_value_type(phosphosites_file)
 ){
    assertive.files::assert_all_are_existing_files(c(proteingroups_file, phosphosites_file, sample_file, parameter_file))
    DT <- load_phosphosite_occupancies_to_long_dt(phosphosites_file  = phosphosites_file,
                                                  proteingroups_file = proteingroups_file,
-                                                 log2_transform     = log2_transform)
+                                                 log2_transform     = log2_transform,
+                                                 min_loc_prob       = min_loc_prob)
    DT %>% esetise_maxquant_dt(entity = 'phosphosite',
                               quantity = 'occupancy',
                               sample_file = sample_file,

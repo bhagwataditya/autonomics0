@@ -6,7 +6,7 @@
 \usage{
 load_phosphosites_to_wide_dt(phosphosites_file,
   value_type = infer_maxquant_value_type(phosphosites_file),
-  min_loc_prob = 0.75, remove_multiple_pg = FALSE)
+  min_loc_prob = 0, remove_multiple_pg = FALSE)
 }
 \arguments{
 \item{phosphosites_file}{path to phosphoSites file}

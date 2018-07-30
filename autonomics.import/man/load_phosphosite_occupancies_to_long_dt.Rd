@@ -8,7 +8,7 @@ load_phosphosite_occupancies_to_long_dt(phosphosites_file,
   proteingroups_file = paste0(dirname(phosphosites_file),
   "/proteinGroups.txt"),
   value_type = infer_maxquant_value_type(proteingroups_file),
-  log2_transform = TRUE, min_loc_prob = 0.75)
+  log2_transform = TRUE, min_loc_prob = 0)
 }
 \arguments{
 \item{phosphosites_file}{phosphosites  file}
