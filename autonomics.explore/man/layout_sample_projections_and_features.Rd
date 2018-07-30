@@ -4,10 +4,10 @@
 \alias{layout_sample_projections_and_features}
 \title{Create graphics layout for mpa feature + sample plot}
 \usage{
-layout_sample_projections_and_features(feature_plot)
+layout_sample_projections_and_features(geom)
 }
 \arguments{
-\item{feature_plot}{feature plot (character)}
+\item{geom}{feature plot (character)}
 }
 \value{
 graphics layout matrix

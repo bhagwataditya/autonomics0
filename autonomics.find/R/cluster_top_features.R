@@ -102,8 +102,8 @@ print_cluster_i <- function(
    top_eset,
    apres,
    result_dir,
-   feature_plots = autonomics.plot::default_feature_plots(top_eset) %>% setdiff('bars'),
-   x             = autonomics.plot::default_x(top_eset, feature_plots[1]),
+   geoms = autonomics.plot::default_feature_plots(top_eset) %>% setdiff('bars'),
+   x             = autonomics.plot::default_x(top_eset, geoms[1]),
    color_var     = autonomics.plot::default_color_var(top_eset),
    shape_var     = autonomics.plot::default_shape_var(top_eset),
    group_var     = autonomics.plot::default_group_var(top_eset),
@@ -120,19 +120,17 @@ print_cluster_i <- function(
    iset %>% autonomics.import::write_fdata_to_file(file = sprintf('%s/cluster%03d_features.txt', subdir, i))
 
    plotargs <- list(object = iset, x = x, color_var = color_var, shape_var = shape_var, group_var = group_var, txt_var = txt_var, line = line)
-   for (curplot in feature_plots){
-      curfun <- sprintf('plot_feature_%s', curplot) %>%
-                utils::getFromNamespace('autonomics.plot')
+   for (curplot in geoms){
       curfile <- sprintf('%s/cluster%03d_%s.pdf', subdir, i, curplot)
-      curargs <- plotargs %>% c(list(file = curfile))
-      curfun %>% do.call(curargs)
+      curargs <- c(plotargs, geom = curplot, file = curfile)
+      autonomics.plot::plot_features %>% do.call(curargs)
    }
 }
 
 #' Cluster features on subgroup profiles
 #' @param object      eset
 #' @param result_dir    result directory
-#' @param feature_plots which types of feature plots to generate
+#' @param geoms which types of feature plots to generate
 #' @param x             svar mapped to x     in feature plots
 #' @param color_var     svar mapped to color in feature plots
 #' @param shape_var     svar mapped to shape in feature plots
@@ -154,8 +152,8 @@ print_cluster_i <- function(
 cluster_features_on_subgroups <- function(
    object,
    result_dir,
-   feature_plots = autonomics.plot::default_feature_plots(object) %>% setdiff('bars'),
-   x             = autonomics.plot::default_x(object, feature_plots[1]),
+   geoms = autonomics.plot::default_feature_plots(object) %>% setdiff('bars'),
+   x             = autonomics.plot::default_x(object, geoms[1]),
    color_var     = autonomics.plot::default_color_var(object),
    shape_var     = autonomics.plot::default_shape_var(object),
    group_var     = autonomics.plot::default_group_var(object),
@@ -205,7 +203,7 @@ cluster_features_on_subgroups <- function(
                     group_var = group_var,
                     txt_var   = txt_var,
                     line      = line)
-   for (curplot in feature_plots){
+   for (curplot in geoms){
       curfun <- sprintf('plot_feature_%s', curplot) %>%
                 utils::getFromNamespace('autonomics.plot')
       curfile <- sprintf('%s/00_exemplar_%s.pdf', result_dir, curplot)
@@ -236,7 +234,7 @@ cluster_features_on_subgroups <- function(
 #' @param result_dir    result directory
 #' @param n             number of top features
 #' @param x             svar mapped to x in feature plots
-#' @param feature_plots which type of feature plots to generate
+#' @param geoms which type of feature plots to generate
 #' @param color_var     svar mapped to color in feature plots
 #' @param shape_var     svar mapped to shape in feature plots
 #' @param group_var     svar mapped to group in feature plots
@@ -244,10 +242,10 @@ cluster_features_on_subgroups <- function(
 #' @param line          whether to connect points in feature plot with line (logical)
 #' @examples
 #' \dontrun{
+#' library(magrittr)
 #' if (require(autonomics.data)){
-#'    library(magrittr)
 #'    result_dir <- tempdir() %T>% message()
-#'    object <- autonomics.data::billing2016
+#'    object <- autonomics.data::stemcomp.proteinratios
 #'    object$subgroup
 #'    contrasts <- c(BM_E = 'BM_E', BM_EM = 'BM_EM', EM_E = 'EM_E')
 #'    object %>% autonomics.find::cluster_top_features_on_subgroups(
@@ -304,8 +302,8 @@ cluster_top_features_on_subgroups <- function(
    contrasts = autonomics.find::default_contrasts(object),
    result_dir,
    n             = 1000,
-   feature_plots = autonomics.plot::default_feature_plots(object) %>% setdiff('bars'),
-   x             = autonomics.plot::default_x(object, feature_plots[1]),
+   geoms = autonomics.plot::default_feature_plots(object) %>% setdiff('bars'),
+   x             = autonomics.plot::default_x(object, geoms[1]),
    color_var     = autonomics.plot::default_color_var(object),
    shape_var     = autonomics.plot::default_shape_var(object),
    group_var     = autonomics.plot::default_group_var(object),
@@ -336,13 +334,13 @@ cluster_top_features_on_subgroups <- function(
    # Cluster
    object %>% cluster_features_on_subgroups(
                    cluster_dir,
-                   feature_plots = feature_plots,
-                   x             = x,
-                   color_var     = color_var,
-                   shape_var     = shape_var,
-                   group_var     = group_var,
-                   txt_var       = txt_var,
-                   line          = line
+                   geoms     = geoms,
+                   x         = x,
+                   color_var = color_var,
+                   shape_var = shape_var,
+                   group_var = group_var,
+                   txt_var   = txt_var,
+                   line      = line
                 )
 
 }

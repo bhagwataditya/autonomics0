@@ -9,7 +9,7 @@ plot_top_features(object,
   contrast = autonomics.find::default_contrasts(object)[1],
   top_definition = autonomics.find::default_top_definition(object),
   direction = autonomics.find::DIRECTIONS[1],
-  feature_plot = autonomics.plot::default_feature_plots(object)[1],
+  geom = autonomics.plot::default_feature_plots(object)[1],
   nplot = autonomics.find::default_nplot(object),
   fvars = autonomics.plot::default_fvars(object), ...)
 }
@@ -24,11 +24,13 @@ plot_top_features(object,
 
 \item{direction}{any value in autonomics.find::DIRECTIONS}
 
-\item{feature_plot}{value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}}
+\item{geom}{'point', 'boxplot', 'violin', 'bar', 'hbar'}
 
 \item{nplot}{max no of top features to plot}
 
 \item{fvars}{fvars to use in plot}
+
+\item{...}{passed to autonomics.plot::plot_feature_xxx()}
 }
 \description{
 This function visualizes the top features for the specified contrast.
@@ -40,66 +42,49 @@ require(magrittr)
   file <- tempfile() \%>\% paste0('.pdf') \%T>\% message()
   if (require(autonomics.data)){
      object <- autonomics.data::stemcomp.proteinratios
-     object \%>\% plot_top_features(feature_plot = 'hbars',         file = file)
-     object \%>\% plot_top_features(feature_plot = 'bars',          file = file)
-     object \%>\% plot_top_features(feature_plot = 'profiles',      file = file)
-     object \%>\% plot_top_features(feature_plot = 'distributions', file = file)
-     object \%>\% plot_top_features(feature_plot = 'boxes',         file = file)
-     object \%>\% plot_top_features(direction  = 'neg', x = 'subgroup', file = file)
+     object \%>\% plot_top_features(geom = 'hbar')
+     object \%>\% plot_top_features(geom = 'bar')
+     object \%>\% plot_top_features(geom = 'point')
+     object \%>\% plot_top_features(geom = 'violin')
+     object \%>\% plot_top_features(geom = 'boxplot')
+     object \%>\% plot_top_features(direction  = 'neg', x = 'subgroup')
   }
 
 # GLUTAMINASE
   if (require(autonomics.data)){
      object <- autonomics.data::glutaminase
-     object \%>\% autonomics.find::plot_top_features(
-        top_definition = 'bonf < 0.05',
-        direction      = 'both',
-        x              = 'TIME_POINT',
-        feature_plot   = 'boxes', 
-        file           = file)
+     object \%>\% plot_top_features(top_definition = 'bonf < 0.05 & rank <= 4',
+                                  direction      = 'both',
+                                  geom           = 'boxplot')
   }
 
 # A somascan eset
 if (require(atkin.2014)){
    object  <- atkin.2014::soma
    contrasts <- atkin.2014::contrasts
-   object \%>\% autonomics.find::plot_top_features(
-                   contrast = contrasts[1], direction = 'neg', nplot = 9,
-                   feature_plot = 'profiles', x = 'time', color_var = 'condition',
-                   facet_var = 'subject_id', fvars = 'TargetFullName', file = file)
-   object \%>\% autonomics.find::plot_top_features(
-                   contrast = contrasts[10], direction = 'neg', nplot = 9,
-                   feature_plot = 'profiles', x = 'time', color_var = 'condition',
-                   fvars = 'TargetFullName')
-   object <- atkin.2014::soma.platelets \%>\%
-               autonomics.import::filter_samples(time \%in\% c('t0', 't2'))
-   object \%>\% autonomics.find::plot_top_features(
-                   contrast  = atkin.2014::contrasts['t2_t0.D_C'],
-                   color_var = 'condition',
-                   fvars     = 'TargetFullName',
-                   file      = file)
+   object \%>\% plot_top_features(contrast = contrasts[1], direction = 'neg', nplot = 9,
+                                geom = 'point', x = 'time', color_var = 'condition',
+                                facet_var = 'subject_id', fvars = 'TargetFullName')
 }
 
 # A metabolon eset
 if (require(subramanian.2016)){
    contrasts <- subramanian.2016::contrasts.metabolon[1]
-   object  <- subramanian.2016::metabolon \%>\%
-                autonomics.find::add_limma_to_fdata(contrasts = contrasts)
-   object \%>\% autonomics.find::plot_top_features(
-                   contrast      = contrasts,
-                   direction     = 'neg',
-                   feature_plot  = 'boxes',
-                   color_var     = 'condition',
-                   group_var     = 'condition',
-                   line          = TRUE,
-                   nplot         = 16, 
-                   file          = file)
+   object  <- subramanian.2016::metabolon \%>\% add_limma_to_fdata(contrasts = contrasts)
+   object \%>\% plot_top_features(contrast  = contrasts,
+                                direction = 'neg',
+                                geom      = 'boxplot',
+                                color_var = 'condition',
+                                group_var = 'condition',
+                                line      = TRUE,
+                                nplot     = 4)
 }
 
 if (require(billing.differentiation.data)){
    object <- billing.differentiation.data::rna.voomcounts
    contrast <- billing.differentiation.data::contrasts[1]
-   object \%>\% autonomics.find::plot_top_features(contrast = contrast)
+   object \%>\% autonomics.find::plot_top_features(contrast = contrast, 
+                                                 nplot    = 4)
 }
 
 

@@ -6,7 +6,7 @@
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_feature_profiles() %>% ggplot2::ggplot_build()
+#'    b <- object %>% autonomics.plot::plot_features('point') %>% ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_nrow()
 #'    b %>% autonomics.plot::gg_ncol()
 #' }
@@ -42,7 +42,7 @@ gg_ncol <- function(b){
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_feature_profiles() %>% ggplot2::ggplot_build()
+#'    b <- object %>% autonomics.plot::plot_features('point') %>% ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_xvalues()
 #' }
 #' @importFrom magrittr %>%
@@ -65,7 +65,7 @@ gg_xvalues <- function(b){
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_feature_profiles() %>% ggplot2::ggplot_build()
+#'    b <- object %>% autonomics.plot::plot_features('point') %>% ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_xlabels()
 #' }
 #' @importFrom magrittr %>%
@@ -91,7 +91,7 @@ gg_xlabels <- function(b){
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_feature_profiles() %>% ggplot2::ggplot_build()
+#'    b <- object %>% autonomics.plot::plot_features('point') %>% ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_rowvars()
 #'    b %>% autonomics.plot::gg_colvars()
 #'    b %>% autonomics.plot::gg_nchar_rowvars()
@@ -100,7 +100,7 @@ gg_xlabels <- function(b){
 #' if (require(atkin.2014)){
 #'    object <- atkin.2014::soma %>% magrittr::extract(1:9, )
 #'    b <- object %>%
-#'         autonomics.plot::plot_feature_profiles(x = 'time', facet_var = 'subject_id') %>%
+#'         autonomics.plot::plot_features('point', x = 'time', facet_var = 'subject_id') %>%
 #'         ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_rowvars()
 #'    b %>% autonomics.plot::gg_colvars()
@@ -168,12 +168,12 @@ gg_panelvar_width <- function(b){
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_feature_profiles() %>%
+#'    b <- object %>% autonomics.plot::plot_features('point') %>%
 #'                    ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'color')
 #'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'x')
 #'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'shape')
-#'    b <- object %>% autonomics.plot::plot_feature_distributions() %>%
+#'    b <- object %>% autonomics.plot::plot_features('violin') %>%
 #'                    ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'color')
 #'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'x')
@@ -181,7 +181,7 @@ gg_panelvar_width <- function(b){
 #' }
 #' if (require(atkin.2014)){
 #'    object <- atkin.2014::soma %>% magrittr::extract(1:10, )
-#'    b <- object %>% autonomics.plot::plot_feature_profiles(
+#'    b <- object %>% autonomics.plot::plot_features('point',
 #'                         x = 'time', color_var = 'condition', facet_var = 'subject_id',
 #'                         line = TRUE, fvars = 'TargetFullName') %>%
 #'                         ggplot2::ggplot_build()
@@ -190,10 +190,10 @@ gg_panelvar_width <- function(b){
 #' if (require(subramanian.2016)){
 #'    b <- subramanian.2016::metabolon %>%
 #'         magrittr::extract(1:10, ) %>%
-#'         autonomics.plot::plot_feature_boxes(
-#'            color_var = 'condition',
-#'            group_var = 'condition',
-#'            line      = TRUE) %>%
+#'         plot_features('boxplot',
+#'                        color_var = 'condition',
+#'                        group_var = 'condition',
+#'                        line      = TRUE) %>%
 #'         ggplot2::ggplot_build()
 #'    aesthetic <- 'colour'
 #'    gg_aesvar(b, aesthetic)
@@ -224,7 +224,7 @@ gg_aesvar <- function(b, aesthetic){
 #' require(Biobase)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_feature_profiles() %>%
+#'    b <- object %>% autonomics.plot::plot_features('point') %>%
 #'                    ggplot2::ggplot_build()
 #'    b %>% autonomics.plot::gg_aeslevels(aesthetic = 'color')
 #'    b %>% autonomics.plot::gg_aeslevels(aesthetic = 'shape')
@@ -250,19 +250,15 @@ gg_aeslevels <- function(b, aesthetic){
 #' require(SummarizedExperiment)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    object %>% autonomics.plot::plot_feature_profiles()      %>%
-#'               autonomics.plot::compute_feature_plot_dims()
-#'    object %>% autonomics.plot::plot_feature_distributions() %>%
-#'               autonomics.plot::compute_feature_plot_dims()
-#'    object %>% autonomics.plot::plot_feature_boxes()         %>%
-#'               autonomics.plot::compute_feature_plot_dims()
+#'    object %>% plot_features('point')   %>% compute_feature_plot_dims()
+#'    object %>% plot_features('violin')  %>% compute_feature_plot_dims()
+#'    object %>% plot_features('boxplot') %>% compute_feature_plot_dims()
 #' }
 #' if (require(atkin.2014)){
 #'    object <- atkin.2014::soma %>% magrittr::extract(1:10, )
-#'    p <- object %>% autonomics.plot::plot_feature_profiles(
-#'                         x = 'time', color_var = 'condition', facet_var = 'subject_id',
-#'                         line = TRUE, fvars = 'TargetFullName')
-#'    p %>% autonomics.plot::compute_feature_plot_dims()
+#'    p <- object %>% plot_features('point', x = 'time', color_var = 'condition',
+#'                         facet_var = 'subject_id', line = TRUE, fvars = 'TargetFullName')
+#'    p %>% compute_feature_plot_dims()
 #'
 #' }
 #' @export
@@ -373,14 +369,14 @@ feature_plot_labeller <- function(plot_df){
 }
 
 
-#' Plot feature profiles / distributions
+#' Plot features
 #'
 #' @param object           SummarizedExperiment, eSet, or EList
-#' @param feature_plot     'profiles', 'distributions', 'boxes', 'bars'
+#' @param geom             'point', 'bar', 'violin', 'boxplot'
 #' @param x                svar mapped to x
 #' @param color_var        svar mapped to color
 #' @param color_values     named color vector (names = color_var levels, values = colors)
-#' @param shape_var        svar mapped to shape (only relevant for profiles)
+#' @param shape_var        svar mapped to shape (only relevant for point)
 #' @param group_var        svar mapped to group
 #' @param txt_var          svar mapped to txt
 #' @param facet_var        svar on which to facet plot
@@ -393,13 +389,13 @@ feature_plot_labeller <- function(plot_df){
 #' @param zero_hline       logical: should y=0 line be added?
 #' @param xlab             xlab
 #' @param ylab             ylab
-#' @param file             file to print to. If NULL, ggplot object is returned
-#' @param width            width (inches)
-#' @param height           height (inches)
 #' @param legend.position  position of legend
 #' @param dodge_width      numeric
 #' @param verbose          logical
-#' @param ...              passed to backend
+#' @param file             string: file path
+#' @param width            numeric
+#' @param height           numeric
+#' @param ...              only for backward compatibility to deprecated functions
 #' @examples
 #' require(magrittr)
 #' result_dir <- tempdir() %T>% message()
@@ -407,30 +403,26 @@ feature_plot_labeller <- function(plot_df){
 #' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios %>% extract(1:10, )
-#'    object %>% autonomics.plot::plot_feature_distributions()
-#'    object %>% autonomics.plot::plot_feature_profiles()
-#'    object %>% autonomics.plot::plot_feature_boxes()
+#'    object %>% autonomics.plot::plot_features(geom = 'violin')
+#'    object %>% autonomics.plot::plot_features(geom = 'point')
+#'    object %>% autonomics.plot::plot_features(geom = 'boxplot')
+#'    object %>% autonomics.plot::plot_features(
+#'                  geom = 'boxplot',
+#'                  file = paste0(result_dir, '/stemcomp_boxes.pdf'))
 #'
-#'    file <- paste0(result_dir, '/stemcomp_distributions.pdf')
-#'    object %>% autonomics.plot::plot_feature_distributions(file = file)
-#'
-#'    file <- paste0(result_dir, '/stemcomp_profiles.pdf')
-#'    object %>% autonomics.plot::plot_feature_profiles(file = file)
-#'
-#'    file <- paste0(result_dir, '/stemcomp_boxes.pdf')
-#'    object %>% autonomics.plot::plot_feature_boxes(file = file)
 #' }
 #'
 #' # STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemdiff.proteinratios %>% extract(1:10, )
-#'    object %>% autonomics.plot::plot_feature_boxes()
+#'    object %>% autonomics.plot::plot_features('boxplot')
 #' }
+#'
 #' if (require(billing.differentiation.data)){
 #'    object <- billing.differentiation.data::rna.voomcounts %>% extract(1:10, )
-#'    object %>% autonomics.plot::plot_feature_profiles(fvars = 'gene_name')
-#'    object %>% autonomics.plot::plot_feature_distributions(fvars = 'gene_name')
-#'    object %>% autonomics.plot::plot_feature_boxes(fvars = 'gene_name')
+#'    object %>% autonomics.plot::plot_features('point',   fvars = 'gene_name')
+#'    object %>% autonomics.plot::plot_features('violin',  fvars = 'gene_name')
+#'    object %>% autonomics.plot::plot_features('boxplot', fvars = 'gene_name')
 #' }
 #'
 #' # GLUTAMINASE
@@ -439,62 +431,42 @@ feature_plot_labeller <- function(plot_df){
 #'    color_values <- c(Control = 'blue', Vehicle = 'green', `Concentration 1` = 'orange',
 #'                     `Concentration 2` = 'red')
 #'    object$alpha <- object$TREATMENT %in% c(0,1)
-#'    object %>% autonomics.plot::plot_feature_boxes(
-#'                    x = 'TIME_POINT', color_var = 'GROUP_DESCRIPTION', color_values = color_values,
-#'                    alpha_var = 'alpha')
+#'    object %>% autonomics.plot::plot_features(
+#'                 'boxplot',
+#'                  x = 'TIME_POINT', color_var = 'GROUP_DESCRIPTION', color_values = color_values,
+#'                  alpha_var = 'alpha')
 #' }
+#'
+#' # SUBRAMANIAN.2016
 #' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon[1:10, ] %>%
-#'    autonomics.plot::plot_feature_boxes(
-#'       color_var = 'condition', group_var = 'condition', line = TRUE)
+#'    object <- subramanian.2016::metabolon[1:10, ]
+#'    object %>% plot_features('boxplot', color_var = 'condition',
+#'                              group_var = 'condition', line = TRUE)
 #'
-#'    subramanian.2016::exiqon[1:10, ]    %>%
-#'    autonomics.plot::plot_feature_boxes(
-#'       color_var = 'condition', group_var = 'condition', line = TRUE)
+#'    object <- subramanian.2016::rnaseq[1:10, ]
+#'    object %>% plot_features('boxplot', color_var = 'condition', group_var = 'condition',
+#'                              line = TRUE)
 #'
-#'    subramanian.2016::rnaseq[1:10, ]    %>%
-#'    autonomics.plot::plot_feature_boxes(
-#'       color_var = 'condition', group_var = 'condition', line = TRUE)
-#'
-#'    result_dir <- tempdir() %T>% message()
-#'    file       <- file.path(result_dir, 'feature_boxes.pdf')
-#'    subramanian.2016::metabolon[1:10, ] %>%
-#'    autonomics.plot::plot_feature_boxes(
-#'       color_var = 'condition', group_var = 'condition', line = TRUE, file = file)
-#'
-#'    \dontrun{
-#'    subramanian.2016::exiqon[1:10, ]    %>%
-#'    autonomics.plot::plot_feature_boxes(
-#'       color_var = 'condition', group_var = 'condition', line = TRUE, file = file)
-#'    }
-#'
-#'    subramanian.2016::rnaseq[1:10, ]    %>%
-#'    autonomics.plot::plot_feature_boxes(
-#'       color_var = 'condition', group_var = 'condition', line = TRUE, file = file)
 #' }
+#'
+#' # ATKIN.2014
 #' if (require(atkin.2014)){
 #'    object <- atkin.2014::soma %>% magrittr::extract(1:10, )
-#'    file <- tempdir() %>% paste0('/atkin_hypo_profiles.pdf')
-#'    object %>% autonomics.plot::plot_feature_profiles(
-#'                    x = 'time', color_var = 'condition', facet_var = 'subject_id',
-#'                    group_var = 'subject_id', line = TRUE)
-#'    object %>% autonomics.plot::plot_feature_profiles(
-#'                    x = 'time', color_var = 'condition', facet_var = 'subject_id',
-#'                    group_var = 'subject_id', line = TRUE, fvar = 'TargetFullName')
-#'    object %>% autonomics.plot::plot_feature_profiles(
-#'                    x = 'time', color_var = 'condition', facet_var = 'subject_id',
-#'                    group_var = 'subject_id', line = TRUE, fvar = 'TargetFullName', file = file)
+#'    object %>% plot_features('point', x = 'time', color_var = 'condition',
+#'                              facet_var = 'subject_id', group_var = 'subject_id', line = TRUE)
+#'    object %>% plot_features('point', x = 'time', color_var = 'condition', facet_var = 'subject_id',
+#'                              group_var = 'subject_id', line = TRUE, fvar = 'TargetFullName')
+#'    object %>% plot_features('point', x = 'time', color_var = 'condition', facet_var = 'subject_id',
+#'                              group_var = 'subject_id', line = TRUE, fvar = 'TargetFullName')
 #' }
 #'
-#'
-#' @author     Aditya Bhagwat
-#' @rdname plot_features
+#' @return file path
 #' @importFrom magrittr  %>%   %<>%
 #' @export
-plot_features_without_printing <- function(
+plot_features <- function(
    object,
-   feature_plot    = autonomics.plot::default_feature_plots(object)[1],
-   x               = autonomics.plot::default_x(object, feature_plot[1]),
+   geom            = autonomics.plot::default_feature_plots(object)[1],
+   x               = autonomics.plot::default_x(object, geom[1]),
    color_var       = autonomics.plot::default_color_var(object),
    color_values    = autonomics.plot::default_color_values(object, color_var),
    shape_var       = autonomics.plot::default_shape_var(object),
@@ -512,106 +484,110 @@ plot_features_without_printing <- function(
    ylab            = NULL,
    legend.position = 'right',
    dodge_width     = 0,
-   verbose         = FALSE
-){
-   # Defaults
-   if (x == 'snames'){        autonomics.import::sdata(object)$sample_id <- autonomics.import::snames(object)
-   x <- 'sample_id'}
-   if (is.null(fvars)){       autonomics.import::fdata(object)$feature_id <- autonomics.import::fnames(object)
-   fvars <- 'feature_id'}
+   verbose         = FALSE,
+   file            = NULL,
+   width           = NULL,
+   height          = NULL){
 
-   # Return if no features to plot
-   if (nrow(object) == 0){
-      message('\t\tno features to plot, no graph created')
-      return()
-   }
 
-   # Assert
-   autonomics.import::assert_is_valid_eset(object)
-   assertive.sets::assert_is_subset(feature_plot, autonomics.plot::FEATURE_PLOTS)
-   assertive.sets::assert_is_subset(x,         autonomics.import::svars(object))
-   assertive.sets::assert_is_subset(color_var, autonomics.import::svars(object))
-   if (!is.null(shape_var)){
-      assertive.sets::assert_is_subset(shape_var, autonomics.import::svars(object) )
-      if (is.numeric(autonomics.import::sdata(object)[[shape_var]])){
-         autonomics.import::sdata(object)[[shape_var]] %<>% as.character() %>% autonomics.support::factorify()
+   # Function to plot features
+   plot_features_without_printing <- function(object){
+      # Defaults
+      if (x == 'snames'){        autonomics.import::sdata(object)$sample_id <- autonomics.import::snames(object)
+      x <- 'sample_id'}
+      if (is.null(fvars)){       autonomics.import::fdata(object)$feature_id <- autonomics.import::fnames(object)
+      fvars <- 'feature_id'}
+
+      # Return if no features to plot
+      if (nrow(object) == 0){
+         message('\t\tno features to plot, no graph created')
+         return()
       }
-   }
-   if (!is.null(fvars))     assertive.sets::assert_is_subset(fvars,     autonomics.import::fvars(object))
-   if (!is.null(alpha_var)){
-      assertive.sets::assert_is_subset(alpha_var, autonomics.import::svars(object))
-      assertive.types::assert_is_logical(autonomics.import::sdata(object)[[alpha_var]])
-   }
 
-   # Prepare plot df
-   plot_df <- autonomics.plot::create_feature_plot_df(object, fvars, verbose = verbose)
-   p <- ggplot2::ggplot(plot_df)
-
-   # Add annotation and facet wrap
-   if (is.null(facet_var)){ p <- p + ggplot2::facet_wrap(~ feature_facet, scales = scales, labeller = feature_plot_labeller)
-   } else {                 p <- p + ggplot2::facet_grid(make_facet_grid_formula(fvars, facet_var), scales = 'free_y', switch = 'y') +
-      ggplot2::theme(strip.text.y = ggplot2::element_text(angle=180))}
-   p %<>% add_annotation(title = title, xlab = xlab, ylab = ylab, x_text_angle = x_text_angle)
-
-   # Add zero hline
-   if (zero_hline){
-      p <- p + ggplot2::geom_hline(yintercept = 0, linetype = 'dashed')
-   }
-
-   # Plot either profiles or distributions
-   dodged_position <- ggplot2::position_dodge(width = dodge_width)
-   if (feature_plot == 'profiles'){              p <- p + ggplot2::geom_point(  ggplot2::aes_string(x = x, y = 'value', color = color_var, alpha = alpha_var, shape = shape_var, group = group_var), na.rm = TRUE, position = dodged_position) # Note: group is required for dodging!
-   } else if (feature_plot == 'bars'){           p <- p + ggplot2::geom_bar(    ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var), stat = 'identity', na.rm = TRUE)
-   } else if (feature_plot == 'distributions'){  p <- p + ggplot2::geom_violin( ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var),                    na.rm = TRUE)
-                                                 p <- p + ggplot2::geom_boxplot(ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var), data = plot_df, width = 0.1)
-   } else if (feature_plot == 'boxes'){          p <- p + ggplot2::geom_boxplot(ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var), data = plot_df)
-   }
-
-   # Take care of alpha transparancy
-   if (!is.null(alpha_var)){
-      if (all(plot_df[[alpha_var]] == TRUE)){
-         p <- p + scale_alpha_discrete(range = c(1,1), guide = FALSE)        # If all subgroups are selected, none should be faded out!
-      } else {
-         transparent <- if (feature_plot=='boxes') 0.2 else 0.5
-         p <- p + scale_alpha_discrete(range = c(transparent, 1), guide = FALSE)
+      # Assert
+      autonomics.import::assert_is_valid_eset(object)
+      assertive.sets::assert_is_subset(geom, autonomics.plot::FEATURE_PLOTS)
+      assertive.sets::assert_is_subset(x,         autonomics.import::svars(object))
+      assertive.sets::assert_is_subset(color_var, autonomics.import::svars(object))
+      if (!is.null(shape_var)){
+         assertive.sets::assert_is_subset(shape_var, autonomics.import::svars(object) )
+         if (is.numeric(autonomics.import::sdata(object)[[shape_var]])){
+            autonomics.import::sdata(object)[[shape_var]] %<>% as.character() %>% autonomics.support::factorify()
+         }
       }
-   }
-
-   # Custom color scale
-   if (!is.null(color_values)){
-      p <- p + ggplot2::scale_fill_manual(values = color_values)
-      p <- p + ggplot2::scale_color_manual(values = color_values)
-   }
-
-   # Connect with a line
-   if (line){
-      # single line with fixed color
-      if (group_var == 1){   p <- p + ggplot2::stat_summary(fun.y = 'median', geom = 'line', na.rm = TRUE,  color = 'gray10',
-                                      ggplot2::aes_string(x = x, y = 'value', group = group_var))
-      # separate lines with different color
-      } else {               p <- p + ggplot2::stat_summary(fun.y = 'median', geom = 'line', na.rm = TRUE,
-                                      ggplot2::aes_string(x = x, y = 'value', group = group_var, color = color_var), position = dodged_position)
+      if (!is.null(fvars))     assertive.sets::assert_is_subset(fvars,     autonomics.import::fvars(object))
+      if (!is.null(alpha_var)){
+         assertive.sets::assert_is_subset(alpha_var, autonomics.import::svars(object))
+         assertive.types::assert_is_logical(autonomics.import::sdata(object)[[alpha_var]])
       }
+
+      # Prepare plot df
+      plot_df <- autonomics.plot::create_feature_plot_df(object, fvars, verbose = verbose)
+      p <- ggplot2::ggplot(plot_df)
+
+      # Add annotation and facet wrap
+      if (is.null(facet_var)){ p <- p + ggplot2::facet_wrap(~ feature_facet, scales = scales, labeller = feature_plot_labeller)
+      } else {                 p <- p + ggplot2::facet_grid(make_facet_grid_formula(fvars, facet_var), scales = 'free_y', switch = 'y') +
+         ggplot2::theme(strip.text.y = ggplot2::element_text(angle=180))}
+      p %<>% add_annotation(title = title, xlab = xlab, ylab = ylab, x_text_angle = x_text_angle)
+
+      # Add zero hline
+      if (zero_hline){
+         p <- p + ggplot2::geom_hline(yintercept = 0, linetype = 'dashed')
+      }
+
+      # Plot either point or distributions
+      dodged_position <- ggplot2::position_dodge(width = dodge_width)
+      if (       geom == 'point'){   p <- p + ggplot2::geom_point(  ggplot2::aes_string(x = x, y = 'value', color = color_var, alpha = alpha_var, shape = shape_var, group = group_var), na.rm = TRUE, position = dodged_position) # Note: group is required for dodging!
+      } else if (geom == 'bar'){     p <- p + ggplot2::geom_bar(    ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var), stat = 'identity', na.rm = TRUE)
+      } else if (geom == 'violin'){  p <- p + ggplot2::geom_violin( ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var),                    na.rm = TRUE)
+      p <- p + ggplot2::geom_boxplot(ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var), data = plot_df, width = 0.1)
+      } else if (geom == 'boxplot'){ p <- p + ggplot2::geom_boxplot(ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var), data = plot_df)
+      }
+
+      # Take care of alpha transparancy
+      if (!is.null(alpha_var)){
+         if (all(plot_df[[alpha_var]] == TRUE)){
+            p <- p + scale_alpha_discrete(range = c(1,1), guide = FALSE)        # If all subgroups are selected, none should be faded out!
+         } else {
+            transparent <- if (geom=='boxplot') 0.2 else 0.5
+            p <- p + scale_alpha_discrete(range = c(transparent, 1), guide = FALSE)
+         }
+      }
+
+      # Custom color scale
+      if (!is.null(color_values)){
+         p <- p + ggplot2::scale_fill_manual(values = color_values)
+         p <- p + ggplot2::scale_color_manual(values = color_values)
+      }
+
+      # Connect with a line
+      if (line){
+         # single line with fixed color
+         if (group_var == 1){   p <- p + ggplot2::stat_summary(fun.y = 'median', geom = 'line', na.rm = TRUE,  color = 'gray10',
+                                                               ggplot2::aes_string(x = x, y = 'value', group = group_var))
+         # separate lines with different color
+         } else {               p <- p + ggplot2::stat_summary(fun.y = 'median', geom = 'line', na.rm = TRUE,
+                                                               ggplot2::aes_string(x = x, y = 'value', group = group_var, color = color_var), position = dodged_position)
+         }
+      }
+
+      # Add text annotation
+      if (!is.null(txt_var)){
+         p <- p + ggrepel::geom_text_repel(ggplot2::aes_string(label = txt_var, x=x, y='value', color = color_var),
+                                           show.legend = FALSE)
+      }
+
+      # Legend position
+      p <- p + ggplot2::theme(legend.position = legend.position)
+      p
+
    }
 
-   # Add text annotation
-   if (!is.null(txt_var)){
-      p <- p + ggrepel::geom_text_repel(ggplot2::aes_string(label = txt_var, x=x, y='value', color = color_var),
-                                        show.legend = FALSE)
-   }
-
-   # Legend position
-   p <- p + ggplot2::theme(legend.position = legend.position)
-   p
-}
-
-#' @rdname plot_features
-#' @export
-plot_features <- function(object, ..., file = NULL, width = NULL, height = NULL){
 
    # Plot and return if no printing required
    if (is.null(file)){
-      p <- plot_features_without_printing(object, ...)
+      p <- plot_features_without_printing(object)
       return(p)
    }
 
@@ -619,7 +595,7 @@ plot_features <- function(object, ..., file = NULL, width = NULL, height = NULL)
    nperpage <- 9
    eset1 <- object %>% magrittr::extract(seq(1, min(nrow(.), nperpage)), )
    fig_dims <- if (is.null(width) & is.null(height)){
-                  compute_feature_plot_dims(plot_features_without_printing(eset1, ...))
+                  compute_feature_plot_dims(plot_features_without_printing(object = eset1))
                } else {
                   if (is.null(width))   width <- height
                   if (is.null(height)) height <- width
@@ -631,7 +607,7 @@ plot_features <- function(object, ..., file = NULL, width = NULL, height = NULL)
       first <- (ipage-1)*nperpage + 1
       last <- min(nrow(object), ipage*nperpage)
       eset1 <- object %>% magrittr::extract(first:last, )
-      p <- plot_features_without_printing(eset1, ...)
+      p <- plot_features_without_printing(object = eset1)
       print(p)
    }
    grDevices::dev.off()
@@ -639,26 +615,32 @@ plot_features <- function(object, ..., file = NULL, width = NULL, height = NULL)
 }
 
 
-#' @export
 #' @rdname plot_features
-plot_feature_bars <- function(object, ...){
-   plot_features(object, ..., feature_plot = 'bars')
+#' @export
+plot_feature_bars <- function(...){
+   .Deprecated('plot_features')
+   plot_features(geom = 'bar', ...)
 }
 
-#' @export
+
 #' @rdname plot_features
-plot_feature_profiles <- function(object, ...){
-  plot_features(object, ..., feature_plot = 'profiles')
+#' @export
+plot_feature_profiles <- function(...){
+   .Deprecated('plot_features')
+   plot_features(geom = 'point', ...)
 }
 
-#' @export
+
 #' @rdname plot_features
-plot_feature_distributions <- function(object, ...){
-  plot_features(object, ..., feature_plot = 'distributions')
+#' @export
+plot_feature_distributions <- function(...){
+   .Deprecated('plot_features')
+   plot_features(geom = 'violin', ...)
 }
 
-#' @export
 #' @rdname plot_features
-plot_feature_boxes <- function(object, ...){
-   plot_features(object, ..., feature_plot = 'boxes')
+#' @export
+plot_feature_boxes <- function(...){
+   .Deprecated('plot_features')
+   plot_features(geom = 'boxplot', ...)
 }

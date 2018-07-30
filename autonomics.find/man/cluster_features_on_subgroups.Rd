@@ -5,8 +5,8 @@
 \title{Cluster features on subgroup profiles}
 \usage{
 cluster_features_on_subgroups(object, result_dir,
-  feature_plots = autonomics.plot::default_feature_plots(object) \%>\%
-  setdiff("bars"), x = autonomics.plot::default_x(object, feature_plots[1]),
+  geoms = autonomics.plot::default_feature_plots(object) \%>\%
+  setdiff("bars"), x = autonomics.plot::default_x(object, geoms[1]),
   color_var = autonomics.plot::default_color_var(object),
   shape_var = autonomics.plot::default_shape_var(object),
   group_var = autonomics.plot::default_group_var(object),
@@ -17,7 +17,7 @@ cluster_features_on_subgroups(object, result_dir,
 
 \item{result_dir}{result directory}
 
-\item{feature_plots}{which types of feature plots to generate}
+\item{geoms}{which types of feature plots to generate}
 
 \item{x}{svar mapped to x     in feature plots}
 

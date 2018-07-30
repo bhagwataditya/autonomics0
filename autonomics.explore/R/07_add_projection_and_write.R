@@ -32,7 +32,7 @@ write_projected_features <- function(object, result_dir, method = 'pca'){
 #' @param method        'pca', 'pls', or 'lda'
 #' @param implementation character
 #' @param result_dir     result dir
-#' @param feature_plots  subset of \code{\link[autonomics.plot]{FEATURE_PLOTS}}
+#' @param geoms  subset of \code{\link[autonomics.plot]{FEATURE_PLOTS}}
 #' @param x              svar mapped to x in feature plots
 #' @param color_var      svar mapped to color in feature plots
 #' @param color_values        color vector (names = color_var levels, values = colors)
@@ -82,8 +82,8 @@ add_and_write_projection <- function(
    method        = 'pca',
    implementation = NULL,
    result_dir,
-   feature_plots = autonomics.plot::default_feature_plots(object),
-   x             = autonomics.plot::default_x(object, feature_plots),
+   geoms = autonomics.plot::default_feature_plots(object),
+   x             = autonomics.plot::default_x(object, geoms),
    color_var     = autonomics.plot::default_color_var(object),
    color_values  = autonomics.plot::default_color_values(object, color_var),
    shape_var     = autonomics.plot::default_shape_var(object),
@@ -98,7 +98,6 @@ add_and_write_projection <- function(
       autonomics.support::cmessage('\tNo PCA (only %d samples)', ncol(object))
       return(object)
    }
-   assertive.sets::assert_is_subset(feature_plots, autonomics.plot::FEATURE_PLOTS)
    
    # Run pca, add to fdata, write to file
    object %<>% autonomics.explore::add_projection_to_eset(
@@ -119,8 +118,8 @@ add_and_write_projection <- function(
                      txt_var      = txt_var,
                      line         = line, 
                      na.impute    = na.impute)
-   for (iplot in seq_along(feature_plots)){
-      cur_plot_args <- plot_args %>% c(list(feature_plot = feature_plots[iplot], x = x[iplot]))
+   for (iplot in seq_along(geoms)){
+      cur_plot_args <- plot_args %>% c(list(geom = geoms[iplot], x = x[iplot]))
       autonomics.explore::plot_projected_samples_and_features %>% do.call(cur_plot_args)
    }
 

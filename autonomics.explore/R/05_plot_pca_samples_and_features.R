@@ -1,11 +1,11 @@
 
 #' Create graphics layout for mpa feature + sample plot
-#' @param feature_plot feature plot (character)
+#' @param geom feature plot (character)
 #' @return graphics layout matrix
 #' @importFrom magrittr %>% 
 #' @export
-layout_sample_projections_and_features <- function(feature_plot){
-   if (feature_plot == 'hbars'){
+layout_sample_projections_and_features <- function(geom){
+   if (geom == 'hbar'){
       rbind(c(2,2,2,2,2,2) %>% rep(2) %>% matrix(nrow = 2, byrow = TRUE),
             c(0,1,1,1,0,0) %>% rep(3) %>% matrix(nrow = 3, byrow = TRUE),
             c(3,3,3,3,3,3) %>% rep(2) %>% matrix(nrow = 2, byrow = TRUE)
@@ -26,7 +26,7 @@ layout_sample_projections_and_features <- function(feature_plot){
 #' @param implementation NULL or "package::function"
 #' @param dims           pc dimensions to plot
 #' @param na.impute      TRUE or FALSE
-#' @param feature_plot   value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}
+#' @param geom           value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}
 #' @param result_dir     NULL or result directory path
 #' @param x              svar mapped to x in feature plots
 #' @param color_var      svar mapped to color in sample and feature plots
@@ -45,38 +45,31 @@ layout_sample_projections_and_features <- function(feature_plot){
 #'      # STEM CELL COMPARISON
 #'      if (require(autonomics.data)){
 #'         object <- autonomics.data::stemcomp.proteinratios
-#'         object %>% autonomics.explore::plot_pca_samples_and_features()
-#'         object %>% autonomics.explore::plot_pca_samples_and_features(
-#'                       feature_plot = 'distributions')
-#'         object %>% autonomics.explore::plot_pca_samples_and_features(
-#'                       feature_plot = 'distributions', na.impute = TRUE)
-#'         object %>% autonomics.explore::plot_pca_samples_and_features(
-#'                       result_dir = result_dir)
-#'         object %>% autonomics.explore::plot_pca_samples_and_features(
-#'                       result_dir = result_dir, feature_plot = 'bars')
+#'         object %>% plot_pca_samples_and_features()
+#'         object %>% plot_pca_samples_and_features(geom = 'violin')
+#'         object %>% plot_pca_samples_and_features(geom = 'violin', na.impute = TRUE)
+#'         object %>% plot_pca_samples_and_features(result_dir = result_dir)
+#'         object %>% plot_pca_samples_and_features(result_dir = result_dir, geom = 'bar')
 #'      }
 #'      
 #'      # STEM CELL DIFFERENTIATION
 #'      if (require(billing.differentiation.data)){
 #'         object <- billing.differentiation.data::rna.voomcounts
-#'         object %>% autonomics.explore::plot_pca_samples_and_features()
+#'         object %>% plot_pca_samples_and_features()
 #'      }
 #'      
 #'      # GLUTAMINASE
 #'      if (require(autonomics.data)){
-#'         autonomics.data::glutaminase %>% autonomics.explore::plot_pca_samples_and_features(
-#'            color_var    = 'GROUP_DESCRIPTION',
-#'            color_values = c(Control = 'orange', Vehicle = 'red', `Concentration 1` = 'green',
-#'                            `Concentration 2` = 'blue'))
+#'         object <- autonomics.data::glutaminase
+#'         object %>% plot_pca_samples_and_features(n=2)
 #'      }
 #'      
 #'      if (require(subramanian.2016)){
 #'         object <- subramanian.2016::metabolon
-#'         object %>% autonomics.explore::plot_pca_samples_and_features(n = 4)
-#'         object %>% autonomics.explore::plot_lda_samples_and_features(n = 4)
-#'      
-#'         object %>% autonomics.explore::plot_pca_samples_and_features(
-#'                       color_var = 'condition', feature_plot = 'boxes')
+#'         object %>% plot_pca_samples_and_features(n = 4)
+#'         object %>% plot_lda_samples_and_features(n = 4)
+#'         object %>% plot_pca_samples_and_features(n = 4,
+#'                       color_var = 'condition', geom = 'boxplot')
 #'      }
 #' }
 #' @importFrom magrittr   %>%
@@ -87,9 +80,9 @@ plot_projected_samples_and_features <- function(
    implementation = NULL,
    dims         = c(1,2),
    na.impute    = FALSE,
-   feature_plot = autonomics.plot::default_feature_plots(object)[1],
+   geom = autonomics.plot::default_feature_plots(object)[1],
    result_dir   = NULL,
-   x            = autonomics.plot::default_x(object, feature_plot),
+   x            = autonomics.plot::default_x(object, geom),
    color_var    = autonomics.plot::default_color_var(object),
    color_values = autonomics.plot::default_color_values(object, color_var),
    shape_var    = NULL,
@@ -104,7 +97,7 @@ plot_projected_samples_and_features <- function(
       autonomics.support::cmessage('\tExit PCA: only %d samples', ncol(object))
       return(invisible(NULL))
    }
-   assertive.sets::assert_is_subset(feature_plot, autonomics.plot::FEATURE_PLOTS)
+   assertive.sets::assert_is_subset(geom, autonomics.plot::FEATURE_PLOTS)
 
    # Plot
    feature_plot_args <- list(
@@ -118,7 +111,7 @@ plot_projected_samples_and_features <- function(
       group_var       = group_var,
       line            = line,
       na.impute       = na.impute,
-      feature_plot    = feature_plot,
+      geom    = geom,
       legend.position = 'none', 
       n               = n
    )
@@ -134,10 +127,10 @@ plot_projected_samples_and_features <- function(
    if (!is.null(result_dir)){
       dir.create(sprintf('%s', result_dir, method), showWarnings = FALSE)
       file_name <- sprintf('%s/%s%s%s_%s_%s.pdf',
-                           result_dir, method, dims[1], dims[2], ifelse(na.impute, 'all', 'common'), feature_plot)
+                           result_dir, method, dims[1], dims[2], ifelse(na.impute, 'all', 'common'), geom)
       grDevices::pdf(file_name, width = 15, height = 12)
    }
-   layout <- autonomics.explore::layout_sample_projections_and_features(feature_plot)
+   layout <- autonomics.explore::layout_sample_projections_and_features(geom)
    autonomics.plot::multiplot(plotlist = plotlist, layout = layout)
    if (!is.null(result_dir)){
       grDevices::dev.off()

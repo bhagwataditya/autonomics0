@@ -44,30 +44,21 @@ extract_top_and_bottom <- function(object, n = 16){
 #' @param object           SummarizedExperiment, eSet, or Elist
 #' @param method           'pca' or 'lda'
 #' @param implementation   'character' or NULL
-#' @param x                svar mapped to x
-#' @param color_var        svar mapped to color
-#' @param color_values        color vector (names = color_var levels, values = colors)
-#' @param shape_var        svar mapped to shape
-#' @param group_var        svar mapped to group
-#' @param txt_var          svar mapped to txt
-#' @param facet_var        svar used for faceting
-#' @param line             whether to connect points with line (logical)
 #' @param fvars            fvars used for plot annotation
 #' @param dim              principal component dimension
 #' @param n                number of top features to plot
 #' @param na.impute        TRUE or FALSE
 #' @param title            title
 #' @param file             file
-#' @param feature_plot     value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}
-#' @param legend.position  ggplot theme argument
-#' @param ...              passed to plot_projection_features
+#' @param geom     value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}
+#' @param ...              passed to autonomics.plot::plot_features
 #' @examples
 #' require(magrittr)
 #' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios
 #'    object %>% autonomics.explore::plot_pca_features(n=9)
-#'    object %>% autonomics.explore::plot_pca_features(feature_plot = 'bars')
+#'    object %>% autonomics.explore::plot_pca_features(geom = 'bar')
 #' }
 #' 
 #' # STEM CELL DIFFERENTIATION
@@ -88,9 +79,9 @@ extract_top_and_bottom <- function(object, n = 16){
 #' 
 #' if (require(subramanian.2016)){
 #'    object <- subramanian.2016::metabolon
-#'    object %>% autonomics.explore::plot_pca_features(feature_plot = 'boxes')
-#'    object %>% autonomics.explore::plot_pls_features(feature_plot = 'boxes')
-#'    object %>% autonomics.explore::plot_lda_features(feature_plot = 'boxes')
+#'    object %>% autonomics.explore::plot_pca_features(geom = 'boxplot', n=4)
+#'    object %>% autonomics.explore::plot_pls_features(geom = 'boxplot', n=4)
+#'    object %>% autonomics.explore::plot_lda_features(geom = 'boxplot', n=4)
 #' }
 #' 
 #' if (require(atkin.2014)){
@@ -104,22 +95,14 @@ plot_projection_features <- function(
    object,
    method,
    implementation  = NULL,
-   feature_plot    = autonomics.plot::default_feature_plots(object)[1],
-   x               = autonomics.plot::default_x(object, feature_plot),
-   color_var       = autonomics.plot::default_color_var(object),
-   color_values    = autonomics.plot::default_color_values(object, color_var),
-   shape_var       = autonomics.plot::default_shape_var(object),
-   group_var       = autonomics.plot::default_group_var(object),
-   txt_var         = autonomics.plot::default_txt_var(object),
-   facet_var       = NULL,
-   line            = autonomics.plot::default_line(object),
+   geom            = autonomics.plot::default_feature_plots(object)[1],
    fvars           = autonomics.plot::default_fvars(object),
    dim             = 1,
    n               = 9,
    na.impute       = FALSE,
    title           = sprintf('X%d', dim),
-   file            = NULL,
-   legend.position = 'right'
+   file            = NULL, 
+   ...
 ){
    # Check input args
    autonomics.import::assert_is_valid_eset(object)
@@ -127,7 +110,7 @@ plot_projection_features <- function(
       autonomics.support::cmessage('\tExit %s: only %d samples', method, ncol(object))
       return(invisible(NULL))
    }
-   assertive.sets::assert_is_subset(feature_plot, autonomics.plot::FEATURE_PLOTS)
+   assertive.sets::assert_is_subset(geom, autonomics.plot::FEATURE_PLOTS)
 
    # Add projection to eset if required
    projection_dim_in_eset <- paste0(method, dim) %in% autonomics.import::fvars(object)
@@ -143,28 +126,9 @@ plot_projection_features <- function(
    object %<>% autonomics.explore::order_on_feature_loadings(method = method, dim = dim, na.impute = na.impute) %>%
                autonomics.explore::extract_top_and_bottom(n=n)
 
-   # Dispatch to plotfun
-   plotfun <- utils::getFromNamespace(paste0('plot_feature_', feature_plot), 'autonomics.plot')
+   # plot
+   object %>% autonomics.plot::plot_features(geom = geom, fvars = fvars, title = title, ...)
 
-   # Prepare plotargs accordingly
-   plotargs <- list(object          = object,
-                    x               = x,
-                    color_var       = color_var,
-                    color_values    = color_values,
-                    facet_var       = facet_var,
-                    fvars           = fvars,
-                    title           = title,
-                    file            = file,
-                    legend.position = legend.position)
-   if (feature_plot!='hbars'){
-      plotargs %<>% c(list(shape_var = shape_var,
-                           group_var = group_var,
-                           txt_var   = txt_var,
-                           line      = line))
-   }
-
-   # Plot
-   do.call(plotfun, plotargs)
 }
 
 #' @rdname plot_projection_features

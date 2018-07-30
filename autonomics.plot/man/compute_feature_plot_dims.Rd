@@ -17,19 +17,15 @@ require(magrittr)
 require(SummarizedExperiment)
 if (require(autonomics.data)){
    object <- autonomics.data::stemcomp.proteinratios \%>\% magrittr::extract(1:9, )
-   object \%>\% autonomics.plot::plot_feature_profiles()      \%>\%
-              autonomics.plot::compute_feature_plot_dims()
-   object \%>\% autonomics.plot::plot_feature_distributions() \%>\%
-              autonomics.plot::compute_feature_plot_dims()
-   object \%>\% autonomics.plot::plot_feature_boxes()         \%>\%
-              autonomics.plot::compute_feature_plot_dims()
+   object \%>\% plot_features('point')   \%>\% compute_feature_plot_dims()
+   object \%>\% plot_features('violin')  \%>\% compute_feature_plot_dims()
+   object \%>\% plot_features('boxplot') \%>\% compute_feature_plot_dims()
 }
 if (require(atkin.2014)){
    object <- atkin.2014::soma \%>\% magrittr::extract(1:10, )
-   p <- object \%>\% autonomics.plot::plot_feature_profiles(
-                        x = 'time', color_var = 'condition', facet_var = 'subject_id',
-                        line = TRUE, fvars = 'TargetFullName')
-   p \%>\% autonomics.plot::compute_feature_plot_dims()
+   p <- object \%>\% plot_features('point', x = 'time', color_var = 'condition',
+                        facet_var = 'subject_id', line = TRUE, fvars = 'TargetFullName')
+   p \%>\% compute_feature_plot_dims()
 
 }
 }

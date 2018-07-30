@@ -7,9 +7,9 @@
 cluster_top_features_on_subgroups(object,
   design = create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object), result_dir,
-  n = 1000, feature_plots = autonomics.plot::default_feature_plots(object)
-  \%>\% setdiff("bars"), x = autonomics.plot::default_x(object,
-  feature_plots[1]), color_var = autonomics.plot::default_color_var(object),
+  n = 1000, geoms = autonomics.plot::default_feature_plots(object) \%>\%
+  setdiff("bars"), x = autonomics.plot::default_x(object, geoms[1]),
+  color_var = autonomics.plot::default_color_var(object),
   shape_var = autonomics.plot::default_shape_var(object),
   group_var = autonomics.plot::default_group_var(object),
   txt_var = autonomics.plot::default_txt_var(object), line = TRUE)
@@ -25,7 +25,7 @@ cluster_top_features_on_subgroups(object,
 
 \item{n}{number of top features}
 
-\item{feature_plots}{which type of feature plots to generate}
+\item{geoms}{which type of feature plots to generate}
 
 \item{x}{svar mapped to x in feature plots}
 
@@ -44,10 +44,10 @@ Cluster top features (on subgroup profiles)
 }
 \examples{
 \dontrun{
+library(magrittr)
 if (require(autonomics.data)){
-   library(magrittr)
    result_dir <- tempdir() \%T>\% message()
-   object <- autonomics.data::billing2016
+   object <- autonomics.data::stemcomp.proteinratios
    object$subgroup
    contrasts <- c(BM_E = 'BM_E', BM_EM = 'BM_EM', EM_E = 'EM_E')
    object \%>\% autonomics.find::cluster_top_features_on_subgroups(

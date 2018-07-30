@@ -206,11 +206,11 @@ default_feature_plots <- function(object){
                                               magrittr::is_greater_than(3) %>%
                                               all()
 
-   if (single_subgroup & single_replicate)            return('hbars')
-   if (single_subgroup | upto_3_singleton_subgroups)  return('bars')
-   if (some_singletons | block_present)               return('profiles')
-   if (each_subgroup_has_three_plus_replicates)       return('boxes')
-   else                                               return('profiles')
+   if (single_subgroup & single_replicate)            return('hbar')
+   if (single_subgroup | upto_3_singleton_subgroups)  return('bar')
+   if (some_singletons | block_present)               return('point')
+   if (each_subgroup_has_three_plus_replicates)       return('boxplot')
+   else                                               return('point')
 }
 
 #' default color_var
@@ -356,14 +356,14 @@ default_x <- function(object, feature_plots = default_feature_plots(object)){
 
    default_x_single_plot <- function(cur_plot){
 
-      if (cur_plot == 'bars' & sample_id_in_sdata){
+      if (cur_plot == 'bar' & sample_id_in_sdata){
          return('sample_id')
 
-      } else if (cur_plot %in% c('distributions', 'boxes')){
+      } else if (cur_plot %in% c('violin', 'boxplot')){
          assertive.sets::assert_is_subset('subgroup', autonomics.import::svars(object))
          return('subgroup')
 
-      } else if (cur_plot == 'profiles' & subgroup_in_sdata){
+      } else if (cur_plot == 'point' & subgroup_in_sdata){
          return('subgroup')
 
       } else {

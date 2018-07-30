@@ -2,4 +2,4 @@
 #'
 #' Which feature plots are supported?
 #' @export
-FEATURE_PLOTS <- c('bars', 'profiles', 'distributions', 'boxes', 'hbars')
+FEATURE_PLOTS <- c('bar', 'point', 'violin', 'boxplot', 'hbar')

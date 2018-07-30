@@ -9,17 +9,9 @@
 \title{Plot pca features}
 \usage{
 plot_projection_features(object, method, implementation = NULL,
-  feature_plot = autonomics.plot::default_feature_plots(object)[1],
-  x = autonomics.plot::default_x(object, feature_plot),
-  color_var = autonomics.plot::default_color_var(object),
-  color_values = autonomics.plot::default_color_values(object, color_var),
-  shape_var = autonomics.plot::default_shape_var(object),
-  group_var = autonomics.plot::default_group_var(object),
-  txt_var = autonomics.plot::default_txt_var(object), facet_var = NULL,
-  line = autonomics.plot::default_line(object),
+  geom = autonomics.plot::default_feature_plots(object)[1],
   fvars = autonomics.plot::default_fvars(object), dim = 1, n = 9,
-  na.impute = FALSE, title = sprintf("X\%d", dim), file = NULL,
-  legend.position = "right")
+  na.impute = FALSE, title = sprintf("X\%d", dim), file = NULL, ...)
 
 plot_pca_features(object, ...)
 
@@ -36,23 +28,7 @@ plot_pls_features(object, ...)
 
 \item{implementation}{'character' or NULL}
 
-\item{feature_plot}{value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}}
-
-\item{x}{svar mapped to x}
-
-\item{color_var}{svar mapped to color}
-
-\item{color_values}{color vector (names = color_var levels, values = colors)}
-
-\item{shape_var}{svar mapped to shape}
-
-\item{group_var}{svar mapped to group}
-
-\item{txt_var}{svar mapped to txt}
-
-\item{facet_var}{svar used for faceting}
-
-\item{line}{whether to connect points with line (logical)}
+\item{geom}{value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}}
 
 \item{fvars}{fvars used for plot annotation}
 
@@ -66,9 +42,7 @@ plot_pls_features(object, ...)
 
 \item{file}{file}
 
-\item{legend.position}{ggplot theme argument}
-
-\item{...}{passed to plot_projection_features}
+\item{...}{passed to autonomics.plot::plot_features}
 }
 \description{
 Plots top pca features.
@@ -81,7 +55,7 @@ require(magrittr)
 if (require(autonomics.data)){
    object <- autonomics.data::stemcomp.proteinratios
    object \%>\% autonomics.explore::plot_pca_features(n=9)
-   object \%>\% autonomics.explore::plot_pca_features(feature_plot = 'bars')
+   object \%>\% autonomics.explore::plot_pca_features(geom = 'bar')
 }
 
 # STEM CELL DIFFERENTIATION
@@ -102,9 +76,9 @@ if (require(autonomics.data)){
 
 if (require(subramanian.2016)){
    object <- subramanian.2016::metabolon
-   object \%>\% autonomics.explore::plot_pca_features(feature_plot = 'boxes')
-   object \%>\% autonomics.explore::plot_pls_features(feature_plot = 'boxes')
-   object \%>\% autonomics.explore::plot_lda_features(feature_plot = 'boxes')
+   object \%>\% autonomics.explore::plot_pca_features(geom = 'boxplot', n=4)
+   object \%>\% autonomics.explore::plot_pls_features(geom = 'boxplot', n=4)
+   object \%>\% autonomics.explore::plot_lda_features(geom = 'boxplot', n=4)
 }
 
 if (require(atkin.2014)){

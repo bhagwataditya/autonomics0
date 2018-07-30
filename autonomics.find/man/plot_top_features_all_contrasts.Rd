@@ -7,10 +7,10 @@
 plot_top_features_all_contrasts(object,
   design = autonomics.find::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object), result_dir,
-  feature_plots = autonomics.plot::default_feature_plots(object), ...)
+  geoms = autonomics.plot::default_feature_plots(object), ...)
 }
 \arguments{
-\item{object}{eset, as returned by \link{add_limma_to_fdata}}
+\item{object}{SummarizedExperiment}
 
 \item{design}{design matrix}
 
@@ -18,9 +18,9 @@ plot_top_features_all_contrasts(object,
 
 \item{result_dir}{directory where to store results}
 
-\item{feature_plots}{which feature plots to be created?}
+\item{geoms}{which feature plots to be created?}
 
-\item{top_definition}{definition of top features}
+\item{...}{passed to autonomics.plot::plot_features}
 }
 \description{
 Plot top features per contrast
@@ -31,23 +31,28 @@ if (require(atkin.2014)){
    object <- atkin.2014::soma
    contrasts <- atkin.2014::contrasts
    result_dir <- tempdir() \%T>\% message()
-   object \%>\% autonomics.find::plot_top_features_all_contrasts(
-                   contrasts = contrasts[1], result_dir = result_dir)
-   object \%>\% autonomics.find::plot_top_features_all_contrasts(
-                   contrasts = contrasts[1], result_dir = result_dir,
-                   nplot = 9, feature_plot = 'profiles', x = 'time',
-                   color_var = 'condition', facet_var = 'subject_id',
-                   fvars = 'TargetFullName')
+   object \%>\% plot_top_features_all_contrasts(
+                   contrasts = contrasts[1], 
+                    result_dir = result_dir)
+   object \%>\% plot_top_features_all_contrasts(
+                   contrasts  = contrasts[1], 
+                   result_dir = result_dir,
+                   nplot      = 9, 
+                   geom       = 'point', 
+                   x          = 'time',
+                   color_var  = 'condition',
+                   facet_var  = 'subject_id',
+                   fvars      = 'TargetFullName')
 }
 # GLUTAMINASE
 if (require(autonomics.data)){
   object <- autonomics.data::glutaminase
   result_dir <- tempdir() \%T>\% message()
-  object \%>\% autonomics.find::plot_top_features_all_contrasts(
+  object \%>\% plot_top_features_all_contrasts(
                 contrasts      = autonomics.import::contrastdefs(.)[1:2],
                 top_definition = 'fdr < 0.05',
                 x              = 'TIME_POINT',
-                feature_plot   = 'boxes',
+                geom           = 'boxplot',
                 result_dir     = result_dir)
 }
 }

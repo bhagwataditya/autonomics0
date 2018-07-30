@@ -19,7 +19,7 @@ Get x labels from ggplot object
 require(magrittr)
 if (require(autonomics.data)){
    object <- autonomics.data::stemcomp.proteinratios \%>\% magrittr::extract(1:9, )
-   b <- object \%>\% autonomics.plot::plot_feature_profiles() \%>\% ggplot2::ggplot_build()
+   b <- object \%>\% autonomics.plot::plot_features('point') \%>\% ggplot2::ggplot_build()
    b \%>\% autonomics.plot::gg_xlabels()
 }
 }

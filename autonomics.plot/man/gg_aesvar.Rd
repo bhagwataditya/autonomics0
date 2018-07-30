@@ -21,12 +21,12 @@ Get name of variable mapped to a aesthetic
 require(magrittr)
 if (require(autonomics.data)){
    object <- autonomics.data::stemcomp.proteinratios \%>\% magrittr::extract(1:9, )
-   b <- object \%>\% autonomics.plot::plot_feature_profiles() \%>\%
+   b <- object \%>\% autonomics.plot::plot_features('point') \%>\%
                    ggplot2::ggplot_build()
    b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'color')
    b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'x')
    b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'shape')
-   b <- object \%>\% autonomics.plot::plot_feature_distributions() \%>\%
+   b <- object \%>\% autonomics.plot::plot_features('violin') \%>\%
                    ggplot2::ggplot_build()
    b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'color')
    b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'x')
@@ -34,7 +34,7 @@ if (require(autonomics.data)){
 }
 if (require(atkin.2014)){
    object <- atkin.2014::soma \%>\% magrittr::extract(1:10, )
-   b <- object \%>\% autonomics.plot::plot_feature_profiles(
+   b <- object \%>\% autonomics.plot::plot_features('point',
                         x = 'time', color_var = 'condition', facet_var = 'subject_id',
                         line = TRUE, fvars = 'TargetFullName') \%>\%
                         ggplot2::ggplot_build()
@@ -43,10 +43,10 @@ if (require(atkin.2014)){
 if (require(subramanian.2016)){
    b <- subramanian.2016::metabolon \%>\%
         magrittr::extract(1:10, ) \%>\%
-        autonomics.plot::plot_feature_boxes(
-           color_var = 'condition',
-           group_var = 'condition',
-           line      = TRUE) \%>\%
+        plot_features('boxplot',
+                       color_var = 'condition',
+                       group_var = 'condition',
+                       line      = TRUE) \%>\%
         ggplot2::ggplot_build()
    aesthetic <- 'colour'
    gg_aesvar(b, aesthetic)
