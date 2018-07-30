@@ -4,16 +4,16 @@
 \alias{invert_ratios}
 \title{Invert ratios for some subgroup levels}
 \usage{
-invert_ratios(object, invert_subgroups, channel_frac, subgroup_frac)
+invert_ratios(object, invert_subgroups, subgroup_frac)
 }
 \arguments{
 \item{object}{eset}
 
 \item{invert_subgroups}{vector of subgroup levels that require inversion}
 
-\item{channel_frac}{fractionator symbol for channel values}
-
 \item{subgroup_frac}{fractionator symbol for subgroup values}
+
+\item{channel_frac}{fractionator symbol for channel values}
 }
 \value{
 eset with inverted ratios for specified subgroups
@@ -23,13 +23,19 @@ Invert ratios for some subgroup levels
 }
 \examples{
 require(magrittr)
+
+# Stem cell comparison (MaxQuant)
+#--------------------------------
 if (require(autonomics.data)){
-   proteingroups_file <- system.file('extdata/billing2016/proteinGroups.txt',
-                                      package = 'autonomics.data')
-   object <- autonomics.import::load_proteingroups(proteingroups_file)
-   invert_subgroups <- unique(object$subgroup)
-   object$subgroup;  subgroup_frac <- '_'
-   object$channel;   channel_frac <- '/'
-   object \%>\% autonomics.preprocess::invert_ratios(invert_subgroups, channel_frac, subgroup_frac)
+   file <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
+                        package = 'autonomics.data')
+   object <- file \%>\%
+             autonomics.import::load_proteingroups(infer_design_from_sampleids = TRUE)
+   object \%>\% autonomics.import::sdata()
+
+   object \%>\% autonomics.preprocess::invert_ratios(
+                 invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'),
+                 subgroup_frac    = '_') \%>\%
+              autonomics.import::sdata()
 }
 }

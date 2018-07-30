@@ -2,16 +2,18 @@
 % Please edit documentation in R/filter_features.R
 \name{filter_features_nonzero_in_some_sample}
 \alias{filter_features_nonzero_in_some_sample}
-\title{Keep features that are non-zero (and non-NA) for some sample}
+\title{Keep features that are non-zero, non-NA, and non-NaN for some sample}
 \usage{
-filter_features_nonzero_in_some_sample(object)
+filter_features_nonzero_in_some_sample(object, verbose = TRUE)
 }
 \arguments{
-\item{object}{eSet}
+\item{object}{SummarizedExperiment}
+
+\item{verbose}{logical}
 }
 \value{
 filtered eSet
 }
 \description{
-Keep features that are non-zero (and non-NA) for some sample
+Keep features that are non-zero, non-NA, and non-NaN for some sample
 }

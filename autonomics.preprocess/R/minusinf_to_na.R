@@ -13,3 +13,45 @@ minusinf_to_na <- function(object){
    }
    object
 }
+
+#' Convert NAs to zeroes
+#' @param object    SummarizedExperiment
+#' @return Updated SummarizedExperiment
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::glutaminase
+#'    object %>% na_to_zero()
+#'    object %>% na_to_zero(condition)
+#' }
+#' @importFrom magrittr %>%
+#' @export
+na_to_zero <- function(object){
+   selector <- autonomics.import::exprs(object) %>% is.na()
+   autonomics.support::cmessage('\t\tReplace NA -> 0 for %d/%d features per sample (avg)',
+                                selector %>% colSums(na.rm=TRUE) %>% mean() %>% round(),
+                                nrow(object))
+   autonomics.import::exprs(object)[selector] <- 0
+   object
+
+}
+
+#' Convert zeroes to NAs
+#' @param object    SummarizedExperiment
+#' @return Updated SummarizedExperiment
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::glutaminase %>% na_to_zero()
+#'    object %>% autonomics.preprocess::zero_to_na()
+#' }
+#' @importFrom magrittr %>%
+#' @export
+zero_to_na <- function(object){
+   selector <- autonomics.import::exprs(object) == 0
+   autonomics.support::cmessage('\t\tReplace 0 -> NA for %d/%d features per sample (avg)',
+                                selector %>% colSums(na.rm=TRUE) %>% mean() %>% round(),
+                                nrow(object))
+   autonomics.import::exprs(object)[selector] <- NA_real_
+   object
+}
