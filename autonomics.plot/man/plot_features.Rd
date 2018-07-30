@@ -20,7 +20,8 @@ plot_features_without_printing(object,
   alpha_var = NULL, fvars = autonomics.plot::default_fvars(object),
   title = "", scales = "free_y", x_text_angle = 90, line = FALSE,
   zero_hline = autonomics.plot::default_zero_hline(object), xlab = NULL,
-  ylab = NULL, legend.position = "right", verbose = FALSE)
+  ylab = NULL, legend.position = "right", dodge_width = 0,
+  verbose = FALSE)
 
 plot_features(object, ..., file = NULL, width = NULL, height = NULL)
 
@@ -70,6 +71,8 @@ plot_feature_boxes(object, ...)
 \item{ylab}{ylab}
 
 \item{legend.position}{position of legend}
+
+\item{dodge_width}{numeric}
 
 \item{verbose}{logical}
 

@@ -8,19 +8,10 @@ plot_top_features(object,
   design = autonomics.find::create_design_matrix(object),
   contrast = autonomics.find::default_contrasts(object)[1],
   top_definition = autonomics.find::default_top_definition(object),
-  direction = autonomics.find::DIRECTIONS[1], xlab = "",
+  direction = autonomics.find::DIRECTIONS[1],
   feature_plot = autonomics.plot::default_feature_plots(object)[1],
-  x = autonomics.plot::default_x(object, feature_plot),
-  color_var = autonomics.plot::default_color_var(object),
-  color_values = autonomics.plot::default_color_values(object),
-  shape_var = autonomics.plot::default_shape_var(object),
-  group_var = autonomics.plot::default_group_var(object),
-  txt_var = autonomics.plot::default_txt_var(object),
-  facet_var = autonomics.plot::default_facet_var(),
-  line = autonomics.plot::default_line(object),
-  fvars = autonomics.plot::default_fvars(object),
-  nplot = autonomics.find::default_nplot(object), file = NULL,
-  width = NULL, height = NULL)
+  nplot = autonomics.find::default_nplot(object),
+  fvars = autonomics.plot::default_fvars(object), ...)
 }
 \arguments{
 \item{object}{\code{eSet}}
@@ -33,35 +24,11 @@ plot_top_features(object,
 
 \item{direction}{any value in autonomics.find::DIRECTIONS}
 
-\item{xlab}{passed to plotting}
-
 \item{feature_plot}{value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}}
-
-\item{x}{svar mapped to x}
-
-\item{color_var}{svar mapped to color}
-
-\item{color_values}{color value vector (names = subgroups, contents = colors)}
-
-\item{shape_var}{svar mapped to shape}
-
-\item{group_var}{svar mapped to group}
-
-\item{txt_var}{svar mapped to txt}
-
-\item{facet_var}{svar used for faceting}
-
-\item{line}{whether to add line (logical)}
-
-\item{fvars}{fvars to use in plot}
 
 \item{nplot}{max no of top features to plot}
 
-\item{file}{file to which fesults are written}
-
-\item{width}{width in inches}
-
-\item{height}{height in inches}
+\item{fvars}{fvars to use in plot}
 }
 \description{
 This function visualizes the top features for the specified contrast.

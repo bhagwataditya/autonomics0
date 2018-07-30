@@ -7,19 +7,7 @@
 plot_top_features_all_contrasts(object,
   design = autonomics.find::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object), result_dir,
-  top_definition = autonomics.find::default_top_definition(object),
-  feature_plots = autonomics.plot::default_feature_plots(object),
-  x = autonomics.plot::default_x(object, feature_plots[1]),
-  color_var = autonomics.plot::default_color_var(object),
-  color_values = autonomics.plot::default_color_values(object),
-  shape_var = autonomics.plot::default_shape_var(object),
-  group_var = autonomics.plot::default_group_var(object),
-  txt_var = autonomics.plot::default_txt_var(object),
-  facet_var = autonomics.plot::default_facet_var(),
-  line = autonomics.plot::default_line(object),
-  fvars = autonomics.plot::default_fvars(object),
-  nplot = autonomics.find::default_nplot(object), width = NULL,
-  height = NULL)
+  feature_plots = autonomics.plot::default_feature_plots(object), ...)
 }
 \arguments{
 \item{object}{eset, as returned by \link{add_limma_to_fdata}}
@@ -30,33 +18,9 @@ plot_top_features_all_contrasts(object,
 
 \item{result_dir}{directory where to store results}
 
-\item{top_definition}{definition of top features}
-
 \item{feature_plots}{which feature plots to be created?}
 
-\item{x}{svar mapped to x in feature plots}
-
-\item{color_var}{svar mapped to color in feature plots}
-
-\item{color_values}{color vector (names = subgroups, values = colors)}
-
-\item{shape_var}{svar mapped to shape in feature plots}
-
-\item{group_var}{svar mapped to group in feature plots}
-
-\item{txt_var}{svar mapped to txt   in feature plots}
-
-\item{facet_var}{svar used to facet feature plots}
-
-\item{line}{whether to connect points in feature plots (logical)}
-
-\item{fvars}{fvars to use in plot}
-
-\item{nplot}{number of features to plot}
-
-\item{width}{figure width (inches)}
-
-\item{height}{figure height (inches)}
+\item{top_definition}{definition of top features}
 }
 \description{
 Plot top features per contrast

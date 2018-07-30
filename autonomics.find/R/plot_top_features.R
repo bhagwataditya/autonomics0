@@ -101,21 +101,9 @@ format_sigbvalues <- function(object, contrast){
 #' @param contrast         named contrast for which to select the top feature bars
 #' @param top_definition   Definition of 'top features'.
 #' @param direction        any value in autonomics.find::DIRECTIONS
-#' @param xlab             passed to plotting
 #' @param feature_plot     value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}
-#' @param x                svar mapped to x
-#' @param color_var        svar mapped to color
-#' @param color_values     color value vector (names = subgroups, contents = colors)
-#' @param shape_var        svar mapped to shape
-#' @param group_var        svar mapped to group
-#' @param txt_var          svar mapped to txt
-#' @param facet_var        svar used for faceting
-#' @param line             whether to add line (logical)
 #' @param fvars            fvars to use in plot
 #' @param nplot            max no of top features to plot
-#' @param file             file to which fesults are written
-#' @param width            width in inches
-#' @param height           height in inches
 #' @examples
 #' require(magrittr)
 #' 
@@ -195,22 +183,10 @@ plot_top_features <- function(
    contrast       = autonomics.find::default_contrasts(object)[1],
    top_definition = autonomics.find::default_top_definition(object),
    direction      = autonomics.find::DIRECTIONS[1],
-#   result_dir     = NULL,
-   xlab           = '',
    feature_plot   = autonomics.plot::default_feature_plots(object)[1],
-   x              = autonomics.plot::default_x(object, feature_plot),
-   color_var      = autonomics.plot::default_color_var(object),
-   color_values   = autonomics.plot::default_color_values(object),
-   shape_var      = autonomics.plot::default_shape_var(object),
-   group_var      = autonomics.plot::default_group_var(object),
-   txt_var        = autonomics.plot::default_txt_var(object),
-   facet_var      = autonomics.plot::default_facet_var(),
-   line           = autonomics.plot::default_line(object),
-   fvars          = autonomics.plot::default_fvars(object),
-   nplot          = autonomics.find::default_nplot(object),
-   file           = NULL,
-   width          = NULL,
-   height         = NULL
+   nplot          = autonomics.find::default_nplot(object), 
+   fvars          = autonomics.plot::default_fvars(object),   
+   ...
 ){
   # Process and check args
   assertive.sets::assert_is_subset(feature_plot, autonomics.plot::FEATURE_PLOTS)
@@ -243,34 +219,9 @@ plot_top_features <- function(
   }
 
   # Horizontal feature bars
-  if (feature_plot == 'hbars'){
-    facet_def <- if('replicate' %in% autonomics.import::svars(object)) '~ subgroup + replicate'  else '~ sample'
-    top %>% autonomics.plot::plot_feature_hbars(fvars        = fvars,
-                                                color_var    = color_var,
-                                                color_values = color_values,
-                                                facet_def    = facet_def,
-                                                alpha_var    = 'plot.alpha',
-                                                xlab         = 'log2 ratio',
-                                                title        = my_title,
-                                                file         = file,
-                                                width        = width,
-                                                height       = height)
-  } else {
-    top %>% autonomics.plot::plot_features(x            = x,
-                                           color_var    = color_var,
-                                           color_values = color_values,
-                                           shape_var    = shape_var,
-                                           group_var    = group_var,
-                                           txt_var      = txt_var,
-                                           facet_var    = facet_var,
-                                           alpha_var    = 'plot.alpha',
-                                           line         = line,
-                                           title        = my_title,
-                                           fvars        = fvars,
-                                           file         = file,
-                                           width        = width,
-                                           height       = height,
-                                           feature_plot = feature_plot)
+  if (feature_plot == 'hbars'){ facet_def <- if('replicate' %in% autonomics.import::svars(object)) '~ subgroup + replicate'  else '~ sample'
+                                top %>% autonomics.plot::plot_feature_hbars(alpha_var = 'plot.alpha', title = my_title, fvars = fvars, xlab = 'log2 ratio', ...)
+  } else {                      top %>% autonomics.plot::plot_features(     alpha_var = 'plot.alpha', title = my_title, fvars = fvars, feature_plot = feature_plot, ...)
   }
 
 }
@@ -284,18 +235,6 @@ plot_top_features <- function(
 #' @param result_dir     directory where to store results
 #' @param top_definition definition of top features
 #' @param feature_plots  which feature plots to be created?
-#' @param x              svar mapped to x in feature plots
-#' @param color_var      svar mapped to color in feature plots
-#' @param color_values   color vector (names = subgroups, values = colors)
-#' @param shape_var      svar mapped to shape in feature plots
-#' @param group_var      svar mapped to group in feature plots
-#' @param txt_var        svar mapped to txt   in feature plots
-#' @param facet_var      svar used to facet feature plots
-#' @param line           whether to connect points in feature plots (logical)
-#' @param fvars          fvars to use in plot
-#' @param nplot          number of features to plot
-#' @param width          figure width (inches)
-#' @param height         figure height (inches)
 #' @examples
 #' require(magrittr)
 #' if (require(atkin.2014)){
@@ -328,20 +267,8 @@ plot_top_features_all_contrasts <- function(
    design         = autonomics.find::create_design_matrix(object),
    contrasts      = autonomics.find::default_contrasts(object),
    result_dir,
-   top_definition = autonomics.find::default_top_definition(object),
    feature_plots  = autonomics.plot::default_feature_plots(object),
-   x              = autonomics.plot::default_x(object, feature_plots[1]),
-   color_var      = autonomics.plot::default_color_var(object),
-   color_values   = autonomics.plot::default_color_values(object),
-   shape_var      = autonomics.plot::default_shape_var(object),
-   group_var      = autonomics.plot::default_group_var(object),
-   txt_var        = autonomics.plot::default_txt_var(object),
-   facet_var      = autonomics.plot::default_facet_var(),
-   line           = autonomics.plot::default_line(object),
-   fvars          = autonomics.plot::default_fvars(object),
-   nplot          = autonomics.find::default_nplot(object),
-   width          = NULL,
-   height         = NULL
+   ...
 ){
   for (i in seq_along(contrasts)){
     contrast <- contrasts[i] %>% magrittr::set_names(names(contrasts)[i])
@@ -350,29 +277,17 @@ plot_top_features_all_contrasts <- function(
     for (direction in c('neg', 'pos')){
        for (i_plot in seq_along(feature_plots)){
           cur_plot <- feature_plots[[i_plot]]
-          if (length(x) > 1)   x %<>% magrittr::extract2(i_plot)
+          #if (length(x) > 1)   x %<>% magrittr::extract2(i_plot)
           my_file <- sprintf('%s/top_%s__%s__%s.pdf', subdir, cur_plot, names(contrast), direction)
           autonomics.support::cmessage('\t\t%s %s 0   %s',
                                         contrast,
                                         autonomics.find::direction_to_sign(direction), basename(my_file))
-          object %>% autonomics.find::plot_top_features(  design         = design,
-                                                            contrast       = contrast,
-                                                            top_definition = top_definition,
-                                                            direction      = direction,
-                                                            feature_plot   = cur_plot,
-                                                            x              = x,
-                                                            color_var      = color_var,
-                                                            color_values   = color_values,
-                                                            shape_var      = shape_var,
-                                                            group_var      = group_var,
-                                                            txt_var        = txt_var,
-                                                            facet_var      = facet_var,
-                                                            line           = line,
-                                                            fvars          = fvars,
-                                                            nplot          = nplot,
-                                                            file           = my_file,
-                                                            width          = width,
-                                                            height         = height)
+          object %>% autonomics.find::plot_top_features( design         = design,
+                                                         contrast       = contrast,
+                                                         direction      = direction,
+                                                         feature_plot   = cur_plot,
+                                                         file           = my_file, 
+                                                         ...)
        }
     }
   }

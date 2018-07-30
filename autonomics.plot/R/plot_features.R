@@ -338,7 +338,6 @@ print_feature_bars <- function(p, file, ngroups, nrows, nfvars, nsamples){
 }
 
 
-#' @importFrom ggplot2  element_text  theme  ggtitle  xlab  ylab
 add_annotation <- function(p, title, xlab, ylab, x_text_angle){
   p +
   ggplot2::ggtitle(title) +
@@ -398,6 +397,7 @@ feature_plot_labeller <- function(plot_df){
 #' @param width            width (inches)
 #' @param height           height (inches)
 #' @param legend.position  position of legend
+#' @param dodge_width      numeric
 #' @param verbose          logical
 #' @param ...              passed to backend
 #' @examples
@@ -511,6 +511,7 @@ plot_features_without_printing <- function(
    xlab            = NULL,
    ylab            = NULL,
    legend.position = 'right',
+   dodge_width     = 0,
    verbose         = FALSE
 ){
    # Defaults
@@ -558,15 +559,12 @@ plot_features_without_printing <- function(
    }
 
    # Plot either profiles or distributions
-   if (feature_plot == 'profiles'){
-      p <- p + ggplot2::geom_point(ggplot2::aes_string(x = x, y = 'value', color = color_var, shape = shape_var, alpha = alpha_var), na.rm = TRUE)
-   } else if (feature_plot == 'bars'){
-      p <- p + ggplot2::geom_bar(ggplot2::aes_string(  x = x, y = 'value', fill  = color_var, alpha = alpha_var), na.rm = TRUE, stat = 'identity')
-   } else if (feature_plot == 'distributions'){
-      p <- p + ggplot2::geom_violin(ggplot2::aes_string(x = x, y = 'value', fill = color_var, alpha = alpha_var), na.rm = TRUE)
-      p <- p + ggplot2::geom_boxplot(data = plot_df, width = 0.1, ggplot2::aes_string(x = x, y = 'value', fill = color_var, alpha = alpha_var))
-   } else if (feature_plot == 'boxes'){
-      p <- p + ggplot2::geom_boxplot(data = plot_df, ggplot2::aes_string(x = x, y = 'value', fill = color_var, alpha = alpha_var))
+   dodged_position <- ggplot2::position_dodge(width = dodge_width)
+   if (feature_plot == 'profiles'){              p <- p + ggplot2::geom_point(  ggplot2::aes_string(x = x, y = 'value', color = color_var, alpha = alpha_var, shape = shape_var, group = group_var), na.rm = TRUE, position = dodged_position) # Note: group is required for dodging!
+   } else if (feature_plot == 'bars'){           p <- p + ggplot2::geom_bar(    ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var), stat = 'identity', na.rm = TRUE)
+   } else if (feature_plot == 'distributions'){  p <- p + ggplot2::geom_violin( ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var),                    na.rm = TRUE)
+                                                 p <- p + ggplot2::geom_boxplot(ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var), data = plot_df, width = 0.1)
+   } else if (feature_plot == 'boxes'){          p <- p + ggplot2::geom_boxplot(ggplot2::aes_string(x = x, y = 'value', fill  = color_var, alpha = alpha_var), data = plot_df)
    }
 
    # Take care of alpha transparancy
@@ -587,12 +585,12 @@ plot_features_without_printing <- function(
 
    # Connect with a line
    if (line){
-      if (group_var == 1){ # single line with fixed color
-         p <- p + ggplot2::stat_summary(fun.y = 'median', geom = 'line', na.rm = TRUE,  color = 'gray10',
-                                        ggplot2::aes_string(x = x, y = 'value', group = group_var))
-      } else {             # separate lines with different color
-         p <- p + ggplot2::stat_summary(fun.y = 'median', geom = 'line', na.rm = TRUE,
-                                        ggplot2::aes_string(x = x, y = 'value', group = group_var, color = color_var))
+      # single line with fixed color
+      if (group_var == 1){   p <- p + ggplot2::stat_summary(fun.y = 'median', geom = 'line', na.rm = TRUE,  color = 'gray10',
+                                      ggplot2::aes_string(x = x, y = 'value', group = group_var))
+      # separate lines with different color
+      } else {               p <- p + ggplot2::stat_summary(fun.y = 'median', geom = 'line', na.rm = TRUE,
+                                      ggplot2::aes_string(x = x, y = 'value', group = group_var, color = color_var), position = dodged_position)
       }
    }
 
