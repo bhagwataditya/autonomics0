@@ -7,23 +7,16 @@ analyze_contrasts <- function(
    result_dir       = default_result_dir(object),
    design           = autonomics.find::create_design_matrix(object),
    contrasts        = autonomics.find::default_contrasts(object),
+   direction        = c('neg', 'pos'),
    top_definition   = autonomics.find::default_top_definition(object),
    universe         = autonomics.ora::default_universe(object),
-   feature_plots    = autonomics.plot::default_feature_plots(object),
-   x                = autonomics.plot::default_x(object, feature_plots[1]),
-   color_var        = autonomics.plot::default_color_var(object),
-   color_values     = autonomics.plot::default_color_values(object, color_var),
-   shape_var        = autonomics.plot::default_shape_var(object),
-   group_var        = autonomics.plot::default_group_var(object),
-   facet_var        = autonomics.plot::default_facet_var(),
-   line             = autonomics.plot::default_line(object),
-   fvars            = autonomics.plot::default_fvars(object),
    cluster_features = autonomics::default_cluster_features(),
    nplot            = autonomics.find::default_nplot(object),
    feature_plot_width  = NULL,
    feature_plot_height = NULL,
    min_set_size     = 5,
-   max_set_size     = Inf
+   max_set_size     = Inf, 
+   ...
 ){
 
   # Assert valid inputs
@@ -49,33 +42,24 @@ analyze_contrasts <- function(
 
   # Write to file
   message('\tWrite results to file')
-  object %>% autonomics.find::write_features(design, contrasts, top_definition, result_dir)
+  object %>% autonomics.find::write_features(
+                design         = design, 
+                contrasts      = contrasts, 
+                direction      = direction,
+                top_definition = top_definition, 
+                result_dir     = result_dir)
 
   # Plot top features
-  message('\tPlot top features')
+  message('\tPlot features')
   object %>% autonomics.find::plot_top_features_all_contrasts(
-     design         = design,
-     contrasts      = contrasts,
-     result_dir     = result_dir,
-     top_definition = top_definition,
-     feature_plots  = feature_plots,
-     x              = x,
-     color_var      = color_var,
-     color_values   = color_values,
-     shape_var      = shape_var,
-     group_var      = group_var,
-     facet_var      = facet_var,
-     line           = line,
-     fvars          = fvars,
-     nplot          = nplot, 
-     width  = feature_plot_width, 
-     height = feature_plot_height)
-
-  # Run sigb analysis
-  # if(inherits(object, "ProtSet")){
-  #    message('\tRun outlier analysis (sigb)')
-  #    object %<>% autonomics.find::add_sigb_to_fdata(contrasts)
-  # }
+                 design         = design,
+                 contrasts      = contrasts,
+                 direction      = direction,
+                 result_dir     = result_dir,
+                 nplot          = nplot, 
+                 width          = feature_plot_width, 
+                 height         = feature_plot_height, 
+                 ...)
 
   # Analyse over representation
   for (cur_universe in universe){
@@ -92,14 +76,9 @@ analyze_contrasts <- function(
   # Run cluster analysis
   if (cluster_features){
      object %>% autonomics.find::cluster_top_features_on_subgroups(
-        contrasts    = contrasts,
-        result_dir   = result_dir,
-        x            = x,
-        color_var    = color_var,
-        color_values = color_values,
-        shape_var    = shape_var,
-        group_var    = group_var,
-        line         = line)
+                   contrasts    = contrasts,
+                   result_dir   = result_dir,
+                   ...)
   }
 
   # Return

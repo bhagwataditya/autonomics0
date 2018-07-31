@@ -3,48 +3,30 @@
 \name{analyze_contrasts}
 \alias{analyze_contrasts}
 \alias{analyze_eset}
-\title{Analyze eset with omics data}
+\title{Analyze SummarizeExperiment}
 \usage{
 analyze_contrasts(object, result_dir = default_result_dir(object),
   design = autonomics.find::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
+  direction = c("neg", "pos"),
   top_definition = autonomics.find::default_top_definition(object),
   universe = autonomics.ora::default_universe(object),
-  feature_plots = autonomics.plot::default_feature_plots(object),
-  x = autonomics.plot::default_x(object, feature_plots[1]),
-  color_var = autonomics.plot::default_color_var(object),
-  color_values = autonomics.plot::default_color_values(object, color_var),
-  shape_var = autonomics.plot::default_shape_var(object),
-  group_var = autonomics.plot::default_group_var(object),
-  facet_var = autonomics.plot::default_facet_var(),
-  line = autonomics.plot::default_line(object),
-  fvars = autonomics.plot::default_fvars(object),
   cluster_features = autonomics::default_cluster_features(),
   nplot = autonomics.find::default_nplot(object), feature_plot_width = NULL,
-  feature_plot_height = NULL, min_set_size = 5, max_set_size = Inf)
+  feature_plot_height = NULL, min_set_size = 5, max_set_size = Inf, ...)
 
 analyze_eset(object, result_dir = default_result_dir(object),
   design = autonomics.find::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
   top_definition = autonomics.find::default_top_definition(object),
-  universe = autonomics.ora::default_universe(object),
-  feature_plots = autonomics.plot::default_feature_plots(object),
-  x = autonomics.plot::default_x(object, feature_plots),
-  color_var = autonomics.plot::default_color_var(object),
-  color_values = autonomics.plot::default_color_values(object),
-  shape_var = autonomics.plot::default_shape_var(object),
-  group_var = autonomics.plot::default_group_var(object),
-  txt_var = autonomics.plot::default_txt_var(object),
-  facet_var = autonomics.plot::default_facet_var(),
-  line = autonomics.plot::default_line(object),
-  fvars = autonomics.plot::default_fvars(object), do_pca = TRUE,
-  cluster_features = default_cluster_features(),
+  universe = autonomics.ora::default_universe(object), dodge_width = 0,
+  do_pca = TRUE, cluster_features = default_cluster_features(),
   nplot = autonomics.find::default_nplot(object), feature_plot_width = NULL,
   feature_plot_height = NULL, min_set_size = 5, max_set_size = Inf,
-  zip_results = FALSE)
+  zip_results = FALSE, ...)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 
 \item{result_dir}{directory to which to write results}
 
@@ -55,24 +37,6 @@ analyze_eset(object, result_dir = default_result_dir(object),
 \item{top_definition}{Definition of 'top features'.}
 
 \item{universe}{'detectome', 'genome', or NULL (no ora)}
-
-\item{feature_plots}{subset of c('bars', 'profiles', 'distributions')}
-
-\item{x}{svar mapped to x in feature plots}
-
-\item{color_var}{svar mapped to color in feature plots}
-
-\item{color_values}{color values vector}
-
-\item{shape_var}{svar mapped to shape in feature plots}
-
-\item{group_var}{svar mapped to group in feature plots}
-
-\item{facet_var}{svar used to facet feature plots}
-
-\item{line}{whether to join points in feature plot with line (logical)}
-
-\item{fvars}{fvars to use in plot annotation}
 
 \item{cluster_features}{whether to cluster features (logical)}
 
@@ -86,14 +50,14 @@ analyze_eset(object, result_dir = default_result_dir(object),
 
 \item{max_set_size}{max set size (for ora)}
 
-\item{txt_var}{svar mapped to txt in PCA plots (but not in feature plots!)}
+\item{...}{passed to autonomics.plot::plot_features(...)}
 
 \item{do_pca}{whether to perform PCA analysis (logical)}
 
 \item{zip_results}{zip analysis results (logical)?}
 }
 \value{
-eset with analysis results in fdata
+Updated SummarizedExperiment
 }
 \description{
 \enumerate{

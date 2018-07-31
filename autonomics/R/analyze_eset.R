@@ -1,5 +1,5 @@
 ####
-#' @title Analyze eset with omics data
+#' @title Analyze SummarizeExperiment
 #' @description
 #' \enumerate{
 #'   \item Sample normalization
@@ -20,22 +20,12 @@
 #' }
 #' See the examples for more details
 #'
-#' @param object          eset
+#' @param object            SummarizedExperiment
 #' @param design            design matrix
 #' @param contrasts         contrast definitions
 #' @param top_definition    Definition of 'top features'.
 #' @param result_dir        directory to which to write results
 #' @param universe          'detectome', 'genome', or NULL (no ora)
-#' @param feature_plots     subset of c('bars', 'profiles', 'distributions')
-#' @param x                 svar mapped to x in feature plots
-#' @param color_var         svar mapped to color in feature plots
-#' @param color_values      color values vector
-#' @param shape_var         svar mapped to shape in feature plots
-#' @param group_var         svar mapped to group in feature plots
-#' @param txt_var           svar mapped to txt in PCA plots (but not in feature plots!)
-#' @param facet_var         svar used to facet feature plots
-#' @param line              whether to join points in feature plot with line (logical)
-#' @param fvars             fvars to use in plot annotation
 #' @param do_pca            whether to perform PCA analysis (logical)
 #' @param cluster_features  whether to cluster features (logical)
 #' @param nplot             no of top features to be plotted
@@ -44,7 +34,8 @@
 #' @param min_set_size      min set size (for ora)
 #' @param max_set_size      max set size (for ora)
 #' @param zip_results       zip analysis results (logical)?
-#' @return eset with analysis results in fdata
+#' @param ...               passed to autonomics.plot::plot_features(...)
+#' @return Updated SummarizedExperiment
 #' @examples
 #'
 #' require(magrittr)
@@ -110,24 +101,16 @@ analyze_eset <- function(
   contrasts        = autonomics.find::default_contrasts(object),
   top_definition   = autonomics.find::default_top_definition(object),
   universe         = autonomics.ora::default_universe(object),
-  feature_plots    = autonomics.plot::default_feature_plots(object),
-  x                = autonomics.plot::default_x(object, feature_plots),
-  color_var        = autonomics.plot::default_color_var(object),
-  color_values     = autonomics.plot::default_color_values(object),
-  shape_var        = autonomics.plot::default_shape_var(object),
-  group_var        = autonomics.plot::default_group_var(object),
-  txt_var          = autonomics.plot::default_txt_var(object),
-  facet_var        = autonomics.plot::default_facet_var(),
-  line             = autonomics.plot::default_line(object),
-  fvars            = autonomics.plot::default_fvars(object),
+  dodge_width      = 0,
   do_pca           = TRUE,
   cluster_features = default_cluster_features(),
   nplot            = autonomics.find::default_nplot(object),
   feature_plot_width  = NULL, 
   feature_plot_height = NULL,
-  min_set_size     = 5,
-  max_set_size     = Inf,
-  zip_results      = FALSE
+  min_set_size        = 5,
+  max_set_size        = Inf,
+  zip_results         = FALSE, 
+  ...
 ){
    # Assert valid args
    autonomics.import::assert_is_valid_eset(object)
@@ -162,41 +145,22 @@ analyze_eset <- function(
    # PCA
    message('\tPerform PCA')
    if (do_pca){
-      object %<>% autonomics.explore::add_and_write_pca(
-                       result_dir    = result_dir,
-                       feature_plots = feature_plots,
-                       color_var     = color_var,
-                       color_values  = color_values,
-                       shape_var     = shape_var,
-                       x             = x,
-                       group_var     = group_var,
-                       txt_var       = txt_var,
-                       line          = line)
+      object %<>% autonomics.explore::add_and_write_pca(result_dir = result_dir, ...)
    }
 
-   # Differential expression
-   # replicates <- !is.null(object$subgroup) && anyDuplicated(object$subgroup)
-   object %<>% autonomics::analyze_contrasts(
-                    result_dir     = result_dir,
-                    design         = design,
-                    contrasts      = contrasts,
-                    top_definition = top_definition,
-                    universe       = universe,
-                    feature_plots  = feature_plots,
-                    x              = x,
-                    color_var      = color_var,
-                    color_values   = color_values,
-                    shape_var      = shape_var,
-                    group_var      = group_var,
-                    facet_var      = facet_var,
-                    line           = line,
-                    fvars          = fvars,
-                    nplot          = nplot,
-                    feature_plot_height = feature_plot_height,
-                    feature_plot_width  = feature_plot_width,
-                    cluster_features = cluster_features,
-                    min_set_size   = min_set_size,
-                    max_set_size   = max_set_size)
+   # Analyze contrasts
+   object %<>% autonomics::analyze_contrasts(result_dir          = result_dir,
+                                             design              = design,
+                                             contrasts           = contrasts,
+                                             top_definition      = top_definition,
+                                             universe            = universe,
+                                             nplot               = nplot,
+                                             feature_plot_height = feature_plot_height,
+                                             feature_plot_width  = feature_plot_width,
+                                             cluster_features    = cluster_features,
+                                             min_set_size        = min_set_size,
+                                             max_set_size        = max_set_size, 
+                                             ...)
 
    # Save eSet. Zip results. Return eSet.
    saveRDS(object, sprintf('%s/object.rds', result_dir))

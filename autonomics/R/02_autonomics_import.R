@@ -1,9 +1,10 @@
-#' Create sample design file for Max Quant table
+#' contrastdefs
 #' 
-#' \code{\link[autonomics.import]{create_maxquant_design_file}}
-#' @name create_maxquant_design_file
-#' @importFrom autonomics.import   create_maxquant_design_file
-#' @export   create_maxquant_design_file
+#' \code{\link[autonomics.import]{contrastdefs}}
+#' @name contrastdefs
+#' @importFrom autonomics.import  contrastdefs   contrastdefs<- 
+#' @export contrastdefs
+#' @export contrastdefs<-
 NULL
 
 
@@ -24,6 +25,15 @@ NULL
 #' @importFrom autonomics.import  fdata   fdata<- 
 #' @export fdata
 #' @export fdata<-
+NULL
+
+#' fnames
+#' 
+#' \code{\link[autonomics.import]{fnames}}
+#' @name fnames
+#' @importFrom autonomics.import  fnames   fnames<- 
+#' @export fnames
+#' @export fnames<-
 NULL
 
 
@@ -64,29 +74,12 @@ NULL
 NULL
 
 
-#' Load phosphosites data
-#' 
-#' \code{\link[autonomics.import]{load_phosphosites}}
-#' @name load_phosphosites
-#' @importFrom autonomics.import   load_phosphosites
-#' @export   load_phosphosites
-NULL
-
 #' Load proteingroups data
 #' 
 #' \code{\link[autonomics.import]{load_proteingroups}}
 #' @name load_proteingroups
 #' @importFrom autonomics.import   load_proteingroups
 #' @export   load_proteingroups
-NULL
-
-
-#' Load rnsaseq counts
-#' 
-#' \code{\link[autonomics.import]{load_rnaseq_counts}}
-#' @name load_rnaseq_counts
-#' @importFrom autonomics.import   load_rnaseq_counts
-#' @export  load_rnaseq_counts
 NULL
 
 
@@ -99,6 +92,15 @@ NULL
 NULL
 
 
+#' Load metabolon complex lipid panel data
+#' 
+#' \code{\link[autonomics.import]{load_metabolonlipids}}
+#' @name load_metabolonlipids
+#' @importFrom autonomics.import   load_metabolonlipids
+#' @export load_metabolonlipids
+NULL
+
+
 #' Load somascan data
 #' 
 #' \code{\link[autonomics.import]{load_soma}}
@@ -107,14 +109,6 @@ NULL
 #' @export load_soma
 NULL
 
-
-#' prepro
-#' 
-#' \code{\link[autonomics.import]{prepro}}
-#' @name prepro
-#' @importFrom autonomics.import  prepro
-#' @export prepro
-NULL
 
 #' sdata
 #' 
@@ -126,6 +120,16 @@ NULL
 NULL
 
 
+#' snames
+#' 
+#' \code{\link[autonomics.import]{snames}}
+#' @name snames
+#' @importFrom autonomics.import  snames   snames<- 
+#' @export snames
+#' @export snames<-
+NULL
+
+
 #' svars
 #' 
 #' \code{\link[autonomics.import]{svars}}
@@ -133,5 +137,15 @@ NULL
 #' @importFrom autonomics.import  svars   svars<- 
 #' @export svars
 #' @export svars<-
+NULL
+
+
+
+#' Write sample design
+#' 
+#' \code{\link[autonomics.import]{write_design}}
+#' @name write_design
+#' @importFrom autonomics.import   write_design
+#' @export   write_design
 NULL
 
