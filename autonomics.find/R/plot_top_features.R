@@ -1,10 +1,10 @@
 #' @importFrom magrittr   %>%
-create_feature_plot_title <- function(object, contrast, top_definition, direction){
+create_feature_plot_title <- function(object, contrast, topdef, direction){
 
   # Add no of top features
-  n_top      <- sum(autonomics.find::are_top_features(object, top_definition, names(contrast), direction))
+  n_top      <- sum(autonomics.find::are_top_features(object, topdef, names(contrast), direction))
   down_or_up <- autonomics.find::direction_to_sign(direction)
-  my_title <- sprintf("%s %s 0   |   %d %s", contrast, down_or_up, n_top, top_definition)
+  my_title <- sprintf("%s %s 0   |   %d %s", contrast, down_or_up, n_top, topdef)
 
   # Add no of directional features
   coefvar        <- paste0('coef.',    names(contrast))
@@ -99,7 +99,7 @@ format_sigbvalues <- function(object, contrast){
 #' @param object \code{eSet}
 #' @param design           design matrix
 #' @param contrast         named contrast for which to select the top feature bars
-#' @param top_definition   Definition of 'top features'.
+#' @param topdef   Definition of 'top features'.
 #' @param direction        any value in autonomics.find::DIRECTIONS
 #' @param geom             'point', 'boxplot', 'violin', 'bar', 'hbar'
 #' @param fvars            fvars to use in plot
@@ -123,7 +123,7 @@ format_sigbvalues <- function(object, contrast){
 #'# GLUTAMINASE
 #'   if (require(autonomics.data)){
 #'      object <- autonomics.data::glutaminase
-#'      object %>% plot_top_features(top_definition = 'bonf < 0.05 & rank <= 4',
+#'      object %>% plot_top_features(topdef = 'bonf < 0.05 & rank <= 4',
 #'                                   direction      = 'both',
 #'                                   geom           = 'boxplot')
 #'   }
@@ -165,7 +165,7 @@ plot_top_features <- function(
    object,
    design         = autonomics.find::create_design_matrix(object),
    contrast       = autonomics.find::default_contrasts(object)[1],
-   top_definition = autonomics.find::default_top_definition(object),
+   topdef         = autonomics.find::default_topdef(object),
    direction      = autonomics.find::DIRECTIONS[1],
    geom           = autonomics.plot::default_feature_plots(object)[1],
    nplot          = autonomics.find::default_nplot(object), 
@@ -179,7 +179,7 @@ plot_top_features <- function(
   assertive.base::assert_is_identical_to_true(autonomics.find::is_valid_contrast(contrast, design))
 
   # Limit eset to top features for chosen direction (abort if none)
-  top <- object %>% autonomics.find::filter_n_arrange_top_features(names(contrast), top_definition, direction, nplot)
+  top <- object %>% autonomics.find::filter_n_arrange_top_features(names(contrast), topdef, direction, nplot)
   if (nrow(top)==0){
      autonomics.support::cmessage('\t\t%s %s 0   no top features - abort',
                                   contrast, autonomics.find::direction_to_sign(direction))
@@ -187,7 +187,7 @@ plot_top_features <- function(
   }
 
   # Prepare title & subdir
-  my_title <- create_feature_plot_title(object, contrast, top_definition, direction)
+  my_title <- create_feature_plot_title(object, contrast, topdef, direction)
 
   # Collapse fvars for hbars
   autonomics.import::sdata(top)[['plot.alpha']] <- top %>% infer_alpha(design, contrast)
@@ -245,7 +245,7 @@ plot_top_features <- function(
 #'   result_dir <- tempdir() %T>% message()
 #'   object %>% plot_top_features_all_contrasts(
 #'                 contrasts      = autonomics.import::contrastdefs(.)[1:2],
-#'                 top_definition = 'fdr < 0.05',
+#'                 topdef = 'fdr < 0.05',
 #'                 x              = 'TIME_POINT',
 #'                 geom           = 'boxplot',
 #'                 result_dir     = result_dir)
@@ -257,6 +257,7 @@ plot_top_features_all_contrasts <- function(
    design         = autonomics.find::create_design_matrix(object),
    contrasts      = autonomics.find::default_contrasts(object),
    direction      = c('neg', 'pos'),
+   topdef         = autonomics.find::default_topdef(object),
    result_dir,
    geoms          = autonomics.plot::default_feature_plots(object),
    ...
@@ -276,6 +277,7 @@ plot_top_features_all_contrasts <- function(
           object %>% autonomics.find::plot_top_features( design    = design,
                                                          contrast  = contrast,
                                                          direction = curdirection,
+                                                         topdef    = topdef,
                                                          geom      = cur_geom,
                                                          file      = my_file, 
                                                          ...)

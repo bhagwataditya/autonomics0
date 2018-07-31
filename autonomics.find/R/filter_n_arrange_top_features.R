@@ -3,7 +3,7 @@
 #'
 #' Which features fulfill top definition and direction for specified contrast?
 #' @param object       eset
-#' @param top_definition top definition
+#' @param topdef top definition
 #' @param contrast_name  contrast name (string)
 #' @param direction      'both', 'pos', or 'neg'
 #' @examples
@@ -27,7 +27,7 @@
 #' @export
 are_top_features <- function(
    object, 
-   top_definition  = autonomics.find::default_top_definition(object), 
+   topdef  = autonomics.find::default_topdef(object), 
    contrast_name, 
    direction
 ){
@@ -36,8 +36,8 @@ are_top_features <- function(
    assertive.types::assert_is_a_string(direction)
    assertive.sets::assert_is_subset(direction, c('both', 'pos', 'neg'))
    
-   top_definition %<>% autonomics.find::complete_top_definition(contrast_name, direction)
-   selector <- lazyeval::lazy_eval(top_definition, autonomics.import::fdata(object))
+   topdef %<>% autonomics.find::complete_topdef(contrast_name, direction)
+   selector <- lazyeval::lazy_eval(topdef, autonomics.import::fdata(object))
    selector[is.na(selector)] <- FALSE
    
    selector
@@ -48,18 +48,18 @@ are_top_features <- function(
 #' @export
 get_top_features <- function(
    object,
-   top_definition = autonomics.find::default_top_definition(object), 
+   topdef = autonomics.find::default_topdef(object), 
    contrast_name, 
    direction
 ){
-   idx <- object %>% are_top_features(top_definition = top_definition, contrast_name = contrast_name, direction = direction)
+   idx <- object %>% are_top_features(topdef = topdef, contrast_name = contrast_name, direction = direction)
    autonomics.import::fnames(object)[idx]
 }
 
 #' Filter (and arrange) top features
 #' @param object           eset
 #' @param contrast_name    contrast name
-#' @param top_definition   definition of 'top features'.
+#' @param topdef   definition of 'top features'.
 #' @param direction        'both', 'neg', or 'pos'
 #' @examples
 #' require(magrittr)
@@ -72,8 +72,8 @@ get_top_features <- function(
 #' }
 #' @importFrom magrittr %>%
 #' @export
-filter_top_features <- function(object, contrast_name, top_definition, direction){
-   idx <- are_top_features(object, top_definition, contrast_name, direction)
+filter_top_features <- function(object, contrast_name, topdef, direction){
+   idx <- are_top_features(object, topdef, contrast_name, direction)
    object %>% magrittr::extract(idx, )
 }
 
@@ -103,7 +103,7 @@ arrange_features_by_rank <- function(object, contrast_name){
 #' Filter and arrange top features
 #' @param object       eset
 #' @param contrast_name  contrast name
-#' @param top_definition top definition
+#' @param topdef top definition
 #' @param direction      'neg' or 'pos'
 #' @param nmax           max number of features
 #' @examples
@@ -117,9 +117,9 @@ arrange_features_by_rank <- function(object, contrast_name){
 #' }
 #' @importFrom magrittr  %>%
 #' @export
-filter_n_arrange_top_features <- function(object, contrast_name, top_definition, direction, nmax = Inf){
+filter_n_arrange_top_features <- function(object, contrast_name, topdef, direction, nmax = Inf){
    object                                                                           %>%
-   autonomics.find::filter_top_features(contrast_name, top_definition, direction)   %>%
+   autonomics.find::filter_top_features(contrast_name, topdef, direction)   %>%
    autonomics.find::arrange_features_by_rank(contrast_name)                         %>%
    magrittr::extract(seq_len(min(nmax, nrow(.))), )
 }

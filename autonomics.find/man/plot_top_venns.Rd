@@ -5,15 +5,14 @@
 \title{Plot venns showing top features}
 \usage{
 plot_top_venns(object, direction,
-  top_definition = autonomics.find::default_top_definition(object),
-  file = NULL)
+  topdef = autonomics.find::default_topdef(object), file = NULL)
 }
 \arguments{
 \item{object}{exprs object}
 
 \item{direction}{'neg' or 'pos'}
 
-\item{top_definition}{top definition}
+\item{topdef}{top definition}
 
 \item{file}{file to which print to}
 }

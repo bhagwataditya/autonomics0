@@ -4,14 +4,14 @@
 \alias{extract_ora_query}
 \title{Extract ora query}
 \usage{
-extract_ora_query(object, contrast_name, top_definition, direction)
+extract_ora_query(object, contrast_name, topdef, direction)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
 
 \item{contrast_name}{character}
 
-\item{top_definition}{character}
+\item{topdef}{character}
 
 \item{direction}{'pos' or 'neg'}
 }

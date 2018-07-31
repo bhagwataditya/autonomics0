@@ -23,7 +23,7 @@
 #' @param object            SummarizedExperiment
 #' @param design            design matrix
 #' @param contrasts         contrast definitions
-#' @param top_definition    Definition of 'top features'.
+#' @param topdef    Definition of 'top features'.
 #' @param result_dir        directory to which to write results
 #' @param universe          'detectome', 'genome', or NULL (no ora)
 #' @param do_pca            whether to perform PCA analysis (logical)
@@ -99,8 +99,8 @@ analyze_eset <- function(
   result_dir       = default_result_dir(object),
   design           = autonomics.find::create_design_matrix(object),
   contrasts        = autonomics.find::default_contrasts(object),
-  top_definition   = autonomics.find::default_top_definition(object),
-  universe         = autonomics.ora::default_universe(object),
+  topdef           = autonomics.find::default_topdef(object),
+  universe         = NULL, #autonomics.ora::default_universe(object),
   dodge_width      = 0,
   do_pca           = TRUE,
   cluster_features = default_cluster_features(),
@@ -152,7 +152,7 @@ analyze_eset <- function(
    object %<>% autonomics::analyze_contrasts(result_dir          = result_dir,
                                              design              = design,
                                              contrasts           = contrasts,
-                                             top_definition      = top_definition,
+                                             topdef              = topdef,
                                              universe            = universe,
                                              nplot               = nplot,
                                              feature_plot_height = feature_plot_height,

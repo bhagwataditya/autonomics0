@@ -4,14 +4,14 @@
 \alias{filter_top_features}
 \title{Filter (and arrange) top features}
 \usage{
-filter_top_features(object, contrast_name, top_definition, direction)
+filter_top_features(object, contrast_name, topdef, direction)
 }
 \arguments{
 \item{object}{eset}
 
 \item{contrast_name}{contrast name}
 
-\item{top_definition}{definition of 'top features'.}
+\item{topdef}{definition of 'top features'.}
 
 \item{direction}{'both', 'neg', or 'pos'}
 }

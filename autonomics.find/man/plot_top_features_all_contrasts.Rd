@@ -7,7 +7,8 @@
 plot_top_features_all_contrasts(object,
   design = autonomics.find::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
-  direction = c("neg", "pos"), result_dir,
+  direction = c("neg", "pos"),
+  topdef = autonomics.find::default_topdef(object), result_dir,
   geoms = autonomics.plot::default_feature_plots(object), ...)
 }
 \arguments{
@@ -53,7 +54,7 @@ if (require(autonomics.data)){
   result_dir <- tempdir() \%T>\% message()
   object \%>\% plot_top_features_all_contrasts(
                 contrasts      = autonomics.import::contrastdefs(.)[1:2],
-                top_definition = 'fdr < 0.05',
+                topdef = 'fdr < 0.05',
                 x              = 'TIME_POINT',
                 geom           = 'boxplot',
                 result_dir     = result_dir)

@@ -51,7 +51,7 @@ extract_ora_universe <- function(object){
 #' Extract ora query 
 #' @param object         SummarizedExperiment
 #' @param contrast_name  character
-#' @param top_definition character
+#' @param topdef character
 #' @param direction      'pos' or 'neg'
 #' @return chracter vector
 #' @examples
@@ -62,9 +62,9 @@ extract_ora_universe <- function(object){
 #' }
 #' @importFrom magrittr %>% 
 #' @export
-extract_ora_query <- function(object, contrast_name, top_definition, direction){
+extract_ora_query <- function(object, contrast_name, topdef, direction){
    object                                                                                    %>% 
-   autonomics.find::filter_n_arrange_top_features(contrast_name, top_definition, direction)  %>% 
+   autonomics.find::filter_n_arrange_top_features(contrast_name, topdef, direction)  %>% 
    autonomics.import::oraid_values()                                                         %>% 
    unique()  # do not double count discriminated isoforms
 }

@@ -8,8 +8,8 @@ analyze_contrasts <- function(
    design           = autonomics.find::create_design_matrix(object),
    contrasts        = autonomics.find::default_contrasts(object),
    direction        = c('neg', 'pos'),
-   top_definition   = autonomics.find::default_top_definition(object),
-   universe         = autonomics.ora::default_universe(object),
+   topdef           = autonomics.find::default_topdef(object),
+   universe         = NULL,#autonomics.ora::default_universe(object),
    cluster_features = autonomics::default_cluster_features(),
    nplot            = autonomics.find::default_nplot(object),
    feature_plot_width  = NULL,
@@ -46,7 +46,7 @@ analyze_contrasts <- function(
                 design         = design, 
                 contrasts      = contrasts, 
                 direction      = direction,
-                top_definition = top_definition, 
+                topdef         = topdef, 
                 result_dir     = result_dir)
 
   # Plot top features
@@ -55,6 +55,7 @@ analyze_contrasts <- function(
                  design         = design,
                  contrasts      = contrasts,
                  direction      = direction,
+                 topdef         = topdef,
                  result_dir     = result_dir,
                  nplot          = nplot, 
                  width          = feature_plot_width, 
@@ -66,7 +67,7 @@ analyze_contrasts <- function(
      object %>% autonomics.ora::run_ora_on_eset(
                      contrasts,
                      result_dir     = result_dir,
-                     top_definition = top_definition,
+                     topdef         = topdef,
                      universe       = cur_universe,
                      min_set_size   = min_set_size,
                      max_set_size   = max_set_size)

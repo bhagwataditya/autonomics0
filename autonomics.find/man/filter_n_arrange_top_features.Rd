@@ -4,7 +4,7 @@
 \alias{filter_n_arrange_top_features}
 \title{Filter and arrange top features}
 \usage{
-filter_n_arrange_top_features(object, contrast_name, top_definition, direction,
+filter_n_arrange_top_features(object, contrast_name, topdef, direction,
   nmax = Inf)
 }
 \arguments{
@@ -12,7 +12,7 @@ filter_n_arrange_top_features(object, contrast_name, top_definition, direction,
 
 \item{contrast_name}{contrast name}
 
-\item{top_definition}{top definition}
+\item{topdef}{top definition}
 
 \item{direction}{'neg' or 'pos'}
 

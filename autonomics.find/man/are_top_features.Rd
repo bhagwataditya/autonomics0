@@ -5,18 +5,16 @@
 \alias{get_top_features}
 \title{Which are the top features?}
 \usage{
-are_top_features(object,
-  top_definition = autonomics.find::default_top_definition(object),
+are_top_features(object, topdef = autonomics.find::default_topdef(object),
   contrast_name, direction)
 
-get_top_features(object,
-  top_definition = autonomics.find::default_top_definition(object),
+get_top_features(object, topdef = autonomics.find::default_topdef(object),
   contrast_name, direction)
 }
 \arguments{
 \item{object}{eset}
 
-\item{top_definition}{top definition}
+\item{topdef}{top definition}
 
 \item{contrast_name}{contrast name (string)}
 

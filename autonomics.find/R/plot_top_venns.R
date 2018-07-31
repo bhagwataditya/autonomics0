@@ -1,7 +1,7 @@
 #' Plot venns showing top features
 #' @param object  exprs object
 #' @param direction 'neg' or 'pos'
-#' @param top_definition top definition
+#' @param topdef top definition
 #' @param file file to which print to 
 #' @return the vennlist used for venn digram plotting
 #' @export
@@ -14,7 +14,7 @@
 plot_top_venns <- function(
    object,
    direction,
-   top_definition = autonomics.find::default_top_definition(object), 
+   topdef = autonomics.find::default_topdef(object), 
    file = NULL
 ){
    contrast_names <- object %>% autonomics.find::infer_contrast_names()
@@ -24,7 +24,7 @@ plot_top_venns <- function(
    }
    vennlist <- mapply(autonomics.find::get_top_features,
                       contrast_name = contrast_names,
-                      MoreArgs = list(object = object, top_definition = top_definition, direction = direction),
+                      MoreArgs = list(object = object, topdef = topdef, direction = direction),
                       SIMPLIFY = FALSE)
    vennlist %>% autonomics.plot::plot_venns(
                    filename = file, 

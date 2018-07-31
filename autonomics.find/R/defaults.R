@@ -97,17 +97,17 @@ default_nplot <- function(object){
    # 500
 }
 
-#' default top_definition
+#' default topdef
 #' @param object eset
-#' @return default value of top_definition
+#' @return default value of topdef
 #' @export
 #' @examples
 #' require(magrittr)
 #' if (require(billing.differentiation.data)){
 #'    billing.differentiation.data::rna.voomcounts %>% 
-#'       autonomics.find::default_top_definition()
+#'       autonomics.find::default_topdef()
 #' }
-default_top_definition <- function(object){
+default_topdef <- function(object){
 
    subgroups             <- !is.null(autonomics.import::sdata(object)$subgroup)
    replicates            <- anyDuplicated(autonomics.import::sdata(object)$subgroup)

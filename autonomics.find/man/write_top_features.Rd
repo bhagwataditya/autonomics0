@@ -6,7 +6,7 @@
 \usage{
 write_top_features(object, design = create_design_matrix(object), contrast,
   direction = autonomics.find::DIRECTIONS[1],
-  top_definition = default_top_definition(object), result_dir = NULL)
+  topdef = default_topdef(object), result_dir = NULL)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -17,7 +17,7 @@ write_top_features(object, design = create_design_matrix(object), contrast,
 
 \item{direction}{any value in autonomics.find::DIRECTIONS}
 
-\item{top_definition}{top definition}
+\item{topdef}{top definition}
 
 \item{result_dir}{directory}
 }
@@ -34,7 +34,7 @@ if (require(autonomics.data)){
    object \%>\% autonomics.find::write_top_features(
                  contrast       = c(BM_E = 'BM_E'),
                  direction      = 'neg', 
-                 top_definition = 'fdr < 0.5', 
+                 topdef = 'fdr < 0.5', 
                  result_dir     = result_dir)
 }
 

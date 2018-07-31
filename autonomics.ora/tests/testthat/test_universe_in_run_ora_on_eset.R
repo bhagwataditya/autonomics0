@@ -9,7 +9,7 @@ context('run_ora_on_eset: test "universe" argument')
          autonomics.find::add_limma_to_fdata())
 (contrasts <- c(BM_E = 'BM - E'))
 (result_dir <- paste0(tempdir(), '/test_run_ora_on_eset'))
-(top_definition <- 'p < 0.05')
+(topdef <- 'p < 0.05')
 (organism <- 'hsa')
 
 # Test
@@ -19,7 +19,7 @@ test_that("run_ora_on_eset doesn't break for universe == NULL",
     pset %>% run_ora_on_eset(
       contrasts      = contrasts, 
       result_dir     = result_dir,
-      top_definition = top_definition,
+      topdef         = topdef,
       universe       = NULL
     ) %>% expect_null()
   } 
@@ -30,7 +30,7 @@ test_that("run_ora_on_eset works for universe == 'detectome'",
     pset %>% run_ora_on_eset(
                 contrasts      = contrasts, 
                 result_dir     = result_dir,
-                top_definition = top_definition,
+                topdef         = topdef,
                 universe       = 'detectome', 
                 gene_set_collections = 'gobp'
              )
@@ -44,10 +44,10 @@ test_that("run_ora_on_eset works for universe == 'detectome'",
 test_that("run_ora_on_eset works for universe == 'genome'",
   {
     pset %>% run_ora_on_eset(
-                contrasts      = contrasts, 
-                result_dir     = result_dir,
-                top_definition = top_definition,
-                universe       = 'genome', 
+                contrasts            = contrasts, 
+                result_dir           = result_dir,
+                topdef               = topdef,
+                universe             = 'genome', 
                 gene_set_collections = 'gobp'
              )
     

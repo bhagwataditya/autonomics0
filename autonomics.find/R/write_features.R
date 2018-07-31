@@ -7,7 +7,7 @@ utils::globalVariables('.')
 #' @param design          design matrix
 #' @param contrast        see \code{analyze_eset}
 #' @param direction       any value in autonomics.find::DIRECTIONS
-#' @param top_definition  top definition
+#' @param topdef  top definition
 #' @param result_dir      directory
 #' @examples
 #' require(magrittr)
@@ -19,7 +19,7 @@ utils::globalVariables('.')
 #'    object %>% autonomics.find::write_top_features(
 #'                  contrast       = c(BM_E = 'BM_E'),
 #'                  direction      = 'neg', 
-#'                  top_definition = 'fdr < 0.5', 
+#'                  topdef = 'fdr < 0.5', 
 #'                  result_dir     = result_dir)
 #' }
 #' 
@@ -41,7 +41,7 @@ write_top_features <- function(
    design         = create_design_matrix(object),
    contrast,
    direction      = autonomics.find::DIRECTIONS[1],
-   top_definition = default_top_definition(object),
+   topdef = default_topdef(object),
    result_dir     = NULL
 ){
 
@@ -55,7 +55,7 @@ write_top_features <- function(
 
    # Keep top portion of eSet (corresponds with ora query!)
    object %<>% autonomics.find::select_fvars_and_filter_samples(design, contrast)
-   object %<>% autonomics.find::filter_n_arrange_top_features(names(contrast), top_definition, direction)
+   object %<>% autonomics.find::filter_n_arrange_top_features(names(contrast), topdef, direction)
 
    # Return if eset empty
    if (nrow(object) == 0){
@@ -114,7 +114,7 @@ write_all_features <- function(object, result_dir){
 #' @param design         design matrix
 #' @param contrasts      A character vector of model contrasts to be written.
 #' @param direction     'neg', 'pos', 'both'
-#' @param top_definition top definition
+#' @param topdef top definition
 #' @param result_dir     dir where to save results
 #' @examples
 #' require(magrittr)
@@ -125,7 +125,7 @@ write_all_features <- function(object, result_dir){
 #'    result_dir <- tempdir() %T>% message()
 #'    object %>% autonomics.find::write_features(
 #'                  contrasts      =  c(BM_E = 'BM_E', BM_EM = 'BM_EM', EM_E = 'EM_E'),
-#'                  top_definition = 'fdr < 0.05', 
+#'                  topdef = 'fdr < 0.05', 
 #'                  result_dir     =  result_dir)
 #' }
 #' @importFrom magrittr  %>%
@@ -135,7 +135,7 @@ write_features <- function(
    design    = autonomics.find::create_design_matrix(object),
    contrasts = autonomics.find::default_contrasts(object),
    direction = c('neg', 'pos'),
-   top_definition,
+   topdef,
    result_dir
 ){
    object %>% autonomics.find::write_all_features(result_dir)
@@ -143,11 +143,11 @@ write_features <- function(
       cur_contrast <- contrasts[i]
       for (curdirection in direction){
          object %>% autonomics.find::write_top_features(
-                       design         = design, 
-                       contrast       = cur_contrast, 
-                       direction      = curdirection, 
-                       top_definition = top_definition, 
-                       result_dir     = result_dir)
+                       design     = design, 
+                       contrast   = cur_contrast, 
+                       direction  = curdirection, 
+                       topdef     = topdef, 
+                       result_dir = result_dir)
       }
    }
 }

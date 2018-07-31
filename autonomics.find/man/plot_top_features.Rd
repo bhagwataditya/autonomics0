@@ -7,7 +7,7 @@
 plot_top_features(object,
   design = autonomics.find::create_design_matrix(object),
   contrast = autonomics.find::default_contrasts(object)[1],
-  top_definition = autonomics.find::default_top_definition(object),
+  topdef = autonomics.find::default_topdef(object),
   direction = autonomics.find::DIRECTIONS[1],
   geom = autonomics.plot::default_feature_plots(object)[1],
   nplot = autonomics.find::default_nplot(object),
@@ -20,7 +20,7 @@ plot_top_features(object,
 
 \item{contrast}{named contrast for which to select the top feature bars}
 
-\item{top_definition}{Definition of 'top features'.}
+\item{topdef}{Definition of 'top features'.}
 
 \item{direction}{any value in autonomics.find::DIRECTIONS}
 
@@ -53,7 +53,7 @@ require(magrittr)
 # GLUTAMINASE
   if (require(autonomics.data)){
      object <- autonomics.data::glutaminase
-     object \%>\% plot_top_features(top_definition = 'bonf < 0.05 & rank <= 4',
+     object \%>\% plot_top_features(topdef = 'bonf < 0.05 & rank <= 4',
                                   direction      = 'both',
                                   geom           = 'boxplot')
   }

@@ -30,6 +30,8 @@ load_exiqon(file, design_file = NULL, log2_transform = NULL,
 \item{mean_center}{logical: whether to mean_center exprs}
 
 \item{flip_sign}{logical: whether to flip sign}
+
+\item{subtract_refgroup}{logical}
 }
 \value{
 SummarizedExperiment

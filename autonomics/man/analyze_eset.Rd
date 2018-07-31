@@ -9,8 +9,7 @@ analyze_contrasts(object, result_dir = default_result_dir(object),
   design = autonomics.find::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
   direction = c("neg", "pos"),
-  top_definition = autonomics.find::default_top_definition(object),
-  universe = autonomics.ora::default_universe(object),
+  topdef = autonomics.find::default_topdef(object), universe = NULL,
   cluster_features = autonomics::default_cluster_features(),
   nplot = autonomics.find::default_nplot(object), feature_plot_width = NULL,
   feature_plot_height = NULL, min_set_size = 5, max_set_size = Inf, ...)
@@ -18,9 +17,9 @@ analyze_contrasts(object, result_dir = default_result_dir(object),
 analyze_eset(object, result_dir = default_result_dir(object),
   design = autonomics.find::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
-  top_definition = autonomics.find::default_top_definition(object),
-  universe = autonomics.ora::default_universe(object), dodge_width = 0,
-  do_pca = TRUE, cluster_features = default_cluster_features(),
+  topdef = autonomics.find::default_topdef(object), universe = NULL,
+  dodge_width = 0, do_pca = TRUE,
+  cluster_features = default_cluster_features(),
   nplot = autonomics.find::default_nplot(object), feature_plot_width = NULL,
   feature_plot_height = NULL, min_set_size = 5, max_set_size = Inf,
   zip_results = FALSE, ...)
@@ -34,7 +33,7 @@ analyze_eset(object, result_dir = default_result_dir(object),
 
 \item{contrasts}{contrast definitions}
 
-\item{top_definition}{Definition of 'top features'.}
+\item{topdef}{Definition of 'top features'.}
 
 \item{universe}{'detectome', 'genome', or NULL (no ora)}
 
