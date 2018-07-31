@@ -110,9 +110,10 @@ write_all_features <- function(object, result_dir){
 }
 
 #' Write feature tables to file
-#' @param object       eset
+#' @param object         SummarizedExperiment
 #' @param design         design matrix
 #' @param contrasts      A character vector of model contrasts to be written.
+#' @param direction     'neg', 'pos', 'both'
 #' @param top_definition top definition
 #' @param result_dir     dir where to save results
 #' @examples
@@ -131,19 +132,20 @@ write_all_features <- function(object, result_dir){
 #' @export
 write_features <- function(
    object,
-   design = autonomics.find::create_design_matrix(object),
-   contrasts,
+   design    = autonomics.find::create_design_matrix(object),
+   contrasts = autonomics.find::default_contrasts(object),
+   direction = c('neg', 'pos'),
    top_definition,
    result_dir
 ){
    object %>% autonomics.find::write_all_features(result_dir)
    for (i in seq_along(contrasts)){
       cur_contrast <- contrasts[i]
-      for (direction in c('neg', 'pos')){
+      for (curdirection in direction){
          object %>% autonomics.find::write_top_features(
                        design         = design, 
                        contrast       = cur_contrast, 
-                       direction      = direction, 
+                       direction      = curdirection, 
                        top_definition = top_definition, 
                        result_dir     = result_dir)
       }

@@ -5,14 +5,17 @@
 \title{Write feature tables to file}
 \usage{
 write_features(object, design = autonomics.find::create_design_matrix(object),
-  contrasts, top_definition, result_dir)
+  contrasts = autonomics.find::default_contrasts(object),
+  direction = c("neg", "pos"), top_definition, result_dir)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 
 \item{design}{design matrix}
 
 \item{contrasts}{A character vector of model contrasts to be written.}
+
+\item{direction}{'neg', 'pos', 'both'}
 
 \item{top_definition}{top definition}
 

@@ -6,7 +6,8 @@
 \usage{
 plot_top_features_all_contrasts(object,
   design = autonomics.find::create_design_matrix(object),
-  contrasts = autonomics.find::default_contrasts(object), result_dir,
+  contrasts = autonomics.find::default_contrasts(object),
+  direction = c("neg", "pos"), result_dir,
   geoms = autonomics.plot::default_feature_plots(object), ...)
 }
 \arguments{
@@ -15,6 +16,8 @@ plot_top_features_all_contrasts(object,
 \item{design}{design matrix}
 
 \item{contrasts}{named contrast vector}
+
+\item{direction}{subset of c('neg', 'pos', 'both')}
 
 \item{result_dir}{directory where to store results}
 
