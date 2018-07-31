@@ -235,9 +235,12 @@ load_snames_maxquant <- function(
       # ' ' separators in sample names are difficult to differentiate from ' H' constructs
       # Instead we generate them from channels and injections, but we make sure the order matches the actual order.
       } else {
-         idx <- autonomics.support::vsprintf('%s %s %s', quantity, channels, injections) %>%
+         idx <- autonomics.support::vsprintf('%s %s %s', quantity, channels, injections, first_slowest = FALSE) %>%
                 match(quantity_colnames)
          snames1 <- autonomics.support::vsprintf('%s[%s]', injections, channels) %>% magrittr::extract(idx)
+         # NOTE the order of the two vsprintfs is opposite to each other,
+         # that's why the first has a first_slowest, but the second doesn't
+         # (Fix)
       }
    }
 

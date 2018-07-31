@@ -79,12 +79,15 @@ load_omics <- function(
    # Merge in design
    design_df <- autonomics.import::write_design(file, platform                    = platform,
                                                       infer_design_from_sampleids = infer_design_from_sampleids,
+                                                      quantity                    = quantity,
                                                       design_sep                  = design_sep,
-                                                      sheet                       = sheet)
-   object %<>% autonomics.import::merge_sdata(design_df, by = sampleid_varname(platform))
+                                                      sheet                       = sheet) %>%
+                autonomics.support::rm_empty_vars()
+
+   object %<>% autonomics.import::merge_sdata(design_df, by = autonomics.import::sampleid_varname(platform))
    if (!is.null(design_file)){
       file_df <- autonomics.import::read_design(design_file)
-      object %<>% autonomics.import::merge_sdata(file_df, by = sampleid_varname(platform))
+      object %<>% autonomics.import::merge_sdata(file_df, by = autonomics.import::sampleid_varname(platform))
    }
 
    # Order on subgroup (and replicate)
@@ -114,7 +117,7 @@ load_omics <- function(
 #' @param rm_spike_features   logical
 #' @param mean_center         logical: whether to mean_center exprs
 #' @param flip_sign           logical: whether to flip sign
-#' @param subtract_refgroup
+#' @param subtract_refgroup   logical
 #' @return SummarizedExperiment
 #' @examples
 #' require(magrittr)
