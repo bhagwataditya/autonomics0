@@ -9,7 +9,7 @@ plot_top_features_all_contrasts(object,
   contrasts = autonomics.find::default_contrasts(object),
   direction = c("neg", "pos"),
   topdef = autonomics.find::default_topdef(object), result_dir,
-  geoms = autonomics.plot::default_feature_plots(object), ...)
+  geom = autonomics.plot::default_feature_plots(object), ...)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -22,7 +22,7 @@ plot_top_features_all_contrasts(object,
 
 \item{result_dir}{directory where to store results}
 
-\item{geoms}{which feature plots to be created?}
+\item{geom}{which feature plots to be created?}
 
 \item{...}{passed to autonomics.plot::plot_features}
 }

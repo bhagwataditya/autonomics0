@@ -10,8 +10,8 @@
 \title{Run pca and print results}
 \usage{
 add_and_write_projection(object, method = "pca", implementation = NULL,
-  result_dir, geoms = autonomics.plot::default_feature_plots(object),
-  x = autonomics.plot::default_x(object, geoms),
+  result_dir, geom = autonomics.plot::default_feature_plots(object),
+  x = autonomics.plot::default_x(object, geom),
   color_var = autonomics.plot::default_color_var(object),
   color_values = autonomics.plot::default_color_values(object, color_var),
   shape_var = autonomics.plot::default_shape_var(object),
@@ -38,7 +38,7 @@ add_and_print_pca(...)
 
 \item{result_dir}{result dir}
 
-\item{geoms}{subset of \code{\link[autonomics.plot]{FEATURE_PLOTS}}}
+\item{geom}{subset of \code{\link[autonomics.plot]{FEATURE_PLOTS}}}
 
 \item{x}{svar mapped to x in feature plots}
 

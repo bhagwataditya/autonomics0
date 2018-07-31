@@ -218,7 +218,7 @@ plot_top_features <- function(
 #' @param contrasts       named contrast vector
 #' @param direction       subset of c('neg', 'pos', 'both')
 #' @param result_dir      directory where to store results
-#' @param geoms           which feature plots to be created?
+#' @param geom           which feature plots to be created?
 #' @param ...             passed to autonomics.plot::plot_features
 #' @examples
 #' require(magrittr)
@@ -259,7 +259,7 @@ plot_top_features_all_contrasts <- function(
    direction      = c('neg', 'pos'),
    topdef         = autonomics.find::default_topdef(object),
    result_dir,
-   geoms          = autonomics.plot::default_feature_plots(object),
+   geom          = autonomics.plot::default_feature_plots(object),
    ...
 ){
   for (i in seq_along(contrasts)){
@@ -267,8 +267,8 @@ plot_top_features_all_contrasts <- function(
     subdir   <- autonomics.find::get_contrast_subdir(result_dir, names(contrast))
     dir.create(subdir, recursive = TRUE, showWarnings = FALSE)
     for (curdirection in direction){
-       for (i_plot in seq_along(geoms)){
-          cur_geom <- geoms[[i_plot]]
+       for (i_plot in seq_along(geom)){
+          cur_geom <- geom[[i_plot]]
           #if (length(x) > 1)   x %<>% magrittr::extract2(i_plot)
           my_file <- sprintf('%s/top_%s__%s__%s.pdf', subdir, cur_geom, names(contrast), direction)
           autonomics.support::cmessage('\t\t%s %s 0   %s',

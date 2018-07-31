@@ -202,9 +202,9 @@ gg_panelvar_width <- function(b){
 #' @export
 gg_aesvar <- function(b, aesthetic){
    layers <- b$plot$layers
-   geoms  <- layers %>% vapply(function(x)class(x$geom)[1], character(1))
-   selected_layer <- which(geoms %in% c('GeomBoxplot', 'GeomViolin', 'GeomPoint', 'GeomBar'))[1]
-   selected_geom  <- geoms[selected_layer]
+   geom  <- layers %>% vapply(function(x)class(x$geom)[1], character(1))
+   selected_layer <- which(geom %in% c('GeomBoxplot', 'GeomViolin', 'GeomPoint', 'GeomBar'))[1]
+   selected_geom  <- geom[selected_layer]
    aesthetic %<>% stringi::stri_replace_first_fixed('color', 'colour')
    if (selected_geom %in% c('GeomBoxplot', 'GeomViolin', 'GeomBar')){
       aesthetic %<>% stringi::stri_replace_first_fixed('colour', 'fill')

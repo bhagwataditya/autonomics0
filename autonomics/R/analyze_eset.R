@@ -23,7 +23,7 @@
 #' @param object            SummarizedExperiment
 #' @param design            design matrix
 #' @param contrasts         contrast definitions
-#' @param topdef    Definition of 'top features'.
+#' @param topdef            Definition of 'top features'.
 #' @param result_dir        directory to which to write results
 #' @param universe          'detectome', 'genome', or NULL (no ora)
 #' @param do_pca            whether to perform PCA analysis (logical)
