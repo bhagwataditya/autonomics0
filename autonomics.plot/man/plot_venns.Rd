@@ -5,7 +5,8 @@
 \title{Plot Venn diagrams}
 \usage{
 plot_venns(x, filename = NULL, width = 7, height = width, title = NULL,
-  colors = autonomics.plot::make_gg_colors(1:length(x)))
+  colors = autonomics.plot::make_gg_colors(1:length(x)), scaled = FALSE,
+  cat.dist = 0.08, main.cex = 1.2, main.pos = c(0.5, 0.97), ...)
 }
 \arguments{
 \item{x}{named list of character vectors}
@@ -19,6 +20,14 @@ plot_venns(x, filename = NULL, width = 7, height = width, title = NULL,
 \item{title}{figure title}
 
 \item{colors}{character vector}
+
+\item{scaled}{logical: whether or not to scale}
+
+\item{cat.dist}{numeric(1): category location (as distance from circle edge)}
+
+\item{main.cex}{numeric(1): title font size}
+
+\item{main.pos}{numeric(2): title location}
 }
 \description{
 Plot Venn diagrams
