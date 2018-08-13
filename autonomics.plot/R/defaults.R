@@ -14,23 +14,30 @@ make_gg_colors <- function(factor_levels) {
 
 #' Make composite colors
 #' @param svalues character vector
+#' @param show    logical(1): whether to show colors in pie plot
 #' @return named character vector (elements = colors, names = color_var levels)
 #' @examples
 #' require(magrittr)
+#' svalues <- c('inflammation.all', 'inflammation.C2_C0', 'inflammation.D2_D0',
+#'              'oxidstress.all',   'oxidstress.C2_C0',   'oxidstress.D2_D0')
+#' svalues %>% autonomics.plot::make_composite_colors(show = TRUE)
+#'
 #' if (require(subramanian.2016)){
-#'    values <- subramanian.2016::metabolon %>% autonomics.import::subgroup_values()
-#'    values %>% autonomics.plot::make_composite_colors()
+#'    subramanian.2016::metabolon %>%
+#'    autonomics.import::subgroup_levels() %>%
+#'    autonomics.plot::make_composite_colors(show = TRUE)
 #' }
 #'
 #' # GLUTAMINASE
 #' if (require(autonomics.data)){
-#'    values <- autonomics.data::glutaminase %>% autonomics.import::subgroup_values()
-#'    values %>% autonomics.plot::make_composite_colors()
+#'    autonomics.data::glutaminase %>%
+#'    autonomics.import::subgroup_levels() %>%
+#'    autonomics.plot::make_composite_colors(show = TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @importFrom data.table   data.table   :=
 #' @export
-make_composite_colors <- function(svalues){
+make_composite_colors <- function(svalues, show = FALSE){
 
    # Satisfy CHECK
    subgroup <- V1 <- V2 <- color <- hue <- luminance <- NULL
@@ -46,13 +53,17 @@ make_composite_colors <- function(svalues){
    hues       <- data.table::data.table(V1 = V1levels, hue = seq(15, 375, length = n1 + 1)[1:n1])
    luminances <- data.table::data.table(V2 = V2levels, luminance = seq(100, 25, length = n2))
 
-   expand.grid(V1=V1levels, V2=V2levels) %>%
-   data.table::data.table() %>%
-   merge(luminances, by = 'V2') %>%
-   merge(hues, by = 'V1') %>%
-   magrittr::extract(, color := grDevices::hcl(h = hue, l = luminance, c = 100), by = c('V1', 'V2')) %>%
-   merge(components, by = c('V1', 'V2')) %>%
-   magrittr::extract(, color %>% magrittr::set_names(subgroup))
+   color_values <- expand.grid(V2=V2levels, V1 = V1levels)    %>%          # all possible levels, also ones not present
+                   autonomics.support::pull_columns('V1')     %>%
+                   data.table::data.table()                   %>%
+                   merge(luminances, by = 'V2', sort = FALSE) %>%
+                   merge(hues, by = 'V1', sort = FALSE)       %>%
+                   magrittr::extract(, color := grDevices::hcl(h = hue, l = luminance, c = 100), by = c('V1', 'V2')) %>%
+                   merge(components, by = c('V1', 'V2'), sort = FALSE) %>% # only levels really present
+                   magrittr::extract(, color %>% magrittr::set_names(subgroup))
+
+   if (show) pie(rep(1, length(color_values)), names(color_values), col = color_values)
+   return(color_values)
 }
 
 
