@@ -19,18 +19,9 @@
 #' @importFrom magrittr %>%
 #' @export
 ssep <- function(object, svar = 'subgroup'){
-   svar_levels <- object %>% autonomics.import::slevels(svar)
-   n_components <- 1
-   # Note: ' ' will not occur: subgroups have been undergone make.names() in autonomics.import
-   possible_seps <- if(autonomics.import::is_maxquant_eset(object)) '.' else  c('.', '_') # in LCMS proteomics, this indicates ratios
-   for (sep in possible_seps){
-      subgroup_components <- svar_levels %>% stringi::stri_split_fixed(sep)
-      n_components <- subgroup_components %>%
-         vapply(length, numeric(1)) %>%
-         (function(x) if (all(x[1]==x))   x[1]   else  1 )
-      if (n_components > 1)   return(sep)
-   }
-   return(NULL)
+   object %>%
+   autonomics.import::slevels(svar) %>%
+   autonomics.import::infer_design_sep()
 }
 
 #' @rdname ssep
