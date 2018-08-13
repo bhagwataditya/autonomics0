@@ -13,34 +13,31 @@ make_gg_colors <- function(factor_levels) {
 }
 
 #' Make composite colors
-#' @param object SummarizedExperiment
-#' @param color_var svar mapped to color
+#' @param svalues character vector
 #' @return named character vector (elements = colors, names = color_var levels)
 #' @examples
 #' require(magrittr)
 #' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    object %>% autonomics.plot::make_composite_colors()
+#'    values <- subramanian.2016::metabolon %>% autonomics.import::subgroup_values()
+#'    values %>% autonomics.plot::make_composite_colors()
 #' }
 #'
 #' # GLUTAMINASE
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::glutaminase
-#'    object %>% autonomics.plot::make_composite_colors()
+#'    values <- autonomics.data::glutaminase %>% autonomics.import::subgroup_values()
+#'    values %>% autonomics.plot::make_composite_colors()
 #' }
 #' @importFrom magrittr %>%
 #' @importFrom data.table   data.table   :=
 #' @export
-make_composite_colors <- function(
-   object,
-   color_var = autonomics.plot::default_color_var(object)
-){
+make_composite_colors <- function(svalues){
 
    # Satisfy CHECK
    subgroup <- V1 <- V2 <- color <- hue <- luminance <- NULL
 
-   components <- object %>% autonomics.import::scomponents(color_var)
-   sep        <- object %>% autonomics.import::ssep(color_var)
+   components <- svalues %>% autonomics.import::split_components()
+   sep        <- svalues %>% autonomics.import::infer_design_sep(verbose = FALSE)
+
    components[, subgroup:=paste0(V1,sep,V2)]
    V1levels <- unique(components$V1)
    V2levels <- unique(components$V2)
@@ -48,50 +45,16 @@ make_composite_colors <- function(
    n2 <- length(V2levels)
    hues       <- data.table::data.table(V1 = V1levels, hue = seq(15, 375, length = n1 + 1)[1:n1])
    luminances <- data.table::data.table(V2 = V2levels, luminance = seq(100, 25, length = n2))
+
    expand.grid(V1=V1levels, V2=V2levels) %>%
-      data.table::data.table() %>%
-      merge(luminances, by = 'V2') %>%
-      merge(hues, by = 'V1') %>%
-      magrittr::extract(, color := grDevices::hcl(h = hue, l = luminance, c = 100), by = c('V1', 'V2')) %>%
-      merge(components, by = c('V1', 'V2')) %>%
-      magrittr::extract(, color %>% magrittr::set_names(subgroup))
+   data.table::data.table() %>%
+   merge(luminances, by = 'V2') %>%
+   merge(hues, by = 'V1') %>%
+   magrittr::extract(, color := grDevices::hcl(h = hue, l = luminance, c = 100), by = c('V1', 'V2')) %>%
+   merge(components, by = c('V1', 'V2')) %>%
+   magrittr::extract(, color %>% magrittr::set_names(subgroup))
 }
 
-
-# default_color_values <- function(object){
-#    NULL
-# }
-
-
-
-# make_composite_colors <- function(
-#    object,
-#    color_var = autonomics.plot::default_color_var(object)
-# ){
-#    # Assert
-#    autonomics.import::assert_is_valid_eset(object)
-#    assertive.sets::assert_is_subset(color_var, autonomics.import::svars(object, color_var))
-#    assertive.base::assert_is_identical_to_true(autonomics.plot::fit_for_composite_coloring(object, color_var))
-#
-#    # Extract subgroup components
-#    svar_components <- object %>% autonomics.import::scomponents(color_var)
-#    sep <- autonomics.import::subgroup_sep(object)
-#    svar_components[, subgroup:= paste0(V1, sep, V2)]
-#
-#    # Create colors
-#    V1levels <- unique(svar_components$V1)
-#    V2levels <- unique(svar_components$V2)
-#    all_components <- expand.grid(V1 = V1levels, V2 = V2levels) %>% data.table::data.table()
-#
-#    palettes <- BREWERPALETTES %>% magrittr::extract(1:length(V1levels))
-#    all_components %<>% merge(data.table::data.table(V1 = V1levels, palette = palettes), by = 'V1')
-#    all_components %>%  magrittr::extract(,
-#                                          color:= RColorBrewer::brewer.pal(length(V2)+1, unique(palette)) %>%
-#                                                  magrittr::extract(length(.):2), # first is too light
-#                                          by = 'V1')
-#    all_components %<>% merge(svar_components, by = c('V1', 'V2'))
-#    all_components %>%  magrittr::extract(, color %>% magrittr::set_names(subgroup))
-# }
 
 #' Default color values
 #' @param object SummarizedExperiment
@@ -131,7 +94,8 @@ default_color_values <- function(
    # Two component subgroups
    if (autonomics.import::svar_has_two_components(object, color_var)){
       autonomics.support::cmessage('\t\tCreating composite colors')
-      return(make_composite_colors(object, color_var))
+      color_values <- object %>% autonomics.import::subgroup_values() %>% make_composite_colors()
+      return(color_values)
    }
 
    # Default ggplot colors

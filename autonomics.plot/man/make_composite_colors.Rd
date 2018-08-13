@@ -4,13 +4,10 @@
 \alias{make_composite_colors}
 \title{Make composite colors}
 \usage{
-make_composite_colors(object,
-  color_var = autonomics.plot::default_color_var(object))
+make_composite_colors(svalues)
 }
 \arguments{
-\item{object}{SummarizedExperiment}
-
-\item{color_var}{svar mapped to color}
+\item{svalues}{character vector}
 }
 \value{
 named character vector (elements = colors, names = color_var levels)
@@ -21,13 +18,13 @@ Make composite colors
 \examples{
 require(magrittr)
 if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
-   object \%>\% autonomics.plot::make_composite_colors()
+   values <- subramanian.2016::metabolon \%>\% autonomics.import::subgroup_values()
+   values \%>\% autonomics.plot::make_composite_colors()
 }
 
 # GLUTAMINASE
 if (require(autonomics.data)){
-   object <- autonomics.data::glutaminase
-   object \%>\% autonomics.plot::make_composite_colors()
+   values <- autonomics.data::glutaminase \%>\% autonomics.import::subgroup_values()
+   values \%>\% autonomics.plot::make_composite_colors()
 }
 }
