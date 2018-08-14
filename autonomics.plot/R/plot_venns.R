@@ -48,7 +48,7 @@ plot_venn <- function(
            set.seed(1)
            x  %>%
            eulerr::euler() %>% # unlimited number of sets; venn.diagram(scaled = TRUE) is limited
-           plot(quantities = TRUE, fills = color_values, ...)
+           plot(quantities = TRUE, fills = color_values, labels = names(x), legend = TRUE, ...)
 
         } else {
             futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")
