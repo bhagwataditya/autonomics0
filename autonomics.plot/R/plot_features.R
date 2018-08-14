@@ -478,7 +478,7 @@ plot_features <- function(
    title           = '',
    scales          = 'free_y',
    x_text_angle    = 90,
-   line            = FALSE,
+   line            = autonomics.plot::default_line(object),
    zero_hline      = autonomics.plot::default_zero_hline(object),
    xlab            = NULL,
    ylab            = NULL,

@@ -179,7 +179,7 @@ plot_top_features <- function(
   assertive.base::assert_is_identical_to_true(autonomics.find::is_valid_contrast(contrast, design))
 
   # Limit eset to top features for chosen direction (abort if none)
-  top <- object %>% autonomics.find::filter_n_arrange_top_features(names(contrast), topdef, direction, nplot)
+  top <- object %>% autonomics.find::filter_n_arrange_top_features(contrast_name = names(contrast), topdef = topdef, direction = direction, nmax = nplot)
   if (nrow(top)==0){
      autonomics.support::cmessage('\t\t%s %s 0   no top features - abort',
                                   contrast, autonomics.find::direction_to_sign(direction))
@@ -270,7 +270,7 @@ plot_top_features_all_contrasts <- function(
        for (i_plot in seq_along(geom)){
           cur_geom <- geom[[i_plot]]
           #if (length(x) > 1)   x %<>% magrittr::extract2(i_plot)
-          my_file <- sprintf('%s/top_%s__%s__%s.pdf', subdir, cur_geom, names(contrast), direction)
+          my_file <- sprintf('%s/top_%ss__%s__%s.pdf', subdir, cur_geom, names(contrast), direction)
           autonomics.support::cmessage('\t\t%s %s 0   %s',
                                         contrast,
                                         autonomics.find::direction_to_sign(curdirection), basename(my_file))
