@@ -59,7 +59,7 @@ default_contrasts <- function(object){
    
    # If contrasts present in object, use these
    if (!is.null(autonomics.import::contrastdefs(object))){
-      autonomics.support::cmessage('\t\tUse contrasts in autonomics.import::contrastdefs(object)')
+      autonomics.support::cmessage('\tUse contrasts in autonomics.import::contrastdefs(object)')
       return(autonomics.import::contrastdefs(object))
    }
 
@@ -69,12 +69,12 @@ default_contrasts <- function(object){
 
    # Ratios for ratio esets
    if (autonomics.import::contains_ratios(object)){
-      autonomics.support::cmessage('\t\tGenerate contrasts from ratios')
+      autonomics.support::cmessage('\tGenerate contrasts from ratios')
       contrasts <- subgroup_values %>% levels() %>% magrittr::set_names(validify_contrast_names(.))
 
    # Reference contrasts for intensity esets
    } else {
-      autonomics.support::cmessage('\t\tGenerate contrasts to reference level')
+      autonomics.support::cmessage('\tGenerate contrasts to reference level')
       contrasts <- object %>% autonomics.find::make_ref_contrasts()
    }
 

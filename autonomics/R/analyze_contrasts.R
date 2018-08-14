@@ -34,7 +34,7 @@ analyze_contrasts <- function(
 
   # Run limma analysis
   message('\tRun significance analysis (limma)')
-  object %<>% autonomics.find::add_limma_to_fdata(contrasts, design, overwrite = TRUE)
+  object %<>% autonomics.find::add_limma_to_fdata(contrasts, design, overwrite = FALSE)
 
   # Create dirs
   subdirs <- autonomics.find::get_contrast_subdir(result_dir, names(contrasts))
