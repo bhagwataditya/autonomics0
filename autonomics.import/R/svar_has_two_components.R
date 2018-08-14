@@ -1,3 +1,22 @@
+#' Do values consist of two components?
+#' @param x character vector
+#' @return logical(1)
+#' @export
+has_two_components <- function(x){
+
+   dt <- x %>% autonomics.import::split_components()
+
+   # FALSE if less than two columns
+   if (ncol(dt) < 1) return(FALSE)
+
+   # FALSE if only one V2 component per V1 component
+   if (nrow(dt[, .SD[.N>1], by = 'V1'])==0) return(FALSE)
+
+   # TRUE if dt has two components
+   return(ncol(dt)==2)
+
+}
+
 #' Does svar have two components?
 #'
 #' @param object SummarizedExperiment, eSet, or EList
@@ -26,23 +45,15 @@
 #' }
 #' @export
 svar_has_two_components <- function(object, svar){
-
-   dt <- object %>% autonomics.import::scomponents(svar)
-
-   # FALSE if less than two columns
-   if (ncol(dt) < 1) return(FALSE)
-
-   # FALSE if only one V2 component per V1 component
-   if (nrow(dt[, .SD[.N>1], by = 'V1'])==0) return(FALSE)
-
-   # TRUE if dt has two components
-   return(ncol(dt)==2)
-
+   object %>%
+   autonomics.import::slevels(svar) %>%
+   autonomics.import::has_two_components(svar)
 }
 
 #' @rdname svar_has_two_components
 #' @importFrom magrittr  %>%
 #' @export
 subgroup_has_two_components <- function(object){
-   object %>% svar_has_two_components('subgroup')
+   object %>%
+   svar_has_two_components('subgroup')
 }
