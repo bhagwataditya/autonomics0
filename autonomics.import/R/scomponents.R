@@ -26,7 +26,7 @@
 #' @export
 split_components <- function(
    values,
-   sep = autonomics.import::infer_design_sep(values)
+   sep = autonomics.import::infer_design_sep(values, verbose = FALSE)
 ){
 
    # Single component
@@ -36,7 +36,7 @@ split_components <- function(
    y <- values %>% stringi::stri_split_fixed(sep)
    n.component <- length(y[[1]])
    1:n.component %>% lapply(function(z) vapply(y, magrittr::extract, character(1), z)) %>%
-      data.table::as.data.table()
+                     data.table::as.data.table()
 }
 
 #' Split (subgroup) components

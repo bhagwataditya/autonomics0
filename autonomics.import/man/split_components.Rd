@@ -4,10 +4,13 @@
 \alias{split_components}
 \title{Split (subgroup) components}
 \usage{
-split_components(values, sep = autonomics.import::infer_design_sep(values))
+split_components(values, sep = autonomics.import::infer_design_sep(values,
+  verbose = FALSE))
 }
 \arguments{
 \item{values}{character vector with subgroup values}
+
+\item{sep}{character(1): separator}
 }
 \value{
 data.table with decomposed subgroup components
