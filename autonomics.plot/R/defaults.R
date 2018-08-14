@@ -66,6 +66,28 @@ make_composite_colors <- function(svalues, show = FALSE){
    return(color_values)
 }
 
+#' Make fitting colors
+#' @param x colorvar levels vector
+#' @return color vectors (values = colors, names = colorvar levels)
+#' @export
+make_colors <- function(x){
+
+   # 0D colors
+   if (is.null(x)){
+      return(autonomics.plot::make_gg_colors('default'))
+   }
+
+   # 2D colors
+   if (autonomics.import::has_two_components(x)){
+      autonomics.support::cmessage('\t\tCreating composite colors')
+      return(autonomics.plot::make_composite_colors(x))
+   }
+
+   # 1D colors
+   autonomics.support::cmessage('\t\tCreating default ggplot colors')
+   return(autonomics.plot::make_gg_colors(x))
+
+}
 
 #' Default color values
 #' @param object SummarizedExperiment
@@ -97,21 +119,11 @@ default_color_values <- function(
    autonomics.import::assert_is_valid_eset(object)
    assertive.sets::assert_is_subset(color_var, autonomics.import::svars(object))
 
-   # No color var
-   if (is.null(color_var)){
-      return(make_gg_colors('default'))
-   }
+   # Make colors
+   object %>%
+   autonomics.import::slevels(color_var) %>%
+   autonomics.plot::make_colors()
 
-   # Two component subgroups
-   if (autonomics.import::svar_has_two_components(object, color_var)){
-      autonomics.support::cmessage('\t\tCreating composite colors')
-      color_values <- object %>% autonomics.import::subgroup_values() %>% make_composite_colors()
-      return(color_values)
-   }
-
-   # Default ggplot colors
-   autonomics.support::cmessage('\t\tCreating default ggplot colors')
-   object %>% autonomics.import::slevels(color_var) %>% autonomics.plot::make_gg_colors()
 }
 
 #' default fvars
