@@ -2,14 +2,14 @@
 % Please edit documentation in R/add_limma_to_fdata.R
 \name{add_limma_to_fdata}
 \alias{add_limma_to_fdata}
-\title{Run "limma" analysis and add to eset}
+\title{Run "limma" analysis and add to SummarizedExperiment}
 \usage{
 add_limma_to_fdata(object,
   contrasts = autonomics.find::default_contrasts(object),
   design = autonomics.find::create_design_matrix(object), overwrite = TRUE)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 
 \item{contrasts}{a character vector of contrasts (of subgroup levels)}
 
@@ -18,7 +18,7 @@ add_limma_to_fdata(object,
 \item{overwrite}{whether to overwrite existing results in fdata (logical)}
 }
 \value{
-updated eset with limma results in fdata
+updated SummarizedExperiment with limma results in fdata
         added columns: rank.xxx coef.xxx p.xxx fdr.xxx bonf.xxx \cr
 }
 \description{

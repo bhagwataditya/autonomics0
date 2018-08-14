@@ -17,15 +17,15 @@ merge_limma_matrices <- function(limma_matrices){
    fmat
 }
 
-#' Run "limma" analysis and add to eset
+#' Run "limma" analysis and add to SummarizedExperiment
 #'
 #' Performs a limma analysis for the specified contrasts.
 #'
-#' @param  object   eset
+#' @param  object   SummarizedExperiment
 #' @param  contrasts  a character vector of contrasts (of subgroup levels)
 #' @param  design     design matrix
 #' @param  overwrite  whether to overwrite existing results in fdata (logical)
-#' @return updated eset with limma results in fdata
+#' @return updated SummarizedExperiment with limma results in fdata
 #'         added columns: rank.xxx coef.xxx p.xxx fdr.xxx bonf.xxx \cr
 #' @author Aditya Bhagwat
 #' @note Features with a single observation can get a significant p value
@@ -69,13 +69,13 @@ add_limma_to_fdata <- function(
    overwrite  = TRUE
 ){
 
-  # eset contains limma: overwrite or return
+  # Sumexps contains limma: overwrite or return
    autonomics.import::assert_is_valid_eset(object)
    if (autonomics.find::contains_limma_in_fdata(object)){
       if (overwrite){
          autonomics.import::fdata(object) %<>% magrittr::extract(, - grep('^(p|fdr|bonf|rank|quantile|coef)[.]', names(.)), drop = FALSE)
       } else {
-         message('\t\t eset contains limma results already - returning')
+         message('\t\tSummarizedExperiment contains limma results already - returning')
          return(object)
       }
    }
