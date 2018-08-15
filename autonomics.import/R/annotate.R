@@ -67,10 +67,12 @@ add_kegg_pathways_to_fdata <- function(object){
 #' @importFrom magrittr %>%
 #' @export
 #' @examples
+#' \dontrun{
 #' require(magrittr)
 #' if (require(subramanian.2016)){
 #'    subramanian.2016::metabolon %>%
 #'       autonomics.import::add_smiles_to_fdata()
+#' }
 #' }
 #'
 add_smiles_to_fdata <- function(object){

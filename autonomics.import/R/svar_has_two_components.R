@@ -47,7 +47,7 @@ has_two_components <- function(x){
 svar_has_two_components <- function(object, svar){
    object %>%
    autonomics.import::slevels(svar) %>%
-   autonomics.import::has_two_components(svar)
+   autonomics.import::has_two_components()
 }
 
 #' @rdname svar_has_two_components

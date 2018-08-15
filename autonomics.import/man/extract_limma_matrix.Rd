@@ -30,6 +30,7 @@ Extract limma matrix from object
 require(magrittr)
 if (require(subramanian.2016)){
    object <- subramanian.2016::metabolon
+   object \%>\% autonomics.import::extract_limma_matrix(quantity = 'value')
    object \%>\% autonomics.import::value()
    object \%>\% autonomics.import::p()
 }

@@ -16,10 +16,12 @@ named character vector (elements = SMILES, names = PUBCHEMIDS)
 Uses \href{https://pubchemdocs.ncbi.nlm.nih.gov/pug-rest-tutorial}{PUBCHEM's REST interface}
 }
 \examples{
+\dontrun{
 require(magrittr)
 if (require(subramanian.2016)){
    subramanian.2016::metabolon \%>\%
       autonomics.import::add_smiles_to_fdata()
+}
 }
 
 }
