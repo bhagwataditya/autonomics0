@@ -14,9 +14,9 @@
 complete_topdef <- function(topdef, contrast_name, direction = c('both', 'neg', 'both')){
    assertive.types::assert_is_a_string(topdef)
    assertive.types::assert_is_a_string(contrast_name)
-   topdef %<>% gsub('(coef|rank|p|fdr|bonf|quantile)', '\\1.xxx', .)
+   topdef %<>% gsub('(value|rank|p|fdr|bonf|quantile)', '\\1.xxx', .)
    topdef %<>% gsub('xxx', contrast_name, .)
-   topdef %<>% sprintf('(%s) & (coef.%s %s 0)', .,
+   topdef %<>% sprintf('(%s) & (value.%s %s 0)', .,
                                contrast_name,
                                switch(direction, neg = '<', pos = '>', both = '!='))
    topdef

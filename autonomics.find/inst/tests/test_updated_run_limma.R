@@ -38,12 +38,12 @@ which.na <- list(BM_E  = autonomics.import::exprs(object)[, 1:3] %>% is.na() %>%
 VennDiagram::venn.diagram(which.na, filename = NULL) %>% autonomics.support::cdraw()
 which.na %<>% Reduce(union, .)
 autonomics.import::exprs(object) %>% magrittr::extract(which.na, )
-old_limma$coef %>% magrittr::extract(which.na, )
-new_limma$coef %>% magrittr::extract(which.na, )
+old_limma$coef  %>% magrittr::extract(which.na, )
+new_limma$value %>% magrittr::extract(which.na, )
 
 # Non NA results remain identical
 list(old = old_limma$coef %>% magrittr::extract(-which.na, ), 
-     new = new_limma$coef %>% magrittr::extract(-which.na, )) %>% 
+     new = new_limma$value %>% magrittr::extract(-which.na, )) %>% 
    (function(x) x$old == x$new) %>% 
    matrixStats::rowAlls() %>% 
    all()

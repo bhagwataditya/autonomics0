@@ -118,6 +118,7 @@ load_omics <- function(
 #' @param mean_center         logical: whether to mean_center exprs
 #' @param flip_sign           logical: whether to flip sign
 #' @param subtract_refgroup   logical
+#' @param refgroup            character(1): reference group to subtract away
 #' @return SummarizedExperiment
 #' @examples
 #' require(magrittr)

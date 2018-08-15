@@ -213,7 +213,7 @@ cluster_features_on_subgroups <- function(
 
    # Print cluster features
    autonomics.support::cmessage('\t\tFeatures')
-   autonomics.import::fdata(object) %<>% magrittr::extract(, !stringi::stri_detect_regex(names(.), '(rank|coef|p|fdr|bonf)[.]'))
+   autonomics.import::fdata(object) %<>% magrittr::extract(, !stringi::stri_detect_regex(names(.), '(rank|value|p|fdr|bonf)[.]'))
    seq(1, length(apres@clusters)) %>% plyr::l_ply(print_cluster_i,
                                                   object,
                                                   apres      = apres,

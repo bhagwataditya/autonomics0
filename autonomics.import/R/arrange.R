@@ -65,7 +65,7 @@ arrange_samples <- function(x, ...){
 #' @export
 arrange_on_magnitude <- function(object, contrast_name){
    idx <- autonomics.import::fdata(object) %>%
-      magrittr::extract2(sprintf('coef.%s', contrast_name)) %>%
+      magrittr::extract2(sprintf('value.%s', contrast_name)) %>%
       abs(.) %>% order(decreasing = TRUE)
    object %>% magrittr::extract(idx, )
 }

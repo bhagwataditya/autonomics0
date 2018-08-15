@@ -16,7 +16,7 @@
 #' @importFrom magrittr  %>% 
 #' @export
 contains_limma_in_fdata <- function(object){
-   autonomics.import::fvars(object) %>% 
-      stringi::stri_detect_fixed('coef.') %>% 
-      any()
+   autonomics.import::fvars(object)     %>% 
+   stringi::stri_detect_fixed('value.') %>% 
+   any()
 }

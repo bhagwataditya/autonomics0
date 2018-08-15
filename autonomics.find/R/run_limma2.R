@@ -17,15 +17,15 @@ fit_contrasts <- function(fit, contrasts, design){
    contrast_results <- lapply(seq(1,ncol(contrast_matrix)), fit_single_contrast)
 
    results <- list()
-   results$coef     <- contrast_results %>% lapply(function(x)  x$coefficients) %>% do.call(cbind, .)
-   results$rank     <- apply(-abs(results$coef), 2, rank)
-   results %<>% magrittr::extract(c('rank', 'coef'))
-   results$quantile <- results$coef %>% apply(2, function(x) stats::ecdf(x)(x))
+   results$value     <- contrast_results %>% lapply(function(x)  x$coefficients) %>% do.call(cbind, .)
+   results$rank     <- apply(-abs(results$value), 2, rank)
+   results %<>% magrittr::extract(c('rank', 'value'))
+   results$quantile <- results$value %>% apply(2, function(x) stats::ecdf(x)(x))
    results$p        <- contrast_results %>% lapply(function(x){
                                                       if ('p.value' %in% names(x)){
                                                          x$p.value
                                                       } else {
-                                                         matrix(NA, nrow = nrow(x$coef), ncol = ncol(x$coef), dimnames = dimnames(x$coef))
+                                                         matrix(NA, nrow = nrow(x$value), ncol = ncol(x$value), dimnames = dimnames(x$value))
                                                       }
                                                    }) %>% do.call(cbind, .)
    if (all(is.na(results$p))){

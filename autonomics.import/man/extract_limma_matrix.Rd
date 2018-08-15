@@ -2,14 +2,14 @@
 % Please edit documentation in R/extract_limma.R
 \name{extract_limma_matrix}
 \alias{extract_limma_matrix}
-\alias{coef}
+\alias{value}
 \alias{p}
 \alias{fdr}
-\title{Extract coef matrix from object}
+\title{Extract limma matrix from object}
 \usage{
 extract_limma_matrix(object, quantity)
 
-coef(object)
+value(object)
 
 p(object)
 
@@ -18,19 +18,19 @@ fdr(object)
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{quantity}{'coef', p', 'fdr', 'bonf'}
+\item{quantity}{'value', p', 'fdr', 'bonf'}
 }
 \value{
 matrix (nfeature x ncontrast)
 }
 \description{
-Extract coef matrix from object
+Extract limma matrix from object
 }
 \examples{
 require(magrittr)
 if (require(subramanian.2016)){
    object <- subramanian.2016::metabolon
-   object \%>\% autonomics.import::coef()
+   object \%>\% autonomics.import::value()
    object \%>\% autonomics.import::p()
 }
 }

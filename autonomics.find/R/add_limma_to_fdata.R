@@ -26,7 +26,7 @@ merge_limma_matrices <- function(limma_matrices){
 #' @param  design     design matrix
 #' @param  overwrite  whether to overwrite existing results in fdata (logical)
 #' @return updated SummarizedExperiment with limma results in fdata
-#'         added columns: rank.xxx coef.xxx p.xxx fdr.xxx bonf.xxx \cr
+#'         added columns: rank.xxx value.xxx p.xxx fdr.xxx bonf.xxx \cr
 #' @author Aditya Bhagwat
 #' @note Features with a single observation can get a significant p value
 #' (though not a significant q value) when the exprs value for that feature is exceptionally large.
@@ -73,7 +73,7 @@ add_limma_to_fdata <- function(
    autonomics.import::assert_is_valid_eset(object)
    if (autonomics.find::contains_limma_in_fdata(object)){
       if (overwrite){
-         autonomics.import::fdata(object) %<>% magrittr::extract(, - grep('^(p|fdr|bonf|rank|quantile|coef)[.]', names(.)), drop = FALSE)
+         autonomics.import::fdata(object) %<>% magrittr::extract(, - grep('^(p|fdr|bonf|rank|quantile|value)[.]', names(.)), drop = FALSE)
       } else {
          message('\t\tSummarizedExperiment contains limma results already - returning')
          return(object)

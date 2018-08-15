@@ -2,28 +2,28 @@
 # RNASEQ
 #============================================
 
-#' Load rnaseq fdata
-#' @param file path to rnaseq data file
-#' @return feature dataframe
-#' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    file <- system.file('extdata/rnaseq/gene_counts.txt',
-#'                         package = 'subramanian.2016')
-#'    file %>% autonomics.import::load_fdata_exiqon()
-#' }
-#' @importFrom magrittr %>%
-#' @export
-load_fdata_rnaseq <- function(
-   file,
-   fvars = c('gene_id', 'locus', 'gene_name', 'gene_type')
-){
-
-   file %>% autonomics.support::cfread()             %>%
-            magrittr::extract(, fvars, with = FALSE) %>%
-            data.frame(stringsAsFactors = FALSE, check.names = FALSE, row.names)
-
-}
+# Load rnaseq fdata
+# @param file path to rnaseq data file
+# @return feature dataframe
+# @examples
+# require(magrittr)
+# if (require(subramanian.2016)){
+#    file <- system.file('extdata/rnaseq/gene_counts.txt',
+#                         package = 'subramanian.2016')
+#    file %>% autonomics.import::load_fdata_exiqon()
+# }
+# @importFrom magrittr %>%
+# @export
+#load_fdata_rnaseq <- function(
+#   file,
+#   fvars = c('gene_id', 'locus', 'gene_name', 'gene_type')
+#){
+#
+#   file %>% autonomics.support::cfread()             %>%
+#            magrittr::extract(, fvars, with = FALSE) %>%
+#            data.frame(stringsAsFactors = FALSE, check.names = FALSE, row.names)
+#
+#}
 
 
 #============================================

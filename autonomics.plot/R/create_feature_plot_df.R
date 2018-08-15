@@ -28,6 +28,9 @@
 #' @export
 create_feature_plot_df <- function(object, fvars, verbose = FALSE){
 
+   # Make sure fvars is unique (otherwise fvar.2 -> strange behaviour later on)
+   fvars %<>% unique()
+
    # Replace -Inf with NA
    idx <- is.infinite(autonomics.import::exprs(object))
    if (sum(idx) > 0){

@@ -91,9 +91,9 @@ utils::globalVariables('.')
 #' @export
 filter_features_on_direction <- function(object, contrast, direction){
    if (direction == 'pos'){
-      object %<>% magrittr::extract(which(autonomics.import::fdata(.)[[paste0('coef.', names(contrast))]] > 0))
+      object %<>% magrittr::extract(which(autonomics.import::fdata(.)[[paste0('value.', names(contrast))]] > 0))
    } else if (direction == 'neg'){
-      object %<>% magrittr::extract(which(autonomics.import::fdata(.)[[paste0('coef.', names(contrast))]] < 0))
+      object %<>% magrittr::extract(which(autonomics.import::fdata(.)[[paste0('value.', names(contrast))]] < 0))
    }
    return(object)
 }

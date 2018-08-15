@@ -318,7 +318,7 @@ calc_sig_b <- function(
 #    add_sigb_to_fdata_single_contrast <- function(pset, contrast){
 #      
 #      # Get ratios
-#      L2R <- autonomics.import::fdata(pset) %>% magrittr::extract2(sprintf('coef.%s', names(contrast)))
+#      L2R <- autonomics.import::fdata(pset) %>% magrittr::extract2(sprintf('value.%s', names(contrast)))
 #      
 #      # Get intensities
 #      contrast_mat <- limma::makeContrasts(contrasts = contrast, 

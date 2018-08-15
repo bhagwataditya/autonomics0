@@ -34,10 +34,10 @@ fid_var <- function(object){
    # Keep default for esets without prepro
    fvar_name <- 'feature_id'
    if (autonomics.import::is_rnaseq_eset(object))    fvar_name <- 'gene_id'     # rnaseq
-   if (autonomics.import::is_exiqon_eset(object))    fvar_name <- 'miRNA'       # exiqon
+   if (autonomics.import::is_exiqon_eset(object))    fvar_name <- 'feature_id'  # exiqon
    if (autonomics.import::is_maxquant_eset(object))  fvar_name <- 'feature_id'  # max quant
    if (autonomics.import::is_soma_eset(object))      fvar_name <- 'SeqId'       # somascan
-   if (autonomics.import::is_metabolon_eset(object)) fvar_name <- 'MCOMP_ID'     # metabolon:  M + COMPOUNDID
+   if (autonomics.import::is_metabolon_eset(object)) fvar_name <- 'MCOMP_ID'    # metabolon:  M + COMPOUNDID
 
    assertive.sets::is_subset(fvar_name, autonomics.import::fvars(object))
    fvalues <- autonomics.import::fdata(object)[[fvar_name]]
@@ -91,7 +91,7 @@ fname_var <- function(object){
 
    # Dispatch on eset type
    if (is_rnaseq_eset(object))    fvar_name <- 'gene_name'           # rnaseq
-   if (is_exiqon_eset(object))    fvar_name <- 'miRNA'               # exiqon
+   if (is_exiqon_eset(object))    fvar_name <- 'feature_id'          # exiqon
    if (is_maxquant_eset(object))  fvar_name <- 'Gene names'          # max quant
    if (is_soma_eset(object))      fvar_name <- 'EntrezGeneSymbol'    # somascan
    if (is_metabolon_eset(object)) fvar_name <- 'BIOCHEMICAL'         # metabolon
@@ -246,7 +246,7 @@ oraid_var <- function(object){
    if (is_soma_eset(object))             return(uniprot_var(object))
    if (is_maxquant_eset(object))         return(uniprot_var(object))
    if (is_metabolon_eset(object))        return('BIOCHEMICAL')
-   if (is_exiqon_eset(object))           return('miRNA')
+   if (is_exiqon_eset(object))           return('feature_id')
    autonomics.support::cmessage('Abort - object must be a SummarizedExperiment with a format as created by one of the autonomics importers')
    return(NULL)
 }

@@ -35,11 +35,11 @@
 #' @export
 select_relevant_fvars <- function(object, contrast_names){
   analysis_fvars <- autonomics.import::fvars(object) %>% 
-                    magrittr::extract(stringi::stri_detect_regex(., '^(rank|coef|p|fdr|bonf|sigb|quantile)[.].*'))
+                    magrittr::extract(stringi::stri_detect_regex(., '^(rank|value|p|fdr|bonf|sigb|quantile)[.].*'))
   contrast_fvars <- lapply(contrast_names, 
                            function(x){
                               autonomics.import::fvars(object) %>% 
-                              magrittr::extract(stringi::stri_detect_regex(., sprintf('^(rank|coef|p|fdr|bonf|sigb|quantile)[.]%s$', x)))
+                              magrittr::extract(stringi::stri_detect_regex(., sprintf('^(rank|value|p|fdr|bonf|sigb|quantile)[.]%s$', x)))
                            }) %>% 
                     unlist()
   annotation_fvars <- autonomics.import::fvars(object) %>% setdiff('fasta_hdrs') %>% setdiff(analysis_fvars)

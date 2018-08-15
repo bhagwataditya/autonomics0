@@ -7,7 +7,7 @@ create_feature_plot_title <- function(object, contrast, topdef, direction){
   my_title <- sprintf("%s %s 0   |   %d %s", contrast, down_or_up, n_top, topdef)
 
   # Add no of directional features
-  coefvar        <- paste0('coef.',    names(contrast))
+  coefvar        <- paste0('value.',    names(contrast))
   coef_available <- coefvar %in% autonomics.import::fvars(object)
   if (coef_available){
      n_direction <- sum(autonomics.find::are_top_features(object, '1', names(contrast), direction))

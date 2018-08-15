@@ -1,13 +1,13 @@
 
 # # Version which just takes top 200
 # #' @importFrom magrittr extract %<>% %>%
-# which_query <- function(object, coef, direction = 'both', top = 200){
+# which_query <- function(object, contrast_name, direction = 'both', top = 200){
 #    # Order
-#    pvar <- paste0('p.', coef)
+#    pvar <- paste0('p.', contrast_name)
 #    idx <- order(autonomics.import::fdata(object)[[pvar]])
 #
 #    # Restrict direction
-#    diffvar <- paste0('diff.', coef)
+#    diffvar <- paste0('diff.', contrast_name)
 #    if (direction == 'neg'){
 #       idx %<>% extract(autonomics.import::fdata(object)[[diffvar]] < 0
 #    } else if (direction == 'pos'){
@@ -274,7 +274,7 @@ run_ora_on_eset <- function(
    entrezg_universe   <- get_entrezg(object, load_org.xx.xx.db = load_org.xx.xx.db)
    entrezg_multiverse <- AnnotationDbi::keys(load_org.xx.xx.db)
 
-   # Loop across collection, coef, direction
+   # Loop across collection, contrast, direction
    return_list_a <- list()
    for (collection in gene_set_collections){
       autonomics.support::cmessage('\tora in %s %s', collection, universe)

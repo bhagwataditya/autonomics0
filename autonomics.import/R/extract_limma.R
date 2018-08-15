@@ -1,12 +1,12 @@
-#' Extract coef matrix from object
+#' Extract limma matrix from object
 #' @param object SummarizedExperiment
-#' @param quantity 'coef', p', 'fdr', 'bonf'
+#' @param quantity 'value', p', 'fdr', 'bonf'
 #' @return matrix (nfeature x ncontrast)
 #' @examples
 #' require(magrittr)
 #' if (require(subramanian.2016)){
 #'    object <- subramanian.2016::metabolon
-#'    object %>% autonomics.import::coef()
+#'    object %>% autonomics.import::value()
 #'    object %>% autonomics.import::p()
 #' }
 #' @importFrom magrittr %>%
@@ -27,8 +27,8 @@ extract_limma_matrix <- function(object, quantity){
 #' @rdname extract_limma_matrix
 #' @importFrom magrittr %>%
 #' @export
-coef <- function(object){
-   object %>% autonomics.import::extract_limma_matrix('coef')
+value <- function(object){
+   object %>% autonomics.import::extract_limma_matrix('value')
 }
 
 #' @rdname extract_limma_matrix
@@ -61,7 +61,7 @@ extract_limma_dt <- function(object){
    # Satisfy CHECK
    . <- NULL
 
-   c('coef', 'p', 'fdr', 'bonf') %>%
+   c('value', 'p', 'fdr', 'bonf') %>%
    lapply(function(quantity){
       data.table::data.table(
          fid   = object %>% autonomics.import::fid_values(),

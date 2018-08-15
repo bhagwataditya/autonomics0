@@ -32,6 +32,8 @@ load_exiqon(file, design_file = NULL, log2_transform = NULL,
 \item{flip_sign}{logical: whether to flip sign}
 
 \item{subtract_refgroup}{logical}
+
+\item{refgroup}{character(1): reference group to subtract away}
 }
 \value{
 SummarizedExperiment

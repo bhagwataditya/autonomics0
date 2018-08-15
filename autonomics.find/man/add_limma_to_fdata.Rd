@@ -19,7 +19,7 @@ add_limma_to_fdata(object,
 }
 \value{
 updated SummarizedExperiment with limma results in fdata
-        added columns: rank.xxx coef.xxx p.xxx fdr.xxx bonf.xxx \cr
+        added columns: rank.xxx value.xxx p.xxx fdr.xxx bonf.xxx \cr
 }
 \description{
 Performs a limma analysis for the specified contrasts.
