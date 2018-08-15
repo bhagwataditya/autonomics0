@@ -6,12 +6,16 @@
 #' require(magrittr)
 #' if (require(subramanian.2016)){
 #'    object <- subramanian.2016::metabolon
+#'    object %>% autonomics.import::extract_limma_matrix(quantity = 'value')
 #'    object %>% autonomics.import::value()
 #'    object %>% autonomics.import::p()
 #' }
 #' @importFrom magrittr %>%
 #' @export
 extract_limma_matrix <- function(object, quantity){
+
+   # Assert
+   assertive.strings::assert_any_are_matching_fixed(autonomics.import::fvars(object), quantity)
 
    # Satisfy CHECK
    . <- NULL
