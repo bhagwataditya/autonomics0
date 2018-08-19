@@ -62,7 +62,7 @@ make_composite_colors <- function(svalues, show = FALSE){
                    merge(components, by = c('V1', 'V2'), sort = FALSE) %>% # only levels really present
                    magrittr::extract(, color %>% magrittr::set_names(subgroup))
 
-   if (show) pie(rep(1, length(color_values)), names(color_values), col = color_values)
+   if (show) graphics::pie(rep(1, length(color_values)), names(color_values), col = color_values)
    return(color_values)
 }
 

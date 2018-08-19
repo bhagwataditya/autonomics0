@@ -10,6 +10,7 @@
 #' @param cat.dist      numeric(1): category location (as distance from circle edge)
 #' @param main.cex      numeric(1): title font size
 #' @param main.pos      numeric(2): title location
+#' @param ...           passed to either VennDiagram::venn.diagram(...) or eulerr::plot.euler(...)
 #' @examples
 #' x <- list(A = c('apple', 'pear'), B = c('pear', 'orange'))
 #' filename <- NULL
@@ -48,7 +49,7 @@ plot_venn <- function(
            set.seed(1)
            x  %>%
            eulerr::euler() %>% # unlimited number of sets; venn.diagram(scaled = TRUE) is limited
-           plot(quantities = TRUE, fills = color_values, labels = names(x), legend = TRUE, ...)
+           graphics::plot(quantities = TRUE, fills = color_values, labels = names(x), legend = TRUE, ...)
 
         } else {
             futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")
