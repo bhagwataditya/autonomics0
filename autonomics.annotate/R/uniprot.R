@@ -1,68 +1,4 @@
 
-#=========================
-
-#' Annotate uniprot accessions
-#' @param uniprot character vector with uniprot accessions
-#' @param fastafile path to fasta file
-#' @return data.table(uniprot, genename, proteinname, reviewed, existence)
-#' @export
-annotate_with_uniprot_fastafile <- function(uniprot, fastafile){
-
-   # Assert
-   assertive.types::assert_is_character(uniprot)
-   assertive.files::assert_all_are_existing_files(fastafile)
-
-   # Import
-   `:=` <- data.table::`:=`
-
-   # Load (relevant portion of) fasta
-   fasta <- seqinr::read.fasta(fastafile)
-   all_accessions <- fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2)
-   assertive.sets::assert_is_subset(uniprot, all_accessions)
-   fasta %<>% magrittr::extract(all_accessions %in% uniprot)
-
-   # Extract annotations
-   dt <- data.table::data.table(
-      uniprot    = fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2),
-      reviewed   = fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 1) %>% magrittr::equals('sp') %>% as.numeric(),
-      #entryname  = fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 3),
-      annotation = fasta %>% vapply(attr, character(1), 'Annot') %>% unname())
-
-   # Sequence version - not of interest
-   dt %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(' SV=[0-9]', ''))
-
-   # Protein existence
-   pattern <- ' PE=[0-9]'
-   dt  %>% magrittr::extract(, existence  := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)) %>% as.numeric())
-   dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
-
-   # Gene names
-   pattern <- ' GN=.+$'
-   dt  %>% magrittr::extract(, genename   := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
-   dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
-
-   # Organism identifier
-   pattern <- ' OX=[0-9]+'
-   #dt %>% magrittr::extract(, orgid      := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
-   dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
-
-   # Organism name
-   pattern <- ' OS=.+$'
-   #dt %>% magrittr::extract(, orgname    := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
-   dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
-
-   # Protein names
-   pattern <- ' .+$'
-   dt  %>% magrittr::extract(, proteinname := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(2,nchar(.)))
-   dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
-
-   # Brushup
-   dt  %>% magrittr::extract(, annotation := NULL)
-   dt %<>% magrittr::extract(, c('uniprot', 'genename', 'proteinname', 'reviewed', 'existence'), with = FALSE)
-
-   # Return
-   return(dt)
-}
 
 
 #=======================================
@@ -76,9 +12,9 @@ annotate_with_uniprot_fastafile <- function(uniprot, fastafile){
 #' @return uniprot.ws connection
 #' @examples
 #' \dontrun{
-#' require(magrittr)
-#' values <- c("A0A024R4M0", "M0R210", "G3HSF3")
-#' values %>% autonomics.annotate::connect_to_uniprot()
+#'    require(magrittr)
+#'    values <- c("A0A024R4M0", "M0R210", "G3HSF3")
+#'    up <- values %>% autonomics.annotate::connect_to_uniprot()
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -347,18 +283,21 @@ clean_uniprot_gene_values <- function(values){
 #' @param values character vector
 #' @return character vector
 #' @examples
+#' require(magrittr)
 #' \dontrun{
-#'    uniprot_vector <- c('P83940', 'E9Q4P1', 'E9Q3S4', 'Q9JKP5', 'Q8BVE3')
+#'    uniprot_vector <- c('A0MZ66', 'A1KZ92', 'A1L020', 'A1XBS5', 'S4R350', 'A4D1P6')
 #'    up <- autonomics.annotate::connect_to_uniprot(uniprot_vector)
-#'    dt <- AnnotationDbi::select(up, keys = uniprot_vector, columns = 'SUBCELLULAR-LOCATIONS')
+#'    dt <- AnnotationDbi::select(up, keys = uniprot_vector, columns = 'SUBCELLULAR-LOCATIONS') %>%
+#'          data.table::data.table()
 #'    values <- dt$`SUBCELLULAR-LOCATIONS`
+#'    values %>% clean_uniprot_location_values()
 #' }
 #' @importFrom magrittr %>%
 #' @export
 clean_uniprot_location_values <- function(values){
-   values %>% stringi::stri_replace_last_regex(' Note=.+$', '') %>%
-      stringi::stri_replace_all_fixed('SUBCELLULAR LOCATION: ', '') %>%
-      stringi::stri_replace_all_regex(' \\{[^ ]+\\}', '')
+   values %>% stringi::stri_replace_last_regex(' Note=.+$', '')              %>%  # rm Notes (not part of controlled vocabulary)
+              stringi::stri_replace_all_fixed('SUBCELLULAR LOCATION: ', '')  %>%
+              stringi::stri_replace_all_regex(' \\{[^;.]+\\}', '')                # make pattern lazy by using [^.;] construct
 }
 
 
@@ -371,14 +310,15 @@ clean_uniprot_location_values <- function(values){
 #' @examples
 #' \dontrun{
 #' require(magrittr)
-#' values <- c("A0A024R4M0", "M0R210", "G3HSF3", "P31941")
+#' values <- c('A0MZ66', 'A1KZ92', 'A1L020', 'A1XBS5', 'S4R350', 'A4D1P6')
 #' up <- values %>% autonomics.annotate::connect_to_uniprot()
-#' autonomics.annotate::annotate_uniprot_through_ws(values, up) %>% print()
+#' autonomics.annotate::annotate_uniprot_with_webservice(
+#'    values, up, columns =  'SUBCELLULAR-LOCATIONS') %>% print()
 #' }
 #' @importFrom data.table   data.table   :=
 #' @importFrom magrittr     %>%   %<>%
 #' @export
-annotate_with_uniprot_webservice <- function(
+annotate_uniprot_with_webservice <- function(
    values,
    up      = autonomics.annotate::connect_to_uniprot(values),
    columns = c('SUBCELLULAR-LOCATIONS', 'KEGG', 'GO-ID', 'INTERPRO')
@@ -386,7 +326,6 @@ annotate_with_uniprot_webservice <- function(
    # Fetch uniprot annotations
    dt <- AnnotationDbi::select(up, keys = values, columns = columns)
    dt %<>% data.table::data.table()
-   data.table::setnames('UNIPROTKB', 'Uniprot accessions')
 
    # Collapse redundant kegg ids
    if ('KEGG' %in% columns){
@@ -409,47 +348,149 @@ annotate_with_uniprot_webservice <- function(
    dt
 }
 
+#=========================
+
+#' Annotate uniprot accessions with fastafile
+#' @param fastafile    path to fasta file
+#' @param fastafields  character vector
+#' @examples
+#' require(magrittr)
+#' fastafile <- '../data/uniprot_hsapiens_20140515_68406entries.fasta'
+#' if (file.exists(fastafile)){
+#'    fastafile %>% autonomics.annotate::load_uniprot_annotations_from_fastafile()
+#' }
+#' @return data.table with fields: (uniprot, genename, proteinname, reviewed, existence)
+#' @importFrom data.table   data.table   :=
+#' @export
+load_uniprot_annotations_from_fastafile <- function(
+   fastafile,
+   fastafields = c('GENES', 'PROTEIN-NAMES', 'REVIEWED', 'EXISTENCE', 'ENTRYNAME', 'ORGID', 'ORGNAME', 'VERSION')
+){
+
+   # Assert
+   assertive.files::assert_all_are_existing_files(fastafile)
+
+   # Import
+   `:=` <- data.table::`:=`
+
+   # Load (relevant portion of) fasta
+   autonomics.support::cmessage('\t\tLoad fasta file')
+   fasta <- seqinr::read.fasta(fastafile)
+   all_accessions <- fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2)
+
+   # Extract annotations
+   dt <- data.table::data.table(UNIPROTKB   =  fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2),
+                                 annotation = fasta  %>% vapply(attr, character(1), 'Annot') %>% unname())
+
+   # REVIEWED
+   autonomics.support::cmessage('\t\tExtract REVIEWED: 0=trembl, 1=swissprot')
+   dt %>% magrittr::extract(, REVIEWED := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 1) %>% magrittr::equals('sp') %>% as.numeric())
+
+   # ENTRYNAME
+   autonomics.support::cmessage('\t\tExtract ENTRYNAME')
+   dt %>% magrittr::extract(, ENTRYNAME := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 3))
+
+   # VERSION
+   pattern <- ' SV=[0-9]'
+   autonomics.support::cmessage('\t\tExtract (sequence) VERSION')
+   dt  %>% magrittr::extract(, VERSION  := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,5) %>% as.numeric())
+   dt %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+
+   # EXISTENCE
+   pattern <- ' PE=[0-9]'
+   autonomics.support::cmessage('\t\tExtract EXISTENCE: 1=protein, 2=transcript, 3=homology, 4=prediction, 5=uncertain, NA=isoform')
+   dt  %>% magrittr::extract(, EXISTENCE  := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,5) %>% as.numeric())
+   dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+
+   # GENES
+   pattern <- ' GN=.+$'
+   autonomics.support::cmessage('\t\tExtract GENES')
+   dt  %>% magrittr::extract(, GENES   := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
+   dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+
+   # ORGID
+   pattern <- ' OX=[0-9]+'
+   dt %>% magrittr::extract(, ORGID    := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
+   dt %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+
+   # ORGNAME
+   pattern <- ' OS=.+$'
+   dt %>% magrittr::extract(, ORGNAME  := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
+   dt %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+
+   # PROTEIN-NAMES
+   pattern <- ' .+$'
+   autonomics.support::cmessage('\t\tExtract PROTEIN-NAMES')
+   dt %>% magrittr::extract(, `PROTEIN-NAMES` := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(2,nchar(.)))
+   dt %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+
+   # Order
+   dt  %>% magrittr::extract(, annotation := NULL)
+   dt %<>% magrittr::extract(, c('UNIPROTKB', fastafields), with = FALSE)
+
+   # Return
+   return(dt)
+}
+
+
 #==============================================================
 
 #' Annotate proteingroups
-#' @param object SummerizedExperiment with proteinGroups data
-#' @param fastafile path to fastafile
-#' @param webservice NULL or character vector (annotations to fetch from uniprot webservice)
+#' @param object      SummerizedExperiment with proteinGroups data
+#' @param fastafile   path to fastafile
+#' @param webservice  NULL or character vector (annotations to fetch from uniprot webservice)
 #' @return SummarizedExperiment with annotations
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios[1:100, ]
+#'    fastafile <- '../data/uniprot_hsapiens_20140515_68406entries.fasta'
+#'    if (file.exists(fastafile)){
+#'       object %>% autonomics.annotate::annotate_proteingroups(fastafile = fastafile)
+#'    }
+#'    \dontrun{
+#'       wsconnection <- autonomics.annotate::connect_to_uniprot(c("A0AV96", "A0AVF1", "A0AVT1"))
+#'    }
+#' }
 annotate_proteingroups <- function(
    object,
    fastafile,
-   webservice_columns= NULL,
-   webservice_connection  = NULL
+   fastafields  = c('GENES', 'PROTEIN-NAMES', 'EXISTENCE', 'REVIEWED'),
+   wsconnection = NULL,
+   wsfields     = c('SUBCELLULAR-LOCATIONS', 'INTERPRO')
 ){
-
-   # Annotate by fasta file
+   # Uncollapse
    fdata1 <- object %>%
              autonomics.import::fdata() %>%
              magrittr::extract(, c('feature_id', 'Uniprot accessions'), drop = FALSE) %>%
              tidyr::separate_rows(`Uniprot accessions`, sep = ';') %>%
              data.table::data.table()
-   annotations <- fdata1$`Uniprot accessions` %>% annotate_with_uniprot_fastafile(fastafile)
-   fdata1 %<>% merge(annotations, by.x = 'Uniprot accessions', by.y = 'uniprot', sort = FALSE)
 
-   # Prefer swissprot over trembl
-   fdata1 %<>% magrittr::extract(, .SD[reviewed == max(reviewed)], by = 'feature_id')
+   # Annotate with fastafile and deconvolute
+      # Annotate
+        fasta_annotations <- fastafile %>% autonomics.annotate::load_uniprot_annotations_from_fastafile(fastafields)
+        fdata1 %<>% merge(fasta_annotations, by.x = 'Uniprot accessions', by.y = 'UNIPROTKB', sort = FALSE)
 
-   # Prefer canonical when present
-   fdata1 %>%  magrittr::extract(, is.canonical := as.numeric(reviewed==TRUE & !stringi::stri_detect_fixed(`Uniprot accessions`, '-')))
-   fdata1 %<>% magrittr::extract(, .SD[is.canonical == max(is.canonical)], by = 'feature_id')
-   fdata1 %<>% magrittr::extract(, is.canonical := NULL)
-   fdata1 %<>% magrittr::extract(, reviewed     := NULL)
+      # Prefer swissprot over trembl
+        fdata1 %<>% magrittr::extract(, .SD[REVIEWED == max(REVIEWED)], by = 'feature_id')
 
-   # Prefer best protein existence
-   fdata1[is.na(existence), existence:=5]
-   fdata1 %<>% magrittr::extract(, .SD[existence == min(existence)], by = 'feature_id')
-   fdata1[, existence := NULL]
+      # Prefer canonical when present
+        fdata1 %>%  magrittr::extract(, CANONICAL := as.numeric(REVIEWED==TRUE & !stringi::stri_detect_fixed(`Uniprot accessions`, '-')))
+        fdata1 %<>% magrittr::extract(, .SD[CANONICAL == max(CANONICAL)], by = 'feature_id')
+        fdata1 %<>% magrittr::extract(, CANONICAL := NULL)
+        fdata1 %<>% magrittr::extract(, REVIEWED     := NULL)
 
-   # Annotate through webservice
-   if (!is.null(annotate_through_webservice)){
+      # Prefer best protein existence
+        fdata1[is.na(EXISTENCE), EXISTENCE:=5]
+        fdata1 %<>% magrittr::extract(, .SD[EXISTENCE == min(EXISTENCE)], by = 'feature_id')
+        fdata1[, EXISTENCE := NULL]
+
+   # Annotate with webservice
+   if (!is.null(wsconnection)){
+      assertive.sets::assert_is_subset(wsfields, UniProt.ws::columns(wsconnection))
+
       annotations2 <- fdata1$`Uniprot accessions` %>%
-                      autonomics.annotate::annotate_with_uniprot_webservice(up = webservice_connection, columns = webservice_columns)
+                      autonomics.annotate::annotate_uniprot_with_webservice(up = wsconnection, columns = wsfields)
       # Merge in
    }
 

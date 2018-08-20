@@ -18,8 +18,8 @@ uniprot webservice connection.
 }
 \examples{
 \dontrun{
-require(magrittr)
-values <- c("A0A024R4M0", "M0R210", "G3HSF3")
-values \%>\% autonomics.annotate::connect_to_uniprot()
+   require(magrittr)
+   values <- c("A0A024R4M0", "M0R210", "G3HSF3")
+   up <- values \%>\% autonomics.annotate::connect_to_uniprot()
 }
 }
