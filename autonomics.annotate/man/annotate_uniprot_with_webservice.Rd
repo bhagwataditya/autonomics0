@@ -22,7 +22,7 @@ Annotate uniprot ids
 \examples{
 \dontrun{
 require(magrittr)
-values <- c("A0A024R4M0", "M0R210", "G3HSF3", "P31941")
+values <- c('A0MZ66', 'A1KZ92', 'A1L020', 'A1XBS5', 'S4R350', 'A4D1P6')
 up <- values \%>\% autonomics.annotate::connect_to_uniprot()
 autonomics.annotate::annotate_uniprot_with_webservice(
    values, up, columns =  'SUBCELLULAR-LOCATIONS') \%>\% print()

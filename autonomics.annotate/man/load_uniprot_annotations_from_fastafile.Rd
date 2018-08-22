@@ -2,11 +2,11 @@
 % Please edit documentation in R/uniprot.R
 \name{load_uniprot_annotations_from_fastafile}
 \alias{load_uniprot_annotations_from_fastafile}
-\title{Annotate uniprot accessions with fastafile}
+\title{Load uniprot annotations from protein sequence fastafile}
 \usage{
-load_uniprot_annotations_from_fastafile(fastafile, fastafields = c("GENES",
-  "PROTEIN-NAMES", "REVIEWED", "EXISTENCE", "ENTRYNAME", "ORGID", "ORGNAME",
-  "VERSION"))
+load_uniprot_annotations_from_fastafile(fastafile,
+  fastafields = c("CANONICAL", "GENES", "PROTEIN-NAMES", "REVIEWED",
+  "EXISTENCE", "ENTRYNAME", "ORGID", "ORGNAME", "VERSION"))
 }
 \arguments{
 \item{fastafile}{path to fasta file}
@@ -17,7 +17,10 @@ load_uniprot_annotations_from_fastafile(fastafile, fastafields = c("GENES",
 data.table with fields: (uniprot, genename, proteinname, reviewed, existence)
 }
 \description{
-Annotate uniprot accessions with fastafile
+Load uniprot annotations from protein sequence fastafile
+}
+\note{
+EXISTENCE values are always those of the canonical isoform (no isoform-level resolution for this field)
 }
 \examples{
 require(magrittr)

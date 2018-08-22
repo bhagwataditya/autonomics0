@@ -4,9 +4,11 @@
 \alias{annotate_proteingroups}
 \title{Annotate proteingroups}
 \usage{
-annotate_proteingroups(object, fastafile, fastafields = c("GENES",
-  "PROTEIN-NAMES", "EXISTENCE", "REVIEWED"), wsconnection = NULL,
-  wsfields = c("SUBCELLULAR-LOCATIONS", "INTERPRO"))
+annotate_proteingroups(object, fastafile, fastafields = c("CANONICAL",
+  "ISOFORM", "GENES", "PROTEIN-NAMES", "EXISTENCE", "REVIEWED"),
+  prefer_swissprot = TRUE, prefer_canonical = TRUE,
+  prefer_best_existence = TRUE, wsconnection = NULL,
+  wsfields = c("SUBCELLULAR-LOCATIONS", "INTERPRO", "GO-ID"))
 }
 \arguments{
 \item{object}{SummerizedExperiment with proteinGroups data}
@@ -25,7 +27,7 @@ Annotate proteingroups
 require(magrittr)
 if (require(autonomics.data)){
    object <- autonomics.data::stemcomp.proteinratios[1:100, ]
-   fastafile <- '../data/uniprot_hsapiens_20140515_68406entries.fasta'
+   fastafile <- '../data/uniprot_hsa_20140515.fasta'
    if (file.exists(fastafile)){
       object \%>\% autonomics.annotate::annotate_proteingroups(fastafile = fastafile)
    }
