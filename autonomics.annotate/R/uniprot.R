@@ -333,7 +333,7 @@ annotate_uniprot_with_webservice <- function(
       dt %<>% magrittr::extract(, ('KEGG') := paste0(get('KEGG'), collapse = ';'), by = 'UNIPROTKB') %>% unique()
       n1 <- nrow(dt)
       autonomics.support::cmessage('\tCollapse %d KEGG ids mapping to same uniprot accession: %d -> %d features', n0-n1, n0, n1)
-      data.table::setnames('KEGG',     'keggid')
+      #data.table::setnames('KEGG',     'keggid')
    }
 
    # Clean values
@@ -366,7 +366,7 @@ annotate_uniprot_with_webservice <- function(
 #' @export
 load_uniprot_annotations_from_fastafile <- function(
    fastafile,
-   fastafields = c('CANONICAL', 'GENES', 'PROTEIN-NAMES', 'REVIEWED', 'EXISTENCE', 'ENTRYNAME', 'ORGID', 'ORGNAME', 'VERSION')
+   fastafields = c('GENES', 'PROTEIN-NAMES', 'REVIEWED', 'EXISTENCE', 'ENTRYNAME', 'ORGID', 'ORGNAME', 'VERSION')
 ){
 
    # Assert
@@ -398,15 +398,11 @@ load_uniprot_annotations_from_fastafile <- function(
    dt  %>% magrittr::extract(, VERSION   := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,5) %>% as.numeric())
    dt %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
 
-   # EXISTENCE, CANONICAL, ISOFORM
+   # EXISTENCE
    pattern <- ' PE=[0-9]'
    autonomics.support::cmessage('\t\tExtract EXISTENCE: 1=protein, 2=transcript, 3=homology, 4=prediction, 5=uncertain, NA=isoform')
    dt  %>% magrittr::extract(, EXISTENCE  := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,5) %>% as.numeric())
    dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
-   dt  %>% magrittr::extract(, CANONICAL  := UNIPROTKB  %>% stringi::stri_replace_last_regex('[-][0-9]+', ''))
-   dt  %>% magrittr::extract(, EXISTENCE  := EXISTENCE[UNIPROTKB==CANONICAL], by = 'CANONICAL')
-   dt  %>% magrittr::extract(, ISOFORM    := UNIPROTKB %>% stringi::stri_replace_first_regex('[A-Z0-9]+[-]?', ''))
-   dt  %>% magrittr::extract(UNIPROTKB==CANONICAL, ISOFORM:= '1')
 
    # GENES
    pattern <- ' GN=.+$'
@@ -461,7 +457,7 @@ load_uniprot_annotations_from_fastafile <- function(
 annotate_proteingroups <- function(
    object,
    fastafile,
-   fastafields  = c('CANONICAL', 'ISOFORM', 'GENES', 'PROTEIN-NAMES', 'EXISTENCE', 'REVIEWED'),
+   fastafields  = c('GENES', 'PROTEIN-NAMES', 'EXISTENCE', 'REVIEWED'),
    prefer_swissprot = TRUE,
    prefer_canonical = TRUE,
    prefer_best_existence = TRUE,
@@ -471,13 +467,20 @@ annotate_proteingroups <- function(
    # Load fasta annotations
    fasta_annotations <- fastafile %>% autonomics.annotate::load_uniprot_annotations_from_fastafile(fastafields)
 
-   # Uncollapse and merge fasta annotations
+   # Uncollapse
    fdata1 <- object %>% autonomics.import::fdata() %>%
                         magrittr::extract(, c('feature_id', 'Uniprot accessions'), drop = FALSE) %>%
                         tidyr::separate_rows(`Uniprot accessions`, sep = ';') %>%
-                        data.table::data.table() %>%
-             merge(fasta_annotations, by.x = 'Uniprot accessions', by.y = 'UNIPROTKB', sort = FALSE)
+                        data.table::data.table()
 
+   # Split into CANONICAL and isoform
+   fdata1 %<>% magrittr::extract(, ISOFORM              := `Uniprot accessions`) %>%
+               magrittr::extract(, `Uniprot accessions` := `Uniprot accessions` %>% stringi::stri_replace_first_regex('[-][0-9]+',     '')) # %>%
+               #magrittr::extract(, ISOFORM := ISOFORM %>% sort() %>% unique() %>% paste0(collapse=';'), by = c('feature_id', 'Uniprot accessions')) %>%
+               #unique()
+
+   # Merge in uniprot fasta annotations
+   fdata1 %<>% merge(fasta_annotations, by.x = 'Uniprot accessions', by.y = 'UNIPROTKB', sort = FALSE)
    report_n <- function(dt, suffix=''){
       n <- dt %>% magrittr::extract(, .SD[, list(nseq = .N,
                                            ngene = length(unique(GENES)),
@@ -496,7 +499,7 @@ annotate_proteingroups <- function(
    if (prefer_swissprot){
      fdata1 %<>% magrittr::extract(, .SD[REVIEWED == max(REVIEWED)], by = 'feature_id')
      ntrembl <- fdata1[, any(REVIEWED==0), by = 'feature_id'][, sum(V1)]
-     fdata1 %>% report_n(suffix = sprintf('   # Drop trembl when swissprot available (%d trembl-only groups, others are swissprot-only)', ntrembl))
+     fdata1 %>% report_n(suffix = sprintf('   # Drop trembl when swissprot available (%d trembl-only groups remain, others are swissprot-only)', ntrembl))
    }
 
    # Prefer best existence
@@ -505,23 +508,70 @@ annotate_proteingroups <- function(
       fdata1 %>% report_n(suffix = '   # Drop inferior existences')
    }
 
-   # Prefer full sequences (over trembl fragments)
-   if (prefer_full_sequence){
+   # Resolve trembl groups
+      # Drop fragments when full sequences available
       fdata1 %>% magrittr::extract(, IS.FRAGMENT := 0)
       fdata1 %>% magrittr::extract(REVIEWED==0, IS.FRAGMENT:= `PROTEIN-NAMES` %>% stringi::stri_detect_fixed('(Fragment)') %>% as.numeric())
       fdata1 %<>% magrittr::extract(, .SD[IS.FRAGMENT == min(IS.FRAGMENT)], by = 'feature_id')
-      fdata1 %>% report_n(suffix = '   # Drop trembl fragments when full sequences available')
       fdata1[, IS.FRAGMENT:=NULL]
-   }
+      fdata1 %>% report_n(suffix = '   # Drop trembl fragments when full sequences available')
 
-   # Prefer canonical swissprot (per canonical)
-   if (prefer_canonical){
-      fdata1[, ISOFORM := paste0(sort(ISOFORM), collapse = ';'), by = 'CANONICAL']
-      fdata1[, IS.CANONICAL:=as.numeric(`Uniprot accessions` == CANONICAL)]
-      fdata1 %<>% magrittr::extract(, .SD[(IS.CANONICAL == max(IS.CANONICAL))], by = c('feature_id', 'CANONICAL'))
-      fdata1 %>% report_n(suffix = '   # Drop alternative isoforms when canonical available')
-      fdata1[, IS.CANONICAL:=NULL]
-   }
+      # Resolve within-gene trembl redundancies: take first
+      fdata1[, N     := .N,                    by = 'feature_id']
+      fdata1[, NGENE := length(unique(GENES)), by = 'feature_id']
+      selector <- fdata1[, N>1 & NGENE==1 & REVIEWED==0]
+      tmpdata <- fdata1 %>% magrittr::extract(selector)
+      fdata1  %<>% magrittr::extract(!selector)
+      tmpdata %<>% magrittr::extract(, .SD[1], by = 'feature_id')
+      fdata1  %<>% rbind(tmpdata)
+      fdata1 %>% report_n(suffix = '   # Take first trembl sequence for singlegene trembl groups')
+
+   # Resolve swissprot groups
+
+      # Collapse similar isoforms
+      fdata1[REVIEWED==1, CANONICAL := `Uniprot accessions` %>% stringi::stri_replace_first_regex('[-][0-9]+', '')]
+      fdata1[ , ISOFORM:= ISOFORM %>% unique() %>% sort() %>% paste0(collapse=';'), by=c('feature_id', 'CANONICAL')]
+      fdata1 %<>% unique()
+      fdata1 %>% report_n(suffix = '   # Collapse similar isoforms (i.e. PROT-2, PROT-3 etc.)')
+
+      # Collapse dissimilar isoforms
+      fdata1[,  NISOFORMS := ISOFORM %>% stringi::stri_count_regex('[A-Z0-9\\-]+[;]?')]
+      fdata1[,  CANONICAL := CANONICAL[NISOFORMS==max(NISOFORMS)] %>% unique() %>% sort() %>% paste0(collapse=';'), by = c('feature_id', 'GENES')]
+      fdata1[,  CANONICAL := CANONICAL[NISOFORMS==max(NISOFORMS)] %>% unique() %>% sort() %>% paste0(collapse=';'), by = c('feature_id', 'GENES')]
+      fdata1[,  ISOFORM   := ISOFORM %>% paste0(collapse = ';'), by=c('CANONICAL', 'feature_id')]
+      fdata1[, `PROTEIN-NAMES` := `PROTEIN-NAMES` %>% unique() %>% paste0(collapse = ';'), by=c('CANONICAL', 'feature_id')]
+      fdata1 %<>% magrittr::extract(, .SD[NISOFORMS==max(NISOFORMS)], by = c('feature_id', 'GENES'))
+      fdata1 %>% report_n(suffix = '   # Collapse dissimilar isoforms with clear canonical (i.e. PROT-2, ALTPROT etc.)')
+
+      # Collapse dissimilar isoforms with no clear canonical
+      fdata1[, N:=.N, by = 'feature_id']
+      fdata1[, NGENE := length(unique(GENES)), by = 'feature_id']
+      fdata1[NGENE==1 & N>1]
+
+      fdata1[GENES %in% c('NACA', 'RABGAP1L', 'HLA-A')]
+
+
+      # Collapse dissimilar isoforms
+      fdata1[feature_id=='B7ZAP0', CANONICAL[nchar(ISOFORM)==max(nchar(ISOFORM))]]
+
+      fdata1[, NPERCANONICAL := .SD[, .N], by = c('feature_id', 'CANONICAL')]
+      fdata1[REVIEWED==TRUE, CANONICAL:= .SD[, CANONICAL[NPERCANONICAL==max(NPERCANONICAL)][1]],  by = c('feature_id', 'GENES')]
+      fdata1[REVIEWED==TRUE, ISOFORM := ISOFORM %>% unique() %>% sort() %>% paste0(collapse=';'), by = c('feature_id', 'GENES')]
+      fdata1[GENES %in% c('NACA', 'RABGAP1L', 'HLA-A')] %>% magrittr::extract(, .SD[NPERCANONICAL==max(NPERCANONICAL)], by = c('feature_id'))
+
+      fdata1[GENES=='RABGAP1L']
+      fdata1[, NPERCANONICAL:=NULL]
+
+      # Collapse isoforms
+
+
+
+
+   # Resolve within-gene swissprot redundancies
+      fdata1[, N     := .N,                    by = 'feature_id']
+      fdata1[, NGENE := length(unique(GENES)), by = 'feature_id']
+      selector <- fdata1[, N>1 & NGENE==1 & REVIEWED==1]
+      fdata1[selector]
 
 
    # Annotate with webservice

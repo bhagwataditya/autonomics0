@@ -4,11 +4,11 @@
 \alias{annotate_proteingroups}
 \title{Annotate proteingroups}
 \usage{
-annotate_proteingroups(object, fastafile, fastafields = c("CANONICAL",
-  "ISOFORM", "GENES", "PROTEIN-NAMES", "EXISTENCE", "REVIEWED"),
-  prefer_swissprot = TRUE, prefer_canonical = TRUE,
-  prefer_best_existence = TRUE, wsconnection = NULL,
-  wsfields = c("SUBCELLULAR-LOCATIONS", "INTERPRO", "GO-ID"))
+annotate_proteingroups(object, fastafile, fastafields = c("GENES",
+  "PROTEIN-NAMES", "EXISTENCE", "REVIEWED"), prefer_swissprot = TRUE,
+  prefer_canonical = TRUE, prefer_best_existence = TRUE,
+  wsconnection = NULL, wsfields = c("SUBCELLULAR-LOCATIONS", "INTERPRO",
+  "GO-ID"))
 }
 \arguments{
 \item{object}{SummerizedExperiment with proteinGroups data}

@@ -4,9 +4,9 @@
 \alias{load_uniprot_annotations_from_fastafile}
 \title{Load uniprot annotations from protein sequence fastafile}
 \usage{
-load_uniprot_annotations_from_fastafile(fastafile,
-  fastafields = c("CANONICAL", "GENES", "PROTEIN-NAMES", "REVIEWED",
-  "EXISTENCE", "ENTRYNAME", "ORGID", "ORGNAME", "VERSION"))
+load_uniprot_annotations_from_fastafile(fastafile, fastafields = c("GENES",
+  "PROTEIN-NAMES", "REVIEWED", "EXISTENCE", "ENTRYNAME", "ORGID", "ORGNAME",
+  "VERSION"))
 }
 \arguments{
 \item{fastafile}{path to fasta file}
