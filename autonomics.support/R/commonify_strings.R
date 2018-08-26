@@ -1,11 +1,44 @@
-x <- "heartspecific HLA class I histocompatibility antigen, A-68 alpha chain"
-y <- "HLA class I/II histocompatibility antigen, A-2 alpha chain (isoform 3)"
 
 #' @rdname commonify_strings
 #' @importFrom magrittr %>% 
 #' @export
+#' @examples 
+#' x <-    "heart-specific HLA class I histocompatibility antigen, A-68 alpha chain"
+#' y <-                "HLA class I/II histocompatibility antigen, A-2 alpha chain (isoform 3)"
+#'   (heart-specific) HLA class (I|II) histocompatibility antigen, A-(2|68) alpha chain (isoform 3)
 commonify_two_strings <- function(x,y){
   ta <- drop(attr(utils::adist(x,y, counts=TRUE), "trafos"))
+  
+  tabroken <- ta %>% stringi::stri_sub(stringi::stri_locate_all_regex(ta, '(D{1,}|M{1,}|I{1,}|S{1,})')[[1]])
+  
+  
+  
+  xstring <- ta %>% stringi::stri_replace_all_fixed('I', '')
+  ystring <- ta %>% stringi::stri_replace_all_fixed('D', '')
+
+  ta %>% stringi::stri_split_regex('D+')
+    
+  ta %>% stringi::stri_replace_all_regex('D+', 
+                                         x %>% stringi::stri_sub(stringi::stri_locate_all_regex(xstring, 'D+')[[1]]), 
+                                         vectorize = FALSE
+                                         )
+  y %>% stringi::stri_sub(stringi::stri_locate_all_regex(ystring, 'I+')[[1]])
+  
+  ta %>% stringi::stri_sub(selector)
+  
+  
+  ta %>% stringi::stri_replace_all_fixed('I', '')
+    
+    stringi::stri_locate_all_regex('D+') %>% magrittr::extract2(1)
+  
+  
+  ta %>% stringi::stri_replace_all_fixed('M', '.')
+  
+
+  x %>% stringi::stri_sub(ta %>% stringi::stri_replace_all_fixed('I', '') %>% stringi::stri_locate_all_regex('[MD]+')[[1]])
+  
+  ta %>% stringi::stri_sub(stringi::stri_locate_all_regex(ta, '[MI]+')[[1]])
+  
   tt <- ta %>% strsplit('') %>% unlist()
   
   x
