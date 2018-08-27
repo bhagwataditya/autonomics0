@@ -1,8 +1,9 @@
 #' Get unique unique tails
 #' @param x character vector
 #' @examples
+#' require(magrittr)
 #' x <- c("E_1", "E_2", "E_3")
-#' x %>% get_unique_tail()
+#' x %>% get_unique_tails()
 #' @importFrom magrittr %>%
 #' @export
 get_unique_tails <- function(x){

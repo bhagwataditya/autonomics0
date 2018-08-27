@@ -206,6 +206,145 @@ load_exiqon <- function(
 # MAXQUANT
 #=============================
 
+#==============================================================
+
+#' Deconvolute proteingroups
+#' @param object      SummerizedExperiment with proteinGroups data
+#' @param fastafile   path to fastafile
+#' @return deconvoluted and annotated SummarizedExperiment
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    fastafile <- '../data/uniprot_hsa_20140515.fasta'
+#'    if (file.exists(fastafile)){
+#'       object %>% autonomics.import::deconvolute_proteingroups(fastafile = fastafile)
+#'    }
+#'    \dontrun{
+#'       wsconnection <- autonomics.annotate::connect_to_uniprot(c("A0AV96", "A0AVF1", "A0AVT1"))
+#'    }
+#' }
+deconvolute_proteingroups <- function(
+   object,
+   fastafile,
+   fastafields           = c('GENES', 'PROTEIN-NAMES', 'EXISTENCE', 'REVIEWED') #,
+   #wsconnection          = NULL,
+   #wsfields              = c('SUBCELLULAR-LOCATIONS', 'INTERPRO', 'GO-ID')
+){
+   # Load fasta annotations
+   fasta_annotations <- fastafile %>% autonomics.annotate::load_uniprot_fasta_annotations(fastafields)
+
+   # Uncollapse
+   fdata1 <- object %>%
+             autonomics.import::fdata() %>%
+             magrittr::extract(, c('feature_id', 'Uniprot accessions'), drop = FALSE) %>%
+             tidyr::separate_rows(`Uniprot accessions`, sep = ';') %>%
+             data.table::data.table()
+
+   # Split into CANONICAL and isoform
+   fdata1 %<>% magrittr::extract(, ISOFORM              := `Uniprot accessions`) %>%
+               magrittr::extract(, `Uniprot accessions` := `Uniprot accessions` %>% stringi::stri_replace_first_regex('[-][0-9]+',     '')) # %>%
+   #magrittr::extract(, ISOFORM := ISOFORM %>% sort() %>% unique() %>% paste0(collapse=';'), by = c('feature_id', 'Uniprot accessions')) %>%
+   #unique()
+
+   # Merge in uniprot fasta annotations
+   fdata1 %<>% merge(fasta_annotations, by.x = 'Uniprot accessions', by.y = 'UNIPROTKB', sort = FALSE)
+   report_n <- function(dt, suffix=''){
+      n <- dt %>% magrittr::extract(, .SD[, list(nseq = .N,
+                                                 ngene = length(unique(GENES)),
+                                                 nprotein = length(unique(`PROTEIN-NAMES`)))],
+                                    by = 'feature_id') %>%
+                  magrittr::extract(, list(ngroups = .N,
+                                           nsinglegene    = sum(ngene==1),
+                                           nsingleprotein = sum(nprotein==1),
+                                           nsingleseq     = sum(nseq==1)))
+      autonomics.support::cmessage('%d proteingroups -> %d singlegene -> %d singleprotein -> %d singleseq%s',
+                                   n$ngroups,          n$nsinglegene,   n$nsingleprotein,   n$nsingleseq, suffix)
+   }
+   fdata1 %>% report_n()
+
+   # Prefer swissprot (over trembl)
+   fdata1 %<>% magrittr::extract(, .SD[REVIEWED == max(REVIEWED)], by = 'feature_id')
+   ntrembl <- fdata1[, any(REVIEWED==0), by = 'feature_id'][, sum(V1)]
+   fdata1 %>% report_n(suffix = sprintf('   # Drop trembl when swissprot available (%d trembl-only groups remain, others are swissprot-only)', ntrembl))
+
+   # Prefer best existence
+   fdata1 %<>% magrittr::extract(, .SD[EXISTENCE == min(EXISTENCE)], by = 'feature_id')
+   fdata1 %>% report_n(suffix = '   # Drop inferior existences')
+
+   # Resolve trembl groups: drop fragments when full sequences available
+   fdata1 %>% magrittr::extract(, IS.FRAGMENT := 0)
+   fdata1 %>% magrittr::extract(REVIEWED==0, IS.FRAGMENT:= `PROTEIN-NAMES` %>% stringi::stri_detect_fixed('(Fragment)') %>% as.numeric())
+   fdata1 %<>% magrittr::extract(, .SD[IS.FRAGMENT == min(IS.FRAGMENT)], by = 'feature_id')
+   fdata1[, IS.FRAGMENT:=NULL]
+   fdata1 %>% report_n(suffix = '   # Drop trembl fragments when full sequences available')
+
+   # Resolve within-gene trembl redundancies: take first
+   fdata1[, N     := .N,                    by = 'feature_id']
+   fdata1[, NGENE := length(unique(GENES)), by = 'feature_id']
+   selector <- fdata1[, N>1 & NGENE==1 & REVIEWED==0]
+   tmpdata <- fdata1 %>% magrittr::extract(selector)
+   fdata1  %<>% magrittr::extract(!selector)
+   tmpdata %<>% magrittr::extract(, .SD[1], by = 'feature_id')
+   fdata1  %<>% rbind(tmpdata)
+   fdata1 %>% report_n(suffix = '   # Take first trembl sequence for singlegene trembl groups')
+
+   # Resolve swissprot groups: collapse similar isoforms with clear canonical
+
+   # Collapse isoforms within same accession
+   fdata1[, NPERGENE            := .N, by = c('feature_id', 'GENES')]
+   fdata1[, NPERACCESSION       := .N, by = c('feature_id', 'Uniprot accessions')]
+   fdata1[REVIEWED==1 & NPERGENE>1,  ISOFORM             :=  ISOFORM        %>% unique() %>% paste(collapse=';'),             by = c('feature_id', 'GENES')]
+   fdata1 %<>% unique()
+   fdata1 %>% report_n(suffix = '   # Collapse isoforms from the same accession (i.e. PROT-2, PROT-3 etc.)')
+
+   # Collapse dissimilar isoforms
+   fdata1[REVIEWED==1,               NPERGENE            := .N, by = c('feature_id', 'GENES')]
+   fdata1[REVIEWED==1 & NPERGENE>1, `PROTEIN-NAMES`      := `PROTEIN-NAMES` %>% unique() %>% autonomics.support::commonify_strings(), by = c('feature_id', 'GENES')]
+   fdata1 %<>% magrittr::extract(, .SD[NPERACCESSION==max(NPERACCESSION)][1], by = c('feature_id', 'GENES'))
+   fdata1 %>% report_n(suffix = '   # Collapse isoforms from different accessions (i.e. PROT-2, PROT-3 etc.)')
+
+   # Collapse paralogs
+   fdata1[, NGENE:= GENES %>% unique() %>% length(), by = 'feature_id']
+   fdata1[NGENE>1,  GENES               :=   GENES               %>% unique() %>% sort %>% paste0(collapse = ';'), by = c('feature_id')]
+   fdata1[NGENE>1, `Uniprot accessions` :=  `Uniprot accessions` %>% unique() %>% sort %>% paste0(collapse = ';'), by = c('feature_id')]
+   fdata1[NGENE>1,  ISOFORM             :=   ISOFORM             %>% unique() %>% sort %>% paste0(collapse = ';'), by = c('feature_id')]
+   fdata1[NGENE>1, `PROTEIN-NAMES`      :=  `PROTEIN-NAMES`      %>% unique() %>% autonomics.support::commonify_strings(), by = c('feature_id')]
+   fdata1 %<>% unique()
+   fdata1 %>% report_n(suffix = '   # Collapse paralogs')
+
+
+   # Annotate with webservice
+   if (!is.null(wsconnection)){
+      assertive.sets::assert_is_subset(wsfields, UniProt.ws::columns(wsconnection))
+      ws_annotations <- fdata1$`CANONICAL` %>%
+         autonomics.annotate::annotate_uniprot_with_webservice(up = wsconnection, columns = wsfields)
+      # Merge in
+      fdata1 %<>% merge(ws_annotations, by.x = 'CANONICAL', by.y = 'UNIPROTKB', sort = FALSE)
+      fdata1[`Uniprot accessions` == CANONICAL]
+
+      #
+      ws_annotations
+   }
+
+   # Collapse
+   fdata1 %<>% magrittr::extract(, list(`Uniprot accessions` = `Uniprot accessions` %>% paste0(collapse = ';'),
+                                        genename            =  unique(genename)     %>% paste0(collapse = ';'),
+                                        proteinname         =  unique(proteinname)  %>% paste0(collapse = ';')), by = 'feature_id')
+
+   # Merge back
+   nullify_fvars <- function(object, fvars){
+      for (curfvar in fvars)   autonomics.import::fdata(object)[[curfvar]] <- NULL
+      return(object)
+   }
+   object %<>% nullify_fvars(fvars = c('Uniprot accessions', 'Protein names', 'Gene names'))
+   autonomics.import::fdata(object) %<>% merge(fdata1, by = 'feature_id', sort = FALSE)
+
+   # Return
+   return(object)
+
+}
+
 #' Load proteingroups
 #' @param file            path to proteinGroups.txt
 #' @param quantity       'Ratio normalized', 'Ratio', 'Intensity', 'LFQ intensity', 'Reporter intensity'

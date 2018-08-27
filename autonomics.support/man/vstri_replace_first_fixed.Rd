@@ -17,11 +17,21 @@ vstri_replace_first_fixed(x, pattern_vector, replacement_vector)
 Vectorized stri_replace_first_fixed
 }
 \examples{
-x <- c("Intensity L", "Intensity M", "Intensity H",
-       "Intensity L E(L).EM(M).BM(H).R1", "Intensity M E(L).EM(M).BM(H).R1", "Intensity H E(L).EM(M).BM(H).R1",
-       "Intensity BM(L).E(M).EM(H).R2",   "Intensity L BM(L).E(M).EM(H).R2", "Intensity M BM(L).E(M).EM(H).R2",
-       "Intensity H BM(L).E(M).EM(H).R2", "Intensity EM(L).BM(M).E(H).R3",   "Intensity L EM(L).BM(M).E(H).R3",
-       "Intensity M EM(L).BM(M).E(H).R3", "Intensity H EM(L).BM(M).E(H).R3")
+require(magrittr)
+x <- c("Intensity L", 
+       "Intensity M", 
+       "Intensity H",
+       "Intensity L E(L).EM(M).BM(H).R1", 
+       "Intensity M E(L).EM(M).BM(H).R1", 
+       "Intensity H E(L).EM(M).BM(H).R1",
+       "Intensity BM(L).E(M).EM(H).R2",   
+       "Intensity L BM(L).E(M).EM(H).R2", 
+       "Intensity M BM(L).E(M).EM(H).R2",
+       "Intensity H BM(L).E(M).EM(H).R2", 
+       "Intensity EM(L).BM(M).E(H).R3",   
+       "Intensity L EM(L).BM(M).E(H).R3",
+       "Intensity M EM(L).BM(M).E(H).R3", 
+       "Intensity H EM(L).BM(M).E(H).R3")
 pattern_vector <- c("E(L).EM(M).BM(H).R1", "BM(L).E(M).EM(H).R2", "EM(L).BM(M).E(H).R3")
 replacement_vector <- ''
 x \%>\% autonomics.support::vstri_replace_first_fixed(pattern_vector, replacement_vector = '')

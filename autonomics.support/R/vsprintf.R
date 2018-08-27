@@ -1,6 +1,7 @@
 #' Vectorized sprintf
 #' @param fmt format string
-#' @param ... arguments
+#' @param ... passed to sprintf
+#' @param first_slowest logical
 #' @return character vector
 #' @examples
 #' vsprintf(fmt = '%s.%s', letters[1:3], 1:3)

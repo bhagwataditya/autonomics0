@@ -13,6 +13,7 @@ get_unique_tails(x)
 Get unique unique tails
 }
 \examples{
+require(magrittr)
 x <- c("E_1", "E_2", "E_3")
-x \%>\% get_unique_tail()
+x \%>\% get_unique_tails()
 }

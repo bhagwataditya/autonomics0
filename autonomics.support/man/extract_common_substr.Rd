@@ -21,6 +21,9 @@ Extract common substring
 # Sequences
   a <- "heart-specific Fatty acid binding protein"
   b <- "Fatty acid binding protein, isoform 3"
+  
+  a <- "Small nuclear ribonucleoprotein-associated proteins B and B'" 
+  b <- "Small nuclear ribonucleoprotein-associated protein N"
   extract_common_substr(a, b)
 }
 \references{

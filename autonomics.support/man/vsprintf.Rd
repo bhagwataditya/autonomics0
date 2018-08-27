@@ -9,7 +9,9 @@ vsprintf(fmt, ..., first_slowest = TRUE)
 \arguments{
 \item{fmt}{format string}
 
-\item{...}{arguments}
+\item{...}{passed to sprintf}
+
+\item{first_slowest}{logical}
 }
 \value{
 character vector

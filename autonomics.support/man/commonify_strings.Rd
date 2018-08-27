@@ -7,9 +7,7 @@
 commonify_strings(x)
 }
 \arguments{
-\item{x}{string}
-
-\item{y}{string}
+\item{x}{character vector}
 }
 \description{
 Commonify strings
@@ -32,6 +30,14 @@ x <- c('Fatty acid binding protein, isoform 3',
        'Fatty acid binding protein', 
        'heart-specific Fatty acid binding protein',
        'heart-specific Fatty acid binding protein, isoform 3')
+x \%>\% commonify_strings()
+
+# NOTHING IN COMMON
+x <- c('ABC1', 'DEF2')
+x \%>\% commonify_strings()
+
+x <- c("Small nuclear ribonucleoprotein-associated proteins B and B'",
+       "Small nuclear ribonucleoprotein-associated protein N")
 x \%>\% commonify_strings()
 
 }
