@@ -376,7 +376,6 @@ load_uniprot_fasta_annotations <- function(
    `:=` <- data.table::`:=`
 
    # Load (relevant portion of) fasta
-   autonomics.support::cmessage('\t\tLoad fasta file')
    fasta <- seqinr::read.fasta(fastafile)
    all_accessions <- fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2)
 
