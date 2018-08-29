@@ -174,6 +174,12 @@ get_ensg_values <- function(object){
 #' Get uniprot var
 #' @param object  eset
 #' @return fvar with uniprot accessions
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% autonomics.import::uniprot_var()
+#' }
 #' @importFrom magrittr            %<>%
 #' @export
 uniprot_var <- function(object){
@@ -191,13 +197,24 @@ uniprot_var <- function(object){
    return(fvar_name)
 }
 
-#' @rdname uniprot_var
+#' Get uniprot values
+#' @param object  eset
+#' @param first_only logical(1)
+#' @return character vector
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% autonomics.import::uniprot_values() %>% head()
+#'    object %>% autonomics.import::uniprot_values(first_only = TRUE) %>% head()
+#' }
+#' @importFrom magrittr            %<>%
 #' @export
-get_uniprot_var <- function(object){
-   .Deprecated('uniprot_var')
-   uniprot_var(object)
+uniprot_values <- function(object, first_only = FALSE){
+   object %>%
+   autonomics.import::fvalues(autonomics.import::uniprot_var(.)) %>%
+  (function (x) if (first_only) x %>% stringi::stri_split_fixed(';') %>% vapply(extract, character(1), 1) else x)
 }
-
 
 
 #=================================================================================

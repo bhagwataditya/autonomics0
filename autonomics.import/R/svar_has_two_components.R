@@ -4,6 +4,9 @@
 #' @export
 has_two_components <- function(x){
 
+   # Satisfy CHECK
+   .SD <- NULL
+
    dt <- x %>% autonomics.import::split_components()
 
    # FALSE if less than two columns

@@ -5,13 +5,13 @@
 \title{Annotate uniprot ids}
 \usage{
 annotate_uniprot_with_webservice(values,
-  up = autonomics.annotate::connect_to_uniprot(values),
+  connection = autonomics.annotate::connect_to_uniprot(values),
   columns = c("SUBCELLULAR-LOCATIONS", "KEGG", "GO-ID", "INTERPRO"))
 }
 \arguments{
 \item{values}{uniprot accessions (character vector)}
 
-\item{up}{uniprot.ws connection}
+\item{connection}{uniprot.ws connection}
 }
 \value{
 data.table with uniprot annotations

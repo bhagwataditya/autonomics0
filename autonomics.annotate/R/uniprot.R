@@ -304,8 +304,8 @@ clean_uniprot_location_values <- function(values){
 #========================================================
 
 #' Annotate uniprot ids
-#' @param values uniprot accessions (character vector)
-#' @param up uniprot.ws connection
+#' @param values      uniprot accessions (character vector)
+#' @param connection  uniprot.ws connection
 #' @return data.table with uniprot annotations
 #' @examples
 #' \dontrun{
@@ -320,11 +320,15 @@ clean_uniprot_location_values <- function(values){
 #' @export
 annotate_uniprot_with_webservice <- function(
    values,
-   up      = autonomics.annotate::connect_to_uniprot(values),
-   columns = c('SUBCELLULAR-LOCATIONS', 'KEGG', 'GO-ID', 'INTERPRO')
+   connection = autonomics.annotate::connect_to_uniprot(values),
+   columns    = c('SUBCELLULAR-LOCATIONS', 'KEGG', 'GO-ID', 'INTERPRO')
 ){
+   # Assert
+   assertive.base::assert_is_identical_to_true(class(connection) == 'UniProt.ws')
+   assertive.sets::assert_is_subset(columns, UniProt.ws::columns(connection))
+
    # Fetch uniprot annotations
-   dt <- AnnotationDbi::select(up, keys = values, columns = columns)
+   dt <- AnnotationDbi::select(connection, keys = values, columns = columns)
    dt %<>% data.table::data.table()
 
    # Collapse redundant kegg ids

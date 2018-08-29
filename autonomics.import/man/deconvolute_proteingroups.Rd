@@ -23,7 +23,7 @@ Deconvolute proteingroups
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   object <- autonomics.data::stemcomp.proteinratios
+   object <- autonomics.data::stemcomp.proteinratios[1:100, ]
    fastafile <- '../data/uniprot_hsa_20140515.fasta'
    if (file.exists(fastafile)){
       object \%>\% deconvolute_proteingroups(fastafile = fastafile)

@@ -1188,7 +1188,7 @@ maxquant_dt_to_sumexp <- function(
    parameter_file
 ){
    # Prevent CHECK notes
-   . <- NULL
+   . <- feature_id <- NULL
 
    # Save custom attributes
 
@@ -1382,6 +1382,9 @@ load_phosphosite_occupancies <- function(
    log2_transform     = TRUE,
    value_type         = autonomics.import::infer_maxquant_value_type(phosphosites_file)
 ){
+   # Satisfy CHECK
+   feature_id <- NULL
+
    assertive.files::assert_all_are_existing_files(c(proteingroups_file, phosphosites_file, design_file, parameter_file))
    DT <- autonomics.import::load_phosphosite_occupancies_to_long_dt(
             phosphosites_file  = phosphosites_file,

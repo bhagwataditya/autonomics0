@@ -263,7 +263,7 @@ load_proteingroups <- function(
    rm_na_features              = TRUE
 ){
    # Satisfy CHECK
-   Reverse <- Contaminant <- NULL
+   Reverse <- Contaminant <- feature_id <- NULL
 
    # Load
    object <- autonomics.import::load_omics(file                        = file,
@@ -328,7 +328,7 @@ load_proteingroups <- function(
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object <- autonomics.data::stemcomp.proteinratios[1:100, ]
 #'    fastafile <- '../data/uniprot_hsa_20140515.fasta'
 #'    if (file.exists(fastafile)){
 #'       object %>% deconvolute_proteingroups(fastafile = fastafile)
@@ -339,11 +339,11 @@ load_proteingroups <- function(
 deconvolute_proteingroups <- function(
    object,
    fastafile,
-   fastafields = c('GENES', 'PROTEIN-NAMES', 'EXISTENCE', 'REVIEWED') #,
+   fastafields = c('GENES', 'PROTEIN-NAMES', 'EXISTENCE', 'REVIEWED')
 ){
    # Satisfy CHECK
    EXISTENCE <- GENES <- IS.FRAGMENT <- ISOFORM <- N <- NGENE <- NISOFORMS <- NPERACCESSION <- NULL
-  `PROTEIN-NAMES` <- REVIEWED <- `Uniprot accessions` <- nprotein <- nseq <- NULL
+  `PROTEIN-NAMES` <- REVIEWED <- `Uniprot accessions` <- ngene <- nprotein <- nseq <- .SD <- NULL
 
    # Load fasta annotations
    autonomics.support::cmessage('Load fasta file')
@@ -351,22 +351,22 @@ deconvolute_proteingroups <- function(
 
    # Uncollapse
    fdata1 <- object %>%
-      autonomics.import::fdata() %>%
-      magrittr::extract(, c('feature_id', 'Uniprot accessions'), drop = FALSE) %>%
-      tidyr::separate_rows(`Uniprot accessions`, sep = ';') %>%
-      data.table::data.table()
+             autonomics.import::fdata() %>%
+             magrittr::extract(, c('feature_id', 'Uniprot accessions'), drop = FALSE) %>%
+             tidyr::separate_rows(`Uniprot accessions`, sep = ';') %>%
+             data.table::data.table()
 
    # Split into CANONICAL and isoform
    fdata1 %<>% magrittr::extract(, ISOFORM              := `Uniprot accessions`) %>%
-      magrittr::extract(, `Uniprot accessions` := `Uniprot accessions` %>% stringi::stri_replace_first_regex('[-][0-9]+',     '')) # %>%
+               magrittr::extract(, `Uniprot accessions` := `Uniprot accessions` %>% stringi::stri_replace_first_regex('[-][0-9]+',     '')) # %>%
    #magrittr::extract(, ISOFORM := ISOFORM %>% sort() %>% unique() %>% paste0(collapse=';'), by = c('feature_id', 'Uniprot accessions')) %>%
    #unique()
 
    # Merge in uniprot fasta annotations
    nunmapped <- fdata1 %>%
-      magrittr::extract(ISOFORM %in% setdiff(ISOFORM, fasta_annotations$UNIPROTKB)) %>%
-      magrittr::extract(, .SD[1], by = 'feature_id') %>%
-      nrow()
+                magrittr::extract(ISOFORM %in% setdiff(ISOFORM, fasta_annotations$UNIPROTKB)) %>%
+                magrittr::extract(, .SD[1], by = 'feature_id') %>%
+                nrow()
    autonomics.support::cmessage('\nFastafile misses sequences of %d/%d proteingroups',
                                 nunmapped, nrow(object))
    fdata1 %<>% merge(fasta_annotations, by.x = 'Uniprot accessions', by.y = 'UNIPROTKB', sort = FALSE)
@@ -397,6 +397,7 @@ deconvolute_proteingroups <- function(
 
    # trembl groups
    #--------------
+   if (nrow(trembl)>0){
    message('')
    trembl  %>% report_n(prefix = 'Trembl groups')
 
@@ -412,9 +413,11 @@ deconvolute_proteingroups <- function(
    trembl  %>% magrittr::extract(, NGENE := length(unique(GENES)), by = 'feature_id')
    trembl %<>% magrittr::extract(, .SD[1],                         by = c('feature_id', 'GENES'))
    trembl  %>% report_n(prefix = 'Per group/gene: use first accession')
+   }
 
    # swissprot groups
    #-----------------
+   if (nrow(swissprot)>0){
    message('')
    swissprot  %>% report_n(prefix = 'Swissprot groups')
 
@@ -431,6 +434,7 @@ deconvolute_proteingroups <- function(
    swissprot  %>% report_n(prefix = 'Per group/gene: use spliceform with most accessions')
    swissprot %<>% magrittr::extract(, .SD[1],                                                      by = c('feature_id', 'GENES'))
    swissprot  %>% report_n(prefix = 'Per group/gene: use first spliceform')
+   }
 
    # paralogs
    #---------
@@ -442,6 +446,7 @@ deconvolute_proteingroups <- function(
    fdata1 <- rbind(swissprot, trembl)
    monologs <- fdata1[, .SD[length(unique(GENES))==1], by = c('feature_id')]
    paralogs <- fdata1[, .SD[length(unique(GENES))>1], by = c('feature_id')]
+   if (nrow(paralogs)>0){
    paralogs  %>% report_n(prefix = 'Paralog groups')
    paralogs  %>% magrittr::extract(,  NISOFORMS := 1+ISOFORM %>% stringi::stri_count_fixed(';'))
    paralogs  %>% magrittr::extract(,  GENES          := GENES           %>% paste0(collapse = ';'),                  by = 'feature_id')
@@ -452,6 +457,7 @@ deconvolute_proteingroups <- function(
    paralogs %<>% magrittr::extract(, .SD[1], by = 'feature_id')
    paralogs  %>% report_n(prefix = '   Per group: use first paralog')
    paralogs  %>% magrittr::extract(, NISOFORMS := NULL)
+   }
    fdata1 <- rbind(monologs, paralogs)
 
    message('')
@@ -468,38 +474,56 @@ deconvolute_proteingroups <- function(
 
 }
 
+#' Open uniprot connection
+#' @param object SummarizedExperiment
+#' @return uniprot webservice connection
+#' @examples
+#' \dontrun{
+#'    require(magrittr)
+#'    if (require(autonomics.data)){
+#'       object <- autonomics.data::stemcomp.proteinratios
+#'       object %>% autonomics.import::open_uniprot_connection()
+#'    }
+#' }
+#' @importFrom magrittr %>%
+#' @export
+open_uniprot_connection <- function(object){
+   object                                                %>%
+   autonomics.import::uniprot_values(first_only = TRUE)  %>%
+   magrittr::extract(1:10)                               %>%
+   autonomics.annotate::connect_to_uniprot()
+}
 
 #' Annotate proteingroups through uniprot.ws
-#' @param object SummarizedExperiment
-#' @param connection uniprot.ws connection
-#' @param fields uniprot.ws fields to query
+#' @param object      SummarizedExperiment
+#' @param connection  uniprot webservice connection
+#' @param columns     uniprot webservice columns
 #' @return Annotated SummarizedExperiment
 #' @examples
 #' require(magrittr)
 #' \dontrun{
 #'    if (require(autonomics.data)){
-#'       object <- autonomics.data::stemcomp.proteinratios[1:10, ]
-#'       connection <- autonomics.annotate::connect_to_uniprot(c("A0AV96", "A0AVF1", "A0AVT1"))
-#'       object %>% annotate_proteingroups(c('SUBCELLULAR-LOCATIONS', 'GO-ID'))
+#'       object <- autonomics.data::stemcomp.proteinratios
+#'       connection <- autonomics.import::open_uniprot_connection(object)
+#'       object[1:10, ] %>% annotate_proteingroups(connection, c('SUBCELLULAR-LOCATIONS', 'GO-ID'))
 #'    }
 #' }
 #' @importFrom magrittr %>%  %<>%
 #' @export
 annotate_proteingroups <- function(
    object,
-   connection = NULL,
-   fields     = c('SUBCELLULAR-LOCATIONS', 'INTERPRO', 'GO-ID')
+   connection = object %>% autonomics.import::open_uniprot_connection(),
+   columns    = c('SUBCELLULAR-LOCATIONS', 'INTERPRO', 'GO-ID')
 ){
    # Assert
    assertive.base::assert_is_identical_to_true(class(object) == 'SummarizedExperiment')
-   assertive.base::assert_is_identical_to_true(class(connection) == 'UniProt.ws')
-   assertive.sets::assert_is_subset(fields, UniProt.ws::columns(connection))
 
    # Restrict to first uniprot accession
    autonomics.import::fdata(object)$`Uniprot accessions` %<>% stringi::stri_split_fixed(';') %>% vapply(extract, character(1), 1)
 
    # Fetch annotations from uniprot
-   annotations <- autonomics.import::fdata(object)$`Uniprot accessions` %>% autonomics.annotate::annotate_uniprot_with_webservice(up = connection, columns = fields)
+   annotations <- autonomics.import::fdata(object)$`Uniprot accessions` %>%
+                  autonomics.annotate::annotate_uniprot_with_webservice(connection = connection, columns = columns)
 
    # Merge in annotations
    autonomics.import::fdata(object) %<>% merge(annotations, by.x = 'Uniprot accessions', by.y = 'UNIPROTKB', sort = FALSE)

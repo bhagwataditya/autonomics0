@@ -2,12 +2,9 @@
 % Please edit documentation in R/get_eset_specific_var.R
 \name{uniprot_var}
 \alias{uniprot_var}
-\alias{get_uniprot_var}
 \title{Get uniprot var}
 \usage{
 uniprot_var(object)
-
-get_uniprot_var(object)
 }
 \arguments{
 \item{object}{eset}
@@ -17,4 +14,11 @@ fvar with uniprot accessions
 }
 \description{
 Get uniprot var
+}
+\examples{
+require(magrittr)
+if (require(autonomics.data)){
+   object <- autonomics.data::stemcomp.proteinratios
+   object \%>\% autonomics.import::uniprot_var()
+}
 }

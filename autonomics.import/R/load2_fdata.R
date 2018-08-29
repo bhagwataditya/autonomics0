@@ -99,7 +99,8 @@ load_fnames_maxquant <- function(file){
 #' @export
 load_fdata_maxquant <- function(file){
 
-   `Majority protein IDs` <- Reverse <- Contaminant <- NULL
+   # Satisfy CHECK
+   `Majority protein IDs` <- Reverse <- Contaminant <- feature_id <- NULL
 
    # Read
    dt <- file %>% autonomics.support::cfread()
