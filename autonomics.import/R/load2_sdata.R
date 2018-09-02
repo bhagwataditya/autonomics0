@@ -294,7 +294,7 @@ load_sdata_maxquant <- function(
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% load_sdata_metabolon(2) %>% extract(1:3, 1:3)
+#'    file %>% load_sdata_metabolon(2) %>% extract(1:3, )
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -306,11 +306,11 @@ load_sdata_metabolon <- function(file, sheet){
    sstart <- which(!is.na(df[1,]))[1]
    fstart <- which(!is.na(df[,1]))[1]
    df %<>% magrittr::extract(1:fstart, (sstart+1):ncol(.)) %>%
-      t() %>%
-      data.frame(stringsAsFactors = FALSE, check.names = FALSE)            %>%
-      magrittr::set_names(df[[sstart]][1:fstart])     %>%
-      magrittr::set_names(names(.) %>% stringi::stri_replace_first_fixed( 'Group   HMDB_ID', 'Group') %>% # recent metabolon files
-                             stringi::stri_replace_first_fixed('Sample   HMDB_ID', 'Group'))    # older metabolon files
+           t() %>%
+           data.frame(stringsAsFactors = FALSE, check.names = FALSE)            %>%
+           magrittr::set_names(df[[sstart]][1:fstart])     %>%
+           magrittr::set_names(names(.) %>% stringi::stri_replace_first_regex('Group[ ]+[A-Z_]+$', 'Group') %>% # recent metabolon files
+                                            stringi::stri_replace_first_regex('Group[ ]+[A-Z_]+$', 'Group'))    # older metabolon files
    df %<>% magrittr::set_rownames(.$CLIENT_IDENTIFIER)
 
    # Return
