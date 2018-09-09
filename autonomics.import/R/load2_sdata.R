@@ -394,6 +394,30 @@ load_sdata_soma <- function(file){
             data.frame(row.names = .$SampleId, stringsAsFactors = FALSE)
 }
 
+#========
+# RNASeq
+#========
+
+#' Load rnaseq sdata
+#' @param file      path to exiqon xls file
+#' @return sample dataframe
+#' @examples
+#'  require(magrittr)
+#'  if (require(subramanian.2016)){
+#'     file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#'     file %>% autonomics.import::load_sdata_rnaseq()
+#'  }
+#' @importFrom magrittr %>%
+#' @export
+load_sdata_rnaseq <- function(file){
+   file %>%
+      data.table::fread(header = TRUE, nrows = 10) %>%
+      (function(x) x %>% magrittr::extract(, vapply(x, is.numeric, logical(1)), with = FALSE)) %>%
+      (function(x) data.frame(sample_id = names(x),
+                              row.names = names(x),
+                              stringsAsFactors = FALSE,
+                              check.names = FALSE))
+}
 
 #==========================================
 # GENERIC
@@ -427,6 +451,14 @@ load_sdata_soma <- function(file){
 #'    file %>% load_sdata(platform = 'metabolonlipids',
 #'                        sheet = 'Lipid Class Concentrations') %>% head()
 #' }
+#'
+#' # RNASEQ
+#' require(magrittr)
+#' if (require(subramanian.2016)){
+#'    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#'    file %>% autonomics.import::load_sdata(platform = 'rnaseq')
+#' }
+#'
 #' @importFrom magrittr %>%
 #' @export
 load_sdata <- function(file, platform, sheet = NULL, quantity = NULL){
@@ -435,6 +467,6 @@ load_sdata <- function(file, platform, sheet = NULL, quantity = NULL){
           maxquant        = file %>% load_sdata_maxquant(quantity = quantity),
           metabolonlipids = file %>% load_sdata_metabolonlipids(sheet = sheet),
           metabolon       = file %>% load_sdata_metabolon(sheet = sheet),
-          soma            = file %>% load_sdata_soma())
+          soma            = file %>% load_sdata_soma(),
+          rnaseq          = file %>% load_sdata_rnaseq())
 }
-

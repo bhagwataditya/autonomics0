@@ -41,4 +41,10 @@ if (file.exists(file)){
    file \%>\% load_fdata(platform = 'metabolonlipids',
                        sheet = 'Lipid Class Concentrations') \%>\% head()
 }
+
+# RNASEQ
+ if (require(subramanian.2016)){
+    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+    file \%>\% autonomics.import::load_fdata('rnaseq')
+ }
 }

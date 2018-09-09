@@ -299,6 +299,26 @@ load_exprs_soma <- function(file){
       (function(x){class(x) <- 'numeric'; x})
 }
 
+
+#' Load rnaseq exprs
+#' @param file      path to exiqon xls file
+#' @return sample dataframe
+#' @examples
+#'  require(magrittr)
+#'  if (require(subramanian.2016)){
+#'     file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#'     file %>% autonomics.import::load_exprs_rnaseq()
+#'  }
+#' @importFrom magrittr %>%
+#' @export
+load_exprs_rnaseq <- function(file){
+   file %>% data.table::fread(header = TRUE) %>%
+           (function(x) x %>% magrittr::extract(, vapply(., is.numeric, logical(1)), with = FALSE) %>%
+                        data.matrix() %>%
+                        magrittr::set_rownames(x[[1]]))
+}
+
+
 #=======================================================================
 # GENERIC
 #=======================================================================
@@ -332,6 +352,12 @@ load_exprs_soma <- function(file){
 #'    file %>% load_exprs('metabolonlipids', sheet = 'Lipid Class Concentrations') %>%
 #'             extract(1:3, 1:3)
 #' }
+#'
+#' # RNASEQ
+#'  if (require(subramanian.2016)){
+#'     file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#'     file %>% autonomics.import::load_exprs('rnaseq')
+#'  }
 #' @importFrom magrittr %>%
 #' @export
 load_exprs <- function(
@@ -345,6 +371,7 @@ load_exprs <- function(
           maxquant        = file %>% load_exprs_maxquant(quantity = quantity),
           metabolonlipids = file %>% load_exprs_metabolonlipids(sheet = sheet),
           metabolon       = file %>% load_exprs_metabolon(      sheet = sheet),
-          soma            = file %>% load_exprs_soma())
+          soma            = file %>% load_exprs_soma(),
+          rnaseq          = file %>% load_exprs_rnaseq())
 }
 

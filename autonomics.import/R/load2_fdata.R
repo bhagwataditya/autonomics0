@@ -231,6 +231,30 @@ load_fdata_soma <- function(file){
       data.frame(row.names = .$SeqId)
 }
 
+#========
+# RNASeq
+#========
+
+#' Load rnaseq fdata
+#' @param file      path to exiqon xls file
+#' @return sample dataframe
+#' @examples
+#'  require(magrittr)
+#'  if (require(subramanian.2016)){
+#'     file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#'     file %>% autonomics.import::load_fdata_rnaseq()
+#'  }
+#' @importFrom magrittr %>%
+#' @export
+load_fdata_rnaseq <- function(file){
+   file %>%
+   data.table::fread(header = TRUE) %>%
+  (function(x) x %>% magrittr::extract(, vapply(x, is.numeric, logical(1)) %>% magrittr::not(), with = FALSE)) %>%
+  (function(x) x %>% data.frame(row.names = x[[1]],
+                                stringsAsFactors = FALSE,
+                                check.names = FALSE))
+}
+
 #============================================
 # GENERIC
 #============================================
@@ -262,6 +286,12 @@ load_fdata_soma <- function(file){
 #'    file %>% load_fdata(platform = 'metabolonlipids',
 #'                        sheet = 'Lipid Class Concentrations') %>% head()
 #' }
+#'
+#' # RNASEQ
+#'  if (require(subramanian.2016)){
+#'     file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#'     file %>% autonomics.import::load_fdata('rnaseq')
+#'  }
 #' @importFrom magrittr %>%
 #' @export
 load_fdata <- function(file, platform, sheet = NULL){
@@ -270,6 +300,7 @@ load_fdata <- function(file, platform, sheet = NULL){
           maxquant        = file %>% load_fdata_maxquant(),
           metabolonlipids = file %>% load_fdata_metabolonlipids(sheet = sheet),
           metabolon       = file %>% load_fdata_metabolon(sheet = sheet),
-          soma            = file %>% load_fdata_soma())
+          soma            = file %>% load_fdata_soma(),
+          rnaseq          = file %>% load_fdata_rnaseq())
 }
 

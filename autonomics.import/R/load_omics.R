@@ -822,3 +822,78 @@ load_soma <- function(
    object
 
 }
+
+#=======================================================
+
+
+#' Load RNAseq
+#' @param file                          rnaseq counts file
+#' @param design_file                   sample design file
+#' @param infer_design_from_sampleids   logical
+#' @param design_sep                    character
+#' @param log2_transform                logical
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data){
+#'    file <- system.file('extdata/stemdiff/rnaseq/gene_counts.txt', package = 'autonomics.data')
+#' })
+#' if (require(subramanian.2016)){
+#'    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#'    infer_design_from_sampleids <- TRUE
+#'
+#' }
+load_rnaseq <- function(
+   file,
+   design_file                 = NULL,
+   infer_design_from_sampleids = FALSE,
+   design_sep                  = NULL,
+   log2_transform              = TRUE
+){
+
+   # Load sumexp
+   object <- load_omics(file                        = file,
+                        platform                    = 'rnaseq',
+                        log2_transform              = log2_transform,
+                        design_file                 = design_file,
+                        infer_design_from_sampleids = infer_design_from_sampleids,
+                        design_sep                  = design_sep)
+
+   autonomics.import::prepro(object) <- list(assay      = "somascan",
+                                             entity     = "epitope",
+                                             quantity   = "abundance",
+                                             software   = "somalogic",
+                                             parameters = list())
+   # Filter
+   # On Sample Type
+   if ('\nSampleType' %in% autonomics.import::svars(object)){
+      message('')
+      autonomics.support::cmessage_df('%s', table(`Sample types` = autonomics.import::sdata(object)$SampleType))
+      if (length(rm_sample_type) > 0)      object %<>% autonomics.import::filter_samples(!SampleType %in% rm_sample_type, verbose = TRUE)
+   }
+   # On sample quality
+   if ('RowCheck'   %in% autonomics.import::svars(object)){
+      message('')
+      autonomics.support::cmessage_df('%s', table(`Sample qualities ("RowCheck")` = autonomics.import::sdata(object)$RowCheck))
+      if (length(rm_sample_quality)  > 0)  object %<>% autonomics.import::filter_samples(!RowCheck %in% rm_sample_quality, verbose = TRUE)
+   }
+   # On feature type
+   if ('Type'       %in% autonomics.import::fvars(object)){
+      message('')
+      autonomics.support::cmessage_df('%s', table(`Type` = autonomics.import::fdata(object)$Type))
+      if (length(rm_feature_type)    > 0)  object %<>% autonomics.import::filter_features(!Type %in% rm_feature_type, verbose = TRUE)
+   }
+   # On feature quality
+   if ('ColCheck'   %in% autonomics.import::fvars(object)){
+      message('')
+      autonomics.support::cmessage_df('%s', table(`Feature qualities ("ColCheck")` = autonomics.import::fdata(object)$ColCheck))
+      if (length(rm_feature_quality) > 0)  object %<>% autonomics.import::filter_features(!ColCheck %in% rm_feature_quality, verbose = TRUE)
+   }
+
+   # Select vars
+   if (rm_na_svars)            autonomics.import::sdata(object) %<>% autonomics.support::rm_na_columns()
+   if (rm_single_value_svars)  autonomics.import::sdata(object) %<>% autonomics.support::rm_single_value_columns()
+
+   # Return
+   object
+
+}

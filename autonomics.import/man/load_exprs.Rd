@@ -44,4 +44,10 @@ if (file.exists(file)){
    file \%>\% load_exprs('metabolonlipids', sheet = 'Lipid Class Concentrations') \%>\%
             extract(1:3, 1:3)
 }
+
+# RNASEQ
+ if (require(subramanian.2016)){
+    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+    file \%>\% autonomics.import::load_exprs('rnaseq')
+ }
 }

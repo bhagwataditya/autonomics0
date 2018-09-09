@@ -1,136 +1,140 @@
-REQUIRED_FVARS_RNASEQ <- c('gene_id', 'gene_name')
-#' Required feature variables
-#'
-#' Required variables in annotated count file
-"REQUIRED_FVARS_RNASEQ"
+#REQUIRED_FVARS_RNASEQ <- c('gene_id', 'gene_name')
+# Required feature variables
+#
+# Required variables in annotated count file
+#"REQUIRED_FVARS_RNASEQ"
 
-REQUIRED_SVARS_RNASEQ <- c('sample_id', 'subgroup', 'replicate')
-#' Required sample variables
-#'
-#' Required variables in sample design file
-"REQUIRED_SVARS_RNASEQ"
+#REQUIRED_SVARS_RNASEQ <- c('sample_id', 'subgroup', 'replicate')
+# Required sample variables
+#
+# Required variables in sample design file
+#"REQUIRED_SVARS_RNASEQ"
 
-#' Load sample design file
-#' @param sample_design_file sample design file
-#' @return sample design dataframe
-#' @examples
-#' if (require(billing.differentiation.data)){
-#'    sample_design_file <- system.file('extdata/rnaseq/sample_design.txt',
-#'                             package = 'billing.differentiation.data')
-#'    autonomics.import::load_sdata_rnaseq(sample_design_file)
-#' }
-#' @importFrom magrittr   %>%   %<>%
-#' @export
-load_sdata_rnaseq <- function(sample_design_file){
+# Load sample design file
+# @param sample_design_file sample design file
+# @return sample design dataframe
+# @examples
+# if (require(billing.differentiation.data)){
+#    sample_design_file <- system.file('extdata/rnaseq/sample_design.txt',
+#                             package = 'billing.differentiation.data')
+#    autonomics.import::load_sdata_rnaseq(sample_design_file)
+# }
+# @importFrom magrittr   %>%   %<>%
+# @export
+# load_sdata_rnaseq_old <- function(sample_design_file){
+#
+#    # Check
+#    . <- NULL
+#
+#    # Read
+#    sample_df <- sample_design_file %>% data.table::fread(data.table = FALSE)
+#
+#    # sample_id has to be present
+#    sample_df$sample_id %<>% as.character()
+#    assertive.base::assert_all_are_not_na(sample_df$sample_id)                 # no NAs
+#    assertive.base::assert_all_are_true(stats::complete.cases(sample_df$sample_id)) # sample ids unique
+#
+#    # subgroup and replicate are optional
+#    if ('subgroup'  %in% names(sample_df)){
+#       sample_df$subgroup  %<>% as.character()
+#       assertive.base::assert_all_are_not_na(sample_df$subgroup)
+#    }
+#    if ('replicate' %in% names(sample_df)){
+#       sample_df$replicate %<>% as.character() # should not be integer to allow mapping to shape
+#       assertive.base::assert_all_are_not_na(sample_df$replicate)
+#    }
+#
+#    # Add rownames
+#    sample_df %<>% magrittr::set_rownames(.$sample_id)
+#
+#    # Return
+#    sample_df
+#
+# }
 
-   # Check
-   . <- NULL
-
-   # Read
-   sample_df <- sample_design_file %>% data.table::fread(data.table = FALSE)
-
-   # sample_id has to be present
-   sample_df$sample_id %<>% as.character()
-   assertive.base::assert_all_are_not_na(sample_df$sample_id)                 # no NAs
-   assertive.base::assert_all_are_true(stats::complete.cases(sample_df$sample_id)) # sample ids unique
-
-   # subgroup and replicate are optional
-   if ('subgroup'  %in% names(sample_df)){
-      sample_df$subgroup  %<>% as.character()
-      assertive.base::assert_all_are_not_na(sample_df$subgroup)
-   }
-   if ('replicate' %in% names(sample_df)){
-      sample_df$replicate %<>% as.character() # should not be integer to allow mapping to shape
-      assertive.base::assert_all_are_not_na(sample_df$replicate)
-   }
-
-   # Add rownames
-   sample_df %<>% magrittr::set_rownames(.$sample_id)
-
-   # Return
-   sample_df
-
-}
 
 
+# Load fdata
+# @param count_file  count file
+# @param map_entrezg whether to map features to their entrezg (logical)
+# @param verbose     whether to report messages (logical)
+# @examples
+# if (require(billing.differentiation.data)){
+#    count_file <- system.file('extdata/rnaseq/gene_counts.txt',
+#                               package = 'billing.differentiation.data')
+#    load_fdata_rnaseq(count_file)
+# }
+# if (require(subramanian.2016)){
+#    count_file <- system.file('extdata/rnaseq/gene_counts.txt',
+#                               package = 'subramanian.2016')
+# }
+# @importFrom data.table   data.table   :=
+# @importFrom magrittr     %>%  %<>%
+# @export
+# load_fdata_rnaseq <- function(count_file, map_entrezg = FALSE, verbose = TRUE){
+#
+#    # Satisfy CHECK
+#    . <- entrezg <- gene_id <- gene_name <- NULL
+#
+#    fdata1 <- data.table::fread(count_file)  %>% magrittr::extract(, !sapply(., is.integer), with = FALSE)
+#    assertive.sets::assert_is_subset(REQUIRED_FVARS_RNASEQ, names(fdata1))
+#    fdata1 %<>% magrittr::extract(, gene_id := gene_id %>%
+#                                               stringi::stri_split_fixed('.') %>%
+#                                               vapply(magrittr::extract, character(1), 1)) #%>%
+#                #data.table::setnames('gene_id', 'feature_id') %>%
+#                #magrittr::extract(, ensg := feature_id)
+#    organism <- fdata1[, autonomics.annotate::infer_organism(gene_id, keytype = 'ensg', verbose = verbose)]
+#
+#    # Add entrezg mappings
+#    if (map_entrezg){
+#       suppressMessages(fdata1[, entrezg := autonomics.annotate::ensg_to_entrezg(gene_id,      organism = organism, verbose = FALSE)])
+#       idx1 <- !is.na(fdata1[, entrezg])
+#
+#       suppressMessages(fdata1[is.na(entrezg), entrezg := autonomics.annotate::gsymbol_to_entrezg(gene_name, organism = organism)])
+#       idx2 <- !is.na(fdata1[, entrezg])
+#       if (verbose){
+#       autonomics.support::cmessage('\t\t%d/%d features mapped to entrezg: %d through ensg, %d through gsymbol',
+#                                    sum(idx2), length(idx2), sum(idx1), sum(idx2)-sum(idx1))
+#       }
+#    }
+#
+#    # Return
+#    fdata1 %<>% as.data.frame() %>% magrittr::set_rownames(.$gene_id)
+#    fdata1
+# }
 
-#' Load fdata
-#' @param count_file  count file
-#' @param map_entrezg whether to map features to their entrezg (logical)
-#' @param verbose     whether to report messages (logical)
-#' @examples
-#' if (require(billing.differentiation.data)){
-#'    count_file <- system.file('extdata/rnaseq/gene_counts.txt',
-#'                               package = 'billing.differentiation.data')
-#'    load_fdata_rnaseq(count_file)
-#' }
-#' if (require(subramanian.2016)){
-#'    count_file <- system.file('extdata/rnaseq/gene_counts.txt',
-#'                               package = 'subramanian.2016')
-#' }
-#' @importFrom data.table   data.table   :=
-#' @importFrom magrittr     %>%  %<>%
-#' @export
-load_fdata_rnaseq <- function(count_file, map_entrezg = FALSE, verbose = TRUE){
 
-   # Satisfy CHECK
-   . <- entrezg <- gene_id <- gene_name <- NULL
 
-   fdata1 <- data.table::fread(count_file)  %>% magrittr::extract(, !sapply(., is.integer), with = FALSE)
-   assertive.sets::assert_is_subset(REQUIRED_FVARS_RNASEQ, names(fdata1))
-   fdata1 %<>% magrittr::extract(, gene_id := gene_id %>%
-                                              stringi::stri_split_fixed('.') %>%
-                                              vapply(magrittr::extract, character(1), 1)) #%>%
-               #data.table::setnames('gene_id', 'feature_id') %>%
-               #magrittr::extract(, ensg := feature_id)
-   organism <- fdata1[, autonomics.annotate::infer_organism(gene_id, keytype = 'ensg', verbose = verbose)]
+# Load exprs
+# @param count_file count file
+# @return count matrix
+# @importFrom magrittr %>%
+# @export
+# load_exprs_rnaseq <-    function(count_file){
+#    . <- NULL
+#    feature_ids <- load_fdata_rnaseq(count_file, map_entrezg = FALSE, verbose = FALSE) %>% magrittr::extract2('gene_id')
+#    exprs1 <- data.table::fread(count_file) %>%
+#              magrittr::extract(, sapply(., is.integer), with = FALSE) %>%
+#              data.matrix() %>%
+#              magrittr::set_rownames(feature_ids)
+# }
 
-   # Add entrezg mappings
-   if (map_entrezg){
-      suppressMessages(fdata1[, entrezg := autonomics.annotate::ensg_to_entrezg(gene_id,      organism = organism, verbose = FALSE)])
-      idx1 <- !is.na(fdata1[, entrezg])
 
-      suppressMessages(fdata1[is.na(entrezg), entrezg := autonomics.annotate::gsymbol_to_entrezg(gene_name, organism = organism)])
-      idx2 <- !is.na(fdata1[, entrezg])
-      if (verbose){
-      autonomics.support::cmessage('\t\t%d/%d features mapped to entrezg: %d through ensg, %d through gsymbol',
-                                   sum(idx2), length(idx2), sum(idx1), sum(idx2)-sum(idx1))
-      }
-   }
+# Infer and add design to sdata
+# @param sdata sample dataframe
+# @return augmented sample dataframe
+# @importFrom magrittr %>%
+# @export
+# infer_add_design <- function(sdata){
+#    . <- NULL
+#    sdata %>%
+#       autonomics.support::left_join_keeping_rownames(
+#          autonomics.import::infer_design_from_sampleids(
+#             .$sample_id),
+#          .,
+#          by = 'sample_id')
+# }
 
-   # Return
-   fdata1 %<>% as.data.frame() %>% magrittr::set_rownames(.$gene_id)
-   fdata1
-}
-
-#' Load exprs
-#' @param count_file count file
-#' @return count matrix
-#' @importFrom magrittr %>%
-#' @export
-load_exprs_rnaseq <-    function(count_file){
-   . <- NULL
-   feature_ids <- load_fdata_rnaseq(count_file, map_entrezg = FALSE, verbose = FALSE) %>% magrittr::extract2('gene_id')
-   exprs1 <- data.table::fread(count_file) %>%
-             magrittr::extract(, sapply(., is.integer), with = FALSE) %>%
-             data.matrix() %>%
-             magrittr::set_rownames(feature_ids)
-}
-
-#' Infer and add design to sdata
-#' @param sdata sample dataframe
-#' @return augmented sample dataframe
-#' @importFrom magrittr %>%
-#' @export
-infer_add_design <- function(sdata){
-   . <- NULL
-   sdata %>%
-      autonomics.support::left_join_keeping_rownames(
-         autonomics.import::infer_design_from_sampleids(
-            .$sample_id),
-         .,
-         by = 'sample_id')
-}
 
 #' Load RNA seq counts
 #' @param dir                directory with count file and sample design file
