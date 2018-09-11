@@ -16,7 +16,8 @@ sampleid_varname <- function(platform){
           maxquant        = 'sample_id',
           metabolonlipids = 'Client Identifier',
           metabolon       = 'CLIENT_IDENTIFIER',
-          soma            = 'SampleId')
+          soma            = 'SampleId',
+          rnaseq          = 'sample_id')
 }
 
 #' Get subgroup svar name
@@ -33,7 +34,8 @@ subgroup_varname <- function(platform){
           maxquant        = NULL,
           metabolonlipids = 'Group',
           metabolon       = 'Group',
-          soma            = 'SampleGroup')
+          soma            = 'SampleGroup',
+          rnaseq          = NULL)
 }
 
 #==================================================

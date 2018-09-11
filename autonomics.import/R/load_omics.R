@@ -49,6 +49,12 @@
 #' if (file.exists(file)){
 #'    file %>% load_omics(sheet = 'Lipid Class Concentrations', platform = 'metabolonlipids')
 #' }
+#'
+#' # RNASEQ
+#' if (require(subramanian.2016)){
+#'    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#'    infer_design_from_sampleids <- TRUE
+#' }
 #' @importFrom magrittr %>%
 #' @export
 load_omics <- function(
@@ -825,6 +831,33 @@ load_soma <- function(
 
 #=======================================================
 
+#' Compute effective library sizes (using TMM)
+#' @param counts counts matrix
+#' @return vector (nsample)
+#' @export
+libsizes <- function(counts){
+   colSums(counts) * edgeR::calcNormFactors(counts)
+}
+
+#' Convert counts into cpm (counts per million reads)
+#' @param counts    count matrix
+#' @param lib.size  scaled library sizes (vector)
+#' @return cpm matrix
+#' @export
+counts_to_cpm <- function(counts, lib.size = libsizes(counts)){
+   t(t(counts + 0.5)/(lib.size + 1) * 1e+06)
+}
+
+#' Invert cpm (counts per million reads) into counts
+#'
+#' @param cpm       cpm matrix
+#' @param lib.size  scaled library sizes (vector)
+#' @return count matrix
+#' @export
+cpm_to_counts <- function(cpm, lib.size){
+   1e-06 * t(t(cpm) * (lib.size + 1))
+}
+
 
 #' Load RNAseq
 #' @param file                          rnaseq counts file
@@ -851,48 +884,27 @@ load_rnaseq <- function(
 ){
 
    # Load sumexp
-   object <- load_omics(file                        = file,
-                        platform                    = 'rnaseq',
-                        log2_transform              = log2_transform,
-                        design_file                 = design_file,
-                        infer_design_from_sampleids = infer_design_from_sampleids,
-                        design_sep                  = design_sep)
+   autonomics.support::cmessage('Load raw counts')
+   object <- autonomics.import::load_omics(file                        = file,
+                                           platform                    = 'rnaseq',
+                                           log2_transform              = FALSE,
+                                           design_file                 = design_file,
+                                           infer_design_from_sampleids = infer_design_from_sampleids,
+                                           design_sep                  = design_sep)
+   object %<>% autonomics.preprocess::filter_features_available_in_all_samples()
 
-   autonomics.import::prepro(object) <- list(assay      = "somascan",
-                                             entity     = "epitope",
-                                             quantity   = "abundance",
-                                             software   = "somalogic",
+   # Convert counts into cpm (store libsize to allow backtransformation)
+   message('counts %>% cpm()  %>% log2()')
+   autonomics.import::sdata(object)$libsize <- autonomics.import::exprs(object) %>% libsizes()
+   SummarizedExperiment::assays(object)$exprs %<>% counts_to_cpm() %>% log2() #%>%
+                                                   #limma::normalizeBetweenArrays(method = normalize.method)
+
+   # Add metadata
+   autonomics.import::prepro(object) <- list(assay      = 'rnaseq',
+                                             entity     = 'rna',
+                                             quantity   = 'log2cpm',
+                                             software   = 'limma',
                                              parameters = list())
-   # Filter
-   # On Sample Type
-   if ('\nSampleType' %in% autonomics.import::svars(object)){
-      message('')
-      autonomics.support::cmessage_df('%s', table(`Sample types` = autonomics.import::sdata(object)$SampleType))
-      if (length(rm_sample_type) > 0)      object %<>% autonomics.import::filter_samples(!SampleType %in% rm_sample_type, verbose = TRUE)
-   }
-   # On sample quality
-   if ('RowCheck'   %in% autonomics.import::svars(object)){
-      message('')
-      autonomics.support::cmessage_df('%s', table(`Sample qualities ("RowCheck")` = autonomics.import::sdata(object)$RowCheck))
-      if (length(rm_sample_quality)  > 0)  object %<>% autonomics.import::filter_samples(!RowCheck %in% rm_sample_quality, verbose = TRUE)
-   }
-   # On feature type
-   if ('Type'       %in% autonomics.import::fvars(object)){
-      message('')
-      autonomics.support::cmessage_df('%s', table(`Type` = autonomics.import::fdata(object)$Type))
-      if (length(rm_feature_type)    > 0)  object %<>% autonomics.import::filter_features(!Type %in% rm_feature_type, verbose = TRUE)
-   }
-   # On feature quality
-   if ('ColCheck'   %in% autonomics.import::fvars(object)){
-      message('')
-      autonomics.support::cmessage_df('%s', table(`Feature qualities ("ColCheck")` = autonomics.import::fdata(object)$ColCheck))
-      if (length(rm_feature_quality) > 0)  object %<>% autonomics.import::filter_features(!ColCheck %in% rm_feature_quality, verbose = TRUE)
-   }
-
-   # Select vars
-   if (rm_na_svars)            autonomics.import::sdata(object) %<>% autonomics.support::rm_na_columns()
-   if (rm_single_value_svars)  autonomics.import::sdata(object) %<>% autonomics.support::rm_single_value_columns()
-
    # Return
    object
 

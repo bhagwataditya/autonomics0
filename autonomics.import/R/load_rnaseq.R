@@ -213,8 +213,11 @@ load_rnaseq_counts <- function(
 #' @export
 logcpm <- function(object){
    counts <- autonomics.import::exprs(object)
-   lib.size <- colSums(counts)
-   autonomics.import::exprs(object) <- t(log2(t(counts + 0.5)/(lib.size + 1) * 1e+06))
+
+   rawlibsize  <- object %>% autonomics.import::exprs() %>% colSums() %>% unname()
+   normfactors <- object %>% autonomics.import::exprs() %>% edgeR::calcNormFactors()
+   libsize <- rawlibsize * normfactors
+   autonomics.import::exprs(object) <- t(log2(t(counts + 0.5)/(libsize + 1) * 1e+06))
    object
 }
 
@@ -257,13 +260,14 @@ voom_transform <- function(object, normalize.method = 'none', plot = TRUE, verbo
 
    # Normalize library size
    if (verbose)   autonomics.support::cmessage('\t\tNormalize library size')
-   dge <- edgeR::DGEList(
-      counts  = autonomics.import::exprs(object),
-      samples = autonomics.import::sdata(object),
-      group   = autonomics.import::sdata(object)$subgroup,
-      genes   = autonomics.import::fdata(object)
-   )
-   dge <- edgeR::calcNormFactors(dge)
+   norm.factors <- autonomics.import::exprs(object) %>% edgeR::calcNormFactors()
+    dge <- edgeR::DGEList(
+       counts  = autonomics.import::exprs(object),
+       samples = autonomics.import::sdata(object),
+       group   = autonomics.import::sdata(object)$subgroup,
+       genes   = autonomics.import::fdata(object)
+    )
+    dge <- edgeR::calcNormFactors(dge)
 
    # Voom transform
    if (verbose)   autonomics.support::cmessage('\t\tVoom transform')
