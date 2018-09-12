@@ -107,7 +107,7 @@ make_volcano_dt <- function(object, ntop = 3){
 #' }
 #' @importFrom data.table   data.table   :=
 #' @export
-plot_volcano <- function(object, ntop = 3, nrow = NULL, legend_position = NULL){
+plot_volcano <- function(object, ntop = 3, nrow = NULL, legend_position = NULL, labeled_features = TRUE){
 
    # Satisfy CHECK
    is.top.up <- is.top.down <- coef <- mlp <- color <- fname <- NULL
@@ -123,17 +123,21 @@ plot_volcano <- function(object, ntop = 3, nrow = NULL, legend_position = NULL){
              magrittr::extract(is.top.up==TRUE | is.top.down==TRUE)
    tmp_plot <- ggplot2::ggplot(point_dt) +
       ggplot2::facet_wrap(~ contrast, nrow = nrow, scales = 'fixed') +
-      ggplot2::geom_point(ggplot2::aes(x=coef, y=mlp, color = color), na.rm = TRUE) +
-      ggrepel::geom_text_repel(data = txt_dt,
-                               ggplot2::aes(x=coef, y=mlp, label=fname, color = color),
-                               #hjust = 'outward',
-                               na.rm = TRUE,
-                               show.legend = FALSE#,
-                               #direction = 'x'
-      ) +
+      ggplot2::geom_point(ggplot2::aes(x=coef, y=mlp, color = color), na.rm = TRUE)
       ggplot2::scale_color_manual(values = color_values, name = NULL) +
       ggplot2::xlab(expression(log[2](FC))) +
       ggplot2::ylab(expression(-log[10](p)))
+    if(labeled_features)
+    {
+      tmp_plot <- tmp_plot +
+        ggrepel::geom_text_repel(data = txt_dt,
+                                 ggplot2::aes(x=coef, y=mlp, label=fname, color = color),
+                                 #hjust = 'outward',
+                                 na.rm = TRUE,
+                                 show.legend = FALSE#,
+                                 #direction = 'x'
+        )
+    }
    if(!is.null(legend_position))
    {
       tmp_plot <- tmp_plot +
