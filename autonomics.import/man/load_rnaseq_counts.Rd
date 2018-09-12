@@ -26,11 +26,11 @@ Load RNA seq counts
 \examples{
 require(magrittr)
 if (require(billing.differentiation.data)){
-   dir <- system.file('extdata/rnaseq', package = 'billing.differentiation.data')
-   autonomics.import::load_rnaseq_counts(dir)
+  dir <- system.file('extdata/rnaseq', package = 'billing.differentiation.data')
+  autonomics.import::load_rnaseq_counts(dir)
 }
 if (require(subramanian.2016)){
-   dir <- system.file('extdata/rnaseq', package = 'subramanian.2016')
-   autonomics.import::load_rnaseq_counts(dir, sample_file = NULL)
+  dir <- system.file('extdata/rnaseq', package = 'subramanian.2016')
+  autonomics.import::load_rnaseq_counts(dir, sample_file = NULL)
 }
 }

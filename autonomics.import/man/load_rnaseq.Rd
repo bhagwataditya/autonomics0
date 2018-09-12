@@ -2,10 +2,10 @@
 % Please edit documentation in R/load_omics.R
 \name{load_rnaseq}
 \alias{load_rnaseq}
-\title{Load RNAseq}
+\title{Load RNAseq cpm}
 \usage{
 load_rnaseq(file, design_file = NULL, infer_design_from_sampleids = FALSE,
-  design_sep = NULL, log2_transform = TRUE)
+  design_sep = NULL)
 }
 \arguments{
 \item{file}{rnaseq counts file}
@@ -15,11 +15,9 @@ load_rnaseq(file, design_file = NULL, infer_design_from_sampleids = FALSE,
 \item{infer_design_from_sampleids}{logical}
 
 \item{design_sep}{character}
-
-\item{log2_transform}{logical}
 }
 \description{
-Load RNAseq
+Load RNAseq cpm
 }
 \examples{
 require(magrittr)
@@ -29,6 +27,7 @@ if (require(autonomics.data){
 if (require(subramanian.2016)){
    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
    infer_design_from_sampleids <- TRUE
-
+   object <- load_rnaseq(file, infer_design_from_sampleids = TRUE)
+   object
 }
 }

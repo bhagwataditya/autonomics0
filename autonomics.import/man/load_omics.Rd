@@ -66,4 +66,10 @@ file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (18071
 if (file.exists(file)){
    file \%>\% load_omics(sheet = 'Lipid Class Concentrations', platform = 'metabolonlipids')
 }
+
+# RNASEQ
+if (require(subramanian.2016)){
+   file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+   infer_design_from_sampleids <- TRUE
+}
 }
