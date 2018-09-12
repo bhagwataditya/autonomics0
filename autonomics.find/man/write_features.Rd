@@ -4,7 +4,8 @@
 \alias{write_features}
 \title{Write feature tables to file}
 \usage{
-write_features(object, design = autonomics.find::create_design_matrix(object),
+write_features(object,
+  design = autonomics.import::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
   direction = c("neg", "pos"), topdef, result_dir)
 }

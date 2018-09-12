@@ -97,7 +97,7 @@
 analyze_eset <- function(
   object,
   result_dir       = default_result_dir(object),
-  design           = autonomics.find::create_design_matrix(object),
+  design           = autonomics.import::create_design_matrix(object),
   contrasts        = autonomics.find::default_contrasts(object),
   topdef           = autonomics.find::default_topdef(object),
   universe         = NULL, #autonomics.ora::default_universe(object),

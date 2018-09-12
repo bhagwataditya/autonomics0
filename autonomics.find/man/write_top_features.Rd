@@ -4,7 +4,8 @@
 \alias{write_top_features}
 \title{Write top features for specified contrast}
 \usage{
-write_top_features(object, design = create_design_matrix(object), contrast,
+write_top_features(object,
+  design = autonomics.import::create_design_matrix(object), contrast,
   direction = autonomics.find::DIRECTIONS[1],
   topdef = default_topdef(object), result_dir = NULL)
 }

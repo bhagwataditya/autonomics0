@@ -23,7 +23,7 @@ require(magrittr)
 # STEM CELL COMPARISON
 if (require(autonomics.data)){
    object  <- autonomics.data::stemcomp.proteinratios
-   design <- autonomics.find::create_design_matrix(object)
+   design <- autonomics.import::create_design_matrix(object)
    contrasts <- autonomics.find::make_ref_contrasts(object)
    contrasts \%>\% autonomics.find::validify_contrasts(design)
 }

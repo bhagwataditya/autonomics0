@@ -298,7 +298,7 @@ cluster_features_on_subgroups <- function(
 #' @export
 cluster_top_features_on_subgroups <- function(
    object,
-   design = create_design_matrix(object),
+   design = autonomics.import::create_design_matrix(object),
    contrasts = autonomics.find::default_contrasts(object),
    result_dir,
    n             = 1000,

@@ -65,7 +65,7 @@ merge_limma_matrices <- function(limma_matrices){
 add_limma_to_fdata <- function(
    object,
    contrasts  = autonomics.find::default_contrasts(object),
-   design     = autonomics.find::create_design_matrix(object),
+   design     = autonomics.import::create_design_matrix(object),
    overwrite  = TRUE
 ){
 

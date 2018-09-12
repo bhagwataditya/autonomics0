@@ -5,7 +5,7 @@
 \title{Plot top features}
 \usage{
 plot_top_features_all_contrasts(object,
-  design = autonomics.find::create_design_matrix(object),
+  design = autonomics.import::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
   direction = c("neg", "pos"),
   topdef = autonomics.find::default_topdef(object), result_dir,

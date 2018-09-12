@@ -23,13 +23,13 @@ Create contrast matrix
 if (require(autonomics.data)){
    require(magrittr)
    autonomics.data::stemcomp.proteinratios   \%>\% 
-   autonomics.find::create_design_matrix()   \%>\% 
+   autonomics.import::create_design_matrix()   \%>\% 
    autonomics.find::create_contrast_matrix()
 }
 
 if (require(billing.differentiation.data)){
    billing.differentiation.data::rna.voomcounts \%>\% 
-      autonomics.find::create_design_matrix() \%>\% 
+      autonomics.import::create_design_matrix() \%>\% 
       autonomics.find::create_contrast_matrix(
          c(EM0.8_0 = 'EM0.8 - EM0.0'))
 }

@@ -90,7 +90,7 @@ fit_contrasts <- function(fit, contrasts, design){
 run_limma <- function(
    object,
    contrasts = autonomics.find::default_contrasts(object),
-   design    = autonomics.find::create_design_matrix(object)
+   design    = autonomics.import::create_design_matrix(object)
 ){
 
    # Set block and correlation if required

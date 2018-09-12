@@ -18,7 +18,7 @@ summarize_limma_analysis <- function(object, fit){
 run_limma_old <- function(
    object, 
    contrasts = autonomics.find::default_contrasts(object),
-   design    = autonomics.find::create_design_matrix(object)
+   design    = autonomics.import::create_design_matrix(object)
 ){
   .Deprecated('run_limma')
   # Set block and correlation if required

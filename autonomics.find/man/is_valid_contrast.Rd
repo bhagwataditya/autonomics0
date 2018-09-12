@@ -20,7 +20,7 @@ Is a valid contrast?
 \examples{
 if (require(subramanian.2016)){
    object <- subramanian.2016::metabolon
-   design <- autonomics.find::create_design_matrix(object)
+   design <- autonomics.import::create_design_matrix(object)
    contrast <- autonomics.find::default_contrasts(object)[1]
    autonomics.find::is_valid_contrast(contrast, design)
 }

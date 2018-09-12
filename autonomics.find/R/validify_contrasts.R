@@ -6,7 +6,7 @@
 #' @examples
 #' if (require(subramanian.2016)){
 #'    object <- subramanian.2016::metabolon
-#'    design <- autonomics.find::create_design_matrix(object)
+#'    design <- autonomics.import::create_design_matrix(object)
 #'    contrast <- autonomics.find::default_contrasts(object)[1]
 #'    autonomics.find::is_valid_contrast(contrast, design)
 #' }
@@ -47,7 +47,7 @@ select_valid_contrasts <- function(contrasts, design, verbose = TRUE){
 #' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
 #'    object  <- autonomics.data::stemcomp.proteinratios
-#'    design <- autonomics.find::create_design_matrix(object)
+#'    design <- autonomics.import::create_design_matrix(object)
 #'    contrasts <- autonomics.find::make_ref_contrasts(object)
 #'    contrasts %>% autonomics.find::validify_contrasts(design)
 #' }

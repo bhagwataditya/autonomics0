@@ -6,7 +6,8 @@
 \usage{
 add_limma_to_fdata(object,
   contrasts = autonomics.find::default_contrasts(object),
-  design = autonomics.find::create_design_matrix(object), overwrite = TRUE)
+  design = autonomics.import::create_design_matrix(object),
+  overwrite = TRUE)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

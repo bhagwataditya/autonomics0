@@ -1,3 +1,12 @@
+#' Create design matrix
+#' 
+#' \code{\link[autonomics.import]{create_design_matrix}}
+#' @name  create_design_matrix
+#' @importFrom autonomics.import  create_design_matrix
+#' @export  create_design_matrix
+NULL
+
+
 #' contrastdefs
 #' 
 #' \code{\link[autonomics.import]{contrastdefs}}

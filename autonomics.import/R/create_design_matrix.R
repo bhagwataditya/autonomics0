@@ -4,15 +4,15 @@
 #' @return design matrix
 #' @examples
 #' require(magrittr)
-#' 
+#'
 #' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
 #'    autonomics.data::stemcomp.proteinratios  %>%
-#'    autonomics.find::create_design_matrix()
+#'    autonomics.import::create_design_matrix()
 #' }
 #' if (require(billing.differentiation.data)){
-#'    billing.differentiation.data::rna.voomcounts %>% 
-#'    autonomics.find::create_design_matrix()      %>% 
+#'    billing.differentiation.data::rna.voomcounts %>%
+#'    autonomics.import::create_design_matrix()      %>%
 #'    magrittr::extract(1:3,)
 #' }
 #' @importFrom magrittr  %<>%
@@ -50,7 +50,7 @@ create_design_matrix <- function(object, confounders = character(0)){
 
    # Rename confounders
    if (length(confounders) > 0){
-      numeric_confounders <- autonomics.import::sdata(object)[, confounders, drop = FALSE]   %>% 
+      numeric_confounders <- autonomics.import::sdata(object)[, confounders, drop = FALSE]   %>%
                              vapply(is.numeric, logical(1)) %>%  which() %>% names()
       factor_confounders  <- confounders %>% setdiff(numeric_confounders)
    }

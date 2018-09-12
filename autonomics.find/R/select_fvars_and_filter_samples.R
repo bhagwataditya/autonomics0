@@ -81,7 +81,7 @@ select_relevant_fvars <- function(object, contrast_names){
 #' @rdname filter_relevant_samples
 #' @importFrom magrittr   %<>%   %>%
 #' @export
-are_relevant_samples <- function(object, design = create_design_matrix(object), contrasts){
+are_relevant_samples <- function(object, design = autonomics.import::create_design_matrix(object), contrasts){
    assertive.base::assert_all_are_true(nrow(design) == ncol(object))
    contrast_mat <- design %>% create_contrast_matrix(contrasts)
    
@@ -93,7 +93,7 @@ are_relevant_samples <- function(object, design = create_design_matrix(object), 
 #'@rdname filter_relevant_samples
 #'@importFrom magrittr %>%
 #'@export
-filter_relevant_samples <- function(object, design = create_design_matrix(object), contrasts){
+filter_relevant_samples <- function(object, design = autonomics.import::create_design_matrix(object), contrasts){
    idx <- are_relevant_samples(object, design = design, contrasts = contrasts)
    object %>% magrittr::extract(, idx)
 }
@@ -124,7 +124,7 @@ filter_relevant_samples <- function(object, design = create_design_matrix(object
 #' @export
 select_fvars_and_filter_samples <- function(
    object, 
-   design = create_design_matrix(object), 
+   design = autonomics.import::create_design_matrix(object), 
    contrasts
 ){
   object %<>% select_relevant_fvars(names(contrasts))

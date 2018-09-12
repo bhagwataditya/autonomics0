@@ -5,7 +5,7 @@
 \title{Cluster top features (on subgroup profiles)}
 \usage{
 cluster_top_features_on_subgroups(object,
-  design = create_design_matrix(object),
+  design = autonomics.import::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object), result_dir,
   n = 1000, geom = autonomics.plot::default_feature_plots(object) \%>\%
   setdiff("bars"), x = autonomics.plot::default_x(object, geom[1]),

@@ -15,7 +15,7 @@ analyze_contrasts(object, result_dir = default_result_dir(object),
   feature_plot_height = NULL, min_set_size = 5, max_set_size = Inf, ...)
 
 analyze_eset(object, result_dir = default_result_dir(object),
-  design = autonomics.find::create_design_matrix(object),
+  design = autonomics.import::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
   topdef = autonomics.find::default_topdef(object), universe = NULL,
   dodge_width = 0, do_pca = TRUE,

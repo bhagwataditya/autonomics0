@@ -163,7 +163,7 @@ format_sigbvalues <- function(object, contrast){
 #' @export
 plot_top_features <- function(
    object,
-   design         = autonomics.find::create_design_matrix(object),
+   design         = autonomics.import::create_design_matrix(object),
    contrast       = autonomics.find::default_contrasts(object)[1],
    topdef         = autonomics.find::default_topdef(object),
    direction      = autonomics.find::DIRECTIONS[1],
@@ -254,7 +254,7 @@ plot_top_features <- function(
 #' @export
 plot_top_features_all_contrasts <- function(
    object,
-   design         = autonomics.find::create_design_matrix(object),
+   design         = autonomics.import::create_design_matrix(object),
    contrasts      = autonomics.find::default_contrasts(object),
    direction      = c('neg', 'pos'),
    topdef         = autonomics.find::default_topdef(object),

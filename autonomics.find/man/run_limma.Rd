@@ -5,7 +5,7 @@
 \title{Run limma}
 \usage{
 run_limma(object, contrasts = autonomics.find::default_contrasts(object),
-  design = autonomics.find::create_design_matrix(object))
+  design = autonomics.import::create_design_matrix(object))
 }
 \arguments{
 \item{object}{eset}

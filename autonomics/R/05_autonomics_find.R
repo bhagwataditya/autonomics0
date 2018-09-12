@@ -1,12 +1,3 @@
-#' Create design matrix
-#' 
-#' \code{\link[autonomics.find]{create_design_matrix}}
-#' @name  create_design_matrix
-#' @importFrom autonomics.find  create_design_matrix
-#' @export  create_design_matrix
-NULL
-
-
 #' Create contrast matrix
 #' 
 #' \code{\link[autonomics.find]{create_contrast_matrix}}

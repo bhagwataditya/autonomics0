@@ -4,8 +4,8 @@
 \alias{select_fvars_and_filter_samples}
 \title{Select portion of SummarizedExperiment relevant to contrasts}
 \usage{
-select_fvars_and_filter_samples(object, design = create_design_matrix(object),
-  contrasts)
+select_fvars_and_filter_samples(object,
+  design = autonomics.import::create_design_matrix(object), contrasts)
 }
 \arguments{
 \item{object}{eSet}

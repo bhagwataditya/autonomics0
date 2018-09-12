@@ -10,7 +10,7 @@ eliminate_confounders <- function(
 ){
    for (cur_confounder in confounders){
       values  <- autonomics.import::sdata(object) %>% magrittr::extract2(cur_confounder)
-      design  <- object %>%  autonomics.find::create_design_matrix(confounders = setdiff(confounders, cur_confounder))
+      design  <- object %>%  autonomics.import::create_design_matrix(confounders = setdiff(confounders, cur_confounder))
       if (is.numeric(values))   autonomics.import::exprs(object) %<>% limma::removeBatchEffect(covariates = values, design = design)
       else                      autonomics.import::exprs(object) %<>% limma::removeBatchEffect(batch      = values, design = design)
       object

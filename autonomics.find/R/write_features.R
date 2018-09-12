@@ -38,7 +38,7 @@ utils::globalVariables('.')
 #' @export
 write_top_features <- function(
    object,
-   design         = create_design_matrix(object),
+   design         = autonomics.import::create_design_matrix(object),
    contrast,
    direction      = autonomics.find::DIRECTIONS[1],
    topdef = default_topdef(object),
@@ -132,7 +132,7 @@ write_all_features <- function(object, result_dir){
 #' @export
 write_features <- function(
    object,
-   design    = autonomics.find::create_design_matrix(object),
+   design    = autonomics.import::create_design_matrix(object),
    contrasts = autonomics.find::default_contrasts(object),
    direction = c('neg', 'pos'),
    topdef,

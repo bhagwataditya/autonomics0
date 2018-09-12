@@ -5,10 +5,11 @@
 \alias{filter_relevant_samples}
 \title{Filter relevant samples}
 \usage{
-are_relevant_samples(object, design = create_design_matrix(object), contrasts)
+are_relevant_samples(object,
+  design = autonomics.import::create_design_matrix(object), contrasts)
 
-filter_relevant_samples(object, design = create_design_matrix(object),
-  contrasts)
+filter_relevant_samples(object,
+  design = autonomics.import::create_design_matrix(object), contrasts)
 }
 \arguments{
 \item{object}{eset}
