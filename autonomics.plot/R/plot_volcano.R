@@ -123,7 +123,7 @@ plot_volcano <- function(object, ntop = 3, nrow = NULL, legend_position = NULL, 
              magrittr::extract(is.top.up==TRUE | is.top.down==TRUE)
    tmp_plot <- ggplot2::ggplot(point_dt) +
       ggplot2::facet_wrap(~ contrast, nrow = nrow, scales = 'fixed') +
-      ggplot2::geom_point(ggplot2::aes(x=coef, y=mlp, color = color), na.rm = TRUE)
+      ggplot2::geom_point(ggplot2::aes(x=coef, y=mlp, color = color), na.rm = TRUE) +
       ggplot2::scale_color_manual(values = color_values, name = NULL) +
       ggplot2::xlab(expression(log[2](FC))) +
       ggplot2::ylab(expression(-log[10](p)))
