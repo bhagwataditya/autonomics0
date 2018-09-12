@@ -6,9 +6,9 @@
 \usage{
 plot_sample_distributions2(object, ..., x = NULL,
   color_var = autonomics.plot::default_color_var(object),
-  color_values = autonomics.plot::default_color_values(object, color_var),
-  displayed_features = NULL, jitter_features = FALSE, horizontal = TRUE,
-  xlab = "", ylab = "",
+  color_values = autonomics.plot::default_color_values(object,
+  color_var), displayed_features = NULL, jitter_features = FALSE,
+  horizontal = TRUE, xlab = "", ylab = "",
   title = sprintf("Per sample distribution of all \%d features",
   nrow(object)))
 }

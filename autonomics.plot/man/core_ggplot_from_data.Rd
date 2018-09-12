@@ -6,13 +6,13 @@
 \usage{
 core_ggplot_from_data(object, ..., listed_objects = list(),
   MARGIN = c("samples", "features"), x = NULL, alpha_var = NULL,
-  color_var = autonomics.plot::default_color_var(object), fill_var = NULL,
-  group_var = NULL, linetype_var = NULL, shape_var = NULL,
-  size_var = NULL, stroke_var = NULL, weigth_var = NULL,
-  facet1_var = NULL, facet2_var = NULL, marked_ids = NULL,
-  horizontal = FALSE, scales = ifelse(horizontal, "free_x", "free_y"),
-  facet_grid_labeller = "label_parsed", xlab = "", ylab = "",
-  title = "")
+  color_var = autonomics.plot::default_color_var(object),
+  fill_var = NULL, group_var = NULL, linetype_var = NULL,
+  shape_var = NULL, size_var = NULL, stroke_var = NULL,
+  weigth_var = NULL, facet1_var = NULL, facet2_var = NULL,
+  marked_ids = NULL, horizontal = FALSE, scales = ifelse(horizontal,
+  "free_x", "free_y"), facet_grid_labeller = "label_parsed", xlab = "",
+  ylab = "", title = "")
 }
 \arguments{
 \item{object}{eSet, EList or SummarizedExperiment}
