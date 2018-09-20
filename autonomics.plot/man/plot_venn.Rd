@@ -36,6 +36,8 @@ plot_venns(...)
 \item{main.cex}{numeric(1): title font size}
 
 \item{main.pos}{numeric(2): title location}
+
+\item{...}{passed to either VennDiagram::venn.diagram(...) or eulerr::plot.euler(...)}
 }
 \description{
 Plot Venn/Euler diagram
