@@ -53,17 +53,19 @@ make_composite_colors <- function(svalues, show = FALSE){
    hues       <- data.table::data.table(V1 = V1levels, hue = seq(15, 375, length = n1 + 1)[1:n1])
    luminances <- data.table::data.table(V2 = V2levels, luminance = seq(100, 25, length = n2))
 
-   color_values <- expand.grid(V2=V2levels, V1 = V1levels)    %>%          # all possible levels, also ones not present
+   color_levels <- expand.grid(V2=V2levels, V1 = V1levels)    %>%          # all possible levels, also ones not present
                    autonomics.support::pull_columns('V1')     %>%
                    data.table::data.table()                   %>%
                    merge(luminances, by = 'V2', sort = FALSE) %>%
                    merge(hues, by = 'V1', sort = FALSE)       %>%
                    magrittr::extract(, color := grDevices::hcl(h = hue, l = luminance, c = 100), by = c('V1', 'V2')) %>%
                    merge(components, by = c('V1', 'V2'), sort = FALSE) %>% # only levels really present
-                   magrittr::extract(, color %>% magrittr::set_names(subgroup))
+                   magrittr::extract(, color %>% magrittr::set_names(subgroup)) %>%
+                   magrittr::extract(!duplicated(.))  # unique drops names
 
-   if (show) graphics::pie(rep(1, length(color_values)), names(color_values), col = color_values)
-   return(color_values)
+   if (show) color_levels %>% (function(x) graphics::pie(rep(1, length(x)), names(x), col = x))
+
+   return(color_levels)
 }
 
 #' Make fitting colors
