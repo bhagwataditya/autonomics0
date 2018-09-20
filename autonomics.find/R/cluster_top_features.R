@@ -321,7 +321,7 @@ cluster_top_features_on_subgroups <- function(
    }
 
 
-   # Run limma if requiredl
+   # Run limma if required
    cluster_dir <- paste0(result_dir, '/feature_clusters')
    if (!contains_limma_in_fdata(object)){
       object %<>% add_limma_to_fdata(contrasts, design)
@@ -329,7 +329,7 @@ cluster_top_features_on_subgroups <- function(
 
    # Filter significant and top ranked features
    object %<>% filter_significant_features()    %>%
-                 filter_top_ranked_features()
+               filter_top_ranked_features()
    
    # Cluster
    object %>% cluster_features_on_subgroups(

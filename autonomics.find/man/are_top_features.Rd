@@ -6,19 +6,17 @@
 \title{Which are the top features?}
 \usage{
 are_top_features(object, topdef = autonomics.find::default_topdef(object),
-  contrast_name, direction)
+  contrast_name)
 
 get_top_features(object, topdef = autonomics.find::default_topdef(object),
-  contrast_name, direction)
+  contrast_name)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 
 \item{topdef}{top definition}
 
 \item{contrast_name}{contrast name (string)}
-
-\item{direction}{'both', 'pos', or 'neg'}
 }
 \value{
 integer vector with indices of top features
@@ -28,18 +26,11 @@ Which features fulfill top definition and direction for specified contrast?
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   contrast <-  c(EM0.8_0 = 'EM0.8 - EM0.0')
-   topdef <- 'bonf < 0.05'
-   autonomics.find::are_top_features(
-      object, topdef, names(contrast), direction = 'neg')  \%>\% 
-      sum()
-   autonomics.find::are_top_features(
-      object, topdef, names(contrast), direction = 'pos')  \%>\% 
-      sum()
-   autonomics.find::are_top_features(
-      object, topdef, names(contrast), direction = 'both') \%>\% 
-      sum()
+if (require(autonomics.data)){
+   object <- autonomics.data::stemdiff.proteinratios
+   topdef <- 'p < 0.05'
+   contrast_name <- object \%>\% autonomics.import::contrastdefs() \%>\% magrittr::extract(1) \%>\% names()
+   object \%>\% autonomics.find::are_top_features('p<0.05',            contrast_name) \%>\% sum()
+   object \%>\% autonomics.find::are_top_features('p<0.05 & effect>0', contrast_name) \%>\% sum()
 }
 }

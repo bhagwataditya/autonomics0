@@ -28,10 +28,10 @@ if (require(autonomics.data)){
       autonomics.find::filter_significant_features()
 }
 if (require(subramanian.2016)){
-   subramanian.2016::metabolon \%>\% 
-      autonomics.find::add_limma_to_fdata(
-         contrasts = subramanian.2016::contrasts.metabolon \%>\% extract(-length(.))) \%>\% 
-      autonomics.find::filter_significant_features() \%>\% invisible()
+   object <- subramanian.2016::metabolon 
+   object \%>\% autonomics.find::add_limma_to_fdata(
+                 contrasts = subramanian.2016::contrasts.metabolon \%>\% extract(-length(.))) \%>\% 
+              autonomics.find::filter_significant_features() \%>\% invisible()
    
    subramanian.2016::exiqon \%>\% 
       autonomics.find::add_limma_to_fdata(

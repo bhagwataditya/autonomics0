@@ -32,7 +32,7 @@ prepro(object)
 \S4method{prepro}{EList}(object)
 }
 \arguments{
-\item{object}{eSet}
+\item{object}{SummarizedExperiment}
 
 \item{value}{list}
 }

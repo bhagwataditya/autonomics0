@@ -7,7 +7,7 @@
 arrange_features_by_rank(object, contrast_name)
 }
 \arguments{
-\item{object}{eSet}
+\item{object}{SummarizedExperiment}
 
 \item{contrast_name}{contrast name}
 }
@@ -19,11 +19,10 @@ Order features on rank
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   object \%>\% autonomics.import::fnames() \%>\% head()
-   contrast <-  c(EM0.8_0 = 'EM0.8 - EM0.0')
-   object \%>\% autonomics.find::arrange_features_by_rank(names(contrast)) \%>\% 
-                autonomics.import::fnames() \%>\% head()
+if (require(autonomics.data)){
+   (object <- autonomics.data::stemdiff.proteinratios)
+   contrast_name <-  names(autonomics.import::contrastdefs(object))[1]
+   (object \%<>\% autonomics.find::arrange_features_by_rank(contrast_name))
+   object \%>\% autonomics.import::limma() \%>\% magrittr::extract(1:2, contrast_name, 1:2)
 }
 }

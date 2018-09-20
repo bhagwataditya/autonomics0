@@ -380,11 +380,41 @@ object})
 setReplaceMethod("fvars",  signature("EList", "character"),                  function(object, value){ names(object$genes) <- value
 object})
 
+#================================================================================================
+#'@title Get/set limma results
+#'@param object SummarizedExperiment
+#'@param value list
+#'@return limma results (get) or updated object (set)
+#'@rdname limma
+
+# Get
+#====
+#' @rdname limma
+#' @export
+setGeneric("limma",                                    function(object)   standardGeneric("limma") )
+
+#' @rdname limma
+setMethod("limma", signature("SummarizedExperiment"),  function(object) S4Vectors::metadata(object)$limma )
+
+# Set
+#====
+
+#' @rdname limma
+#' @export
+setGeneric("limma<-",                                                function(object, value)  standardGeneric("limma<-") )
+
+#' @rdname limma
+setReplaceMethod("limma", signature("SummarizedExperiment", "array"), function(object, value){ S4Vectors::metadata(object)$limma <- value; object})
+
+#' @rdname limma
+setReplaceMethod("limma", signature("SummarizedExperiment", "NULL"), function(object, value){object})
+
+
 
 #=================================================================================================
 #' @title Get/Set prepro
 #' @description Get/Set preprocessing details
-#' @param object eSet
+#' @param object SummarizedExperiment
 #' @param value  list
 #' @return preprocessing details (get) or updated eset
 #' @rdname prepro

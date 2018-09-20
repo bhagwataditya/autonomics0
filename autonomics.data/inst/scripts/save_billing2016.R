@@ -11,14 +11,14 @@ stemcomp.proteinratios <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
                               invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'), 
                               subgroup_frac = '_') %>% 
                            autonomics.import::set_contrastdefs(c( EM_E =  'EM_E', BM_E =  'BM_E', BM_EM = 'BM_EM')) %>% 
-                           autonomics.find::add_limma_to_fdata()
+                           autonomics.find::add_limma()
 save(stemcomp.proteinratios, file = 'data/stemcomp.proteinratios.RData', compress = 'xz')
 
 # SOMA
 stemcomp.soma <- 'extdata/stemcomp/soma/stemcomp.adat'      %>% 
                   system.file(package = 'autonomics.data')  %>%
                   autonomics.import::load_soma()            %>%
-                  autonomics.find::add_limma_to_fdata(contrasts = c(EM_E  = 'EM-E', BM_E  = 'BM-E', BM_EM = 'BM-EM'))
+                  autonomics.find::add_limma(c(EM_E  = 'EM-E', BM_E  = 'BM-E', BM_EM = 'BM-EM'))
 save(stemcomp.soma, file = 'data/stemcomp.soma.RData', compress = 'xz')
 
 
@@ -42,7 +42,7 @@ stemdiff.proteinratios <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
                                        x
                            }) %>% 
                            autonomics.import::set_contrastdefs(autonomics.find::make_ref_contrasts(.)) %>% 
-                           autonomics.find::add_limma_to_fdata()
+                           autonomics.find::add_limma()
 
 save(stemdiff.proteinratios, file = 'data/stemdiff.proteinratios.RData', compress = 'xz')
 stemdiff.proteinratios %>% autonomics.explore::plot_pca_samples()
@@ -56,7 +56,7 @@ glutaminase <- 'extdata/glutaminase/glutaminase.xlsx'     %>%
                 system.file(package = 'autonomics.data')  %>% 
                 autonomics.import::load_metabolon()       %>% 
                 autonomics.import::set_contrastdefs(autonomics.find::make_ref_contrasts(.)) %>% 
-                autonomics.find::add_limma_to_fdata()
+                autonomics.find::add_limma()
 save(glutaminase, file = 'data/glutaminase.RData', compress = 'xz')
 
 

@@ -4,10 +4,10 @@
 \alias{filter_top_features}
 \title{Filter (and arrange) top features}
 \usage{
-filter_top_features(object, contrast_name, topdef, direction)
+filter_top_features(object, contrast_name, topdef)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 
 \item{contrast_name}{contrast name}
 
@@ -20,11 +20,11 @@ Filter (and arrange) top features
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   contrast <-  c(EM0.8_0 = 'EM0.8 - EM0.0')
+if (require(autonomics.data)){
+   (object <- autonomics.data::stemdiff.proteinratios)
+   contrast_name <-  names(autonomics.import::contrastdefs(object))[1]
    topdef <- 'bonf < 0.05'
-   autonomics.find::filter_top_features(object, names(contrast), topdef, 'neg') \%>\% dim()
-   autonomics.find::filter_top_features(object, names(contrast), topdef, 'both') \%>\% dim()
+   (object \%<>\% autonomics.find::filter_top_features(contrast_name, topdef))
+   object \%>\% autonomics.import::limma()
 }
 }
