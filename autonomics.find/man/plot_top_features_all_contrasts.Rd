@@ -7,9 +7,8 @@
 plot_top_features_all_contrasts(object,
   design = autonomics.import::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
-  direction = c("neg", "pos"),
-  topdef = autonomics.find::default_topdef(object), result_dir,
-  geom = autonomics.plot::default_feature_plots(object), ...)
+  topdef = autonomics.find::default_topdef(object),
+  geom = autonomics.plot::default_feature_plots(object), result_dir, ...)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -18,11 +17,9 @@ plot_top_features_all_contrasts(object,
 
 \item{contrasts}{named contrast vector}
 
-\item{direction}{subset of c('neg', 'pos', 'both')}
+\item{geom}{which feature plots to be created?}
 
 \item{result_dir}{directory where to store results}
-
-\item{geom}{which feature plots to be created?}
 
 \item{...}{passed to autonomics.plot::plot_features}
 }
@@ -53,10 +50,10 @@ if (require(autonomics.data)){
   object <- autonomics.data::glutaminase
   result_dir <- tempdir() \%T>\% message()
   object \%>\% plot_top_features_all_contrasts(
-                contrasts      = autonomics.import::contrastdefs(.)[1:2],
-                topdef = 'fdr < 0.05',
-                x              = 'TIME_POINT',
-                geom           = 'boxplot',
-                result_dir     = result_dir)
+                contrasts  = autonomics.import::contrastdefs(object)[1:2],
+                topdef     = 'fdr < 0.05',
+                x          = 'TIME_POINT',
+                geom       = 'boxplot',
+                result_dir = result_dir)
 }
 }

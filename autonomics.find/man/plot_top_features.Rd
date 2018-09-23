@@ -8,10 +8,10 @@ plot_top_features(object,
   design = autonomics.import::create_design_matrix(object),
   contrast = autonomics.find::default_contrasts(object)[1],
   topdef = autonomics.find::default_topdef(object),
-  direction = autonomics.find::DIRECTIONS[1],
   geom = autonomics.plot::default_feature_plots(object)[1],
   nplot = autonomics.find::default_nplot(object),
-  fvars = autonomics.plot::default_fvars(object), ...)
+  fvars = autonomics.plot::default_fvars(object),
+  color_var = autonomics.plot::default_color_var(object), ...)
 }
 \arguments{
 \item{object}{\code{eSet}}
@@ -20,9 +20,7 @@ plot_top_features(object,
 
 \item{contrast}{named contrast for which to select the top feature bars}
 
-\item{topdef}{Definition of 'top features'.}
-
-\item{direction}{any value in autonomics.find::DIRECTIONS}
+\item{topdef}{definition of 'top features'.}
 
 \item{geom}{'point', 'boxplot', 'violin', 'bar', 'hbar'}
 
@@ -47,14 +45,13 @@ require(magrittr)
      object \%>\% plot_top_features(geom = 'point')
      object \%>\% plot_top_features(geom = 'violin')
      object \%>\% plot_top_features(geom = 'boxplot')
-     object \%>\% plot_top_features(direction  = 'neg', x = 'subgroup')
+     object \%>\% plot_top_features(x = 'subgroup')
   }
 
 # GLUTAMINASE
   if (require(autonomics.data)){
      object <- autonomics.data::glutaminase
      object \%>\% plot_top_features(topdef = 'bonf < 0.05 & rank <= 4',
-                                  direction      = 'both',
                                   geom           = 'boxplot')
   }
 
@@ -62,7 +59,7 @@ require(magrittr)
 if (require(atkin.2014)){
    object  <- atkin.2014::soma
    contrasts <- atkin.2014::contrasts
-   object \%>\% plot_top_features(contrast = contrasts[1], direction = 'neg', nplot = 9,
+   object \%>\% plot_top_features(contrast = contrasts[1], nplot = 9,
                                 geom = 'point', x = 'time', color_var = 'condition',
                                 facet_var = 'subject_id', fvars = 'TargetFullName')
 }
@@ -72,7 +69,6 @@ if (require(subramanian.2016)){
    contrasts <- subramanian.2016::contrasts.metabolon[1]
    object  <- subramanian.2016::metabolon \%>\% add_limma_to_fdata(contrasts = contrasts)
    object \%>\% plot_top_features(contrast  = contrasts,
-                                direction = 'neg',
                                 geom      = 'boxplot',
                                 color_var = 'condition',
                                 group_var = 'condition',

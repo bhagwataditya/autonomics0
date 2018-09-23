@@ -23,25 +23,11 @@ Filter features which are significant for at least one contrast
 \examples{
 library(magrittr)
 if (require(autonomics.data)){
-   autonomics.data::stemcomp.proteinratios               \%>\% 
-      autonomics.find::add_limma_to_fdata()   \%>\% 
-      autonomics.find::filter_significant_features()
+   autonomics.data::stemcomp.proteinratios \%>\% autonomics.find::filter_significant_features()
 }
 if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon 
-   object \%>\% autonomics.find::add_limma_to_fdata(
-                 contrasts = subramanian.2016::contrasts.metabolon \%>\% extract(-length(.))) \%>\% 
-              autonomics.find::filter_significant_features() \%>\% invisible()
-   
-   subramanian.2016::exiqon \%>\% 
-      autonomics.find::add_limma_to_fdata(
-         contrasts  = subramanian.2016::contrasts.exiqon \%>\% extract(-length(.))) \%>\% 
-      autonomics.find::filter_significant_features() \%>\% invisible()
-   
-   subramanian.2016::rnaseq \%>\% 
-      autonomics.find::add_limma_to_fdata(
-         contrasts = subramanian.2016::contrasts.rnaseq \%>\% extract(-length(.))) \%>\%
-      autonomics.find::filter_significant_features() \%>\% 
-      autonomics.find::filter_top_ranked_features() \%>\% invisible()
+   subramanian.2016::metabolon \%>\% autonomics.find::filter_significant_features()
+   subramanian.2016::exiqon    \%>\% autonomics.find::filter_significant_features()
+   subramanian.2016::rnaseq    \%>\% autonomics.find::filter_significant_features() 
 }
 }

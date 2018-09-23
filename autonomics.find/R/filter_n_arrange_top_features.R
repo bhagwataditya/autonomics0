@@ -144,14 +144,14 @@ filter_significant_features <- function(object){
    if (!contains_pvalues) return(object)
    
    # Filter significant
-   selector <- object %>% 
-               autonomics.import::limma() %>% 
-               magrittr::extract(, , 'p') %>%
-               magrittr::is_less_than(0.05) %>% 
+   selector <- object                                 %>% 
+               autonomics.import::limma()             %>% 
+               magrittr::extract(, , 'p')             %>%
+               magrittr::is_less_than(0.05)           %>% 
               (function (x){x[is.na(x)] <- FALSE; x}) %>% 
                matrixStats::rowAnys()
    autonomics.support::cmessage('\t\tFilter %d/%d features significant for at least one contrast (p < 0.05)', sum(selector), length(selector))
-   object %<>% magrittr::extract(selector, )
+   object %<>% autonomics.import::extract_features(selector)
 
    # Return
    object
@@ -163,22 +163,21 @@ filter_significant_features <- function(object){
 filter_top_ranked_features <- function(object, n = 1000){
    
    # Return eset if no limma in fdata
-   if (!contains_limma_in_fdata(object)){
-      autonomics.support::cmessage('\t\tNo limma in fdata - abort')
+   if (is.null(autonomics.import::limma(object))){
+      autonomics.support::cmessage('\t\tNo limma in object - abort')
       return(object) 
    } 
    
    # Order on rank
-   selector <- autonomics.import::fdata(object) %>% 
-               magrittr::extract(, stringi::stri_detect_fixed(names(.), 'rank.')) %>%
-               data.matrix() %>% 
-               matrixStats::rowMins() %>% 
+   selector <- autonomics.import::limma(object) %>% 
+               magrittr::extract(,, 'rank')     %>%
+               matrixStats::rowMins()           %>% 
                order()
-   object %<>% magrittr::extract(selector, )
+   object %<>% autonomics.import::extract_features(selector)
    
    # Filter top ranked
    if (n < nrow(object)){
       autonomics.support::cmessage('\t\tRestrict to %d/%d top ranked features for performance reasons', n, nrow(object))
-      object %<>% magrittr::extract(1:n, )
+      object %<>% autonomics.import::extract_features(1:n)
    }
 }

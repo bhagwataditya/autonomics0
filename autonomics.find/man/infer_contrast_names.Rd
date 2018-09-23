@@ -19,6 +19,6 @@ Infer contrast names
 require(magrittr)
 if (require(subramanian.2016)){
    subramanian.2016::exiqon \%>\%  
-      autonomics.find::infer_contrast_names()
+   autonomics.find::infer_contrast_names()
 }
 }
