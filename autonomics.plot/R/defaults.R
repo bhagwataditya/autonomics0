@@ -1,15 +1,18 @@
 #' Create default ggplot colors for factor levels
 #' @param factor_levels character vector
+#' @param show logical
 #' @return color vector (character)
 #' @author John Colby
 #' @seealso \href{https://stackoverflow.com/questions/8197559/emulate-ggplot2-default-color-palette}{stackoverflow}
 #' @importFrom magrittr  %>%
 #' @export
-make_gg_colors <- function(factor_levels) {
+make_gg_colors <- function(factor_levels, show) {
    n <- length(factor_levels)
    hues <- seq(15, 375, length = n + 1)
-   grDevices::hcl(h = hues, l = 65, c = 100)[1:n] %>%
-      magrittr::set_names(factor_levels)
+   color_levels <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n] %>%
+                   magrittr::set_names(factor_levels)
+   if (show) color_levels %>% (function(x) graphics::pie(rep(1, length(x)), names(x), col = x))
+   color_levels
 }
 
 #' Make composite colors

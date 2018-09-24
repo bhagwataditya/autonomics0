@@ -5,12 +5,14 @@
 \title{Default color values}
 \usage{
 default_color_values(object,
-  color_var = autonomics.plot::default_color_var(object))
+  color_var = autonomics.plot::default_color_var(object), show = FALSE)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
 
 \item{color_var}{color variable}
+
+\item{show}{logical}
 }
 \value{
 default color values vector
@@ -20,17 +22,25 @@ Default color values
 }
 \examples{
 require(magrittr)
+if (require(autonomics.data)){
+   autonomics.data::stemcomp.proteinratios \%>\%
+   autonomics.plot::default_color_values(show = TRUE)
+}
+
 if (require(subramanian.2016)){
-   subramanian.2016::metabolon \%>\% autonomics.plot::default_color_values()
+   subramanian.2016::metabolon \%>\%
+   autonomics.plot::default_color_values(show=TRUE)
 }
 
 # GLUTAMINASE
 if (require(autonomics.data)){
-   autonomics.data::glutaminase \%>\% autonomics.plot::default_color_values()
+   autonomics.data::glutaminase \%>\%
+   autonomics.plot::default_color_values(show=TRUE)
 }
 
 # STEM CELL DIFFERENTIATION
 if (require(autonomics.data)){
-   autonomics.data::stemdiff.proteinratios \%>\% autonomics.plot::default_color_values()
+   autonomics.data::stemdiff.proteinratios \%>\%
+   autonomics.plot::default_color_values(show=TRUE)
 }
 }
