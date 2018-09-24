@@ -585,8 +585,8 @@ plot_features <- function(
 
       # Legend position
       p <- p + ggplot2::theme(legend.position = legend.position)
+      p <- p + ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5, size = ggplot2::rel(1))) # relative to base_size
       p
-
    }
 
 
