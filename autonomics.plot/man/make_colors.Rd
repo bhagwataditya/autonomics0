@@ -4,10 +4,13 @@
 \alias{make_colors}
 \title{Make fitting colors}
 \usage{
-make_colors(x)
+make_colors(x, sep = autonomics.import::infer_design_sep(x, verbose = FALSE),
+  show = FALSE)
 }
 \arguments{
 \item{x}{colorvar levels vector}
+
+\item{show}{logical}
 }
 \value{
 color vectors (values = colors, names = colorvar levels)

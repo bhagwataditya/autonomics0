@@ -26,9 +26,9 @@ make_gg_colors <- function(factor_levels, show) {
 #' svalues %>% autonomics.plot::make_composite_colors(show = TRUE)
 #'
 #' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>%
-#'    autonomics.import::subgroup_levels() %>%
-#'    autonomics.plot::make_composite_colors(show = TRUE)
+#'    svalues <- subramanian.2016::metabolon %>%
+#'               autonomics.import::subgroup_levels()
+#'    svalues %>% autonomics.plot::make_composite_colors(show = TRUE)
 #' }
 #'
 #' # GLUTAMINASE
@@ -40,13 +40,26 @@ make_gg_colors <- function(factor_levels, show) {
 #' @importFrom magrittr %>%
 #' @importFrom data.table   data.table   :=
 #' @export
-make_composite_colors <- function(svalues, show = FALSE){
+make_composite_colors <- function(
+   svalues,
+   sep  = autonomics.import::infer_design_sep(svalues),
+   show = FALSE
+){
+
+   # Assert
+   assertive.properties::assert_is_not_null(sep)
 
    # Satisfy CHECK
    subgroup <- V1 <- V2 <- color <- hue <- luminance <- NULL
 
-   components <- svalues %>% autonomics.import::split_components()
-   sep        <- svalues %>% autonomics.import::infer_design_sep(verbose = FALSE)
+   # Split into components
+   #    * V1: first n-1 components => will be mapped to hue
+   #    * V2: last component       => will be mapped to luminance
+   # This approach works also when more than two components are present
+   # It is therefore used instead of autonomics.import::split_components()
+   V1 <- svalues %>% stringi::stri_split_fixed(sep) %>% vapply(function(x) x %>% magrittr::extract(-length(x)) %>% paste0(collapse = sep), character(1))
+   V2 <- svalues %>% stringi::stri_split_fixed(sep) %>% vapply(function(x) x %>% magrittr::extract( length(x)),                            character(1))
+   components <- data.table::data.table(V1=V1, V2=V2)
 
    components[, subgroup:=paste0(V1,sep,V2)]
    V1levels <- unique(components$V1)
@@ -73,61 +86,80 @@ make_composite_colors <- function(svalues, show = FALSE){
 
 #' Make fitting colors
 #' @param x colorvar levels vector
+#' @param show logical
 #' @return color vectors (values = colors, names = colorvar levels)
 #' @export
-make_colors <- function(x){
+make_colors <- function(
+   x,
+   sep = autonomics.import::infer_design_sep(x, verbose = FALSE),
+   show = FALSE
+){
 
    # 0D colors
    if (is.null(x)){
       return(autonomics.plot::make_gg_colors('default'))
    }
 
+   # 1D colors
+   if (is.null(sep)){
+      autonomics.support::cmessage('\t\tMake default ggplot colors')
+      return(autonomics.plot::make_gg_colors(x, show = show))
+
    # 2D colors
-   if (autonomics.import::has_two_components(x)){
-      autonomics.support::cmessage('\t\tCreating composite colors')
-      return(autonomics.plot::make_composite_colors(x))
+   } else {
+      autonomics.support::cmessage('\t\tMake composite colors')
+      return(autonomics.plot::make_composite_colors(x, sep = sep, show = show))
    }
 
-   # 1D colors
-   autonomics.support::cmessage('\t\tCreating default ggplot colors')
-   return(autonomics.plot::make_gg_colors(x))
 
 }
 
 #' Default color values
 #' @param object SummarizedExperiment
 #' @param color_var color variable
+#' @param show logical
 #' @return default color values vector
 #' @examples
 #' require(magrittr)
+#' if (require(autonomics.data)){
+#'    autonomics.data::stemcomp.proteinratios %>%
+#'    autonomics.plot::default_color_values(show = TRUE)
+#' }
+#'
 #' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>% autonomics.plot::default_color_values()
+#'    subramanian.2016::metabolon %>%
+#'    autonomics.plot::default_color_values(show=TRUE)
 #' }
 #'
 #' # GLUTAMINASE
 #' if (require(autonomics.data)){
-#'    autonomics.data::glutaminase %>% autonomics.plot::default_color_values()
+#'    autonomics.data::glutaminase %>%
+#'    autonomics.plot::default_color_values(show=TRUE)
 #' }
 #'
 #' # STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemdiff.proteinratios %>% autonomics.plot::default_color_values()
+#'    autonomics.data::stemdiff.proteinratios %>%
+#'    autonomics.plot::default_color_values(show=TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @export
 default_color_values <- function(
    object,
-   color_var = autonomics.plot::default_color_var(object)
+   color_var = autonomics.plot::default_color_var(object),
+   show = FALSE
 ){
 
    # Assert
    autonomics.import::assert_is_valid_eset(object)
    assertive.sets::assert_is_subset(color_var, autonomics.import::svars(object))
 
+   # sep
+   sep              <- object %>% autonomics.import::ssep(color_var)
+   color_var_levels <- object %>% autonomics.import::slevels(color_var)
+
    # Make colors
-   object %>%
-   autonomics.import::slevels(color_var) %>%
-   autonomics.plot::make_colors()
+   autonomics.plot::make_colors(color_var_levels, sep, show)
 
 }
 

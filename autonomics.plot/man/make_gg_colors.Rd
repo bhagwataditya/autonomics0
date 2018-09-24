@@ -4,10 +4,12 @@
 \alias{make_gg_colors}
 \title{Create default ggplot colors for factor levels}
 \usage{
-make_gg_colors(factor_levels)
+make_gg_colors(factor_levels, show)
 }
 \arguments{
 \item{factor_levels}{character vector}
+
+\item{show}{logical}
 }
 \value{
 color vector (character)

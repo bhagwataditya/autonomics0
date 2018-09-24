@@ -4,7 +4,8 @@
 \alias{make_composite_colors}
 \title{Make composite colors}
 \usage{
-make_composite_colors(svalues, show = FALSE)
+make_composite_colors(svalues,
+  sep = autonomics.import::infer_design_sep(svalues), show = FALSE)
 }
 \arguments{
 \item{svalues}{character vector}
@@ -24,9 +25,9 @@ svalues <- c('inflammation.all', 'inflammation.C2_C0', 'inflammation.D2_D0',
 svalues \%>\% autonomics.plot::make_composite_colors(show = TRUE)
 
 if (require(subramanian.2016)){
-   subramanian.2016::metabolon \%>\%
-   autonomics.import::subgroup_levels() \%>\%
-   autonomics.plot::make_composite_colors(show = TRUE)
+   svalues <- subramanian.2016::metabolon \%>\%
+              autonomics.import::subgroup_levels()
+   svalues \%>\% autonomics.plot::make_composite_colors(show = TRUE)
 }
 
 # GLUTAMINASE
