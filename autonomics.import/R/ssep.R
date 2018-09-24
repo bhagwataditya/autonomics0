@@ -10,6 +10,9 @@
 #'    object <- autonomics.import::load_metabolon(file)
 #'    object  %>% ssep()
 #' }
+#' if (require(autonomics.data)){
+#'    autonomics.data::stemcomp.proteinratios %>% autonomics.import::ssep()
+#' }
 #' if (require(subramanian.2016)){
 #'    subramanian.2016::metabolon   %>% autonomics.import::ssep()
 #' }
@@ -19,9 +22,9 @@
 #' @importFrom magrittr %>%
 #' @export
 ssep <- function(object, svar = 'subgroup'){
-   object %>%
-   autonomics.import::slevels(svar) %>%
-   autonomics.import::infer_design_sep()
+   possible_separators <- if (autonomics.import::contains_ratios(object)) c('.', ' ') else c('.', '_', ' ')
+   object %>% autonomics.import::slevels(svar) %>%
+              autonomics.import::infer_design_sep(possible_separators = possible_separators, verbose = FALSE)
 }
 
 #' @rdname ssep

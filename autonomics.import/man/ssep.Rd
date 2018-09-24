@@ -28,6 +28,9 @@ if (require(autonomics.data)){
    object <- autonomics.import::load_metabolon(file)
    object  \%>\% ssep()
 }
+if (require(autonomics.data)){
+   autonomics.data::stemcomp.proteinratios \%>\% autonomics.import::ssep()
+}
 if (require(subramanian.2016)){
    subramanian.2016::metabolon   \%>\% autonomics.import::ssep()
 }
