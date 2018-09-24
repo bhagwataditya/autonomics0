@@ -51,8 +51,8 @@ require(magrittr)
 # GLUTAMINASE
   if (require(autonomics.data)){
      object <- autonomics.data::glutaminase
-     object \%>\% plot_top_features(topdef = 'bonf < 0.05 & rank <= 4',
-                                  geom           = 'boxplot')
+     topdef <- 'bonf < 0.05 & rank <= 4'
+     object \%>\% plot_top_features(topdef = topdef, geom = 'boxplot')
   }
 
 # A somascan eset

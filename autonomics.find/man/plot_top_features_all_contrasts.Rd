@@ -52,7 +52,6 @@ if (require(autonomics.data)){
   object \%>\% plot_top_features_all_contrasts(
                 contrasts  = autonomics.import::contrastdefs(object)[1:2],
                 topdef     = 'fdr < 0.05',
-                x          = 'TIME_POINT',
                 geom       = 'boxplot',
                 result_dir = result_dir)
 }
