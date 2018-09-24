@@ -34,10 +34,10 @@ create_feature_plot_title <- function(object, contrast, topdef, direction){
    
    s0 <- sprintf('%s : %s %s', names(contrast), n.top, topdef)
    spaces <- paste0(rep(' ', nchar(names(contrast))), collapse = '')
-   s1 <- sprintf('%s   %s down > %s p > %s fdr > %s bonf', spaces, n.down, n.down.p, n.down.fdr, n.down.bonf)
-   s2 <- sprintf('%s   %s up   > %s p > %s fdr > %s bonf', spaces, n.up,   n.up.p,   n.up.fdr,   n.up.bonf)
+   s1 <- sprintf('%s down > %s p > %s fdr > %s bonf', n.down, n.down.p, n.down.fdr, n.down.bonf)
+   s2 <- sprintf('%s up   > %s p > %s fdr > %s bonf', n.up,   n.up.p,   n.up.fdr,   n.up.bonf)
    
-   s <- sprintf('%s\n%s\n%s', s0, s1, s2) #%>% cat()
+   s <- sprintf('%s\n\n%s\n%s\n', s0, s1, s2) #%>% cat()
 
   return(s)
 }
