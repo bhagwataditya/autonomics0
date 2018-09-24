@@ -100,8 +100,8 @@ collapse_fvars <- function(object, fvars){
 #'# GLUTAMINASE
 #'   if (require(autonomics.data)){
 #'      object <- autonomics.data::glutaminase
-#'      object %>% plot_top_features(topdef = 'bonf < 0.05 & rank <= 4',
-#'                                   geom           = 'boxplot')
+#'      topdef <- 'bonf < 0.05 & rank <= 4'
+#'      object %>% plot_top_features(topdef = topdef, geom = 'boxplot')
 #'   }
 #'
 #' # A somascan eset
@@ -230,7 +230,6 @@ plot_top_features <- function(
 #'   object %>% plot_top_features_all_contrasts(
 #'                 contrasts  = autonomics.import::contrastdefs(object)[1:2],
 #'                 topdef     = 'fdr < 0.05',
-#'                 x          = 'TIME_POINT',
 #'                 geom       = 'boxplot',
 #'                 result_dir = result_dir)
 #'}
