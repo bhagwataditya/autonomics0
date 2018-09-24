@@ -20,8 +20,9 @@ plot_features(object,
   title = "", scales = "free_y", x_text_angle = 90,
   line = autonomics.plot::default_line(object),
   zero_hline = autonomics.plot::default_zero_hline(object), xlab = NULL,
-  ylab = NULL, legend.position = "right", dodge_width = 0,
-  verbose = FALSE, file = NULL, width = NULL, height = NULL)
+  ylab = NULL, dodge_width = 0, verbose = FALSE, file = NULL,
+  width = NULL, height = NULL, theme = ggplot2::theme_bw(),
+  legend.position = "right")
 
 plot_feature_bars(...)
 
@@ -68,8 +69,6 @@ plot_feature_boxes(...)
 
 \item{ylab}{ylab}
 
-\item{legend.position}{position of legend}
-
 \item{dodge_width}{numeric}
 
 \item{verbose}{logical}
@@ -79,6 +78,10 @@ plot_feature_boxes(...)
 \item{width}{numeric}
 
 \item{height}{numeric}
+
+\item{theme}{ggplot2::theme}
+
+\item{legend.position}{position of legend}
 
 \item{...}{only for backward compatibility to deprecated functions}
 }

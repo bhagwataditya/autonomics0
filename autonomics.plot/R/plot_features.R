@@ -389,12 +389,13 @@ feature_plot_labeller <- function(plot_df){
 #' @param zero_hline       logical: should y=0 line be added?
 #' @param xlab             xlab
 #' @param ylab             ylab
-#' @param legend.position  position of legend
 #' @param dodge_width      numeric
 #' @param verbose          logical
 #' @param file             string: file path
 #' @param width            numeric
 #' @param height           numeric
+#' @param theme            ggplot2::theme
+#' @param legend.position  position of legend
 #' @param ...              only for backward compatibility to deprecated functions
 #' @examples
 #' require(magrittr)
@@ -477,18 +478,22 @@ plot_features <- function(
    fvars           = autonomics.plot::default_fvars(object),
    title           = '',
    scales          = 'free_y',
-   x_text_angle    = 90,
+   x_text_angle    = 90, # is better readable than e.g. 60 with many xvalues
    line            = autonomics.plot::default_line(object),
    zero_hline      = autonomics.plot::default_zero_hline(object),
    xlab            = NULL,
    ylab            = NULL,
-   legend.position = 'right',
    dodge_width     = 0,
    verbose         = FALSE,
    file            = NULL,
    width           = NULL,
-   height          = NULL){
-
+   height          = NULL,
+   theme           = ggplot2::theme_bw(),
+   legend.position = 'right'
+){
+   # Set theme
+   old_theme <- ggplot2::theme_get()
+   ggplot2::theme_set(theme)
 
    # Function to plot features
    plot_features_without_printing <- function(object){
@@ -528,7 +533,7 @@ plot_features <- function(
       # Add annotation and facet wrap
       if (is.null(facet_var)){ p <- p + ggplot2::facet_wrap(~ feature_facet, scales = scales, labeller = feature_plot_labeller)
       } else {                 p <- p + ggplot2::facet_grid(make_facet_grid_formula(fvars, facet_var), scales = 'free_y', switch = 'y') +
-         ggplot2::theme(strip.text.y = ggplot2::element_text(angle=180))}
+                               ggplot2::theme(strip.text.y = ggplot2::element_text(angle=180))}
       p %<>% add_annotation(title = title, xlab = xlab, ylab = ylab, x_text_angle = x_text_angle)
 
       # Add zero hline
@@ -611,6 +616,9 @@ plot_features <- function(
       print(p)
    }
    grDevices::dev.off()
+
+   # Return
+   ggplot2::theme_set(old_theme)
    return(invisible(file))
 }
 
