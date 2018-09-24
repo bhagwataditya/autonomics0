@@ -191,8 +191,7 @@ plot_top_features <- function(
      p <- top %>% autonomics.plot::plot_features(     alpha_var = 'plot.alpha', title = my_title, fvars = fvars, geom = geom,         color_var = color_var, ...)
   }
   
-  # Align title
-  p <- p + ggplot2::theme(plot.title = ggplot2::element_text(family = 'mono', size = 11))
+  # Return
   p
 }
 
