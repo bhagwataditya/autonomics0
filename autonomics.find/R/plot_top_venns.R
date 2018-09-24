@@ -1,6 +1,5 @@
 #' Plot venns showing top features
 #' @param object  exprs object
-#' @param direction 'neg' or 'pos'
 #' @param topdef top definition
 #' @param file file to which print to 
 #' @return the vennlist used for venn digram plotting
@@ -9,11 +8,10 @@
 #' require(magrittr)
 #' if (require(subramanian.2016)){
 #'    object <- subramanian.2016::exiqon
-#'    object %>% autonomics.find::plot_top_venns('neg')
+#'    object %>% autonomics.find::plot_top_venns()
 #' }
 plot_top_venns <- function(
    object,
-   direction,
    topdef = autonomics.find::default_topdef(object), 
    file = NULL
 ){
@@ -24,10 +22,10 @@ plot_top_venns <- function(
    }
    vennlist <- mapply(autonomics.find::get_top_features,
                       contrast_name = contrast_names,
-                      MoreArgs = list(object = object, topdef = topdef, direction = direction),
+                      MoreArgs = list(object = object, topdef = topdef),
                       SIMPLIFY = FALSE)
-   vennlist %>% autonomics.plot::plot_venns(
+   vennlist %>% autonomics.plot::plot_venn(
                    filename = file, 
-                   title = ifelse(direction=='neg', 'Down', 'Up'))
+                   title = topdef)
    return(vennlist)
 }

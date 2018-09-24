@@ -4,13 +4,11 @@
 \alias{plot_top_venns}
 \title{Plot venns showing top features}
 \usage{
-plot_top_venns(object, direction,
-  topdef = autonomics.find::default_topdef(object), file = NULL)
+plot_top_venns(object, topdef = autonomics.find::default_topdef(object),
+  file = NULL)
 }
 \arguments{
 \item{object}{exprs object}
-
-\item{direction}{'neg' or 'pos'}
 
 \item{topdef}{top definition}
 
@@ -26,6 +24,6 @@ Plot venns showing top features
 require(magrittr)
 if (require(subramanian.2016)){
    object <- subramanian.2016::exiqon
-   object \%>\% autonomics.find::plot_top_venns('neg')
+   object \%>\% autonomics.find::plot_top_venns()
 }
 }
