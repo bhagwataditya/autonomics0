@@ -165,9 +165,9 @@ plot_top_features <- function(
   }
 
   # Set alpha
-  composite_colors_required <- top %>% autonomics.import::slevels(color_var) %>% autonomics.import::has_two_components()
-  autonomics.import::sdata(top)[['plot.alpha']] <- if (composite_colors_required){ TRUE 
-                                                   } else {                        top %>% autonomics.find::are_relevant_samples(design, contrast) }
+  composite_colors_used <- top %>% autonomics.import::ssep(color_var) %>% is.null() %>% magrittr::not()
+  autonomics.import::sdata(top)[['plot.alpha']] <- if (composite_colors_used){ TRUE 
+                                                   } else {                    top %>% autonomics.find::are_relevant_samples(design, contrast) }
   
   # Collapse fvars for hbars
   if (geom == 'hbar'){
