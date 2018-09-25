@@ -7,8 +7,9 @@
 #'
 #' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcomp.proteinratios  %>%
-#'    autonomics.import::create_design_matrix()
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    object %>% autonomics.import::create_design_matrix()
+#'    object %>% autonomics.import::create_design_matrix(intercept = TRUE)
 #' }
 #' if (require(billing.differentiation.data)){
 #'    billing.differentiation.data::rna.voomcounts %>%
@@ -17,7 +18,7 @@
 #' }
 #' @importFrom magrittr  %<>%
 #' @export
-create_design_matrix <- function(object, confounders = character(0)){
+create_design_matrix <- function(object, intercept = FALSE, confounders = character(0)){
 
    # Assert
    if (assertive.types::is_inherited_from(object, 'eSet')){ # Can also be EList
@@ -33,6 +34,7 @@ create_design_matrix <- function(object, confounders = character(0)){
 
    # Create formula
    formula <- if (length(unique(sdata1$subgroup)) < 2){   '~ 1'
+              } else if (intercept){                      '~ 1 + subgroup'
               } else {                                    '~ 0 + subgroup'
               }
    if (length(confounders)>0){
@@ -43,10 +45,16 @@ create_design_matrix <- function(object, confounders = character(0)){
    # Create design matrix
    myDesign <- stats::model.matrix(formula,  data = sdata1)
 
-   # Rename intercepts
-   subgroup1 <- unique(autonomics.import::sdata(object)$subgroup)[1] %>% as.character()
-   colnames(myDesign) %<>% gsub('(Intercept)', subgroup1, ., fixed = TRUE) # ~ 1
-   colnames(myDesign) %<>% gsub('subgroup',    '',        ., fixed = TRUE) # ~ 0 + subgroup
+   # Rename coefficients
+   # ~ 1 + subgroup
+   if (intercept){
+      subgroup1 <- unique(autonomics.import::sdata(object)$subgroup)[1] %>% as.character()
+      colnames(myDesign) %<>% gsub('(Intercept)', subgroup1, ., fixed = TRUE)
+      colnames(myDesign) %<>% stringi::stri_replace_first_regex('subgroup(.+)', paste0('$1_', subgroup1))
+   # ~ 0 + subgroup
+   } else {
+      colnames(myDesign) %<>% gsub('subgroup',    '',        ., fixed = TRUE)
+   }
 
    # Rename confounders
    if (length(confounders) > 0){

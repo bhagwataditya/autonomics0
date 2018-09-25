@@ -4,7 +4,7 @@
 \alias{create_design_matrix}
 \title{Create design matrix for statistical analysis}
 \usage{
-create_design_matrix(object, confounders = character(0))
+create_design_matrix(object, intercept = FALSE, confounders = character(0))
 }
 \arguments{
 \item{object}{eSet or eList}
@@ -22,8 +22,9 @@ require(magrittr)
 
 # STEM CELL COMPARISON
 if (require(autonomics.data)){
-   autonomics.data::stemcomp.proteinratios  \%>\%
-   autonomics.import::create_design_matrix()
+   object <- autonomics.data::stemdiff.proteinratios
+   object \%>\% autonomics.import::create_design_matrix()
+   object \%>\% autonomics.import::create_design_matrix(intercept = TRUE)
 }
 if (require(billing.differentiation.data)){
    billing.differentiation.data::rna.voomcounts \%>\%
