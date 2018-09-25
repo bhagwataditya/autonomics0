@@ -5,7 +5,7 @@ filter_features_ <- function(x, condition, verbose = FALSE){
    idx <- lazyeval::lazy_eval(condition, autonomics.import::fdata(x))
    idx <- idx & !is.na(idx)
    if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' features: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
-   x[idx, ]
+   x %>% autonomics.import::extract_features(idx)
 }
 
 #' Filter features on condition

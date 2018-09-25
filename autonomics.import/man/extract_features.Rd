@@ -18,8 +18,7 @@ Extract features
 require(magrittr)
 if (require(autonomics.data)){
    object <- autonomics.data::stemdiff.proteinratios
-   (object \%<>\% autonomics.import::extract_features(c(1,2)))
-   (object \%<>\% autonomics.import::extract_features(1))
+   (object \%<>\% autonomics.import::extract_features(c(5,4)))
    object \%>\% autonomics.import::limma()
 }
 }
