@@ -11,7 +11,8 @@ stemcomp.proteinratios <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
                               invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'), 
                               subgroup_frac = '_') %>% 
                            autonomics.import::set_contrastdefs(c( EM_E =  'EM_E', BM_E =  'BM_E', BM_EM = 'BM_EM')) %>% 
-                           autonomics.find::add_limma()
+                           autonomics.find::add_limma() %>% 
+                           autonomics.import::deconvolute_proteingroups('../data/uniprot_hsa_20140515.fasta')
 save(stemcomp.proteinratios, file = 'data/stemcomp.proteinratios.RData', compress = 'xz')
 
 # SOMA
@@ -42,7 +43,8 @@ stemdiff.proteinratios <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
                                        x
                            }) %>% 
                            autonomics.import::set_contrastdefs(autonomics.find::make_ref_contrasts(.)) %>% 
-                           autonomics.find::add_limma()
+                           autonomics.find::add_limma() %>% 
+                           autonomics.import::deconvolute_proteingroups('../data/uniprot_hsa_20140515.fasta')
 
 save(stemdiff.proteinratios, file = 'data/stemdiff.proteinratios.RData', compress = 'xz')
 stemdiff.proteinratios %>% autonomics.explore::plot_pca_samples()
