@@ -48,7 +48,8 @@
 #'    autonomics.plot::core_ggplot_from_data(autonomics.data::ALL[, 1:30]) +
 #'      ggplot2::geom_violin()
 #'    # (Nearly) same thing, but horizontal and filled ...
-#'    autonomics.plot::core_ggplot_from_data(autonomics.data::ALL[, 1:15], fill_var = 'sex', horizontal = TRUE) +
+#'    autonomics.plot::core_ggplot_from_data(
+#'        autonomics.data::ALL[, 1:15], fill_var = 'sex', horizontal = TRUE) +
 #'      ggstance::geom_violinh()
 #'    # Combine 2 'data sets', separating them by fill (augmenting the data on-the-fly)
 #'    autonomics.plot::core_ggplot_from_data(
