@@ -29,6 +29,7 @@ Imports:
     magrittr,
     mgcv,
     pheatmap,
+    plyr,
     reshape2,
     rlang,
     stringi,

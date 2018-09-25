@@ -81,6 +81,11 @@ plot_ora <- function(
       ora_results %<>%
          dplyr::filter(
             contrast %in% contrasts)
+      if(assertive.properties::has_names(contrasts))
+      {
+         ora_results$contrast %<>%
+            plyr::mapvalues(contrasts, names(contrasts))
+      }
    }
 
 # Plotting ----------------------------------------------------------------
