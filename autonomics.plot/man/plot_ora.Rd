@@ -7,7 +7,7 @@
 plot_ora(ora_results, top_n = 5, collections = c("gobp", "gocc",
   "gomf", "kegg"), directions = c("neg", "pos", "both"),
   contrasts = NULL, facet_var_x = "contrast",
-  facet_var_y = "direction")
+  facet_var_y = "direction", trim_pathway_id = FALSE)
 }
 \arguments{
 \item{ora_results}{\code{\link{data.frame}} as (silently) returned from \code{autonomics.ora::run_ora_on_eset}}
@@ -23,6 +23,8 @@ plot_ora(ora_results, top_n = 5, collections = c("gobp", "gocc",
 \item{facet_var_x}{variable name to \code{\link[ggplot2]{facet_grid}} on}
 
 \item{facet_var_y}{variable name to \code{\link[ggplot2]{facet_grid}} on}
+
+\item{trim_pathway_id}{whether to trim the 'GOxxxxx:' from labels on the plot}
 }
 \value{
 ggplot2 object

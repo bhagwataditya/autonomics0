@@ -2,13 +2,14 @@ utils::globalVariables(c('collection', 'direction', 'contrast', 'pathway', 'p'))
 
 #' Plot ORA results
 #'
-#' @param ora_results    \code{\link{data.frame}} as (silently) returned from \code{autonomics.ora::run_ora_on_eset}
-#' @param top_n          number of factors chosen for plotting (by rank)
-#' @param collections    (sub)ontologies/collections to plot
-#' @param directions     what coefficient/effect direction of a given contrast the set tested is chosen from
-#' @param contrasts      contrasts to filter on
-#' @param facet_var_x    variable name to \code{\link[ggplot2]{facet_grid}} on
-#' @param facet_var_y    variable name to \code{\link[ggplot2]{facet_grid}} on
+#' @param ora_results     \code{\link{data.frame}} as (silently) returned from \code{autonomics.ora::run_ora_on_eset}
+#' @param top_n           number of factors chosen for plotting (by rank)
+#' @param collections     (sub)ontologies/collections to plot
+#' @param directions      what coefficient/effect direction of a given contrast the set tested is chosen from
+#' @param contrasts       contrasts to filter on
+#' @param facet_var_x     variable name to \code{\link[ggplot2]{facet_grid}} on
+#' @param facet_var_y     variable name to \code{\link[ggplot2]{facet_grid}} on
+#' @param trim_pathway_id whether to trim the 'GOxxxxx:' from labels on the plot
 #' @return ggplot2 object
 #' @author Aditya Bhagwat, Johannes Graumann
 #' @importFrom  magrittr  %>%
@@ -16,11 +17,12 @@ utils::globalVariables(c('collection', 'direction', 'contrast', 'pathway', 'p'))
 plot_ora <- function(
    ora_results,
    top_n = 5,
-   collections = c('gobp', 'gocc', 'gomf', 'kegg'),
-   directions = c('neg', 'pos', 'both'),
-   contrasts  = NULL,
-   facet_var_x = 'contrast',
-   facet_var_y = 'direction')
+   collections     = c('gobp', 'gocc', 'gomf', 'kegg'),
+   directions      = c('neg', 'pos', 'both'),
+   contrasts       = NULL,
+   facet_var_x     = 'contrast',
+   facet_var_y     = 'direction',
+   trim_pathway_id = FALSE)
 {
 # Check prerequisites & input processing ----------------------------------
    ora_results %>%
@@ -62,6 +64,8 @@ plot_ora <- function(
       facet_var_y <- '.'
    }
 
+   assertive.types::assert_is_a_bool(trim_pathway_id)
+
 # Processing of data set --------------------------------------------------
    ora_results %<>%
       dplyr::filter(
@@ -86,6 +90,15 @@ plot_ora <- function(
          ora_results$contrast %<>%
             plyr::mapvalues(contrasts, names(contrasts))
       }
+   }
+   if(trim_pathway_id)
+   {
+      ora_results %<>%
+         dplyr::mutate(
+            pathway = pathway %>%
+               stringi::stri_replace_all_regex(
+                  pattern = '^GO:\\d+\\s',
+                  replacement = ''))
    }
 
 # Plotting ----------------------------------------------------------------
