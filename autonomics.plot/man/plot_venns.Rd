@@ -17,6 +17,8 @@ plot_venns(x, filename = NULL, width = 7, height = width,
 \item{height}{height in inches}
 
 \item{title}{figure title}
+
+\item{colors}{colors used}
 }
 \description{
 Plot Venn diagrams

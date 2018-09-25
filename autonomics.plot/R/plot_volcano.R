@@ -84,6 +84,7 @@ make_volcano_dt <- function(object, ntop = 3){
 #' @param ntop n top features to be annotated
 #' @param nrow number of rows in faceted plot
 #' @param legend_position handed to \code{\link[ggplot2]{theme}} as 'legend.position'
+#' @param labeled_features whether to label prominent features or not
 #' @return ggplot object
 #' @examples
 #' require(magrittr)

@@ -15,6 +15,8 @@ plot_volcano(object, ntop = 3, nrow = NULL, legend_position = NULL,
 \item{nrow}{number of rows in faceted plot}
 
 \item{legend_position}{handed to \code{\link[ggplot2]{theme}} as 'legend.position'}
+
+\item{labeled_features}{whether to label prominent features or not}
 }
 \value{
 ggplot object

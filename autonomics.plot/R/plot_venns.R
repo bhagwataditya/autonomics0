@@ -4,6 +4,7 @@
 #' @param width  width  in inches
 #' @param height height in inches
 #' @param title figure title
+#' @param colors colors used
 #' @examples
 #' x <- list(A = c('apple', 'pear'), B = c('pear', 'orange'))
 #' filename <- NULL
