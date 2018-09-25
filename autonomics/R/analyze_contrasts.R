@@ -42,7 +42,7 @@ analyze_contrasts <- function(
 
   # Write to file
   message('\tWrite results to file')
-  object %>% autonomics.find::write_features(
+  object %>% autonomics.import::write_features(
                 design         = design, 
                 contrasts      = contrasts, 
                 direction      = direction,

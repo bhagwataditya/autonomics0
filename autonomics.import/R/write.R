@@ -82,11 +82,35 @@ flatten <- function(
    dt %<>% cbind(exprs_dt)
 
    # Order on F.p
-   dt %<>% magrittr::extract(order(F.p))
+   if (!is.null(limma_array)) dt %<>% magrittr::extract(order(F.p))
 
    # return
    dt
 }
+
+
+#' Write features to file
+#' @param object         SummarizedExperiment
+#' @param result_dir     dir where to save results
+#' @examples
+#' require(magrittr)
+#'
+#' # STEM CELL COMPARISON
+#' if (require(autonomics.data)){
+#'    object  <- autonomics.data::stemcomp.proteinratios
+#'    file <- tempdir() %>% paste0('/features.txt') %T>% message()
+#'    object %>% autonomics.import::write_features(file)
+#' }
+#' @importFrom magrittr  %>%
+#' @export
+write_features <- function(
+   object,
+   file
+){
+   object %>% autonomics.import::flatten() %>% autonomics.support::print2txt(file)
+   autonomics.support::cmessage("\t\tall   %s", basename(file))
+}
+
 
 #' @export
 write_fdata_to_file <- function(object, file = ""){
