@@ -5,7 +5,7 @@
 \title{Deconvolute proteingroups}
 \usage{
 deconvolute_proteingroups(object, fastafile, fastafields = c("GENES",
-  "PROTEIN-NAMES", "EXISTENCE", "REVIEWED"))
+  "PROTEIN-NAMES", "EXISTENCE", "REVIEWED"), drop_isoform_info = FALSE)
 }
 \arguments{
 \item{object}{SummerizedExperiment with proteinGroups data}
@@ -13,6 +13,8 @@ deconvolute_proteingroups(object, fastafile, fastafields = c("GENES",
 \item{fastafile}{path to fastafile}
 
 \item{fastafields}{character vector: fields to load from fastafile}
+
+\item{drop_isoform_info}{logical: whether to drop isoform info}
 }
 \value{
 deconvoluted and annotated SummarizedExperiment
@@ -23,10 +25,16 @@ Deconvolute proteingroups
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   object <- autonomics.data::stemcomp.proteinratios[1:100, ]
    fastafile <- '../data/uniprot_hsa_20140515.fasta'
    if (file.exists(fastafile)){
-      object \%>\% deconvolute_proteingroups(fastafile = fastafile)
+      object <- 'extdata/stemcomp/maxquant/proteinGroups.txt'            \%>\%
+                 system.file(package='autonomics.data')                  \%>\%
+                 load_proteingroups(infer_design_from_sampleids = TRUE)
+      autonomics.import::fdata(object) \%>\% head()
+
+      object \%<>\% magrittr::extract(1:100, )                             \%>\%
+                  deconvolute_proteingroups(fastafile = fastafile)
+      autonomics.import::fdata(object) \%>\% head()
    }
 }
 }

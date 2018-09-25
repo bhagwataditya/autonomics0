@@ -327,17 +327,24 @@ load_proteingroups <- function(
 #==============================================================
 
 #' Deconvolute proteingroups
-#' @param object       SummerizedExperiment with proteinGroups data
-#' @param fastafile    path to fastafile
-#' @param fastafields  character vector: fields to load from fastafile
+#' @param object             SummerizedExperiment with proteinGroups data
+#' @param fastafile          path to fastafile
+#' @param fastafields        character vector: fields to load from fastafile
+#' @param drop_isoform_info  logical: whether to drop isoform info
 #' @return deconvoluted and annotated SummarizedExperiment
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::stemcomp.proteinratios[1:100, ]
 #'    fastafile <- '../data/uniprot_hsa_20140515.fasta'
 #'    if (file.exists(fastafile)){
-#'       object %>% deconvolute_proteingroups(fastafile = fastafile)
+#'       object <- 'extdata/stemcomp/maxquant/proteinGroups.txt'            %>%
+#'                  system.file(package='autonomics.data')                  %>%
+#'                  load_proteingroups(infer_design_from_sampleids = TRUE)
+#'       autonomics.import::fdata(object) %>% head()
+#'
+#'       object %<>% magrittr::extract(1:100, )                             %>%
+#'                   deconvolute_proteingroups(fastafile = fastafile)
+#'       autonomics.import::fdata(object) %>% head()
 #'    }
 #' }
 #' @importFrom magrittr %>% %<>%
@@ -345,7 +352,8 @@ load_proteingroups <- function(
 deconvolute_proteingroups <- function(
    object,
    fastafile,
-   fastafields = c('GENES', 'PROTEIN-NAMES', 'EXISTENCE', 'REVIEWED')
+   fastafields = c('GENES', 'PROTEIN-NAMES', 'EXISTENCE', 'REVIEWED'),
+   drop_isoform_info = FALSE
 ){
    # Satisfy CHECK
    EXISTENCE <- GENES <- IS.FRAGMENT <- ISOFORM <- N <- NGENE <- NISOFORMS <- NPERACCESSION <- NULL
@@ -476,6 +484,18 @@ deconvolute_proteingroups <- function(
    }
    object %<>% nullify_fvars(fvars = c('Uniprot accessions', 'Protein names', 'Gene names'))
    autonomics.import::fdata(object) %<>% merge(fdata1, by = 'feature_id', sort = FALSE, all.x = TRUE)
+
+   # Rename (MaxQuant style)
+   autonomics.import::fvars(object) %<>% stringi::stri_replace_first_fixed('GENES',         'Gene names')
+   autonomics.import::fvars(object) %<>% stringi::stri_replace_first_fixed('PROTEIN-NAMES', 'Protein names')
+   autonomics.import::fvars(object) %<>% stringi::stri_replace_first_fixed('ISOFORM',       'Isoforms')
+
+   # Remove unimportant fvars
+   autonomics.import::fdata(object)$REVIEWED  <- NULL
+   autonomics.import::fdata(object)$EXISTENCE <- NULL
+   if (drop_isoform_info) autonomics.import::fdata(object)$Isoforms <- NULL
+
+   # Return
    object
 
 }
