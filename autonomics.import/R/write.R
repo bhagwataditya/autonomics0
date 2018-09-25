@@ -40,26 +40,56 @@ write_fvar_to_file <- function(object, fvar, file = ""){
 
 }
 
-#' Write fdata to file
-#' @param object    eset
-#' @param file file
+#' Write sumexp to file
+#' @param object            SummarizedExperiment
+#' @param limma_quantities  character vector: which limma quantities to include
+#' @return data.table       data.table
 #' @examples
+#' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- ALL
-#'    file <- tempfile()
-#'    write_fdata_to_file(object, file)
-#'    file.exists(file)
-#'    unlink(file)
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% autonomics.import::flatten() %>% head()
 #' }
 #' @importFrom magrittr  %<>%  %>%
 #' @export
+flatten <- function(
+   object,
+   limma_quantities = c('effect', 'p', 'fdr')
+){
+
+   # fdata
+   dt   <- autonomics.import::fdata(object) %>% data.table::data.table()
+   if ('fasta_hdrs' %in% names(dt)){
+      dt[, fasta_hdrs := NULL]
+   }
+
+   # limma
+   limma_array <- autonomics.import::limma(object)
+   if (!is.null(limma_array)){
+      limma_array %<>% magrittr::extract(autonomics.import::fnames(object), , limma_quantities, drop = FALSE)
+      limma_dt    <- limma_array %>%
+                     matrix(nrow     = NROW(.),
+                            ncol     = prod(NCOL(.), dim(.)[3]),
+                            dimnames = list(rownames(.),
+                                            autonomics.support::vsprintf('%s.%s', dimnames(.)[[3]], colnames(.)))) %>%
+                     data.table::data.table()
+      dt %<>% cbind(limma_dt)
+      dt
+   }
+
+   # exprs
+   exprs_dt <- autonomics.import::exprs(object) %>% data.table::data.table()
+   dt %<>% cbind(exprs_dt)
+
+   # Order on F.p
+   dt %<>% magrittr::extract(order(F.p))
+
+   # return
+   dt
+}
+
+#' @export
 write_fdata_to_file <- function(object, file = ""){
-  my_f   <- autonomics.import::fdata(object)
-  if ('fasta_hdrs' %in% names(my_f)){
-    my_f %<>% dplyr::select_(~ -fasta_hdrs)
-  }
-  #names(my_f) %<>% gsub(paste0('.', names(contrast)), '', .)
-  my_diff <- autonomics.import::exprs(object) %>% as.data.frame()
-  feature_table <- cbind(my_f, my_diff)
-  feature_table %>% autonomics.support::print2txt(file)
+   .Deprecated('flatten')
+   object %>% flatten(object) %>% autonomics.support::print2txt(file)
 }
