@@ -108,7 +108,7 @@ load_omics <- function(
 
    # Convert consistent NA to zero
    if (zero_subgroup_nas){
-
+      autonomics.preprocess::na
    }
 
    # Return
