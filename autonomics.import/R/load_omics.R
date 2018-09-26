@@ -6,15 +6,16 @@
 #===========================================
 
 #' Load omics
-#' @param file        path to omics data file
-#' @param platform   'exiqon', 'maxquant', 'metabolon', 'metabolonlipids', 'soma'
-#' @param sheet       excel sheet number or name if applicable
-#' @param quantity    string: which quantity to extract into exprs
-#' @param design_file path to design file
-#' @param log2_transform  logical
-#' @param log2_offset     offset in mapping x -> log2(x+offset)
-#' @param infer_design_from_sampleids logical
-#' @param design_sep                  string: design separator
+#' @param file                         path to omics data file
+#' @param platform                    'exiqon', 'maxquant', 'metabolon', 'metabolonlipids', 'soma'
+#' @param sheet                        excel sheet number or name if applicable
+#' @param quantity                     string: which quantity to extract into exprs
+#' @param design_file                  path to design file
+#' @param log2_transform               logical
+#' @param log2_offset                  offset in mapping x -> log2(x+offset)
+#' @param infer_design_from_sampleids  logical
+#' @param design_sep                   string: design separator
+#' @param zero_subgroup_nas            logical: whether to zero subgroup NAs (i.e. NA value for all samples in a subgroup)
 #' @return sample dataframe
 #' @examples
 #'  require(magrittr)
@@ -66,7 +67,8 @@ load_omics <- function(
    log2_offset                 = 0,
    design_file                 = NULL,
    infer_design_from_sampleids = FALSE,
-   design_sep                  = NULL
+   design_sep                  = NULL,
+   zero_subgroup_nas           = FALSE
 ){
    # Satisfy CHECK
    . <- NULL
@@ -102,6 +104,11 @@ load_omics <- function(
    if (!is.null(subgroup_values)){
       if (!is.null(replicate_values)){ object %<>% magrittr::extract(, order(subgroup_values, replicate_values))
       } else {                         object %<>% magrittr::extract(, order(subgroup_values))}
+   }
+
+   # Convert consistent NA to zero
+   if (zero_subgroup_nas){
+
    }
 
    # Return
