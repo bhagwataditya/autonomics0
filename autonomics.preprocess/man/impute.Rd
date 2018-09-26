@@ -16,7 +16,6 @@ impute(object, method = c("none", "missForest", "impute.minDet",
 imputation (the used \code{\link[imputeLCMD]{impute.QRILC}} implys random draws from a distribution)}
 
 \item{...}{Parameters handed on to the imputation methods.}
->>>>>>> 3d4f6f1... Expand impute to accept several methodologies;
 }
 \value{
 updated object
