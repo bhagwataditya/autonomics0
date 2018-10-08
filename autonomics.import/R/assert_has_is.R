@@ -47,6 +47,29 @@ has_valid_sampleNames <- function(x, .xname = assertive.base::get_name_in_parent
    TRUE
 }
 
+#' Are subgroup definitions complete?
+#' @param object SummarizedExperiment
+#' @return logical
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::glutaminase
+#'    object %>% subgroup_defs_complete()
+#' }
+#' @importFrom magrittr %>%
+#' @export
+subgroup_defs_complete <- function(object){
+
+   # subgroup var missing
+   if (!('subgroup' %in% autonomics.import::svars(object))) return(FALSE)
+
+   # subgroup values missing
+   if (autonomics.import::subgroup_values(object) %>% assertive.strings::is_empty_character() %>% any) return(FALSE)
+
+   # subgroup var and values both present
+   return(TRUE)
+}
+
 #' Does object contain block values?
 #' @param object SummarizedExperiment
 #' @return logical(1)
