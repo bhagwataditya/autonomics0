@@ -87,6 +87,7 @@ infer_design_sep <- function(sample_ids, possible_separators = c('.', ' ', '_'),
    }
 
    # Separator identified - return
+   autonomics.support::cmessage("\t\tInfer design sep '%s'", best_sep)
    return(best_sep)
 }
 
@@ -312,7 +313,8 @@ write_design <- function(
 
    # Infer subgroup from sampleids and add to design
    if (infer_design_from_sampleids){
-      if (is.null(design_sep)) design_sep <- design_df[[sampleid_var]] %>% autonomics.import::infer_design_sep()
+      autonomics.support::cmessage('\t\tInfer design from sampleids (%s)', design_df[[sampleid_var]][1])
+      if (is.null(design_sep)) design_sep <- design_df[[sampleid_var]] %>% autonomics.import::infer_design_sep(verbose = TRUE)
       inferred_design <- design_df[[sampleid_var]] %>% autonomics.import::infer_design_from_sampleids(sep = design_sep, maxquant = platform=='maxquant')
       design_df$sample_id <- NULL
       design_df %<>% cbind(., inferred_design)

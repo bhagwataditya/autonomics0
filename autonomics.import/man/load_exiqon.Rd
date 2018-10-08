@@ -4,36 +4,24 @@
 \alias{load_exiqon}
 \title{Load exiqon data}
 \usage{
-load_exiqon(file, design_file = NULL, log2_transform = NULL,
-  log2_offset = NULL, infer_design_from_sampleids = FALSE,
-  design_sep = NULL, rm_ref_features = TRUE, rm_spike_features = TRUE,
-  mean_center = TRUE, flip_sign = TRUE, subtract_refgroup = FALSE,
-  refgroup = NULL)
+load_exiqon(file, design_file = NULL, infer_design_from_sampleids = FALSE,
+  design_sep = NULL, lod = 37, plot_sample_distributions = TRUE,
+  color_var = object \%>\% autonomics.plot::default_color_var(),
+  color_values = object \%>\%
+  autonomics.plot::default_color_values(color_var))
 }
 \arguments{
 \item{file}{exiqon xlsx file}
 
 \item{design_file}{NULL or character (sample design file)}
 
-\item{log2_transform}{logical: whether to log2 transform}
-
-\item{log2_offset}{offset in mapping x -> log2(offset + x)}
-
 \item{infer_design_from_sampleids}{logical: whether to infer design from sample ids}
 
 \item{design_sep}{string: sample id separator}
 
-\item{rm_ref_features}{logical}
+\item{lod}{lod Ct value}
 
-\item{rm_spike_features}{logical}
-
-\item{mean_center}{logical: whether to mean_center exprs}
-
-\item{flip_sign}{logical: whether to flip sign}
-
-\item{subtract_refgroup}{logical}
-
-\item{refgroup}{character(1): reference group to subtract away}
+\item{plot_sample_distributions}{logical: whether to plot sample distributions}
 }
 \value{
 SummarizedExperiment
@@ -48,7 +36,7 @@ if (require(subramanian.2016)){
    # Load exiqon
    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
                         package = 'subramanian.2016')
-   file \%>\% load_exiqon(infer_design_from_sampleids = TRUE)
+   file \%>\% autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE)
 
    # Load exiqon with design file
    design_file <- tempfile()

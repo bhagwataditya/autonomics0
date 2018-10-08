@@ -6,7 +6,8 @@
 \usage{
 load_omics(file, platform, sheet = 2, quantity = NULL,
   log2_transform = TRUE, log2_offset = 0, design_file = NULL,
-  infer_design_from_sampleids = FALSE, design_sep = NULL)
+  infer_design_from_sampleids = FALSE, design_sep = NULL,
+  zero_subgroup_nas = FALSE)
 }
 \arguments{
 \item{file}{path to omics data file}
@@ -26,6 +27,8 @@ load_omics(file, platform, sheet = 2, quantity = NULL,
 \item{infer_design_from_sampleids}{logical}
 
 \item{design_sep}{string: design separator}
+
+\item{zero_subgroup_nas}{logical: whether to zero subgroup NAs (i.e. NA value for all samples in a subgroup)}
 }
 \value{
 sample dataframe

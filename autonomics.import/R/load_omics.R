@@ -120,16 +120,12 @@ load_omics <- function(
 #=============================
 
 #' Load exiqon data
-#' @param file                exiqon xlsx file
-#' @param design_file         NULL or character (sample design file)
+#' @param file                         exiqon xlsx file
+#' @param design_file                  NULL or character (sample design file)
 #' @param infer_design_from_sampleids  logical: whether to infer design from sample ids
-#' @param design_sep          string: sample id separator
-#' @param rm_ref_features     logical
-#' @param rm_spike_features   logical
-#' @param mean_center         logical: whether to mean_center exprs
-#' @param flip_sign           logical: whether to flip sign
-#' @param subtract_refgroup   logical
-#' @param refgroup            character(1): reference group to subtract away
+#' @param design_sep                   string: sample id separator
+#' @param lod                          lod Ct value
+#' @param plot_sample_distributions    logical: whether to plot sample distributions
 #' @return SummarizedExperiment
 #' @examples
 #' require(magrittr)
@@ -138,7 +134,7 @@ load_omics <- function(
 #'    # Load exiqon
 #'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
 #'                         package = 'subramanian.2016')
-#'    file %>% load_exiqon(infer_design_from_sampleids = TRUE)
+#'    file %>% autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE)
 #'
 #'    # Load exiqon with design file
 #'    design_file <- tempfile()
@@ -154,7 +150,10 @@ load_exiqon <- function(
    design_file                 = NULL,
    infer_design_from_sampleids = FALSE,
    design_sep                  = NULL,
-   lod                         = 37
+   lod                         = 37,
+   plot_sample_distributions   = TRUE,
+   color_var                   = object %>% autonomics.plot::default_color_var(),
+   color_values                = object %>% autonomics.plot::default_color_values(color_var)
 ){
    # Satisfy CHECK
    . <- `#RefGenes` <- `#Spike` <- NULL
@@ -163,7 +162,7 @@ load_exiqon <- function(
    #--------------
    plotfun <- function(object, xlab, title){
                  object %>%
-                 autonomics.plot::plot_overlayed_sample_distributions() +
+                 autonomics.plot::plot_overlayed_sample_distributions(color_var = color_var, color_values = color_values) +
                  ggplot2::xlab(xlab) +
                  ggplot2::ggtitle(title)
               }
@@ -177,43 +176,46 @@ load_exiqon <- function(
                                            infer_design_from_sampleids = infer_design_from_sampleids,
                                            design_sep                  = design_sep)
    autonomics.import::prepro(object) <- list(assay = 'exiqon', entity = 'mirna', quantity = 'ct', software = 'genex')
-   plotfun(object, 'Ct', 'Load Ct values')
+   object %>% plotfun('Ct', 'Load Ct values') %>% print()
 
    # Rm qc features
    #---------------
+   message('')
    object %<>% autonomics.import::filter_features(`#RefGenes`==0, verbose = TRUE)
    object %<>% autonomics.import::filter_features(`#Spike`   ==0, verbose = TRUE)
    autonomics.import::fdata(object)$`#RefGenes` <- NULL
    autonomics.import::fdata(object)$`#Spike`    <- NULL
-   plotfun(object, 'Ct', 'Rm ref and spikein features')
+   object %>% plotfun('Ct', 'Rm ref and spikein features') %>% print()
 
    # Align sample means
    #-------------------
-   autonomics.support::cmessage('\t\tAlign sample means')
+   autonomics.support::cmessage('\n\t\tAlign sample means')
    sample_means <- object %>% autonomics.import::exprs() %>% (function(y){y[y>32] <- NA; y}) %>% colMeans(na.rm = TRUE)
    sample_diffs <- sample_means - median(sample_means)
    autonomics.import::exprs(object) %<>% sweep(2, sample_diffs)
-   plotfun(object, 'Ct', 'Align sample means')
+   object %>% plotfun('Ct', 'Align sample means') %>% print()
 
    # Invert scale
    #-------------
+   autonomics.support::cmessage('\t\tInvert exprs = %d - Ct', lod)
    autonomics.import::exprs(object) %<>% magrittr::subtract(lod, .)
    newmetric <- sprintf('%d - Ct', lod)
-   plotfun(object, newmetric, newmetric)
+   object %>% plotfun(newmetric, newmetric) %>% print()
 
-   # Zero below-lod values
-   #----------------------
-   exprs1 <- autonomics.import::exprs(object)
-   exprs1[exprs1<0] <- 0
-   autonomics.import::exprs(object) <- exprs1
-   plotfun(object, newmetric, 'Zero below-lod values')
+   # Left-censor below-lod values
+   #-----------------------------
+   object %<>% autonomics.preprocess::left_censor(0)
+   object %>% plotfun(newmetric, 'Left censor exprs < 0') %>% print()
 
    # Convert inconsistent zeroes into NAs
    #-------------------------------------
    # Because the zeroes could be due to improper amplification, rather than absence
    # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4133581
-   object %<>% autonomics.preprocess::zero_to_na_if_not_all_zero()
-   plotfun(object, newmetric, 'Convert inconsistent zeroes into NAs')
+   if (autonomics.import::subgroup_defs_complete(object)){
+      autonomics.support::cmessage('\t\tConvert inconsistent zeroes into NAs')
+      object %<>% autonomics.preprocess::zero_to_na_if_not_all_zero()
+      object %>% plotfun(newmetric, 'Convert inconsistent zeroes into NAs') %>% print()
+   }
 
    # # Flip sign
    # if (flip_sign){
