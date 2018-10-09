@@ -1,40 +1,40 @@
-#' Zero to NA
+#' @rdname missify_inconsistent_zeroes
+#' @export
+zero_to_na_if_not_all_zero <- function(
+   no_zero = c('fail', 'warn_passthrough', 'passthrough')[1],
+   ...
+){
+   missify_inconsistent_zeroes(...)
+}
+
+#' Missify inconsistent zeroes
 #'
-#' Prominently due to dynamic range limitations in mass spectrometry, data from proteomics
-#' and metabolomics LCMS experiments is plagued by missing/dropout values, which occasionaly
-#' (e.g. by MaxQuant LFQ) are reported as \code{0} (zero).
-#' 
-#' Based on the assumption that features truly absent will produce \code{0} (zero) measurements
-#' across replicate samples, this function evaluates such data and replcaces \code{0} (zero)
-#' with \code{NA} (not available) \bold{only} if any other replicate for the same feature is
-#' \bold{not} \code{0} (zero) within the same subgroup.
+#' Convert inconsistent zeroes into NAs. \cr
+#' Inconsistent zeroes are those not replicated across samples of the same subgroup.
+#' Such zeroes are likely caused by identification/quantification stochasticity.
+#' Their proper representation is NA rather than zero.
+#' Failure to make this distinction diminishes statistical power.
 #'
-#' @param object SummarizedExperiment, eSet, or EList
+#' Inconsistent zeroes are common in LCMS proteomics and metabolomics, due to the
+#' stochastic nature of the identification process.
+#'
+#' @param object SummarizedExperiment
 #' @param no_zero \code{\link{character}} defining how to react of there are no \code{0}s (zeros) present in the data set
 #' @return updated object
 #' @importFrom magrittr %<>% %>%
 #' @export
-zero_to_na_if_not_all_zero <- function(
+missify_inconsistent_zeroes <- function(
   object,
-  no_zero = c('fail', 'warn_passthrough', 'passthrough')[1])
-{
+  verbose = FALSE
+){
 # Check prerequisites -----------------------------------------------------
   autonomics.import::assert_is_valid_eset(object)
-  no_zero %<>%
-    match.arg(
-      choices = c('fail', 'warn_passthrough', 'passthrough'),
-      several.ok = FALSE)
-  
-  if(
-    object %>%
-      autonomics.import::exprs() %>%
-      magrittr::equals(0) %>%
-      any() %>%
-      magrittr::not())
-  {
-    msg <- "'object' contains no '0's (zeros)."
-    if(no_zero == 'fail'){ stop(msg) }
-    if(no_zero == 'warn_passthrough'){ warning(msg) }
+  if (!autonomics.import::has_complete_subgroup_values(object)){
+     autonomics.support::cmessage('Return unmodified - object lacks complete subgroup values')
+     return(object)
+  }
+  if(object %>% autonomics.import::exprs() %>% magrittr::equals(0) %>% any() %>% magrittr::not()){
+    autonomics.support::cmessage("'object' contains no '0's (zeros).")
     return(object)
   }
 
@@ -51,20 +51,20 @@ zero_to_na_if_not_all_zero <- function(
     set_names(autonomics.import::subgroup_levels(object)) %>%
     ## Isolate expressions
     lapply(autonomics.import::exprs)
-    
+
   # Count zeros per row
   zeros_per_row_by_subgroup <- data_by_subgroup %>%
     ## Check for zero-ness
     lapply(magrittr::equals, 0) %>%
     ## Check for zero-counts
     lapply(matrixStats::rowSums2)
-  
+
   # Count replicates by subgroup
   replicate_counts <- object %>%
     autonomics.import::sdata() %>%
     magrittr::extract2('subgroup') %>%
     table()
-  
+
   # Which rows contain 1 to replicates-1 zeros (which should be replaced by NA)?
   rows_with_missing_data_by_subgroup <- zeros_per_row_by_subgroup %>%
     names() %>%
@@ -76,7 +76,7 @@ zero_to_na_if_not_all_zero <- function(
     magrittr::set_names(
       zeros_per_row_by_subgroup %>%
         names())
-  
+
   # Subset zeros in identified rows
   subset_data_by_subroup <- data_by_subgroup %>%
     names() %>%
@@ -106,10 +106,13 @@ zero_to_na_if_not_all_zero <- function(
     magrittr::set_names(
       data_by_subgroup %>%
         names())
- 
+
   # Reassemble
   autonomics.import::exprs(object) <- do.call(cbind, subset_data_by_subroup) %>%
     magrittr::extract(,colnames(autonomics.import::exprs(object)))
   autonomics.import::assert_is_valid_eset(object)
+
+  # Return
+  if (verbose)  autonomics.support::cmessage('\t\tConvert inconsistent zeroes into NAs')
   return(object)
 }
