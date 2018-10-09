@@ -207,15 +207,12 @@ load_exiqon <- function(
    object %<>% autonomics.preprocess::left_censor(0)
    object %>% plotfun(newmetric, 'Left censor exprs < 0') %>% print()
 
-   # Missify inconsistent non-detects
-   #---------------------------------
+   # Missify inconsistent zeroes
+   #----------------------------
    # Because the zeroes could be due to improper amplification, rather than absence
    # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4133581
-   if (autonomics.import::has_complete_subgroup_values(object)){
-      autonomics.support::cmessage('\t\tConvert inconsistent zeroes into NAs')
-      object %<>% autonomics.preprocess::zero_to_na_if_not_all_zero()
-      object %>% plotfun(newmetric, 'Convert inconsistent zeroes into NAs') %>% print()
-   }
+      object %<>% autonomics.preprocess::missify_inconsistent_zeroes(verbose = TRUE)
+      object %>% plotfun(newmetric, 'Missify inconsistent zeroes') %>% print()
 
    # # Flip sign
    # if (flip_sign){
