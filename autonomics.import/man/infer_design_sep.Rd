@@ -5,7 +5,7 @@
 \title{Infer design separator}
 \usage{
 infer_design_sep(sample_ids, possible_separators = c(".", " ", "_"),
-  verbose = TRUE)
+  verbose = FALSE)
 }
 \arguments{
 \item{sample_ids}{character vector with sampleids}

@@ -59,7 +59,7 @@ subgroup_varname <- function(platform){
 #' sample_ids %>% infer_design_sep()
 #' @importFrom magrittr %>%
 #' @export
-infer_design_sep <- function(sample_ids, possible_separators = c('.', ' ', '_'), verbose = TRUE){
+infer_design_sep <- function(sample_ids, possible_separators = c('.', ' ', '_'), verbose = FALSE){
    . <- NULL
    sep_freqs <- Map(function(x) stringi::stri_split_fixed(sample_ids, x), possible_separators)        %>%
                 lapply(function(x) x %>% vapply(length, integer(1)))                                  %>%
@@ -87,7 +87,7 @@ infer_design_sep <- function(sample_ids, possible_separators = c('.', ' ', '_'),
    }
 
    # Separator identified - return
-   autonomics.support::cmessage("\t\tInfer design sep '%s'", best_sep)
+   if (verbose) autonomics.support::cmessage("\t\tInfer design sep '%s'", best_sep)
    return(best_sep)
 }
 
