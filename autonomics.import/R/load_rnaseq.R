@@ -283,7 +283,7 @@ voom_transform <- function(object, normalize.method = 'none', plot = TRUE, verbo
 
    # Correct voom transformation for block effect
    # https://support.bioconductor.org/p/59700/
-   if (autonomics.import::contains_block(object)){
+   if (autonomics.import::has_complete_block_values(object)){
       if (verbose)   autonomics.support::cmessage('\t\tAccount for block effect and rerun voom transformation')
       corfit <- limma::duplicateCorrelation(v, design = my_design, block = object$block)
       v <- limma::voom(dge, my_design, block = object$block, correlation = corfit$consensus,

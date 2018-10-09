@@ -207,11 +207,11 @@ load_exiqon <- function(
    object %<>% autonomics.preprocess::left_censor(0)
    object %>% plotfun(newmetric, 'Left censor exprs < 0') %>% print()
 
-   # Convert inconsistent zeroes into NAs
-   #-------------------------------------
+   # Missify inconsistent non-detects
+   #---------------------------------
    # Because the zeroes could be due to improper amplification, rather than absence
    # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4133581
-   if (autonomics.import::subgroup_defs_complete(object)){
+   if (autonomics.import::has_complete_subgroup_values(object)){
       autonomics.support::cmessage('\t\tConvert inconsistent zeroes into NAs')
       object %<>% autonomics.preprocess::zero_to_na_if_not_all_zero()
       object %>% plotfun(newmetric, 'Convert inconsistent zeroes into NAs') %>% print()
@@ -968,7 +968,7 @@ compute_precision_weights_once <- function(
 compute_precision_weights <- function(object, design = autonomics.import::create_design_matrix(object), plot = TRUE){
 
    # Estimate precision weights
-   has_block <- autonomics.import::contains_block(object)
+   has_block <- autonomics.import::has_complete_block_values(object)
    weights <- object %>% compute_precision_weights_once(design = design, plot = !has_block)
 
    # Update precision weights using block correlation

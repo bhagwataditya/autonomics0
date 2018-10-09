@@ -82,7 +82,7 @@ add_limma <- function(
    block <- NULL
    correlation <- NULL
    my_sdata <- autonomics.import::sdata(object) # works for both eSet and EList
-   if (autonomics.import::contains_block(object)){
+   if (autonomics.import::has_complete_block_values(object)){
       autonomics.support::cmessage("\t\tBlock on svar 'block'")
       block <- my_sdata$block
       correlation <- limma::duplicateCorrelation(autonomics.import::exprs(object),

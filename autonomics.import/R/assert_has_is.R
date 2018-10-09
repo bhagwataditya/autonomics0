@@ -47,39 +47,47 @@ has_valid_sampleNames <- function(x, .xname = assertive.base::get_name_in_parent
    TRUE
 }
 
-#' Are subgroup definitions complete?
+#' Does object have complete svalues
 #' @param object SummarizedExperiment
+#' @param svar   sample var
 #' @return logical
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::glutaminase
-#'    object %>% subgroup_defs_complete()
+#'    object %>% autonomics.import::has_complete_subgroup_values()
+#'    object %>% autonomics.import::has_complete_block_values()
 #' }
 #' @importFrom magrittr %>%
 #' @export
-subgroup_defs_complete <- function(object){
+has_complete_svalues <- function(object, svar){
 
-   # subgroup var missing
-   if (!('subgroup' %in% autonomics.import::svars(object))) return(FALSE)
+   # svar missing
+   var_present <- svar %in% autonomics.import::svars(object)
+   if (!var_present) return(FALSE)
 
-   # subgroup values missing
-   if (autonomics.import::subgroup_values(object) %>% assertive.strings::is_empty_character() %>% any) return(FALSE)
+   # svalues missing
+   values_present <- object %>% autonomics.import::svalues(svar) %>%
+                                assertive.strings::is_empty_character() %>%
+                                any()
+   if (values_present) return(FALSE)
 
-   # subgroup var and values both present
+   # svar and svalues both present
    return(TRUE)
 }
 
-#' Does object contain block values?
-#' @param object SummarizedExperiment
-#' @return logical(1)
+#' @rdname has_complete_svalues
+#' @importFrom magrittr %>%
 #' @export
-contains_block <- function(object){
-   block_in_svars <- 'block' %in% autonomics.import::svars(object)
-   if (!block_in_svars) return(FALSE)
-   block_levels <- object %>% autonomics.import::svalues('block')
-   if ("" %in% block_levels) return(FALSE)
-   return(TRUE)
+has_complete_subgroup_values <- function(object){
+   object %>% autonomics.import::has_complete_svalues('subgroup')
+}
+
+#' @rdname has_complete_svalues
+#' @importFrom magrittr %>%
+#' @export
+has_complete_block_values <- function(object){
+   object %>% autonomics.import::has_complete_svalues('block')
 }
 
 #' @title Does object contain prepro?
