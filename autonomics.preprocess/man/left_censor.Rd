@@ -5,14 +5,16 @@
 \alias{right_censor}
 \title{Censor exprs}
 \usage{
-left_censor(object, threshold)
+left_censor(object, threshold, censored_value = threshold)
 
-right_censor(object, threshold)
+right_censor(object, threshold, censored_value = threshold)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
 
 \item{threshold}{numeric scalar: threshold beyond which to censor values}
+
+\item{censored_value}{scalar}
 }
 \value{
 SummarizedExperiment
