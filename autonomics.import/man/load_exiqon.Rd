@@ -5,10 +5,9 @@
 \title{Load exiqon data}
 \usage{
 load_exiqon(file, design_file = NULL, infer_design_from_sampleids = FALSE,
-  design_sep = NULL, lod = 37, plot_sample_distributions = TRUE,
-  color_var = object \%>\% autonomics.plot::default_color_var(),
-  color_values = object \%>\%
-  autonomics.plot::default_color_values(color_var))
+  design_sep = NULL, rm_qc_features = TRUE, align_sample_means = TRUE,
+  invert_scale = TRUE, lod = 37, censor_beyond_lod = TRUE,
+  missify_inconsistent_zeroes = TRUE, plot_sample_distributions = TRUE)
 }
 \arguments{
 \item{file}{exiqon xlsx file}

@@ -150,10 +150,15 @@ load_exiqon <- function(
    design_file                 = NULL,
    infer_design_from_sampleids = FALSE,
    design_sep                  = NULL,
+   rm_qc_features              = TRUE,
+   align_sample_means          = TRUE,
+   invert_scale                = TRUE,
    lod                         = 37,
-   plot_sample_distributions   = TRUE,
-   color_var                   = object %>% autonomics.plot::default_color_var(),
-   color_values                = object %>% autonomics.plot::default_color_values(color_var)
+   censor_beyond_lod           = TRUE,
+   missify_inconsistent_zeroes = TRUE,
+   plot_sample_distributions   = TRUE#,
+   #color_var                   = 'subgroup',
+   #color_values                = object %>% autonomics.plot::default_color_values(color_var)
 ){
    # Satisfy CHECK
    . <- `#RefGenes` <- `#Spike` <- NULL
@@ -162,7 +167,7 @@ load_exiqon <- function(
    #--------------
    plotfun <- function(object, xlab, title){
                  object %>%
-                 autonomics.plot::plot_overlayed_sample_distributions(color_var = color_var, color_values = color_values) +
+                 autonomics.plot::plot_overlayed_sample_distributions() +
                  ggplot2::xlab(xlab) +
                  ggplot2::ggtitle(title)
               }
@@ -180,33 +185,42 @@ load_exiqon <- function(
 
    # Rm qc features
    #---------------
+   if (rm_qc_features){
    message('')
    object %<>% autonomics.import::filter_features(`#RefGenes`==0, verbose = TRUE)
    object %<>% autonomics.import::filter_features(`#Spike`   ==0, verbose = TRUE)
    autonomics.import::fdata(object)$`#RefGenes` <- NULL
    autonomics.import::fdata(object)$`#Spike`    <- NULL
    object %>% plotfun('Ct', 'Rm ref and spikein features') %>% print()
+   }
 
    # Align sample means
    #-------------------
+   if (align_sample_means){
    autonomics.support::cmessage('\n\t\tAlign sample means')
    sample_means <- object %>% autonomics.import::exprs() %>% (function(y){y[y>32] <- NA; y}) %>% colMeans(na.rm = TRUE)
    sample_diffs <- sample_means - median(sample_means)
    autonomics.import::exprs(object) %<>% sweep(2, sample_diffs)
    object %>% plotfun('Ct', 'Align sample means') %>% print()
+   }
 
    # Invert scale
    #-------------
+   if (invert_scale){
    autonomics.support::cmessage('\t\tInvert exprs = %d - Ct', lod)
    autonomics.import::exprs(object) %<>% magrittr::subtract(lod, .)
    newmetric <- sprintf('%d - Ct', lod)
    object %>% plotfun(newmetric, newmetric) %>% print()
+   }
 
    # Left-censor below-lod values
    #-----------------------------
-   object %<>% autonomics.preprocess::left_censor(0)
+   if (censor_beyond_lod){
+   object %<>% autonomics.preprocess::left_censor(0, NA)
    object %>% plotfun(newmetric, 'Left censor exprs < 0') %>% print()
+   }
 
+   # Nullify consistent NAs
    # Missify inconsistent zeroes
    #----------------------------
    # Because the zeroes could be due to improper amplification, rather than absence
