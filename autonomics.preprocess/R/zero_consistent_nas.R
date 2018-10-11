@@ -106,18 +106,12 @@ na_inconsistent_zeroes <- function(
 }
 
 
-#' NA inconsistent zeroes. Zero consistent NAS.
+#' Zero consistent NAs - NA inconsistent zeroes
 #'
-#' Convert consistent NAS into zeroes.
-#' And convert inconsistent zeroes into NAS.
-#'
-#' Inconsistent zeroes are those not replicated across samples of the same subgroup.
-#' Such zeroes are likely caused by identification/quantification stochasticity.
-#' Their proper representation is NA rather than zero.
-#' Failure to make this distinction diminishes statistical power.
-#'
-#' Inconsistent zeroes are common in LCMS proteomics and metabolomics, due to the
-#' stochastic nature of the identification process.
+#' These functions allow to differentiate between consistent and inconsistent non-detects.
+#' Inconsistent non-detects are due to measurement stochasticity.     These should be coded as NA rather than zero.
+#' Consistent   non-detects are not due to measurement stochasticity. These should be coded as zero rather than NA.
+#' Making this distinction improves power of statistical analysis.
 #'
 #' @param object SummarizedExperiment
 #' @param no_zero \code{\link{character}} defining how to react of there are no \code{0}s (zeros) present in the data set
@@ -129,6 +123,7 @@ na_inconsistent_zeroes <- function(
 #'              autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE)
 #' }
 #' @return updated object
+#' @importFrom data.table data.table :=
 #' @importFrom magrittr %>%
 #' @export
 zero_consistent_nas <- function(object, verbose = FALSE){
@@ -144,7 +139,7 @@ zero_consistent_nas <- function(object, verbose = FALSE){
    n_consistentfeature  <- dt[consistent_na==TRUE, length(unique(feature_id))]
    n_consistentsubgroup <- dt[consistent_na==TRUE, length(unique(subgroup  ))]
    n_subgroup           <- dt[, length(unique(subgroup  ))]
-   if (verbose) autonomics.support::cmessage("Nullify consistent NAS for %d/%d subgroups in %d/%d features",
+   if (verbose) autonomics.support::cmessage("\t\tZero consistent NAS for %d/%d subgroups in %d/%d features",
                                              n_consistentsubgroup, n_subgroup, n_consistentfeature,  nrow(object))
 
    # Cast into exprs

@@ -4,7 +4,7 @@
 \alias{zero_to_na_if_not_all_zero}
 \alias{na_inconsistent_zeroes}
 \alias{zero_consistent_nas}
-\title{NA inconsistent zeroes. Zero consistent NAS.}
+\title{Zero consistent NAs - NA inconsistent zeroes}
 \usage{
 zero_to_na_if_not_all_zero(no_zero = c("fail", "warn_passthrough",
   "passthrough")[1], ...)
@@ -24,17 +24,10 @@ updated object
 updated object
 }
 \description{
-Convert consistent NAS into zeroes.
-And convert inconsistent zeroes into NAS.
-}
-\details{
-Inconsistent zeroes are those not replicated across samples of the same subgroup.
-Such zeroes are likely caused by identification/quantification stochasticity.
-Their proper representation is NA rather than zero.
-Failure to make this distinction diminishes statistical power.
-
-Inconsistent zeroes are common in LCMS proteomics and metabolomics, due to the
-stochastic nature of the identification process.
+These functions allow to differentiate between consistent and inconsistent non-detects.
+Inconsistent non-detects are due to measurement stochasticity.     These should be coded as NA rather than zero.
+Consistent   non-detects are not due to measurement stochasticity. These should be coded as zero rather than NA.
+Making this distinction improves power of statistical analysis.
 }
 \examples{
 if (require(subramanian.2016)){
