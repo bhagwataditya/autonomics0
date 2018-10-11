@@ -5,9 +5,7 @@
 \title{Load exiqon data}
 \usage{
 load_exiqon(file, design_file = NULL, infer_design_from_sampleids = FALSE,
-  design_sep = NULL, rm_qc_features = TRUE, align_sample_means = TRUE,
-  invert_scale = TRUE, lod = 37, censor_beyond_lod = TRUE,
-  missify_inconsistent_zeroes = TRUE, plot_sample_distributions = TRUE)
+  design_sep = NULL)
 }
 \arguments{
 \item{file}{exiqon xlsx file}
@@ -17,10 +15,6 @@ load_exiqon(file, design_file = NULL, infer_design_from_sampleids = FALSE,
 \item{infer_design_from_sampleids}{logical: whether to infer design from sample ids}
 
 \item{design_sep}{string: sample id separator}
-
-\item{lod}{lod Ct value}
-
-\item{plot_sample_distributions}{logical: whether to plot sample distributions}
 }
 \value{
 SummarizedExperiment
@@ -32,12 +26,14 @@ Load exiqon data
 require(magrittr)
 if (require(subramanian.2016)){
 
-   # Load exiqon
+   # Load exiqon and infer design from sampleids
+   #--------------------------------------------
    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
                         package = 'subramanian.2016')
    file \%>\% autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE)
 
    # Load exiqon with design file
+   #-----------------------------
    design_file <- tempfile()
    file \%>\% write_design('exiqon', infer_design_from_sampleids = TRUE,
                                    design_file = design_file)

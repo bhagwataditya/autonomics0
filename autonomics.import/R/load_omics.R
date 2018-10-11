@@ -67,8 +67,7 @@ load_omics <- function(
    log2_offset                 = 0,
    design_file                 = NULL,
    infer_design_from_sampleids = FALSE,
-   design_sep                  = NULL,
-   zero_subgroup_nas           = FALSE
+   design_sep                  = NULL
 ){
    # Satisfy CHECK
    . <- NULL
@@ -106,11 +105,6 @@ load_omics <- function(
       } else {                         object %<>% magrittr::extract(, order(subgroup_values))}
    }
 
-   # Convert consistent NA to zero
-   if (zero_subgroup_nas){
-      autonomics.preprocess::na
-   }
-
    # Return
    object
 }
@@ -124,19 +118,19 @@ load_omics <- function(
 #' @param design_file                  NULL or character (sample design file)
 #' @param infer_design_from_sampleids  logical: whether to infer design from sample ids
 #' @param design_sep                   string: sample id separator
-#' @param lod                          lod Ct value
-#' @param plot_sample_distributions    logical: whether to plot sample distributions
 #' @return SummarizedExperiment
 #' @examples
 #' require(magrittr)
 #' if (require(subramanian.2016)){
 #'
-#'    # Load exiqon
+#'    # Load exiqon and infer design from sampleids
+#'    #--------------------------------------------
 #'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
 #'                         package = 'subramanian.2016')
 #'    file %>% autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE)
 #'
 #'    # Load exiqon with design file
+#'    #-----------------------------
 #'    design_file <- tempfile()
 #'    file %>% write_design('exiqon', infer_design_from_sampleids = TRUE,
 #'                                    design_file = design_file)
@@ -149,31 +143,9 @@ load_exiqon <- function(
    file,
    design_file                 = NULL,
    infer_design_from_sampleids = FALSE,
-   design_sep                  = NULL,
-   rm_qc_features              = TRUE,
-   align_sample_means          = TRUE,
-   invert_scale                = TRUE,
-   lod                         = 37,
-   censor_beyond_lod           = TRUE,
-   missify_inconsistent_zeroes = TRUE,
-   plot_sample_distributions   = TRUE#,
-   #color_var                   = 'subgroup',
-   #color_values                = object %>% autonomics.plot::default_color_values(color_var)
+   design_sep                  = NULL
 ){
-   # Satisfy CHECK
    . <- `#RefGenes` <- `#Spike` <- NULL
-
-   # Plot function
-   #--------------
-   plotfun <- function(object, xlab, title){
-                 object %>%
-                 autonomics.plot::plot_overlayed_sample_distributions() +
-                 ggplot2::xlab(xlab) +
-                 ggplot2::ggtitle(title)
-              }
-
-   # Load sumexp
-   #------------
    object <- autonomics.import::load_omics(file                        = file,
                                            platform                    = 'exiqon',
                                            log2_transform              = FALSE,
@@ -181,65 +153,81 @@ load_exiqon <- function(
                                            infer_design_from_sampleids = infer_design_from_sampleids,
                                            design_sep                  = design_sep)
    autonomics.import::prepro(object) <- list(assay = 'exiqon', entity = 'mirna', quantity = 'ct', software = 'genex')
-   object %>% plotfun('Ct', 'Load Ct values') %>% print()
+   object
+}
 
-   # Rm qc features
-   #---------------
-   if (rm_qc_features){
-   message('')
-   object %<>% autonomics.import::filter_features(`#RefGenes`==0, verbose = TRUE)
-   object %<>% autonomics.import::filter_features(`#Spike`   ==0, verbose = TRUE)
-   autonomics.import::fdata(object)$`#RefGenes` <- NULL
-   autonomics.import::fdata(object)$`#Spike`    <- NULL
-   object %>% plotfun('Ct', 'Rm ref and spikein features') %>% print()
+
+#' Preprocess Exiqon SumExp
+#' @param object               SummarizedExperiment
+#' @param filter_features      character(1) with feature filter condition
+#' @param align_sample_means   logical: whether to align the sample maens
+#' @param lod                  numeric(1): lod Ct value
+#' @param zero_consistent_nas  logical(1)
+#' @param plot                 logical: whether to plot sample distributions
+#' @return SummarizedExperiment
+#' @examples
+#' require(magrittr)
+#' if (require(subramanian.2016)){
+#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
+#'                         package = 'subramanian.2016')
+#'    file %>% autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE) %>%
+#'             autonomics.import::prepro_exiqon(lod=36)
+#' }
+#' @importFrom magrittr %>%
+#' @export
+prepro_exiqon <- function(
+   object,
+   filter_features             = '`#RefGenes`==0 & `#Spike`   ==0',
+   align_sample_means          = TRUE,
+   lod                         = 37,
+   zero_consistent_nas         = TRUE,
+   plot                        = TRUE
+){
+   # Plot function
+   #--------------
+   plotfun <- function(object, xlab, title){
+      object %>%
+         autonomics.plot::plot_overlayed_sample_distributions() +
+         ggplot2::xlab(xlab) +
+         ggplot2::ggtitle(title)
    }
+
+   # Original
+   #---------
+   if (plot) object %>% plotfun('Ct', 'Load Ct values') %>% print()
+
+   # Filter features
+   #----------------
+   object %<>% autonomics.import::filter_features_(filter_features, verbose = TRUE)
 
    # Align sample means
    #-------------------
    if (align_sample_means){
-   autonomics.support::cmessage('\n\t\tAlign sample means')
-   sample_means <- object %>% autonomics.import::exprs() %>% (function(y){y[y>32] <- NA; y}) %>% colMeans(na.rm = TRUE)
-   sample_diffs <- sample_means - median(sample_means)
-   autonomics.import::exprs(object) %<>% sweep(2, sample_diffs)
-   object %>% plotfun('Ct', 'Align sample means') %>% print()
+      autonomics.support::cmessage('\t\tAlign sample means')
+      sample_means <- object %>% autonomics.import::exprs() %>% (function(y){y[y>32] <- NA; y}) %>% colMeans(na.rm = TRUE)
+      sample_diffs <- sample_means - median(sample_means)
+      autonomics.import::exprs(object) %<>% sweep(2, sample_diffs)
+      if (plot) object %>% plotfun('Ct', 'Align sample means') %>% print()
    }
+
+   # NA beyond lod
+   #-----------------------------
+   object %<>% autonomics.preprocess::na_exprs_weakly_gt(lod)
+   if (plot) object %>% plotfun('Ct', 'NA Ct >= lod') %>% print()
 
    # Invert scale
    #-------------
-   if (invert_scale){
-   autonomics.support::cmessage('\t\tInvert exprs = %d - Ct', lod)
-   autonomics.import::exprs(object) %<>% magrittr::subtract(lod, .)
-   newmetric <- sprintf('%d - Ct', lod)
-   object %>% plotfun(newmetric, newmetric) %>% print()
+      autonomics.support::cmessage('\t\tInvert exprs = %d - Ct', lod)
+      autonomics.import::exprs(object) %<>% magrittr::subtract(lod, .)
+      newmetric <- sprintf('%d - Ct', lod)
+      if (plot) object %>% plotfun(newmetric, newmetric) %>% print()
+
+   # Zero consistent NAs
+   #--------------------
+   if (zero_consistent_nas){
+      object %<>% autonomics.preprocess::zero_consistent_nas(verbose = TRUE)
+      if (plot) object %>% plotfun(newmetric, 'Zero consistent NA values') %>% print()
    }
-
-   # Left-censor below-lod values
-   #-----------------------------
-   if (censor_beyond_lod){
-   object %<>% autonomics.preprocess::left_censor(0, NA)
-   object %>% plotfun(newmetric, 'Left censor exprs < 0') %>% print()
-   }
-
-   # Nullify consistent NAs
-   # Missify inconsistent zeroes
-   #----------------------------
-   # Because the zeroes could be due to improper amplification, rather than absence
-   # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4133581
-      object %<>% autonomics.preprocess::missify_inconsistent_zeroes(verbose = TRUE)
-      object %>% plotfun(newmetric, 'Missify inconsistent zeroes') %>% print()
-
-   # # Flip sign
-   # if (flip_sign){
-   #    autonomics.support::cmessage('\t\tFlip sign')
-   #    object %<>% (function(x){autonomics.import::exprs(x) %<>% magrittr::multiply_by(-1); x})
-   # }
-
-   # # Subtract median reference exprs
-   # if (subtract_refgroup){
-   #    if (is.null(refgroup))  refgroup <- autonomics.import::sdata(object)$subgroup[1]
-   #    autonomics.support::cmessage("\t\tSubtract '%s' median", refgroup)
-   #    object %<>% autonomics.preprocess::subtract_median_ref_exprs(ref = refgroup)
-   # }
 
    # Return
    object

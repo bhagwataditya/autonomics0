@@ -6,8 +6,7 @@
 \usage{
 load_omics(file, platform, sheet = 2, quantity = NULL,
   log2_transform = TRUE, log2_offset = 0, design_file = NULL,
-  infer_design_from_sampleids = FALSE, design_sep = NULL,
-  zero_subgroup_nas = FALSE)
+  infer_design_from_sampleids = FALSE, design_sep = NULL)
 }
 \arguments{
 \item{file}{path to omics data file}
