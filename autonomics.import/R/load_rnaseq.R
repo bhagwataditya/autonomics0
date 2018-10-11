@@ -1,396 +1,220 @@
-REQUIRED_FVARS_RNASEQ <- c('gene_id', 'gene_name')
-# Required feature variables
-#
-#' Required variables in annotated count file
-#"REQUIRED_FVARS_RNASEQ"
-
-REQUIRED_SVARS_RNASEQ <- c('sample_id', 'subgroup', 'replicate')
-# Required sample variables
-#
-#' Required variables in sample design file
-#"REQUIRED_SVARS_RNASEQ"
-
-#' Load sample design file
-#' @param sample_design_file sample design file
-#' @return sample design dataframe
-#' @examples
-#' if (require(billing.differentiation.data)){
-#'    sample_design_file <- system.file('extdata/rnaseq/sample_design.txt',
-#'                             package = 'billing.differentiation.data')
-#'    autonomics.import::load_rnaseq_sdata(sample_design_file)
-#' }
-#' @importFrom magrittr   %>%   %<>%
+#' Compute effective library sizes (using TMM)
+#' @param counts counts matrix
+#' @return vector (nsample)
 #' @export
-load_rnaseq_sdata <- function(sample_design_file){
-   .Deprecated('load_sdata_rnaseq')
-
-   # Check
-   . <- NULL
-
-   # Read
-   sample_df <- sample_design_file %>% data.table::fread(data.table = FALSE)
-
-   # sample_id has to be present
-   sample_df$sample_id %<>% as.character()
-   assertive.base::assert_all_are_not_na(sample_df$sample_id)                 # no NAs
-   assertive.base::assert_all_are_true(stats::complete.cases(sample_df$sample_id)) # sample ids unique
-
-   # subgroup and replicate are optional
-   if ('subgroup'  %in% names(sample_df)){
-      sample_df$subgroup  %<>% as.character()
-      assertive.base::assert_all_are_not_na(sample_df$subgroup)
-   }
-   if ('replicate' %in% names(sample_df)){
-      sample_df$replicate %<>% as.character() # should not be integer to allow mapping to shape
-      assertive.base::assert_all_are_not_na(sample_df$replicate)
-   }
-
-   # Add rownames
-   sample_df %<>% magrittr::set_rownames(.$sample_id)
-
-   # Return
-   sample_df
-
+libsizes <- function(counts){
+   colSums(counts) * edgeR::calcNormFactors(counts)
 }
 
-
-
-#' Load fdata
-#' @param count_file  count file
-#' @param map_entrezg whether to map features to their entrezg (logical)
-#' @param verbose     whether to report messages (logical)
-#' @examples
-#' if (require(billing.differentiation.data)){
-#'    count_file <- system.file('extdata/rnaseq/gene_counts.txt',
-#'                               package = 'billing.differentiation.data')
-#'    load_rnaseq_fdata(count_file)
-#' }
-#' if (require(subramanian.2016)){
-#'    count_file <- system.file('extdata/rnaseq/gene_counts.txt',
-#'                               package = 'subramanian.2016')
-#' }
-#' @importFrom data.table   data.table   :=
-#' @importFrom magrittr     %>%  %<>%
+#' Convert counts into cpm (counts per million reads)
+#' @param counts    count matrix
+#' @param lib.size  scaled library sizes (vector)
+#' @return cpm matrix
 #' @export
-load_rnaseq_fdata <- function(count_file, map_entrezg = FALSE, verbose = TRUE){
-   .Deprecated('load_fdata_rnaseq')
-
-   # Satisfy CHECK
-   . <- entrezg <- gene_id <- gene_name <- NULL
-
-   fdata1 <- data.table::fread(count_file)  %>% magrittr::extract(, !sapply(., is.integer), with = FALSE)
-   assertive.sets::assert_is_subset(REQUIRED_FVARS_RNASEQ, names(fdata1))
-   fdata1 %<>% magrittr::extract(, gene_id := gene_id %>%
-                                              stringi::stri_split_fixed('.') %>%
-                                              vapply(magrittr::extract, character(1), 1)) #%>%
-               #data.table::setnames('gene_id', 'feature_id') %>%
-               #magrittr::extract(, ensg := feature_id)
-   organism <- fdata1[, autonomics.annotate::infer_organism(gene_id, keytype = 'ensg', verbose = verbose)]
-
-   # Add entrezg mappings
-   if (map_entrezg){
-      suppressMessages(fdata1[, entrezg := autonomics.annotate::ensg_to_entrezg(gene_id,      organism = organism, verbose = FALSE)])
-      idx1 <- !is.na(fdata1[, entrezg])
-
-      suppressMessages(fdata1[is.na(entrezg), entrezg := autonomics.annotate::gsymbol_to_entrezg(gene_name, organism = organism)])
-      idx2 <- !is.na(fdata1[, entrezg])
-      if (verbose){
-      autonomics.support::cmessage('\t\t%d/%d features mapped to entrezg: %d through ensg, %d through gsymbol',
-                                   sum(idx2), length(idx2), sum(idx1), sum(idx2)-sum(idx1))
-      }
-   }
-
-   # Return
-   fdata1 %<>% as.data.frame() %>% magrittr::set_rownames(.$gene_id)
-   fdata1
+counts_to_cpm <- function(counts, lib.size = libsizes(counts)){
+   t(t(counts + 0.5)/(lib.size + 1) * 1e+06)
 }
 
-
-
-#' Load rnaseq exprs
-#' @param count_file count file
+#' Invert cpm (counts per million reads) into counts
+#'
+#' @param cpm       cpm matrix
+#' @param lib.size  scaled library sizes (vector)
 #' @return count matrix
-#' @importFrom magrittr %>%
 #' @export
-load_rnaseq_exprs <- function(count_file){
-   .Deprecated('load_exprs_rnaseq')
-
-   . <- NULL
-   feature_ids <- load_rnaseq_fdata(count_file, map_entrezg = FALSE, verbose = FALSE) %>% magrittr::extract2('gene_id')
-   exprs1 <- data.table::fread(count_file) %>%
-             magrittr::extract(, sapply(., is.integer), with = FALSE) %>%
-             data.matrix() %>%
-             magrittr::set_rownames(feature_ids)
+cpm_to_counts <- function(cpm, lib.size){
+   1e-06 * t(t(cpm) * (lib.size + 1))
 }
 
-
-#'Infer and add design to sdata
-#'@param sdata sample dataframe
-#'@return augmented sample dataframe
-#'@importFrom magrittr %>%
-#'@export
-infer_add_design <- function(sdata){
-   . <- NULL
-   sdata %>%
-      autonomics.support::left_join_keeping_rownames(
-         autonomics.import::infer_design_from_sampleids(
-            .$sample_id),
-         .,
-         by = 'sample_id')
-}
-
-
-#'Load RNA seq counts
-#'@param dir                directory with count file and sample design file
-#'@param count_file         gene count file
-#'@param sample_file        sample design file
-#'@param map_entrezg        logical
-#'@return eset
-#'@examples
-#'require(magrittr)
-#'if (require(billing.differentiation.data)){
-#'   dir <- system.file('extdata/rnaseq', package = 'billing.differentiation.data')
-#'   autonomics.import::load_rnaseq_counts(dir)
-#'}
-#'if (require(subramanian.2016)){
-#'   dir <- system.file('extdata/rnaseq', package = 'subramanian.2016')
-#'   autonomics.import::load_rnaseq_counts(dir, sample_file = NULL)
-#'}
-#'@importFrom magrittr   %>%   %<>%
-#'@export
-load_rnaseq_counts <- function(
-   dir         = '.',
-   count_file  = paste0(dir, '/gene_counts.txt'),
-   sample_file = if (file.exists(paste0(dir, '/sample_design.txt'))) paste0(dir, '/sample_design.txt') else NULL,
-   map_entrezg = FALSE
+#' @importFrom magrittr %>%
+compute_precision_weights_once <- function(
+   object,
+   design = autonomics.import::create_design_matrix(object),
+   plot = TRUE,
+   ...
 ){
-   .Deprecated('load_rnaseq')
+
+   # Extract
+   log2cpm  <- autonomics.import::exprs(object)
+   lib.size <- autonomics.import::sdata(object)$libsize
 
    # Assert
-   assertive.files::assert_all_are_non_empty_files(count_file)
-   if (!is.null(sample_file)) assertive.files::assert_all_are_non_empty_files(sample_file)
+   n <- nrow(log2cpm)
+   if (n < 2L) stop("Need at least two genes to fit a mean-variance trend")
 
-   # Load components
-   fdata1 <- autonomics.import::load_rnaseq_fdata(count_file, map_entrezg = map_entrezg, verbose = TRUE)
-   exprs1 <- autonomics.import::load_rnaseq_exprs(count_file)
-   sdata1 <- if (is.null(sample_file)){
-                data.frame(sample_id = colnames(exprs1), row.names = colnames(exprs1)) %>%
-                autonomics.import::infer_add_design()
-             } else {
-                autonomics.import::load_rnaseq_sdata(sample_file)
-             }
-   prepro1 <- autonomics.import::create_prepro_list(
-                 assay      = 'rnaseq',
-                 entity     = 'rna',
-                 quantity   = 'voomcount',
-                 software   = 'limma',
-                 parameters = list())
+   # Fit linear model
+   fit <- limma::lmFit(log2cpm, design=design, ...)
 
-   # Forge eset
-   eset1 <- SummarizedExperiment::SummarizedExperiment(list(exprs = exprs1))
-   autonomics.import::fdata(eset1) <- fdata1
-   autonomics.import::sdata(eset1) <- sdata1
-   autonomics.import::prepro(eset1) <- prepro1
-   autonomics.import::assert_is_valid_eset(eset1)
-
-   # Filter
-   eset1 %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample()
-
-   # Return
-   eset1
-}
-
-
-#' Convert raw counts into log cpm
-#'
-#' Convert raw counts into log cpm in exactly the same way as limma::voom does
-#'
-#' @param object eset
-#' @return log cpm
-#' @examples
-#' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    eset1 <- billing.differentiation.data::rna.counts
-#'    eset1 %>% autonomics.import::exprs()    %>% magrittr::extract(1:3, 1:3)
-#'    eset1 %>% autonomics.import::logcpm() %>%
-#'              autonomics.import::exprs() %>% magrittr::extract(1:3, 1:3)
-#' }
-#' @export
-logcpm <- function(object){
-   .Deprecated('counts_to_cpm')
-   counts <- autonomics.import::exprs(object)
-
-   rawlibsize  <- object %>% autonomics.import::exprs() %>% colSums() %>% unname()
-   normfactors <- object %>% autonomics.import::exprs() %>% edgeR::calcNormFactors()
-   libsize <- rawlibsize * normfactors
-   autonomics.import::exprs(object) <- t(log2(t(counts + 0.5)/(libsize + 1) * 1e+06))
-   object
-}
-
-
-#' Voom transform eset
-#' @param object eset
-#' @param normalize.method normalization method
-#' @param plot whether to plot mean variance trend
-#' @param verbose whether to report progress
-#' @export
-#' @examples
-#' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'
-#'    # eset with counts
-#'       object <- billing.differentiation.data::rna.counts
-#'       object %>% autonomics.import::exprs() %>% extract(1:3, 1:3)
-#'
-#'    # voom transformation
-#'          object %>% autonomics.import::voom_transform() %>% autonomics.import::exprs() %>%
-#'                     magrittr::extract(1:3, 1:3)
-#'       # containing logcpm exprs
-#'          object %>% autonomics.import::logcpm() %>% autonomics.import::exprs() %>%
-#'                     extract(1:3, 1:3)
-#'          object %>% autonomics.import::exprs() %>% magrittr::extract(1:3, 1:3)
-#'       # and precision weights
-#'          object %>% voom_transform() %>% autonomics.import::weights() %>%
-#'                     extract(1:3, 1:3)
-#' }
-#' if (require(subramanian.2016)){
-#'    dir <- system.file('extdata/rnaseq', package = 'subramanian.2016')
-#'    object <- autonomics.import::load_rnaseq_counts(dir, sample_file = NULL)
-#'    object %>% autonomics.import::voom_transform()
-#' }
-#' @export
-voom_transform <- function(object, normalize.method = 'none', plot = TRUE, verbose = TRUE){
-   .Deprecated('add_precision_weights')
-
-   autonomics.import::assert_is_valid_eset(object)
-   assertive.sets::assert_is_subset('subgroup', autonomics.import::svars(object))
-
-   # Normalize library size
-   if (verbose)   autonomics.support::cmessage('\t\tNormalize library size')
-   norm.factors <- autonomics.import::exprs(object) %>% edgeR::calcNormFactors()
-    dge <- edgeR::DGEList(
-       counts  = autonomics.import::exprs(object),
-       samples = autonomics.import::sdata(object),
-       group   = autonomics.import::sdata(object)$subgroup,
-       genes   = autonomics.import::fdata(object)
-    )
-    dge <- edgeR::calcNormFactors(dge)
-
-   # Voom transform
-   if (verbose)   autonomics.support::cmessage('\t\tVoom transform')
-   my_design <- stats::model.matrix(~ 0 + subgroup, data = autonomics.import::sdata(object))
-   v <- limma::voom(dge, my_design, plot = plot, normalize.method = normalize.method, save.plot = TRUE)
-
-   # Correct voom transformation for block effect
-   # https://support.bioconductor.org/p/59700/
-   if (autonomics.import::has_complete_block_values(object)){
-      if (verbose)   autonomics.support::cmessage('\t\tAccount for block effect and rerun voom transformation')
-      corfit <- limma::duplicateCorrelation(v, design = my_design, block = object$block)
-      v <- limma::voom(dge, my_design, block = object$block, correlation = corfit$consensus,
-                       plot = plot, normalize.method = normalize.method, save.plot = TRUE)
+   # Predict
+   if (is.null(fit$Amean)) fit$Amean <- rowMeans(log2cpm, na.rm = TRUE)
+   if (fit$rank < ncol(design)) {
+      j <- fit$pivot[1:fit$rank]
+      fitted.log2cpm <- fit$coef[, j, drop = FALSE] %*% t(fit$design[,j, drop = FALSE])
+   } else {
+      fitted.log2cpm <- fit$coef %*% t(fit$design)
    }
+   fitted.log2count <- (2^fitted.log2cpm) %>% cpm_to_counts(lib.size) %>% log2()
 
-   # Add voom transfo to SummarizedExperiment
-   SummarizedExperiment::assays(object)$counts  <- SummarizedExperiment::assays(object)$exprs
-   SummarizedExperiment::assays(object)$exprs   <- v$E
-   SummarizedExperiment::assays(object)$weights <- v$weights
-   S4Vectors::metadata(object)$voom.xy   <- v$voom.xy
-   S4Vectors::metadata(object)$voom.line <- v$voom.line
-
-   # Add prepro info
-   autonomics.import::prepro(object) <- autonomics.import::prepro(object)
-
-   # Return
-   object
-}
-
-
-#' Plot voom mean variance trend
-#' @param object SummarizedExperiment
-#' @param normalize.method passed to limma::voom
-#' @param title plot title
-#' @return plot object
-#' @importFrom magrittr %>%
-#' @export
-voom_plot <- function(object, normalize.method, title){
-   .Deprecated()
-   x <- S4Vectors::metadata(object)$voom.xy$x
-   y <- S4Vectors::metadata(object)$voom.xy$y
-   xlab   <- S4Vectors::metadata(object)$voom.xy$xlab
-   ylab   <- S4Vectors::metadata(object)$voom.xy$ylab
-   graphics::plot(x, y, pch = 16, cex = 0.25, xlab = xlab, ylab = ylab)
-   l <- stats::lowess(x, y, f=0.5)
-   graphics::lines(l, col = 'red')
-   title(title)
-}
-
-invlog2 <- function(x, pseudocount=0.5){
-   function(x) 2^x - 0.5
-}
-
-#' Is mean var trend monotonic
-#' @param object SummarizedExperiment
-#' @param normalize.method normalization method
-#' @return logical
-#' @importFrom magrittr %>%
-#' @export
-mean_var_monotonic <- function(object, normalize.method){
-   object %>%
-   autonomics.import::voom_transform(normalize.method = normalize.method, verbose = FALSE) %>%
-   (function(object){
-      x <- S4Vectors::metadata(object)$voom.line$x
-      y <- S4Vectors::metadata(object)$voom.line$y
-      x[which.max(y)] <= x[1]
-   })
-}
-
-#' Voom filter features
-#'
-#' Filter low count features (for all samples) to achieve monotonic mean variance trend,
-#' as is recommended by Gordon Smyth & co. (see references)
-#'
-#' @param object exprs object
-#' @param normalize.method passed to limma::voom
-#' @param file file to print mean var curve to
-#' @param width  fig width in inches
-#' @param height fig height in inches
-#' @return filtered eset
-#' @references
-#' https://support.bioconductor.org/p/64484/
-#' https://support.bioconductor.org/p/80331/
-#' @importFrom magrittr %>% %<>%
-#' @export
-voom_filter_n_transform <- function(object, normalize.method = 'none', file = NULL, width = 10, height = 5){
-
-   # Filter until inflection point vanishes
-   object0 <- object
-   filter_threshold <- 0
-   while(!mean_var_monotonic(object, normalize.method)){
-      filter_threshold %<>% magrittr::add(1)
-      object %<>% autonomics.import::filter_features_min_expr(filter_threshold + 1)
+   # Fit mean-variance trend
+   mean.log2count <- fit$Amean + mean(log2(lib.size + 1)) - log2(1e+06)  # mean log2 count
+   sdrt.log2count <- sqrt(fit$sigma)                                     # sqrtsd(resid)
+   all.identical <- matrixStats::rowVars(log2cpm)==0
+   if (any(all.identical)) {
+      mean.log2count <- mean.log2count[!all.identical]
+      sdrt.log2count <- sdrt.log2count[!all.identical]
    }
+   l <- lowess(mean.log2count, sdrt.log2count, f = 0.5)
+   f <- approxfun(l, rule = 2)
 
-   # Transform
-   object %<>% autonomics.import::voom_transform(normalize.method = normalize.method)
-
-   # Log
-   summary_attr <- autonomics.import::get_summary_attr(object) %>%
-                   c(list(voom_filter_n         = unname(nrow(object)),
-                          voom_filter_threshold = filter_threshold))
-   attr(object, 'autonomics_summary') <- summary_attr
+   # Compute precision weights
+   w <- 1/f(fitted.log2count)^4     # f(.) = sqrt(sd(.)) --> f(.)^4 = var(.)
+   dim(w) <- dim(fitted.log2count)
 
    # Plot
-   if (!is.null(file))   grDevices::pdf(file, width = width, height = height)
-   graphics::layout(matrix(1:2, ncol = 2))
-   object0 %>% voom_transform(plot = FALSE) %>%
-               autonomics.import::voom_plot(normalize.method = normalize.method,
-                                            title = sprintf('all (%d)', nrow(object0   )))
-   object %>% autonomics.import::voom_plot(normalize.method = normalize.method,
-                                           title = sprintf('expr < %0.0f (%d)', filter_threshold, nrow(object)))
-   if (!is.null(file))   grDevices::dev.off()
-
+   if (plot) {
+      plot(mean.log2count, sdrt.log2count, xlab = "mean log2count", ylab = "sdrt log2count",
+           pch = 16, cex = 0.25)
+      title("voom: Mean-variance trend")
+      lines(l, col = "red")
+   }
 
    # Return
-   return(object)
+   return(w)
 }
 
+
+#' @rdname add_precision_weights
+#' @importFrom magrittr %>%
+#' @export
+compute_precision_weights <- function(object, design = autonomics.import::create_design_matrix(object), plot = TRUE){
+
+   # Estimate precision weights
+   has_block <- autonomics.import::has_complete_block_values(object)
+   weights <- object %>% compute_precision_weights_once(design = design, plot = !has_block)
+
+   # Update precision weights using block correlation
+   if (has_block){
+      correlation <- log2cpm() %>%
+         limma::duplicateCorrelation(design = design, block = object$block, weights = weights) %>%
+         magrittr::extract2('consensus')
+      weights <- object %>% compute_precision_weights_once(design = design,
+                                                           block = object$block,
+                                                           correlation = correlation,
+                                                           plot = TRUE)
+   }
+
+   # Return
+   dimnames(weights) <- dimnames(object)
+   weights
+}
+
+#' Compute (and add) precision weights
+#'
+#' Compute (and add) precision weights for SummarizedExperiment with log2cpm values.
+#'
+#' Refactored version of limma::voom() which operates on a SummarizedExperiment with log2cpm values.
+#' Created to allow a separation of the two steps in limma::voom():
+#'    1. raw counts -> log2cpm (autonomics.import::counts_to_cpm)
+#'    2. log2cpm    -> weights (autonomics.import::compute_precision_weights)
+#' If a block factor is present, precision weights are updated using the block correlation information,
+#' as suggested by Gordon Brown on BioC support (https://support.bioconductor.org/p/59700/)
+#'
+#' @param object    SummarizedExperiment
+#' @param design    design matrix
+#' @param plot      whether to plot mean-var trend (logical)
+#' @param ...       passed to limma::lmFit
+#' @return weights vector
+#' @author Charity Law, Gordon Smyth, Aditya Bhagwat
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- 'extdata/rnaseq/gene_counts.txt'           %>%
+#'               system.file(package = 'subramanian.2016') %>%
+#'               autonomics.import::load_rnaseq(infer_design_from_sampleids = TRUE)
+#'    object %>% autonomics.import::compute_precision_weights() %>% str()
+#'    object %>% autonomics.import::add_precision_weights()
+#'    object %>% autonomics.import::load_rnaseq()
+#' }
+#'
+#' @importFrom magrittr  %>%
+#' @export
+add_precision_weights <- function(
+   object,
+   design = autonomics.import::create_design_matrix(object),
+   plot = TRUE
+){
+   weights <- object %>% compute_precision_weights(design = design, plot = plot)
+   SummarizedExperiment::assays(object)$weights <- weights
+   object
+}
+
+
+
+#' Load RNAseq cpm
+#' @param file                          rnaseq counts file
+#' @param design_file                   sample design file
+#' @param infer_design_from_sampleids   logical
+#' @param design_sep                    character
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data){
+#'    file <- system.file('extdata/stemdiff/rnaseq/gene_counts.txt', package = 'autonomics.data')
+#' })
+#' if (require(subramanian.2016)){
+#'    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#'    infer_design_from_sampleids <- TRUE
+#'    object <- load_rnaseq(file, infer_design_from_sampleids = TRUE)
+#'    object
+#' }
+#' @export
+load_rnaseq <- function(
+   file,
+   design_file                 = NULL,
+   infer_design_from_sampleids = FALSE,
+   design_sep                  = NULL
+){
+
+   # Load sumexp
+   autonomics.support::cmessage('\t\tload counts')
+   object <- autonomics.import::load_omics(file                        = file,
+                                           platform                    = 'rnaseq',
+                                           log2_transform              = FALSE,
+                                           design_file                 = design_file,
+                                           infer_design_from_sampleids = infer_design_from_sampleids,
+                                           design_sep                  = design_sep)
+   object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample()
+
+   # Compute effective library size
+   message('\t\tstore libsizes in sdata')
+   autonomics.import::sdata(object)$libsize <- autonomics.import::exprs(object) %>% libsizes()
+
+   # TMM-normalize counts
+   message('\t\tcounts -> cpm')
+   SummarizedExperiment::assays(object)$exprs %<>% counts_to_cpm()
+
+   # Log2 transform
+   message('\t\tcpm -> log2cpm')
+   SummarizedExperiment::assays(object)$exprs %<>% log2()
+
+   # Quantile normalize
+   # Gordon:  prefer TMM over quantile normalization for most cases
+   #          Use quantile normalization for extreme cases
+   #          Don't use both
+   # object %<>% limma::normalizeBetweenArrays(method = normalize.method)
+   # Don't quantile normalize when using TMM
+   # https://support.bioconductor.org/p/77664/
+
+   # Add voom precision weights
+   autonomics.support::cmessage('\t\tadd voom precision weights')
+   object %<>% autonomics.import::add_precision_weights(plot = TRUE)
+
+   # Add metadata
+   autonomics.import::prepro(object) <- list(assay      = 'rnaseq',
+                                             entity     = 'rna',
+                                             quantity   = 'log2cpm',
+                                             software   = 'limma',
+                                             parameters = list())
+
+   # Return
+   object
+
+}
