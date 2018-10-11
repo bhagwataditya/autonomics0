@@ -5,12 +5,12 @@
 \alias{filter_samples}
 \title{Filter samples on condition}
 \usage{
-filter_samples_(x, condition, verbose = FALSE)
+filter_samples_(object, condition, verbose = FALSE)
 
-filter_samples(x, condition, verbose = FALSE)
+filter_samples(object, condition, verbose = FALSE)
 }
 \arguments{
-\item{x}{eSet}
+\item{object}{SummarizedExperiment}
 
 \item{condition}{filter condition}
 

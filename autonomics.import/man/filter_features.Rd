@@ -5,12 +5,12 @@
 \alias{filter_features}
 \title{Filter features on condition}
 \usage{
-filter_features_(x, condition, verbose = FALSE)
+filter_features_(object, condition, verbose = FALSE)
 
-filter_features(x, condition, verbose = FALSE)
+filter_features(object, condition, verbose = FALSE)
 }
 \arguments{
-\item{x}{eSet}
+\item{object}{SummarizedExperiment}
 
 \item{condition}{filter condition}
 
