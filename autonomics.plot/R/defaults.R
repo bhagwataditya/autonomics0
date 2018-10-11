@@ -85,14 +85,16 @@ make_composite_colors <- function(
 }
 
 #' Make fitting colors
-#' @param x colorvar levels vector
-#' @param show logical
+#' @param x        colorvar levels vector
+#' @param show     logical(1)
+#' @param verbose  logical(1)
 #' @return color vectors (values = colors, names = colorvar levels)
 #' @export
 make_colors <- function(
    x,
    sep = autonomics.import::infer_design_sep(x, verbose = FALSE),
-   show = FALSE
+   show = FALSE,
+   verbose = FALSE
 ){
 
    # 0D colors
@@ -102,12 +104,12 @@ make_colors <- function(
 
    # 1D colors
    if (is.null(sep)){
-      autonomics.support::cmessage('\t\tMake default ggplot colors')
+      if (verbose) autonomics.support::cmessage('\t\tMake default ggplot colors')
       return(autonomics.plot::make_gg_colors(x, show = show))
 
    # 2D colors
    } else {
-      autonomics.support::cmessage('\t\tMake composite colors')
+      if (verbose) autonomics.support::cmessage('\t\tMake composite colors')
       return(autonomics.plot::make_composite_colors(x, sep = sep, show = show))
    }
 
