@@ -80,7 +80,8 @@ compute_precision_weights_once <- function(
    plot   = TRUE,
    ...
 ){
-   counts   <- object %>% autonomics.import::exprs()
+   # Compute
+   counts   <- object %>% autonomics.import::counts()
    lib.size <- counts %>% autonomics.import::libsizes()
    counts %>% limma::voom(design = design, lib.size = lib.size, plot = plot, ...) %>%
               magrittr::extract2('weights') %>%
@@ -90,7 +91,7 @@ compute_precision_weights_once <- function(
 
 
 #' Compute voom precision weights
-#' @param object  SummarizedExperiment
+#' @param object  SummarizedExperiment: exprs(.) with log2cpm, counts(.) with raw counts.
 #' @param design  design matrix
 #' @param plot    logical
 #' @param ...     passed to limma::voom() -> limma::lmFit()
@@ -110,14 +111,16 @@ compute_precision_weights <- function(
    plot   = TRUE
 ){
 
+   # Assert
+   assertive.properties::assert_is_not_null(autonomics.import::counts(object))
+
    # Estimate precision weights
    has_block <- autonomics.import::has_complete_block_values(object)
    weights <- object %>% compute_precision_weights_once(design = design, plot = !has_block)
 
    # Update precision weights using block correlation
    if (has_block){
-      log2cpm <- object %>% autonomics.import::exprs() %>% counts_to_cpm() %>% log2()
-      correlation <- log2cpm %>%
+      correlation <- autonomics.import::counts(object) %>% counts_to_cpm() %>% log2() %>%
                      limma::duplicateCorrelation(design = design, block = object$block, weights = weights) %>%
                      magrittr::extract2('consensus')
       weights <- object %>% compute_precision_weights_once(design      = design,
@@ -146,27 +149,24 @@ compute_precision_weights <- function(
 #' @export
 prepro_rnaseq <- function(object, plot = TRUE){
 
-   # Impute
-   object %>% autonomics.preprocess::na_inconsistent_zeroes()
+   # Store counts
+   autonomics.support::cmessage('\t\tStore counts in autonomics.import::counts(object)')
+   autonomics.import::counts(object) <- autonomics.import::exprs(object)
+
+   # TMM-normalize
+   message('\t\tTMM normalize exprs: counts -> cpm')
+   autonomics.import::exprs(object) %<>% autonomics.import::counts_to_cpm()
+
+   # Filter
+   object %<>% autonomics.import::filter_exprs_replicated_in_some_subgroup('>', 1)
+
+   # Log2 transform
+   message('\t\tLog2 transform exprs: cpm -> log2cpm')
+   autonomics.import::exprs(object) %<>% log2()
 
    # Add precision weights
    autonomics.support::cmessage('\t\tCompute and add precision weights')
-   SummarizedExperiment::assays(object)$weights <- object %>% compute_precision_weights(plot = plot)
-
-   # Compute effective libsizes
-   message('\t\tCompute and add libsizes')
-   lib.size <- autonomics.import::exprs(object) %>% autonomics.import::libsizes()
-   autonomics.import::sdata(object)$libsize <- lib.size
-
-   # TMM-normalize
-   message('\t\tConvert counts -> cpm')
-   autonomics.import::exprs(object) %<>% counts_to_cpm(lib.size)
-
-   # Log2 transform
-   message('\t\tConvert cpm -> log2cpm')
-   autonomics.import::exprs(object) %<>% log2()
-
-
+   SummarizedExperiment::assays(object)$weights <- object %>% autonomics.import::compute_precision_weights(plot = plot)
 
    # Return
    object

@@ -1,3 +1,15 @@
+#' Filter features with min expr for all samples
+#' @param object  exprs object
+#' @param min_expr  minimum expression
+#' @importFrom magrittr %>%
+#' @export
+filter_features_min_expr <- function(object, min_expr){
+   selector <- matrixStats::rowAnys(autonomics.import::exprs(object) > min_expr)
+   autonomics.support::cmessage('\t\tRetain %d/%d features: expr > %0.2f for all samples', sum(selector), length(selector), min_expr)
+   object %>% magrittr::extract(selector, )
+}
+
+
 REQUIRED_FVARS_RNASEQ <- c('gene_id', 'gene_name')
 # Required feature variables
 #

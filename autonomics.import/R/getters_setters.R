@@ -115,6 +115,40 @@ setGeneric("contrastdefs",                                    function(object)  
 setMethod("contrastdefs", signature("SummarizedExperiment"),  function(object) S4Vectors::metadata(object)$contrastdefs )
 
 
+#=========================================================================
+
+#' @title Get/Set counts
+#' @description Get / Set counts matrix
+#' @param object SummarizedExperiment
+#' @param value count matrix (features x samples)
+#' @return exprs matrix (get) or updated object (set)
+#' @rdname counts
+
+# Get
+#====
+#' @rdname counts
+#' @export
+setGeneric('counts',                                        function(object)   standardGeneric("counts"))
+
+#' @rdname exprs
+setMethod("counts",    signature("SummarizedExperiment"),   function(object)   SummarizedExperiment::assays(object)$counts)
+
+
+# Set
+#====
+#' @rdname counts
+#' @export
+setGeneric(      'counts<-',                                                function(object, value) standardGeneric("counts<-"))
+
+#' @rdname exprs
+setReplaceMethod("counts",    signature("SummarizedExperiment", "matrix"),  function(object, value){
+   SummarizedExperiment::assays(object)$counts <- value
+   object })
+#' @rdname exprs
+setReplaceMethod("counts",    signature("SummarizedExperiment", "numeric"), function(object, value){
+   SummarizedExperiment::assays(object)$counts[] <- value
+   object })
+
 
 #=========================================================================
 #' @title Get/Set exprs

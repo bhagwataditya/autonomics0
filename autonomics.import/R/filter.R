@@ -1,3 +1,55 @@
+#=================
+# FILTER EXPRS
+#=================
+
+utils::globalVariables('.')
+
+
+#' Filter features with replicated expression in some subgroup
+#' @param object      SummarizedExperiment
+#' @param comparator  '>' or '!='
+#' @param lod         numeric(1)
+#' @return Filtered SummarizedExperiment
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% autonomics.import::filter_exprs_replicated_in_some_subgroup()
+#'    object <- autonomics.data::glutaminase
+#'    object %>% autonomics.import::filter_exprs_replicated_in_some_subgroup()
+#' }
+#' @importFrom magrittr %>%
+#' @export
+filter_exprs_replicated_in_some_subgroup <- function(
+   object,
+   comparator = if (autonomics.import::contains_ratios(object)) '!=' else '>',
+   lod = 0
+){
+
+   # Datatablify
+   fidvar <- object %>% autonomics.import::fid_var()
+   dt     <- object %>% autonomics.import::sumexp_to_long_dt(svars = 'subgroup')
+
+   # Is expr replicated in its subgroup?
+   if (comparator ==  '>') dt %>% magrittr::extract(, replicated_in_its_subgroup := sum(value  > lod, na.rm=TRUE) > 1,   by = c(fidvar, 'subgroup'))
+   if (comparator == '!=') dt %>% magrittr::extract(, replicated_in_its_subgroup := sum(value != lod, na.rm=TRUE) > 1,   by = c(fidvar, 'subgroup'))
+
+   # Is it replicated in any subgroup
+   dt %>% magrittr::extract(, replicated_in_any_subgroup := any(replicated_in_its_subgroup),    by =  fidvar)
+
+   # Keep only replicated features
+   replicated_features <- dt %>% magrittr::extract(replicated_in_any_subgroup == TRUE, get(fidvar))
+   idx <- autonomics.import::fid_values(object) %in% replicated_features
+   autonomics.support::cmessage('\t\tFilter %d/%d features: expr %s %s, for at least two samples in some subgroup', sum(idx), length(idx), comparator, as.character(lod))
+   object %>% magrittr::extract(idx, )
+}
+
+
+
+
+#=================
+# FILTER FEATURES
+#=================
 
 #' @rdname filter_features
 #' @export
@@ -83,33 +135,11 @@ filter_features_on_fvalues <- function(object, fvar, split, fvalues){
 }
 
 
-utils::globalVariables('.')
-#'Select portion of eSet with only up (or down) features
-#' @param object eSet
-#' @param contrast contrast (named string)
-#' @param direction 'neg' or 'pos'
-#' @importFrom magrittr %<>%
-#' @export
-filter_features_on_direction <- function(object, contrast, direction){
-   if (direction == 'pos'){
-      object %<>% magrittr::extract(which(autonomics.import::fdata(.)[[paste0('value.', names(contrast))]] > 0))
-   } else if (direction == 'neg'){
-      object %<>% magrittr::extract(which(autonomics.import::fdata(.)[[paste0('value.', names(contrast))]] < 0))
-   }
-   return(object)
-}
 
-#' Filter features with min expr for all samples
-#' @param object  exprs object
-#' @param min_expr  minimum expression
-#' @importFrom magrittr %>%
-#' @export
-filter_features_min_expr <- function(object, min_expr){
-   selector <- matrixStats::rowAnys(autonomics.import::exprs(object) > min_expr)
-   autonomics.support::cmessage('\t\tRetain %d/%d features: expr > %0.2f for all samples', sum(selector), length(selector), min_expr)
-   object %>% magrittr::extract(selector, )
-}
 
+#=========================
+# FILTER SAMPLES
+#=========================
 
 #' @rdname filter_samples
 #' @importFrom magrittr %<>%

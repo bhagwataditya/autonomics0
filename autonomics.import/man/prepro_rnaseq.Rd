@@ -4,7 +4,7 @@
 \alias{prepro_rnaseq}
 \title{Preprocess RNAseq counts}
 \usage{
-prepro_rnaseq(object)
+prepro_rnaseq(object, plot = TRUE)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -18,6 +18,7 @@ if (require(subramanian.2016)){
    object <- 'extdata/rnaseq/gene_counts.txt' \%>\%
               system.file(package = 'subramanian.2016') \%>\%
               autonomics.import::load_rnaseq(infer_design_from_sampleids = TRUE)
-   object \%>\% prepro_rnaseq()
+   object \%<>\% prepro_rnaseq()
+   object \%>\% autonomics.plot::plot_overlayed_sample_distributions()
 }
 }
