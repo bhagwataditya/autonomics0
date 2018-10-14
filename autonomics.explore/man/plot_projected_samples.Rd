@@ -13,9 +13,9 @@ plot_projected_samples(object, ..., listed_objects = NULL, method = c("pca",
   "mixOmics::splsda", "ropls::opls")[1], dims = 1:2, color_var = "subgroup",
   color_values = autonomics.plot::default_color_values(object, color_var),
   shape_var = autonomics.plot::default_shape_var(object), size_var = NULL,
-  txt_var = autonomics.plot::default_txt_var(object), group_var = NULL,
-  split_var = NULL, facet_var = NULL, scales = ifelse(is.null(facet_var),
-  "fixed", "free"), labs = list(color =
+  txt_var = autonomics.plot::default_txt_var(object), txt_outliers = FALSE,
+  group_var = NULL, split_var = NULL, facet_var = NULL,
+  scales = ifelse(is.null(facet_var), "fixed", "free"), labs = list(color =
   stringi::stri_trans_totitle(color_var), shape =
   stringi::stri_trans_totitle(shape_var)), nrow = NULL,
   mention_method = ifelse(is.null(facet_var), TRUE, FALSE), title = NULL,
@@ -51,6 +51,8 @@ plot_pls_samples(object, ...)
 \item{size_var}{svar mapped to size}
 
 \item{txt_var}{svar mapped to txt}
+
+\item{txt_outliers}{logical(1): whether to annotate outliers}
 
 \item{group_var}{svar mapped to group}
 

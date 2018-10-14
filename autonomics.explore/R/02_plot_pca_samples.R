@@ -10,6 +10,7 @@
 #' @param shape_var         svar mapped to shape
 #' @param size_var          svar mapped to size
 #' @param txt_var           svar mapped to txt
+#' @param txt_outliers      logical(1): whether to annotate outliers
 #' @param group_var         svar mapped to group
 #' @param split_var         svar on which to split data prior to transformation
 #' @param facet_var         svar on which to facet sample biplot
@@ -63,6 +64,7 @@ plot_projected_samples <- function(
    shape_var         = autonomics.plot::default_shape_var(object),
    size_var          = NULL, 
    txt_var           = autonomics.plot::default_txt_var(object), 
+   txt_outliers      = FALSE,
    group_var         = NULL,
    split_var         = NULL,
    facet_var         = NULL,
@@ -226,7 +228,12 @@ plot_projected_samples <- function(
    if (!is.null(txt_var)){
       p <- p + ggrepel::geom_text_repel(ggplot2::aes_string(x='x',y='y', label='label', color = 'color'), show.legend = FALSE)
    }
-
+   if (txt_outliers){
+      is_an_outlier <- autonomics.support::is_outlier(plotDF$x) | autonomics.support::is_outlier(plotDF$y)
+      p <- p + ggrepel::geom_text_repel(data    = plotDF[is_an_outlier, ], 
+                                        mapping = ggplot2::aes_string(x='x', y='y', color = 'color', label = 'sample_id'))
+   }
+   
    # Facet
    if (!is.null(facet_var)){ 
       p <- p + ggplot2::facet_wrap(
