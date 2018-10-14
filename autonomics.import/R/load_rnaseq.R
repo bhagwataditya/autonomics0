@@ -150,7 +150,7 @@ compute_precision_weights <- function(
 prepro_rnaseq <- function(object, plot = TRUE){
 
    # Store counts
-   autonomics.support::cmessage('\t\tStore counts in autonomics.import::counts(object)')
+   autonomics.support::cmessage('\n\t\tStore counts in autonomics.import::counts(object)')
    autonomics.import::counts(object) <- autonomics.import::exprs(object)
 
    # TMM-normalize
