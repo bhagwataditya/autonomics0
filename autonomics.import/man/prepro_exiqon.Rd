@@ -2,7 +2,7 @@
 % Please edit documentation in R/load_exiqon.R
 \name{prepro_exiqon}
 \alias{prepro_exiqon}
-\title{Preprocess Exiqon SumExp}
+\title{Preprocess Exiqon Ct}
 \usage{
 prepro_exiqon(object, filter_features = "`#RefGenes`==0 & `#Spike`   ==0",
   align_sample_means = TRUE, lod = 37, zero_consistent_nas = TRUE,
@@ -25,14 +25,14 @@ prepro_exiqon(object, filter_features = "`#RefGenes`==0 & `#Spike`   ==0",
 SummarizedExperiment
 }
 \description{
-Preprocess Exiqon SumExp
+Preprocess Exiqon Ct
 }
 \examples{
 require(magrittr)
 if (require(subramanian.2016)){
-   file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
-                        package = 'subramanian.2016')
-   file \%>\% autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE) \%>\%
-            autonomics.import::prepro_exiqon(lod=36)
+   object <- 'extdata/exiqon/subramanian.2016.exiqon.xlsx' \%>\%
+              system.file(package = 'subramanian.2016') \%>\%
+              autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE)
+   object \%>\% autonomics.import::prepro_exiqon(lod=36)
 }
 }

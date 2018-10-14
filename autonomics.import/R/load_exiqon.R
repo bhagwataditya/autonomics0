@@ -43,7 +43,7 @@ load_exiqon <- function(
 
 #==========================================================================
 
-#' Preprocess Exiqon SumExp
+#' Preprocess Exiqon Ct
 #' @param object               SummarizedExperiment
 #' @param filter_features      character(1) with feature filter condition
 #' @param align_sample_means   logical: whether to align the sample maens
@@ -54,10 +54,10 @@ load_exiqon <- function(
 #' @examples
 #' require(magrittr)
 #' if (require(subramanian.2016)){
-#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
-#'                         package = 'subramanian.2016')
-#'    file %>% autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE) %>%
-#'             autonomics.import::prepro_exiqon(lod=36)
+#'    object <- 'extdata/exiqon/subramanian.2016.exiqon.xlsx' %>%
+#'               system.file(package = 'subramanian.2016') %>%
+#'               autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE)
+#'    object %>% autonomics.import::prepro_exiqon(lod=36)
 #' }
 #' @importFrom magrittr %>%
 #' @export
