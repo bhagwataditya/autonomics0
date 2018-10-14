@@ -19,6 +19,6 @@ Load rnaseq fdata
  require(magrittr)
  if (require(subramanian.2016)){
     file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
-    file \%>\% autonomics.import::load_fdata_rnaseq()
+    file \%>\% autonomics.import::load_fdata_rnaseq() \%>\% head()
  }
 }

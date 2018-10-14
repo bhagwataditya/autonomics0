@@ -153,10 +153,10 @@ load_fdata_metabolon <- function(file, sheet){
    sstart <- which(!is.na(df[1,]))[1]
    fstart <- which(!is.na(df[,1]))[1]
    df %>% magrittr::extract((fstart+1):nrow(.), 1:sstart)                     %>%
-      as.data.frame(stringsAsFactors = FALSE)                             %>%
-      magrittr::set_names(df[fstart, 1:sstart] %>% unlist() %>% unname()) %>%
-      magrittr::set_rownames(paste0('M', .$COMP_ID))                      %>%
-      cbind(MCOMP_ID = rownames(.), .)
+          as.data.frame(stringsAsFactors = FALSE)                             %>%
+          magrittr::set_names(df[fstart, 1:sstart] %>% unlist() %>% unname()) %>%
+          magrittr::set_rownames(paste0('M', .$COMP_ID))                      %>%
+          cbind(feature_id = rownames(.), .)
 }
 
 
@@ -222,13 +222,14 @@ load_fdata_soma <- function(file){
    x <- file %>% autonomics.import::identify_soma_structure()
 
    file %>%
-      data.table::fread(header = FALSE, sep = '\t', fill = TRUE)                  %>%
-      magrittr::extract((x$row-length(x$fvars)-1):(x$row-2),  (x$col-1):ncol(.))  %>%
-      t()                                                                         %>%
-      data.table::data.table()                                                    %>%
-      magrittr::set_names(unlist(unname(.[1,])))                                  %>%
-      magrittr::extract(-1, )                                                     %>%
-      data.frame(row.names = .$SeqId)
+   data.table::fread(header = FALSE, sep = '\t', fill = TRUE)                  %>%
+   magrittr::extract((x$row-length(x$fvars)-1):(x$row-2),  (x$col-1):ncol(.))  %>%
+   t()                                                                         %>%
+   data.table::data.table()                                                    %>%
+   magrittr::set_names(unlist(unname(.[1,])))                                  %>%
+   magrittr::extract(-1, )                                                     %>%
+  (function(x){names(x)[1] <- 'feature_id'; x})                                %>%
+   data.frame(row.names = .$SeqId)
 }
 
 #========
@@ -242,7 +243,7 @@ load_fdata_soma <- function(file){
 #'  require(magrittr)
 #'  if (require(subramanian.2016)){
 #'     file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
-#'     file %>% autonomics.import::load_fdata_rnaseq()
+#'     file %>% autonomics.import::load_fdata_rnaseq() %>% head()
 #'  }
 #' @importFrom magrittr %>%
 #' @export
@@ -252,7 +253,8 @@ load_fdata_rnaseq <- function(file){
   (function(x) x %>% magrittr::extract(, vapply(x, is.numeric, logical(1)) %>% magrittr::not(), with = FALSE)) %>%
   (function(x) x %>% data.frame(row.names = x[[1]],
                                 stringsAsFactors = FALSE,
-                                check.names = FALSE))
+                                check.names = FALSE)) %>%
+  (function(x){names(x)[1] <- 'feature_id'; x})
 }
 
 #============================================

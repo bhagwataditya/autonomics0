@@ -33,11 +33,11 @@ fid_var <- function(object){
 
    # Keep default for esets without prepro
    fvar_name <- 'feature_id'
-   if (autonomics.import::is_rnaseq_eset(object))    fvar_name <- 'gene_id'     # rnaseq
+   if (autonomics.import::is_rnaseq_eset(object))    fvar_name <- 'feature_id'  # rnaseq
    if (autonomics.import::is_exiqon_eset(object))    fvar_name <- 'feature_id'  # exiqon
    if (autonomics.import::is_maxquant_eset(object))  fvar_name <- 'feature_id'  # max quant
-   if (autonomics.import::is_soma_eset(object))      fvar_name <- 'SeqId'       # somascan
-   if (autonomics.import::is_metabolon_eset(object)) fvar_name <- 'MCOMP_ID'    # metabolon:  M + COMPOUNDID
+   if (autonomics.import::is_soma_eset(object))      fvar_name <- 'feature_id'  # somascan
+   if (autonomics.import::is_metabolon_eset(object)) fvar_name <- 'feature_id'  # metabolon:  M + COMPOUNDID
 
    assertive.sets::is_subset(fvar_name, autonomics.import::fvars(object))
    fvalues <- autonomics.import::fdata(object)[[fvar_name]]
