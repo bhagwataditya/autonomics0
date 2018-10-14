@@ -26,8 +26,6 @@ if (require(autonomics.data){
 })
 if (require(subramanian.2016)){
    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
-   infer_design_from_sampleids <- TRUE
-   object <- load_rnaseq(file, infer_design_from_sampleids = TRUE)
-   object
+   load_rnaseq(file, infer_design_from_sampleids = TRUE)
 }
 }
