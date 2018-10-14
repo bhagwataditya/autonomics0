@@ -8,7 +8,7 @@ compute_precision_weights(object,
   design = autonomics.import::create_design_matrix(object), plot = TRUE)
 }
 \arguments{
-\item{object}{SummarizedExperiment}
+\item{object}{SummarizedExperiment: exprs(.) with log2cpm, counts(.) with raw counts.}
 
 \item{design}{design matrix}
 

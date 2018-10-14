@@ -153,4 +153,26 @@ zero_consistent_nas <- function(object, verbose = FALSE){
    object
 }
 
+# Thought of re-writing na_inconsistent_zeroes
+# in the same style as zero_consistent_nas(), using data.table,
+#
+# Started working on this function while working on rnaseq data.
+# But then noticed that rnaseq data does not need this.
+# So then stopped working
+# Will pick up once another need arises.
+#
+# na_inconsistent_zeroes <- function(object, verbose = FALSE){
+#
+#    # Melt
+#    fid_var <- autonomics.import::fid_var(object)
+#    dt <- object %>% autonomics.import::sumexp_to_long_dt(fid = fid_var, svars = 'subgroup')
+#    dt %<>% magrittr::extract(order(gene_id))
+#
+#    # NA inconsistent zeroes
+#    dt %>%  magrittr::extract(, inconsistent_0 := value==0 & any(value!=0), by = c(fid_var, 'subgroup'))
+#    dt %>%  magrittr::extract(, any_inconsistent_0 := any(inconsistent_0), by='gene_id')
+#    dt %<>% magrittr::extract(any_inconsistent_0 == TRUE)
+#    mat <- dt %>%  data.table::dcast.data.table(gene_id ~ sample_id, value.var = 'value')
+#    mat
+# }
 

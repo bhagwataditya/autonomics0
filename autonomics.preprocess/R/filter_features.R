@@ -26,6 +26,8 @@ filter_features_nonzero_for_two_samples_in_some_subgroup <- function(object){
    object[selector, ]
 }
 
+
+
 #' Keep features that are available in all samples
 #' @param object SummarizedExperiment, eSet, or EList
 #' @return updated object
