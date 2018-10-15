@@ -108,10 +108,11 @@ na_inconsistent_zeroes <- function(
 
 #' Zero consistent NAs - NA inconsistent zeroes
 #'
-#' These functions allow to differentiate between consistent and inconsistent non-detects.
-#' Inconsistent non-detects are due to measurement stochasticity.     These should be coded as NA rather than zero.
-#' Consistent   non-detects are not due to measurement stochasticity. These should be coded as zero rather than NA.
-#' Making this distinction improves power of statistical analysis.
+#' These functions allow to differentiate between two types of non-detects: consistent (which are 0 rather than NA) and
+#' inconsistent (NA rather than 0). This distinction is required in LCMS platforms (proteomics and metabolomics),
+#' where a high degree of inconsistent non-detects are generated due to platform stochasticity. It is not required in
+#' transcriptomics platforms (RNAseq, qPCR, microarrays), where non-detecs arise due to low abundance rather than platform
+#' stochasticity.
 #'
 #' @param object SummarizedExperiment
 #' @param no_zero \code{\link{character}} defining how to react of there are no \code{0}s (zeros) present in the data set
@@ -121,6 +122,12 @@ na_inconsistent_zeroes <- function(
 #'    object <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
 #'                           package = 'subramanian.2016') %>%
 #'              autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE)
+#'    object %>% autonomics.preprocess::zero_consistent_nas(verbose = TRUE)
+#'
+#'    object <- system.file('extdata/metabolon/subramanian.2016.metabolon.xlsx',
+#'                           package = 'subramanian.2016') %>%
+#'              autonomics.import::load_metabolon(sheet = 5, infer_design_from_sampleids = TRUE)
+#'    object %>% autonomics.preprocess::zero_consistent_nas(verbose = TRUE)
 #' }
 #' @return updated object
 #' @importFrom data.table data.table :=
@@ -144,11 +151,10 @@ zero_consistent_nas <- function(object, verbose = FALSE){
 
    # Cast into exprs
    autonomics.import::exprs(object) <- dt %>% data.table::dcast.data.table(feature_id ~ sample_id, value.var = 'value') %>%
-                                              data.table::setkey(feature_id)      %>%
-                                              magrittr::extract(rownames(object)) %>%
-                                             (function(x)  x[, -1, with = FALSE]  %>%
-                                                           data.matrix()          %>%
-                                                           magrittr::set_rownames(x[[1]]) )
+                                              autonomics.support::matrixify() %>%
+                                              magrittr::extract(rownames(object), ) %>%
+                                              magrittr::extract(, colnames(object))
+
    # Return
    object
 }

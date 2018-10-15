@@ -16,6 +16,6 @@ logical
 Identify outliers in vector
 }
 \examples{
-require(magrittr)
-c(1,2,3,4,5,6, 200) \%>\% autonomics.support::is_outlier()
+x <- c(1:25,  200)
+autonomics.support::is_outlier(x)
 }
