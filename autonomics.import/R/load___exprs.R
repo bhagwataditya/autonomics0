@@ -203,7 +203,12 @@ load_exprs_maxquant <- function(file, quantity){
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% load_exprs_metabolon(2) %>% extract(1:3, 1:3)
+#'    file %>% autonomics.import::load_exprs_metabolon(2) %>% extract(1:3, 1:3)
+#' }
+#' if (require(subramanian.2016)){
+#'    file <- 'extdata/metabolon/subramanian.2016.metabolon.xlsx' %>%
+#'             system.file(package = 'subramanian.2016')
+#'    file %>% autonomics.import::load_exprs_metabolon(sheet = 5)
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -218,7 +223,7 @@ load_exprs_metabolon <- function(file, sheet){
    df %>% magrittr::extract((fstart+1):nrow(.), (sstart+1):ncol(.)) %>%
       data.matrix() %>%
       magrittr::set_colnames(sdata1$CLIENT_IDENTIFIER) %>%
-      magrittr::set_rownames(fdata1$MCOMP_ID)
+      magrittr::set_rownames(fdata1$feature_id)
 }
 
 

@@ -21,6 +21,11 @@ Load metabolon exprs
 require(magrittr)
 if (require(autonomics.data)){
    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-   file \%>\% load_exprs_metabolon(2) \%>\% extract(1:3, 1:3)
+   file \%>\% autonomics.import::load_exprs_metabolon(2) \%>\% extract(1:3, 1:3)
+}
+if (require(subramanian.2016)){
+   file <- 'extdata/metabolon/subramanian.2016.metabolon.xlsx' \%>\%
+            system.file(package = 'subramanian.2016')
+   file \%>\% autonomics.import::load_exprs_metabolon(sheet = 5)
 }
 }
