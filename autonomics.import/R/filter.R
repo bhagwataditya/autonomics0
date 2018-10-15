@@ -148,7 +148,7 @@ filter_samples_ <- function(object, condition, verbose = FALSE){
    if (is.null(condition)) return(object)
    idx <- lazyeval::lazy_eval(condition, autonomics.import::sdata(object))
    idx <- idx & !is.na(idx)
-   if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' features: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
+   if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' samples: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
    object %<>% magrittr::extract(, idx)
    autonomics.import::sdata(object) %<>% droplevels()
    object
