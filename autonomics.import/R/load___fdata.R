@@ -143,7 +143,7 @@ load_fdata_maxquant <- function(file){
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% load_fdata_metabolon(2) %>% extract(1:3, 1:3)
+#'    file %>% autonomics.import::load_fdata_metabolon(2) %>% extract(1:3, 1:3)
 #' }
 #' @importFrom magrittr %>%
 #' @export

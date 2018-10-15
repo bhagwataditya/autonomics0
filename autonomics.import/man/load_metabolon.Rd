@@ -55,4 +55,9 @@ if (require(autonomics.data)){
       file \%>\% load_metabolon(design_file = design_file) \%>\%
                autonomics.import::sdata() \%>\% magrittr::extract(1:3, 1:5)
 }
+if (require(subramanian.2016)){
+   file <- 'extdata/metabolon/subramanian.2016.metabolon.xlsx' \%>\%
+           system.file(package='subramanian.2016')
+   object <- file \%>\% autonomics.import::load_metabolon(sheet = 5)
+}
 }

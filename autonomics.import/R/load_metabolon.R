@@ -36,6 +36,11 @@
 #'       file %>% load_metabolon(design_file = design_file) %>%
 #'                autonomics.import::sdata() %>% magrittr::extract(1:3, 1:5)
 #' }
+#' if (require(subramanian.2016)){
+#'    file <- 'extdata/metabolon/subramanian.2016.metabolon.xlsx' %>%
+#'            system.file(package='subramanian.2016')
+#'    object <- file %>% autonomics.import::load_metabolon(sheet = 5)
+#' }
 #' @importFrom magrittr %>%
 #' @export
 load_metabolon <- function(
@@ -55,7 +60,7 @@ load_metabolon <- function(
    # Sheet
    all_sheets <- readxl::excel_sheets(file)
    cur_sheet <- all_sheets %>% (function(x){ names(x) <- x; x}) %>% magrittr::extract2(sheet)
-   autonomics.support::cmessage('Load  %s  %s', basename(file), cur_sheet)
+   autonomics.support::cmessage('\t\tLoad  %s  %s', basename(file), cur_sheet)
 
    # Load sumexp
    object <- autonomics.import::load_omics(file                        = file,
@@ -68,6 +73,9 @@ load_metabolon <- function(
                                            design_sep                  = design_sep)
    autonomics.import::prepro(object) <- list(assay='lcms', entity='metabolite', quantity='intensities', software='metabolon')
    autonomics.import::annotation(object) <- ''
+
+   # Zero consistent nas
+   object %<>% autonomics.preprocess::zero_consistent_nas(verbose = TRUE)
 
    # Annotate
    if (add_kegg_pathways){
