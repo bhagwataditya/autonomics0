@@ -110,10 +110,9 @@ default_nplot <- function(object){
 default_topdef <- function(object){
 
    subgroups             <- !is.null(autonomics.import::sdata(object)$subgroup)
-   replicates            <- anyDuplicated(autonomics.import::sdata(object)$subgroup)
-   sufficient_features   <- nrow(object) > 50
+   replicates            <- any(duplicated(autonomics.import::sdata(object)$subgroup)) # anyDuplicated sometimes returns a number!
 
-   if (subgroups & replicates & sufficient_features)   'p < 0.05'
-   else                                                '(quantile < 0.05 | quantile > 0.95)'
+   if (subgroups & replicates)   'p < 0.05'
+   else                          '(effect < 1 | effect > 1)'
 }
 
