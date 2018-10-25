@@ -6,7 +6,7 @@
 \usage{
 prepro_exiqon(object, filter_features = "`#RefGenes`==0 & `#Spike`   ==0",
   align_sample_means = TRUE, lod = 37, zero_consistent_nas = TRUE,
-  plot = TRUE)
+  filter_conserved_in_human = FALSE, plot = TRUE)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -18,6 +18,8 @@ prepro_exiqon(object, filter_features = "`#RefGenes`==0 & `#Spike`   ==0",
 \item{lod}{numeric(1): lod Ct value}
 
 \item{zero_consistent_nas}{logical(1)}
+
+\item{filter_conserved_in_human}{logical: whether to filter for features consvered in human (useful for non-human microRNA profiles)}
 
 \item{plot}{logical: whether to plot sample distributions}
 }

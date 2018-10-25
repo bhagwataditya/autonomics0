@@ -44,12 +44,13 @@ load_exiqon <- function(
 #==========================================================================
 
 #' Preprocess Exiqon Ct
-#' @param object               SummarizedExperiment
-#' @param filter_features      character(1) with feature filter condition
-#' @param align_sample_means   logical: whether to align the sample maens
-#' @param lod                  numeric(1): lod Ct value
-#' @param zero_consistent_nas  logical(1)
-#' @param plot                 logical: whether to plot sample distributions
+#' @param object                    SummarizedExperiment
+#' @param filter_features           character(1) with feature filter condition
+#' @param align_sample_means        logical: whether to align the sample maens
+#' @param lod                       numeric(1): lod Ct value
+#' @param zero_consistent_nas       logical(1)
+#' @param filter_conserved_in_human logical: whether to filter for features consvered in human (useful for non-human microRNA profiles)
+#' @param plot                      logical: whether to plot sample distributions
 #' @return SummarizedExperiment
 #' @examples
 #' require(magrittr)
@@ -67,6 +68,7 @@ prepro_exiqon <- function(
    align_sample_means          = TRUE,
    lod                         = 37,
    zero_consistent_nas         = TRUE,
+   filter_conserved_in_human   = FALSE,
    plot                        = TRUE
 ){
    # Plot function
@@ -113,6 +115,14 @@ prepro_exiqon <- function(
    if (zero_consistent_nas){
       object %<>% autonomics.preprocess::zero_consistent_nas(verbose = TRUE)
       if (plot) object %>% plotfun(newmetric, 'Zero consistent NA values') %>% print()
+   }
+
+   # Filter for mirs conserved in human
+   #-----------------------------------
+   if (filter_conserved_in_human){
+      autonomics.import::fdata(object) %<>% (function(x){x$number <- x$feature_id %>% substr(9, nchar(.)); x})
+      conserved_human_mirs <- autonomics.annotate::load_targetscan('H.sapiens') %>% magrittr::extract2('number')
+      object %<>% autonomics.import::filter_features(number %in% conserved_human_mirs, verbose = TRUE)
    }
 
    # Return
