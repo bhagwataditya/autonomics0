@@ -75,7 +75,7 @@ load_metabolon <- function(
    autonomics.import::annotation(object) <- ''
 
    # Zero consistent nas
-   object %<>% autonomics.preprocess::zero_consistent_nas(verbose = TRUE)
+   #object %<>% autonomics.preprocess::zero_consistent_nas(verbose = TRUE)
 
    # Annotate
    if (add_kegg_pathways){
