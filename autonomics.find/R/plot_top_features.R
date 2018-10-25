@@ -69,14 +69,20 @@ collapse_fvars <- function(object, fvars){
    do.call(paste, c(fdf, sep = '   ')) %>% trimws()
 }
 
+#' @rdname plot_contrast_features
+#' @export
+plot_top_features <- function(...){
+   autonomics.plot::plot_contrast_features(...)
+}
 
-#' Plot top features
+
+#' Plot contrast features
 #'
-#' This function visualizes the top features for the specified contrast.
+#' This function visualizes the differential contrast features
 #'
-#' @param object \code{eSet}
-#' @param design    design matrix
+#' @param object \code{SummarizedExperiment}
 #' @param contrast  named contrast for which to select the top feature bars
+#' @param design    design matrix
 #' @param topdef    definition of 'top features'.
 #' @param geom     'point', 'boxplot', 'violin', 'bar', 'hbar'
 #' @param fvars     fvars to use in plot
@@ -89,26 +95,26 @@ collapse_fvars <- function(object, fvars){
 #'   file <- tempfile() %>% paste0('.pdf') %T>% message()
 #'   if (require(autonomics.data)){
 #'      object <- autonomics.data::stemcomp.proteinratios
-#'      object %>% plot_top_features(geom = 'hbar')
-#'      object %>% plot_top_features(geom = 'bar')
-#'      object %>% plot_top_features(geom = 'point')
-#'      object %>% plot_top_features(geom = 'violin')
-#'      object %>% plot_top_features(geom = 'boxplot')
-#'      object %>% plot_top_features(x = 'subgroup')
+#'      object %>% plot_contrast_features(geom = 'hbar')
+#'      object %>% plot_contrast_features(geom = 'bar')
+#'      object %>% plot_contrast_features(geom = 'point')
+#'      object %>% plot_contrast_features(geom = 'violin')
+#'      object %>% plot_contrast_features(geom = 'boxplot')
+#'      object %>% plot_contrast_features(x = 'subgroup')
 #'   }
 #'
 #'# GLUTAMINASE
 #'   if (require(autonomics.data)){
 #'      object <- autonomics.data::glutaminase
 #'      topdef <- 'bonf < 0.05 & rank <= 4'
-#'      object %>% plot_top_features(topdef = topdef, geom = 'boxplot')
+#'      object %>% plot_contrast_features(topdef = topdef, geom = 'boxplot')
 #'   }
 #'
 #' # A somascan eset
 #' if (require(atkin.2014)){
 #'    object  <- atkin.2014::soma
 #'    contrasts <- atkin.2014::contrasts
-#'    object %>% plot_top_features(contrast = contrasts[1], nplot = 9,
+#'    object %>% plot_contrast_features(contrast = contrasts[1], nplot = 9,
 #'                                 geom = 'point', x = 'time', color_var = 'condition',
 #'                                 facet_var = 'subject_id', fvars = 'TargetFullName')
 #' }
@@ -117,7 +123,7 @@ collapse_fvars <- function(object, fvars){
 #' if (require(subramanian.2016)){
 #'    contrasts <- subramanian.2016::contrasts.metabolon[1]
 #'    object  <- subramanian.2016::metabolon %>% add_limma_to_fdata(contrasts = contrasts)
-#'    object %>% plot_top_features(contrast  = contrasts,
+#'    object %>% plot_contrast_features(contrast  = contrasts,
 #'                                 geom      = 'boxplot',
 #'                                 color_var = 'condition',
 #'                                 group_var = 'condition',
@@ -128,7 +134,7 @@ collapse_fvars <- function(object, fvars){
 #' if (require(billing.differentiation.data)){
 #'    object <- billing.differentiation.data::rna.voomcounts
 #'    contrast <- billing.differentiation.data::contrasts[1]
-#'    object %>% autonomics.find::plot_top_features(contrast = contrast, 
+#'    object %>% autonomics.find::plot_contrast_features(contrast = contrast, 
 #'                                                  nplot    = 4)
 #' }
 #'
@@ -136,10 +142,10 @@ collapse_fvars <- function(object, fvars){
 #' @author Aditya Bhagwat
 #' @importFrom magrittr   %>%   %<>%
 #' @export
-plot_top_features <- function(
+plot_contrast_features <- function(
    object,
-   design         = autonomics.import::create_design_matrix(object),
    contrast       = autonomics.find::default_contrasts(object)[1],
+   design         = autonomics.import::create_design_matrix(object),
    topdef         = autonomics.find::default_topdef(object),
    geom           = autonomics.plot::default_feature_plots(object)[1],
    nplot          = autonomics.find::default_nplot(object), 
@@ -195,25 +201,33 @@ plot_top_features <- function(
   p
 }
 
-#' Plot top features
+
+#' @rdname plot_features_all_contrasts
+#' @export
+plot_top_features_all_contrasts <- function(...){
+   plot_per_contrast_features(...)
+}
+
+
+
+#' Plot per contrast features for all contrasts
 #'
-#' Plot top features per contrast
-#' @param object          SummarizedExperiment
-#' @param design          design matrix
-#' @param contrasts       named contrast vector
-#' @param result_dir      directory where to store results
-#' @param geom           which feature plots to be created?
-#' @param ...             passed to autonomics.plot::plot_features
+#' @param object     SummarizedExperiment
+#' @param contrasts  named contrast vector
+#' @param design     design matrix
+#' @param result_dir directory where to store results
+#' @param geom       which feature plots to be created?
+#' @param ...        passed to autonomics.plot::plot_features
 #' @examples
 #' require(magrittr)
 #' if (require(atkin.2014)){
 #'    object <- atkin.2014::soma
 #'    contrasts <- atkin.2014::contrasts
 #'    result_dir <- tempdir() %T>% message()
-#'    object %>% plot_top_features_all_contrasts(
+#'    object %>% plot_per_contrast_features(
 #'                    contrasts = contrasts[1], 
 #'                     result_dir = result_dir)
-#'    object %>% plot_top_features_all_contrasts(
+#'    object %>% plot_per_contrast_features(
 #'                    contrasts  = contrasts[1], 
 #'                    result_dir = result_dir,
 #'                    nplot      = 9, 
@@ -227,7 +241,7 @@ plot_top_features <- function(
 #' if (require(autonomics.data)){
 #'   object <- autonomics.data::glutaminase
 #'   result_dir <- tempdir() %T>% message()
-#'   object %>% plot_top_features_all_contrasts(
+#'   object %>% plot_per_contrast_features(
 #'                 contrasts  = autonomics.import::contrastdefs(object)[1:2],
 #'                 topdef     = 'fdr < 0.05',
 #'                 geom       = 'boxplot',
@@ -235,10 +249,10 @@ plot_top_features <- function(
 #'}
 #' @importFrom magrittr  %>%
 #' @export
-plot_top_features_all_contrasts <- function(
+plot_per_contrast_features <- function(
    object,
-   design         = autonomics.import::create_design_matrix(object),
    contrasts      = autonomics.find::default_contrasts(object),
+   design         = autonomics.import::create_design_matrix(object),
    topdef         = autonomics.find::default_topdef(object),
    geom           = autonomics.plot::default_feature_plots(object),
    result_dir,
@@ -255,12 +269,12 @@ plot_top_features_all_contrasts <- function(
           my_file <- sprintf('%s/top_%ss__%s__%s.pdf', subdir, cur_geom, names(contrast), direction)
           comparator <- c(up='>', down='<')[[direction]]
           autonomics.support::cmessage('\t\t%s %s 0   %s', names(contrast), comparator, basename(my_file))
-          object %>% autonomics.find::plot_top_features( design    = design,
-                                                         contrast  = contrast,
-                                                         topdef    = sprintf('effect %s 0  &  %s', comparator, topdef),
-                                                         geom      = cur_geom,
-                                                         file      = my_file, 
-                                                         ...)
+          object %>% autonomics.find::plot_contrast_features(contrast  = contrast,
+                                                            design    = design,
+                                                            topdef    = sprintf('effect %s 0  &  %s', comparator, topdef),
+                                                            geom      = cur_geom,
+                                                            file      = my_file, 
+                                                            ...)
        }
     }
   }
