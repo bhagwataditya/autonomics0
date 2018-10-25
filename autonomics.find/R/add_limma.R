@@ -114,6 +114,7 @@ add_limma <- function(
       S4Vectors::metadata(object)$limma[, , 't'   ] <- fit$t
       S4Vectors::metadata(object)$limma[, , 'se'  ] <- sqrt(fit$s2.post) * fit$stdev.unscaled
       S4Vectors::metadata(object)$limma[, , 'p'   ] <- fit$p.value
+      S4Vectors::metadata(object)$limma[, , 'rank'] <- fit$p.value %>% apply(2, rank)
       
       S4Vectors::metadata(object)$limma[, , 'fdr' ] <- fit$p.value %>% apply(2, stats::p.adjust, 'fdr')
       S4Vectors::metadata(object)$limma[, , 'bonf'] <- fit$p.value %>% apply(2, stats::p.adjust, 'bonferroni')
