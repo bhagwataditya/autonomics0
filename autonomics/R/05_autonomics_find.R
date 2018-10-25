@@ -24,12 +24,3 @@ NULL
 #' @export  plot_top_features
 NULL
 
-
-
-#' Write top features
-#' 
-#' \code{\link[autonomics.find]{write_top_features}}
-#' @name write_top_features
-#' @importFrom autonomics.find   write_top_features
-#' @export write_top_features
-NULL
