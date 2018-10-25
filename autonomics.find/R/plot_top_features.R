@@ -32,7 +32,7 @@ create_feature_plot_title <- function(object, contrast, topdef, direction){
    n.down.fdr %<>% stringi::stri_pad(width = max(nchar(c(n.down.fdr, n.up.fdr))))
    n.up.fdr   %<>% stringi::stri_pad(width = max(nchar(c(n.down.fdr, n.up.fdr))))
    
-   s0 <- sprintf('%s : %s %s', names(contrast), n.top, topdef)
+   s0 <- sprintf('%s %s features : %s', n.top, names(contrast), topdef)
    spaces <- paste0(rep(' ', nchar(names(contrast))), collapse = '')
    s1 <- sprintf('%s down > %s p > %s fdr > %s bonf', n.down, n.down.p, n.down.fdr, n.down.bonf)
    s2 <- sprintf('%s up   > %s p > %s fdr > %s bonf', n.up,   n.up.p,   n.up.fdr,   n.up.bonf)
