@@ -47,7 +47,7 @@ download_targetscan_human_mouse <- function(organism = 'H.sapiens', cachefile){
    cachedir <- dirname(cachefile)
 
    # Target predictions
-   subdir <- switch(organism, H.sapiens = 'vert_71/vert_71_data_download', M.musculus = 'mmu_71/mmu_71_data_download')
+   subdir <- switch(organism, H.sapiens = 'vert_72/vert_72_data_download', M.musculus = 'mmu_72/mmu_72_data_download')
    remote <- sprintf('http://www.targetscan.org/%s/Summary_Counts.default_predictions.txt.zip', subdir)
    local  <-  paste0(cachedir, '/', basename(remote))
    utils::download.file(remote, local)
@@ -97,6 +97,9 @@ download_targetscan <- function(organism){
 
    # Rename
    target_predictions[, mir := tolower(mir)]
+
+   # Number
+   target_predictions[, number := mir %>% substr(9, nchar(.))]
 
    # Filter
    mir_taxon_id = SPECIES_TO_TAXONID %>% magrittr::extract2(organism)
