@@ -56,7 +56,12 @@ stemdiff.proteinratios %>% autonomics.plot::default_color_values(color_var = 'su
 
 glutaminase <- 'extdata/glutaminase/glutaminase.xlsx'     %>% 
                 system.file(package = 'autonomics.data')  %>% 
-                autonomics.import::load_metabolon()       %>% 
+                autonomics.import::load_metabolon()
+glutaminase %>% autonomics.import::sdata() %>% head()
+
+glutaminase %>% autonomics.find::make_ref_contrasts()
+
+%>% 
                 autonomics.import::set_contrastdefs(autonomics.find::make_ref_contrasts(.)) %>% 
                 autonomics.find::add_limma()
 autonomics.import::sdata(glutaminase) %>% magrittr::extract(, c('SAMPLE_NAME', 'SAMPLE_ID', 'CLIENT_IDENTIFIER', 'EXPERIMENT', ))
