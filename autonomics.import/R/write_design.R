@@ -15,8 +15,8 @@ sampleid_varname <- function(platform){
           exiqon          = 'sample_id',
           maxquant        = 'sample_id',
           metabolonlipids = 'Client Identifier',
-          metabolon       = 'CLIENT_IDENTIFIER',
-          soma            = 'SampleId',
+          metabolon       = 'sample_id',
+          soma            = 'sample_id',
           rnaseq          = 'sample_id')
 }
 
@@ -33,8 +33,8 @@ subgroup_varname <- function(platform){
           exiqon          = NULL,
           maxquant        = NULL,
           metabolonlipids = 'Group',
-          metabolon       = 'Group',
-          soma            = 'SampleGroup',
+          metabolon       = 'subgroup',
+          soma            = 'subgroup',
           rnaseq          = NULL)
 }
 
@@ -297,10 +297,10 @@ write_design <- function(
 ){
 
    # sdata
-   sdata1 <- autonomics.import::load_sdata(file                        = file,
-                                           platform                    = platform,
-                                           sheet                       = sheet,
-                                           quantity                    = quantity)
+   sdata1 <- autonomics.import::load_sdata(file     = file,
+                                           platform = platform,
+                                           sheet    = sheet,
+                                           quantity = quantity)
    sampleid_var <- autonomics.import::sampleid_varname(platform)
    subgroup_var <- autonomics.import::subgroup_varname(platform)
 

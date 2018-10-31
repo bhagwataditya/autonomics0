@@ -91,7 +91,7 @@ load_omics <- function(
                                                       sheet                       = sheet) %>%
                 autonomics.support::rm_empty_vars()
 
-   object %<>% autonomics.import::merge_sdata(design_df, by = autonomics.import::sampleid_varname(platform))
+   object %<>% autonomics.import::merge_sdata(design_df, by = autonomics.import::sampleid_varname(platform), verbose = FALSE)
    if (!is.null(design_file)){
       file_df <- autonomics.import::read_design(design_file)
       object %<>% autonomics.import::merge_sdata(file_df, by = autonomics.import::sampleid_varname(platform))

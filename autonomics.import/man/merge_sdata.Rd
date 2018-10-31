@@ -4,7 +4,7 @@
 \alias{merge_sdata}
 \title{Merge sdata into SummarizedExperiment}
 \usage{
-merge_sdata(object, newdata, by, newdata_first = FALSE)
+merge_sdata(object, newdata, by, newdata_first = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -14,6 +14,8 @@ merge_sdata(object, newdata, by, newdata_first = FALSE)
 \item{by}{variable by which to merge}
 
 \item{newdata_first}{logical: whether to have newdata first in sdata}
+
+\item{verbose}{logical}
 }
 \description{
 Merge sdata into SummarizedExperiment

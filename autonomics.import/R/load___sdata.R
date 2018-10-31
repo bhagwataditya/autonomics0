@@ -294,7 +294,7 @@ load_sdata_maxquant <- function(
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% load_sdata_metabolon(2) %>% extract(1:3, )
+#'    file %>% autonomics.import::load_sdata_metabolon(2) %>% extract(1:3, )
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -309,9 +309,10 @@ load_sdata_metabolon <- function(file, sheet){
            t() %>%
            data.frame(stringsAsFactors = FALSE, check.names = FALSE)            %>%
            magrittr::set_names(df[[sstart]][1:fstart])     %>%
-           magrittr::set_names(names(.) %>% stringi::stri_replace_first_regex('Group[ ]+[A-Z_]+$', 'Group') %>% # recent metabolon files
-                                            stringi::stri_replace_first_regex('Group[ ]+[A-Z_]+$', 'Group'))    # older metabolon files
-   df %<>% magrittr::set_rownames(.$CLIENT_IDENTIFIER)
+           magrittr::set_names(names(.) %>% stringi::stri_replace_first_regex('Group[ ]+[A-Z_]+$', 'subgroup') %>%  # recent metabolon files
+                                            stringi::stri_replace_first_regex('Group[ ]+[A-Z_]+$', 'subgroup') %>%
+                                            stringi::stri_replace_first_fixed('CLIENT_IDENTIFIER', 'sample_id'))    # older metabolon files
+   df %<>% magrittr::set_rownames(.$sample_id)
 
    # Return
    df
@@ -387,11 +388,17 @@ load_sdata_metabolonlipids <- function(file, sheet){
 load_sdata_soma <- function(file){
    x <- file %>% autonomics.import::identify_soma_structure()
 
-   file %>% autonomics.support::cfread(header = FALSE, sep = '\t', fill = TRUE) %>%
-            magrittr::extract((x$row-1):nrow(.),  1:(x$col-2), with = FALSE)    %>%
-            magrittr::set_names(unlist(unname(.[1,])))                          %>%
-            magrittr::extract(-1, )                                             %>%
-            data.frame(row.names = .$SampleId, stringsAsFactors = FALSE)
+   sdata1 <- file %>%
+             autonomics.support::cfread(header = FALSE, sep = '\t', fill = TRUE) %>%
+             magrittr::extract((x$row-1):nrow(.),  1:(x$col-2), with = FALSE)    %>%
+             magrittr::set_names(unlist(unname(.[1,])))                          %>%
+             magrittr::extract(-1, )
+   sdata1$SampleId %<>% make.unique()
+
+   sdata1 %>% data.table::setnames('SampleId',    'sample_id')
+   sdata1 %>% data.table::setnames('SampleGroup', 'subgroup' )
+   sdata1 %<>% data.frame(row.names = .$sample_id, stringsAsFactors = FALSE)
+   sdata1
 }
 
 #========

@@ -9,6 +9,7 @@
 #' @param newdata        dataframe
 #' @param by             variable by which to merge
 #' @param newdata_first  logical: whether to have newdata first in sdata
+#' @param verbose        logical
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
@@ -26,7 +27,7 @@
 #' }
 #' @importFrom magrittr %>%
 #' @export
-merge_sdata <- function(object, newdata, by, newdata_first = FALSE){
+merge_sdata <- function(object, newdata, by, newdata_first = FALSE, verbose = TRUE){
 
    # Assert
    assertive.sets::assert_is_subset(by, autonomics.import::svars(object))
@@ -38,8 +39,8 @@ merge_sdata <- function(object, newdata, by, newdata_first = FALSE){
    # Common variables
    common_vars <- names(newdata) %>% setdiff(by) %>% intersect(autonomics.import::svars(object))
    if (length(common_vars)>0){
-      autonomics.support::cmessage("Ignore from design file (already in sumexp): %s",
-                                   sprintf("'%s'", common_vars) %>% paste0(collapse = ', '))
+      if (verbose) autonomics.support::cmessage("Ignore from design file (already in sumexp): %s",
+                                                 sprintf("'%s'", common_vars) %>% paste0(collapse = ', '))
       newdata %<>% magrittr::extract(, setdiff(names(.), common_vars), drop = FALSE)
    }
 

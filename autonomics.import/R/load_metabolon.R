@@ -20,7 +20,7 @@
 #'
 #'    # Loading metabolon file is easy
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    file %>% load_metabolon()
+#'    file %>% autonomics.import::load_metabolon()
 #'
 #'    # Three ways to specify sample design
 #'       # Use Group definition in metabolon file
