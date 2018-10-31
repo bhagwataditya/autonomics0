@@ -59,6 +59,8 @@ glutaminase <- 'extdata/glutaminase/glutaminase.xlsx'     %>%
                 autonomics.import::load_metabolon()       %>% 
                 autonomics.import::set_contrastdefs(autonomics.find::make_ref_contrasts(.)) %>% 
                 autonomics.find::add_limma()
+autonomics.import::sdata(glutaminase) %>% magrittr::extract(, c('SAMPLE_NAME', 'SAMPLE_ID', 'CLIENT_IDENTIFIER', 'EXPERIMENT', ))
+
 save(glutaminase, file = 'data/glutaminase.RData', compress = 'xz')
 
 
