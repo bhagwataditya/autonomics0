@@ -86,52 +86,53 @@ load_soma <- function(
    infer_design_from_sampleids = FALSE,
    design_sep                  = NULL,
    log2_transform              = TRUE,
-   rm_sample_type              = character(0),
-   rm_feature_type             = character(0),
-   rm_sample_quality           = character(0),
-   rm_feature_quality          = character(0),
+   filter_sample_type          = 'Sample',
+   filter_feature_type         = 'Protein',
+   filter_sample_quality       = c('FLAG', 'PASS'),
+   filter_feature_quality      = c('FLAG', 'PASS'),
    rm_na_svars                 = TRUE,
    rm_single_value_svars       = TRUE
 ){
    SampleType <- RowCheck <- Type <- ColCheck <- NULL
 
    # Load sumexp
-   object <- load_omics(file                        = file,
-                        platform                    = 'soma',
-                        log2_transform              = log2_transform,
-                        design_file                 = design_file,
-                        infer_design_from_sampleids = infer_design_from_sampleids,
-                        design_sep                  = design_sep)
+   object <- autonomics.import::load_omics(file                        = file,
+                                           platform                    = 'soma',
+                                           log2_transform              = log2_transform,
+                                           design_file                 = design_file,
+                                           infer_design_from_sampleids = infer_design_from_sampleids,
+                                           design_sep                  = design_sep)
 
    autonomics.import::prepro(object) <- list(assay      = "somascan",
                                              entity     = "epitope",
                                              quantity   = "abundance",
                                              software   = "somalogic",
                                              parameters = list())
-   # Filter
-   # On Sample Type
-   if ('\nSampleType' %in% autonomics.import::svars(object)){
-      message('')
-      autonomics.support::cmessage_df('%s', table(`Sample types` = autonomics.import::sdata(object)$SampleType))
-      if (length(rm_sample_type) > 0)      object %<>% autonomics.import::filter_samples(!SampleType %in% rm_sample_type, verbose = TRUE)
+
+   # Filter on sample type
+   if ('SampleType' %in% autonomics.import::svars(object)){ # older versions don't have it
+      message('\t\t========================================================================================================================')
+      autonomics.support::cmessage_df('\t\t%s', table(`Sample types` = autonomics.import::sdata(object)$SampleType))
+      object %<>% autonomics.import::filter_samples(SampleType %in% filter_sample_type, verbose = TRUE)
    }
-   # On sample quality
+   # Filter on sample quality
    if ('RowCheck'   %in% autonomics.import::svars(object)){
-      message('')
-      autonomics.support::cmessage_df('%s', table(`Sample qualities ("RowCheck")` = autonomics.import::sdata(object)$RowCheck))
-      if (length(rm_sample_quality)  > 0)  object %<>% autonomics.import::filter_samples(!RowCheck %in% rm_sample_quality, verbose = TRUE)
+      message('\t\t========================================================================================================================')
+      autonomics.support::cmessage_df('\t\t%s', table(`Sample qualities ("RowCheck")` = autonomics.import::sdata(object)$RowCheck))
+      object %<>% autonomics.import::filter_samples(RowCheck %in% filter_sample_quality, verbose = TRUE)
    }
-   # On feature type
+   # Filter on feature type
    if ('Type'       %in% autonomics.import::fvars(object)){
-      message('')
-      autonomics.support::cmessage_df('%s', table(`Type` = autonomics.import::fdata(object)$Type))
-      if (length(rm_feature_type)    > 0)  object %<>% autonomics.import::filter_features(!Type %in% rm_feature_type, verbose = TRUE)
+      message('\t\t========================================================================================================================')
+      autonomics.support::cmessage_df('\t\t%s', table(`Type` = autonomics.import::fdata(object)$Type))
+      object %<>% autonomics.import::filter_features(Type %in% filter_feature_type, verbose = TRUE)
    }
-   # On feature quality
+   # Filter on feature quality
    if ('ColCheck'   %in% autonomics.import::fvars(object)){
-      message('')
-      autonomics.support::cmessage_df('%s', table(`Feature qualities ("ColCheck")` = autonomics.import::fdata(object)$ColCheck))
-      if (length(rm_feature_quality) > 0)  object %<>% autonomics.import::filter_features(!ColCheck %in% rm_feature_quality, verbose = TRUE)
+      message('\t\t========================================================================================================================')
+      autonomics.support::cmessage_df('\t\t%s', table(`Feature qualities ("ColCheck")` = autonomics.import::fdata(object)$ColCheck))
+      object %<>% autonomics.import::filter_features(ColCheck %in% filter_feature_quality, verbose = TRUE)
+      message('\t\t========================================================================================================================')
    }
 
    # Select vars

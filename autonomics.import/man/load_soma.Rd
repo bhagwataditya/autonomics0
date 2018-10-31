@@ -5,9 +5,9 @@
 \title{Load soma}
 \usage{
 load_soma(file, design_file = NULL, infer_design_from_sampleids = FALSE,
-  design_sep = NULL, log2_transform = TRUE, rm_sample_type = character(0),
-  rm_feature_type = character(0), rm_sample_quality = character(0),
-  rm_feature_quality = character(0), rm_na_svars = TRUE,
+  design_sep = NULL, log2_transform = TRUE, filter_sample_type = "Sample",
+  filter_feature_type = "Protein", filter_sample_quality = c("FLAG",
+  "PASS"), filter_feature_quality = c("FLAG", "PASS"), rm_na_svars = TRUE,
   rm_single_value_svars = TRUE)
 }
 \arguments{
@@ -21,6 +21,10 @@ load_soma(file, design_file = NULL, infer_design_from_sampleids = FALSE,
 
 \item{log2_transform}{logical: whether to log2 transform}
 
+\item{rm_na_svars}{logical: whether to rm NA svars}
+
+\item{rm_single_value_svars}{logical: whether to rm single value svars}
+
 \item{rm_sample_type}{character vector: sample  types to be removed. Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').}
 
 \item{rm_feature_type}{character vector: feature types to be removed. Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').}
@@ -28,10 +32,6 @@ load_soma(file, design_file = NULL, infer_design_from_sampleids = FALSE,
 \item{rm_sample_quality}{character vector: sample  qualities to be removed. Probably a subset of c('PASS', 'FLAG', 'FAIL')}
 
 \item{rm_feature_quality}{character vector: feature qualities to be removed. Probably a subset of c('PASS', 'FLAG', 'FAIL')}
-
-\item{rm_na_svars}{logical: whether to rm NA svars}
-
-\item{rm_single_value_svars}{logical: whether to rm single value svars}
 }
 \value{
 SummarizedExperiment
