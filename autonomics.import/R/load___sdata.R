@@ -36,11 +36,14 @@ validify_sample_ids <- function(x){
 load_sdata_exiqon <- function(file){
 
    Exiqon <- sample_id <- NULL
-
-   file %>% readxl::read_excel()      %>%
-            dplyr::select(sample_id = Exiqon, tidyselect::matches('^#')) %>%
-            dplyr::filter(sample_id %>% stringi::stri_detect_regex('^#') %>% magrittr::not()) %>%
-            data.frame(stringsAsFactors = FALSE, check.names = FALSE, row.names = .$sample_id)
+   sdata1 <- file %>%
+             readxl::read_excel()      %>%
+             dplyr::select(sample_id = Exiqon, tidyselect::matches('^#')) %>%
+             dplyr::filter(sample_id %>% stringi::stri_detect_regex('^#') %>% magrittr::not()) %>%
+             data.frame(stringsAsFactors = FALSE, check.names = FALSE)
+   sdata1$sample_id %<>% autonomics.support::uniquify('make.unique')
+   sdata1 %<>% magrittr::set_rownames(.$sample_id)
+   sdata1
 }
 
 
@@ -312,6 +315,7 @@ load_sdata_metabolon <- function(file, sheet){
            magrittr::set_names(names(.) %>% stringi::stri_replace_first_regex('Group[ ]+[A-Z_]+$', 'subgroup') %>%  # recent metabolon files
                                             stringi::stri_replace_first_regex('Group[ ]+[A-Z_]+$', 'subgroup') %>%
                                             stringi::stri_replace_first_fixed('CLIENT_IDENTIFIER', 'sample_id'))    # older metabolon files
+   df$sample_id %<>% autonomics.support::uniquify('make.unique')
    df %<>% magrittr::set_rownames(.$sample_id)
 
    # Return
@@ -393,10 +397,10 @@ load_sdata_soma <- function(file){
              magrittr::extract((x$row-1):nrow(.),  1:(x$col-2), with = FALSE)    %>%
              magrittr::set_names(unlist(unname(.[1,])))                          %>%
              magrittr::extract(-1, )
-   sdata1$SampleId %<>% make.unique()
-
    sdata1 %>% data.table::setnames('SampleId',    'sample_id')
    sdata1 %>% data.table::setnames('SampleGroup', 'subgroup' )
+
+   sdata1$sample_id %<>% autonomics.support::uniquify('make.unique')
    sdata1 %<>% data.frame(row.names = .$sample_id, stringsAsFactors = FALSE)
    sdata1
 }
@@ -417,13 +421,15 @@ load_sdata_soma <- function(file){
 #' @importFrom magrittr %>%
 #' @export
 load_sdata_rnaseq <- function(file){
-   file %>%
-      data.table::fread(header = TRUE, nrows = 10) %>%
-      (function(x) x %>% magrittr::extract(, vapply(x, is.numeric, logical(1)), with = FALSE)) %>%
-      (function(x) data.frame(sample_id = names(x),
-                              row.names = names(x),
-                              stringsAsFactors = FALSE,
-                              check.names = FALSE))
+   sdata1 <- file %>%
+             data.table::fread(header = TRUE, nrows = 10) %>%
+            (function(x) x %>% magrittr::extract(, vapply(x, is.numeric, logical(1)), with = FALSE)) %>%
+            (function(x) data.frame(sample_id = names(x),
+                                    stringsAsFactors = FALSE,
+                                    check.names = FALSE))
+   sdata1$sample_id %<>% autonomics.support::uniquify('make.unique')
+   sdata1 %<>% magrittr::set_rownames(.$sample_id)
+   sdata1
 }
 
 #==========================================

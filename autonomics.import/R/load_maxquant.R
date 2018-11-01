@@ -23,8 +23,8 @@
 #'                         package = 'autonomics.data')
 #'
 #'    # The sample design can be inferred from the sample ids
-#'       object <- file %>% load_proteingroups(infer_design_from_sampleids = TRUE)
-#'       object %>% sdata()
+#'       object <- file %>% autonomics.import::load_proteingroups(infer_design_from_sampleids = TRUE)
+#'       object %>% autonomics.import::sdata()
 #'
 #'    # Or it can be loaded through a sample file
 #'       design_file <- tempfile()
