@@ -317,6 +317,7 @@ load_sdata_metabolon <- function(file, sheet){
                                             stringi::stri_replace_first_fixed('CLIENT_IDENTIFIER', 'sample_id'))    # older metabolon files
    df$sample_id %<>% autonomics.support::uniquify('make.unique')
    df %<>% magrittr::set_rownames(.$sample_id)
+   df %<>% autonomics.support::pull_columns(c('sample_id', 'subgroup'), verbose = FALSE)
 
    # Return
    df
@@ -402,6 +403,7 @@ load_sdata_soma <- function(file){
 
    sdata1$sample_id %<>% autonomics.support::uniquify('make.unique')
    sdata1 %<>% data.frame(row.names = .$sample_id, stringsAsFactors = FALSE)
+   sdata1 %<>% autonomics.support::pull_columns(c('sample_id', 'subgroup'), verbose = FALSE)
    sdata1
 }
 

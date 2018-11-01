@@ -83,6 +83,7 @@ dedupe_varnames <- function(x){
 #' Pull columns in a dataframe to the front
 #' @param df dataframe
 #' @param first_cols columns that need to be pulled to the front
+#' @param verbose logical
 #' @return dataframe with re-ordered columns
 #' @examples 
 #' require(magrittr)
@@ -91,17 +92,24 @@ dedupe_varnames <- function(x){
 #'    id     = c('1',    '2'),
 #'    name   = c('alpha-1-B glycoprotein', 'alpha-2-macroglobulin'), 
 #'    type   = c('proteincoding', 'proteincoding'))
-#' first_cols <- c('id', 'symbol') 
+#' first_cols <- c('id', 'symbol', 'location', 'uniprot') 
 #' df %>% autonomics.support::pull_columns(first_cols)
 #' @importFrom magrittr %>% 
 #' @export
-pull_columns <- function(df, first_cols){
+pull_columns <- function(df, first_cols, verbose = TRUE){
   
   assertive.types::assert_is_data.frame(df)
   assertive.types::assert_is_character(first_cols)
   
-  df %>% 
-    magrittr::extract(, c(first_cols, setdiff(names(df), first_cols)), drop = FALSE)
+  idx <- first_cols %in% names(df)
+  if (any(!idx)){
+    if (verbose) autonomics.support::cmessage(
+                   'pull_columns: ignore absent columns %s', 
+                    first_cols[!idx] %>% sprintf("'%s'", .) %>% paste0(collapse = ', '))
+    first_cols %<>% magrittr::extract(idx)
+  }
+  
+  df %>% magrittr::extract(, c(first_cols, setdiff(names(df), first_cols)), drop = FALSE)
 }
 
 
