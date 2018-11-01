@@ -14,15 +14,33 @@ factorify <- function(avector, reverse = FALSE){
   factor(avector, myLevels)
 }
 
-#' Make vector components unique by appending spaces
-#' @param avector character or factor vector
-#' @seealso \code{\link[base]{make.unique}}
-#' @export
-uniquify <- function(avector){
-  avector <- as.character(avector)
-  while(any(duplicated(avector))){
-    idxDuplicates <- which(duplicated(avector))
-    avector[idxDuplicates] <- paste0(avector[idxDuplicates], ' ')
+
+#' @importFrom magrittr %<>% 
+make.unique.spaces <- function(x, verbose=TRUE){
+  x %<>% as.character()
+  while(any(duplicated(x))){
+    idx_duplicates <- which(duplicated(x))
+    x[idx_duplicates] <- paste0(x[idx_duplicates], ' ')
   }
-  return(avector)
+  return(x)
+}
+
+
+#' Make vector components unique by appending spaces
+#' @param x character or factor vector
+#' @param method 'uniquify'
+#' @param verbose logical
+#' @seealso \code{\link[base]{make.unique}}
+#' @examples 
+#' x <- c('A', 'B', 'C', 'A', 'D')
+#' x %>% uniquify('make.unique')
+#' x %>% uniquify('make.unique.spaces')
+#' @export
+uniquify <- function(x, method = 'make.unique.spaces', verbose = TRUE){
+  idx <- autonomics.support::cduplicated(x)
+  if (verbose & any(idx)){
+     autonomics.support::cmessage('\t\tRun %s() to uniquify replicated sample ids', method)
+     autonomics.support::cmessage_df('\t\t\t%s', table(x[idx]))
+  }
+   get(method)(x)
 }

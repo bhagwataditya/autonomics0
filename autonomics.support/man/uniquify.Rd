@@ -4,13 +4,22 @@
 \alias{uniquify}
 \title{Make vector components unique by appending spaces}
 \usage{
-uniquify(avector)
+uniquify(x, method = "make.unique.spaces", verbose = TRUE)
 }
 \arguments{
-\item{avector}{character or factor vector}
+\item{x}{character or factor vector}
+
+\item{method}{'uniquify'}
+
+\item{verbose}{logical}
 }
 \description{
 Make vector components unique by appending spaces
+}
+\examples{
+x <- c('A', 'B', 'C', 'A', 'D')
+x \%>\% uniquify('make.unique')
+x \%>\% uniquify('make.unique.spaces')
 }
 \seealso{
 \code{\link[base]{make.unique}}
