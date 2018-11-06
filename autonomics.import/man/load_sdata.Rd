@@ -4,7 +4,7 @@
 \alias{load_sdata}
 \title{Load sdata}
 \usage{
-load_sdata(file, platform, sheet = NULL, quantity = NULL)
+load_sdata(file, platform, sheet = NULL, quantity = NULL, verbose = TRUE)
 }
 \arguments{
 \item{file}{path to omics data file}
@@ -14,6 +14,8 @@ load_sdata(file, platform, sheet = NULL, quantity = NULL)
 \item{sheet}{excel sheet number or name if applicable}
 
 \item{quantity}{string: which quantity should be extracted (only applicable for maxquant platform)}
+
+\item{verbose}{logical}
 }
 \value{
 sample dataframe

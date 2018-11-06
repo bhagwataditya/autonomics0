@@ -4,10 +4,12 @@
 \alias{load_sdata_soma}
 \title{Load soma sdata}
 \usage{
-load_sdata_soma(file)
+load_sdata_soma(file, verbose = TRUE)
 }
 \arguments{
 \item{file}{string: path to adat file}
+
+\item{verbose}{logical}
 }
 \value{
 sample dataframe
