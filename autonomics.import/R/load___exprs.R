@@ -292,7 +292,7 @@ load_exprs_metabolonlipids <- function(file, sheet){
 load_exprs_soma <- function(file){
    x      <- file %>% autonomics.import::identify_soma_structure()
    fdata1 <- file %>% autonomics.import::load_fdata_soma()
-   sdata1 <- file %>% autonomics.import::load_sdata_soma()
+   sdata1 <- file %>% autonomics.import::load_sdata_soma(verbose=FALSE)
 
    file %>%
       data.table::fread(header = FALSE, sep = '\t', fill = TRUE) %>%
