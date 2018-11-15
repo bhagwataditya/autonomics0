@@ -365,5 +365,8 @@ pls <- function(object, implementation = NULL, ndim = 2, ...){
 #' @author Aditya Bhagwat
 #' @export
 project <- function(object, method = 'pca', na.impute = FALSE, implementation = NULL, ndim = 2){
-   get(method)(object, na.impute = na.impute, implementation = implementation, ndim = ndim)
+   utils::getFromNamespace(method, 'autonomics.explore')(object, 
+                                                         na.impute      = na.impute, 
+                                                         implementation = implementation, 
+                                                         ndim           = ndim)
 }
