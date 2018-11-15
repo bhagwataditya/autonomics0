@@ -9,8 +9,8 @@ plot_venn(x, color_values = if (assertive.properties::has_names(x)) {
   autonomics.plot::make_colors(names(x)) } else {    
   autonomics.plot::make_gg_colors(1:length(x)) }, euler = FALSE,
   filename = NULL, width = 7, height = width, title = NULL,
-  scaled = FALSE, cat.dist = 0.08, main.cex = 1.2, main.pos = c(0.5,
-  0.97), ...)
+  scaled = FALSE, cat.dist = 0.3, margin = cat.dist, main.cex = 1.5,
+  main.pos = c(0.5, 0.97), ...)
 
 plot_venns(...)
 }
@@ -33,7 +33,7 @@ plot_venns(...)
 
 \item{cat.dist}{numeric(1): category location (as distance from circle edge)}
 
-\item{main.cex}{numeric(1): title font size}
+\item{main.cex}{numeric(1): scaling factor for title size}
 
 \item{main.pos}{numeric(2): title location}
 

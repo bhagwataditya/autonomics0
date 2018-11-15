@@ -8,7 +8,7 @@
 #' @param title         figure title
 #' @param scaled        logical: whether or not to scale
 #' @param cat.dist      numeric(1): category location (as distance from circle edge)
-#' @param main.cex      numeric(1): title font size
+#' @param main.cex      numeric(1): scaling factor for title size
 #' @param main.pos      numeric(2): title location
 #' @param ...           passed to either VennDiagram::venn.diagram(...) or eulerr::plot.euler(...)
 #' @examples
@@ -30,8 +30,9 @@ plot_venn <- function(
    height       = width,
    title        = NULL,
    scaled       = FALSE,
-   cat.dist     = 0.08,
-   main.cex     = 1.2,
+   cat.dist     = 0.3,
+   margin       = cat.dist,
+   main.cex     = 1.5,
    main.pos     = c(0.5, 0.97),
    ...
 ){
@@ -44,6 +45,8 @@ plot_venn <- function(
    assertive.types::assert_is_character(color_values)
    assertive.sets::assert_are_set_equal(names(x), names(color_values))
 
+   names(x) %<>% paste0(' (', vapply(x, length, numeric(1)), ')')
+
    # Plot Euler or Venn diagram
    p <- if (euler){
            set.seed(1)
@@ -53,6 +56,11 @@ plot_venn <- function(
 
         } else {
             futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")
+            if (length(x)>5){
+               autonomics.support::cmessage('\t\tLimit to first five sets (restriction of VennDiagram::venn.diagram)')
+               x            %<>% magrittr::extract(1:5)
+               color_values %<>% magrittr::extract(1:5)
+            }
             VennDiagram::venn.diagram(
                     x,
                     main     = title,
@@ -62,6 +70,7 @@ plot_venn <- function(
                     cat.col  = color_values,
                     scaled   = scaled,
                     cat.dist = cat.dist,
+                    margin   = margin,
                     main.cex = main.cex,
                     main.pos = main.pos,
                     ...
