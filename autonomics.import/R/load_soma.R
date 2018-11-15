@@ -111,28 +111,28 @@ load_soma <- function(
 
    # Filter on sample type
    if ('SampleType' %in% autonomics.import::svars(object)){ # older versions don't have it
-      message('\t\t========================================================================================================================')
+      message('\t\t=========================================================================')
       autonomics.support::cmessage_df('\t\t%s', table(`Sample types` = autonomics.import::sdata(object)$SampleType))
       object %<>% autonomics.import::filter_samples(SampleType %in% filter_sample_type, verbose = TRUE)
    }
    # Filter on sample quality
    if ('RowCheck'   %in% autonomics.import::svars(object)){
-      message('\t\t========================================================================================================================')
+      message('\t\t=========================================================================')
       autonomics.support::cmessage_df('\t\t%s', table(`Sample qualities ("RowCheck")` = autonomics.import::sdata(object)$RowCheck))
       object %<>% autonomics.import::filter_samples(RowCheck %in% filter_sample_quality, verbose = TRUE)
    }
    # Filter on feature type
    if ('Type'       %in% autonomics.import::fvars(object)){
-      message('\t\t========================================================================================================================')
+      message('\t\t=========================================================================')
       autonomics.support::cmessage_df('\t\t%s', table(`Type` = autonomics.import::fdata(object)$Type))
       object %<>% autonomics.import::filter_features(Type %in% filter_feature_type, verbose = TRUE)
    }
    # Filter on feature quality
    if ('ColCheck'   %in% autonomics.import::fvars(object)){
-      message('\t\t========================================================================================================================')
+      message('\t\t=========================================================================')
       autonomics.support::cmessage_df('\t\t%s', table(`Feature qualities ("ColCheck")` = autonomics.import::fdata(object)$ColCheck))
       object %<>% autonomics.import::filter_features(ColCheck %in% filter_feature_quality, verbose = TRUE)
-      message('\t\t========================================================================================================================')
+      message('\t\t=========================================================================')
    }
 
    # Select vars
