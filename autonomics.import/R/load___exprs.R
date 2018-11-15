@@ -299,8 +299,8 @@ load_exprs_soma <- function(file){
       magrittr::extract(x$row:nrow(.), (x$col):ncol(.))          %>%
       t()                                                        %>%
       data.matrix()                                              %>%
-      magrittr::set_rownames(fdata1$SeqId)                       %>%
-      magrittr::set_colnames(sdata1$SampleId)                    %>%
+      magrittr::set_rownames(fdata1$feature_id)                  %>%
+      magrittr::set_colnames(sdata1$sample_id)                   %>%
       (function(x){class(x) <- 'numeric'; x})
 }
 
