@@ -202,7 +202,7 @@ plot_contrast_features <- function(
 }
 
 
-#' @rdname plot_features_all_contrasts
+#' @rdname plot_per_contrast_features
 #' @export
 plot_top_features_all_contrasts <- function(...){
    plot_per_contrast_features(...)

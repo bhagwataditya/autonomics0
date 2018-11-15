@@ -1,26 +1,32 @@
+#' @rdname are_contrast_features
+#' @export
+are_top_features <- function(object, topdef, contrast_name){
+   .Deprecated('are_contrast_features')
+   are_contrast_features(object, contrast_name = contrast_name, topdef = topdef)
+}
 
-#' Which are the top features?
+#' Are contrast features?
 #'
-#' Which features fulfill top definition and direction for specified contrast?
-#' @param object  SummarizedExperiment
-#' @param topdef  top definition
-#' @param contrast_name  contrast name (string)
+#' @param object         SummarizedExperiment
+#' @param contrast_name  character(1): contrast name 
+#' @param topdef         character(1): top definition
+#' @param ...            for backward compatibility only
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemdiff.proteinratios
 #'    topdef <- 'p < 0.05'
 #'    contrast_name <- object %>% autonomics.import::contrastdefs() %>% magrittr::extract(1) %>% names()
-#'    object %>% autonomics.find::are_top_features('p<0.05',            contrast_name) %>% sum()
-#'    object %>% autonomics.find::are_top_features('p<0.05 & effect>0', contrast_name) %>% sum()
+#'    object %>% autonomics.find::are_contrast_features('p<0.05',            contrast_name) %>% sum()
+#'    object %>% autonomics.find::are_contrast_features('p<0.05 & effect>0', contrast_name) %>% sum()
 #' }
 #' @return integer vector with indices of top features
 #' @importFrom magrittr   %<>%
 #' @export
-are_top_features <- function(
+are_contrast_features <- function(
    object, 
-   topdef  = autonomics.find::default_topdef(object), 
-   contrast_name
+   contrast_name,
+   topdef  = autonomics.find::default_topdef(object)
 ){
    autonomics.import::assert_is_valid_eset(object)
    assertive.types::assert_is_a_string(contrast_name)
@@ -36,36 +42,75 @@ are_top_features <- function(
    selector
 }
 
-#' @rdname are_top_features
+
+#' Get number of contrast features
+#'
+#' @param object         SummarizedExperiment
+#' @param contrast_name  character(1): contrast name 
+#' @param topdef         character(1): top definition
+#' @param ...            for backward compatibility only
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'    topdef <- 'p < 0.05'
+#'    contrast_name <- object %>% autonomics.import::contrastdefs() %>% magrittr::extract(1) %>% names()
+#'    object %>% autonomics.find::n_contrast_features('p<0.05',            contrast_name) %>% sum()
+#'    object %>% autonomics.find::n_contrast_features('p<0.05 & effect>0', contrast_name) %>% sum()
+#' }
+#' @return integer vector with indices of top features
+#' @importFrom magrittr   %<>%
+#' @export
+n_contrast_features <- function(object, contrast_name, topdef = autonomics.find::default_topdef(object)){
+   object %>% 
+   autonomics.find::are_contrast_features(contrast_name = contrast_name, topdef = topdef) %>% 
+   sum()
+}
+
+
+#' @rdname are_contrast_features
+#' @export
+get_top_features <- function(object, topdef, contrast_name){
+   .Deprecated('get_contrast_features')
+   get_contrast_features(object, contrast_name = contrast_name, topdef = topdef)
+}
+
+#' @rdname are_contrast_features
 #' @importFrom magrittr   %>% 
 #' @export
-get_top_features <- function(
+get_contrast_features <- function(
    object,
-   topdef = autonomics.find::default_topdef(object), 
-   contrast_name
+   contrast_name,
+   topdef = autonomics.find::default_topdef(object)
 ){
-   idx <- object %>% are_top_features(topdef = topdef, contrast_name = contrast_name)
+   idx <- object %>% are_contrast_features(contrast_name = contrast_name, topdef = topdef)
    autonomics.import::fnames(object)[idx]
 }
 
-#' Filter (and arrange) top features
+#' @rdname filter_contrast_features
+#' @export
+filter_top_features <- function(...){
+   .Deprecated('filter_top_features')
+   filter_contrast_features(...)
+}
+
+#' Filter (and arrange) contrast features
 #' @param object           SummarizedExperiment
-#' @param contrast_name    contrast name
-#' @param topdef   definition of 'top features'.
-#' @param direction        'both', 'neg', or 'pos'
+#' @param contrast_name    character(1): contrast name
+#' @param topdef           character(1): top definition.
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    (object <- autonomics.data::stemdiff.proteinratios)
 #'    contrast_name <-  names(autonomics.import::contrastdefs(object))[1]
 #'    topdef <- 'bonf < 0.05'
-#'    (object %<>% autonomics.find::filter_top_features(contrast_name, topdef))
+#'    (object %<>% autonomics.find::filter_contrast_features(contrast_name, topdef))
 #'    object %>% autonomics.import::limma()
 #' }
 #' @importFrom magrittr %>%
 #' @export
-filter_top_features <- function(object, contrast_name, topdef){
-   idx <- are_top_features(object, topdef, contrast_name)
+filter_contrast_features <- function(object, contrast_name, topdef){
+   idx <- are_contrast_features(object, contrast_name = contrast_name, topdef = topdef)
    object %>% autonomics.import::extract_features(idx)
 }
 
@@ -90,26 +135,33 @@ arrange_features_by_rank <- function(object, contrast_name){
    object %>% autonomics.import::extract_features(idx)
 }
 
-
-#' Filter and arrange top features
+#' @rdname filter_n_arrange_contrast_features
+#' @export
+filter_n_arrange_top_features <- function(...){
+   .Deprecated('filter_n_arrange_contrast_features')
+   filter_n_arrange_contrast_features(...)
+}
+   
+#' Filter and arrange contrast features
 #' @param object         SummarizedExperiment
 #' @param contrast_name  contrast name
 #' @param topdef         top definition
 #' @param nmax           max number of features
+#' @param ...            for backward compatibility only
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    (object <- autonomics.data::stemdiff.proteinratios)
 #'    contrast_name <- names(autonomics.import::contrastdefs(object))[1]
 #'    topdef <- 'bonf < 0.05 & effect<0'
-#'    object %<>% filter_n_arrange_top_features(contrast_name, topdef)
+#'    object %<>% filter_n_arrange_contrast_features(contrast_name, topdef)
 #'    object %>% autonomics.import::limma()
 #' }
 #' @importFrom magrittr  %>%
 #' @export
-filter_n_arrange_top_features <- function(object, contrast_name, topdef, nmax = Inf){
+filter_n_arrange_contrast_features <- function(object, contrast_name, topdef, nmax = Inf){
    object                                                      %>%
-   autonomics.find::filter_top_features(contrast_name, topdef) %>%
+   autonomics.find::filter_contrast_features(contrast_name, topdef) %>%
    autonomics.find::arrange_features_by_rank(contrast_name)    %>%
    autonomics.import::extract_features(seq_len(min(nmax, nrow(.))))
 }
