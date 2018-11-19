@@ -28,7 +28,7 @@ Imports:
    UniProt.ws,
    xml2
 biocViews:
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Suggests:
    billing.differentiation.data, 
    halama.2016,

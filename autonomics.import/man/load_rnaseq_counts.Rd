@@ -4,9 +4,10 @@
 \alias{load_rnaseq_counts}
 \title{Load RNA seq counts}
 \usage{
-load_rnaseq_counts(dir = ".", count_file = paste0(dir, "/gene_counts.txt"),
-  sample_file = if (file.exists(paste0(dir, "/sample_design.txt")))
-  paste0(dir, "/sample_design.txt") else NULL, map_entrezg = FALSE)
+load_rnaseq_counts(dir = ".", count_file = paste0(dir,
+  "/gene_counts.txt"), sample_file = if (file.exists(paste0(dir,
+  "/sample_design.txt"))) paste0(dir, "/sample_design.txt") else NULL,
+  map_entrezg = FALSE)
 }
 \arguments{
 \item{dir}{directory with count file and sample design file}

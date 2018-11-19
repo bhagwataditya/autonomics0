@@ -4,8 +4,8 @@
 \alias{load_collection}
 \title{Get pathways}
 \usage{
-load_collection(collection, organism, universe = NULL, min_set_size = 5,
-  max_set_size = 2000)
+load_collection(collection, organism, universe = NULL,
+  min_set_size = 5, max_set_size = 2000)
 }
 \arguments{
 \item{collection}{value from GENE_SET_COLLECTIONS}

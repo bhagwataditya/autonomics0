@@ -3,7 +3,6 @@
 \name{pathway_accessions_to_names}
 \alias{pathway_accessions_to_names}
 \alias{gene_accessions_to_pathway_accessions}
-\alias{gene_accessions_to_pathway_accessions}
 \title{Accession-based mapping/interconversion for multiple ontologies}
 \usage{
 pathway_accessions_to_names(accessions, ontology = c("auto", "interpro",

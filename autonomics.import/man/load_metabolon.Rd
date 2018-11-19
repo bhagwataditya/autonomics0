@@ -11,8 +11,8 @@ load_metabolon_sdata(file, sheet = 2)
 
 load_metabolon_fdata(file, sheet = 2)
 
-load_metabolon(file, sheet = 2, verbose = TRUE, add_kegg_pathways = FALSE,
-  add_smiles = FALSE)
+load_metabolon(file, sheet = 2, verbose = TRUE,
+  add_kegg_pathways = FALSE, add_smiles = FALSE)
 
 load_metabolon_file(...)
 }

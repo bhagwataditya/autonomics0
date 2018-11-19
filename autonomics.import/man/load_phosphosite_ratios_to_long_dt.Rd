@@ -6,7 +6,8 @@
 \usage{
 load_phosphosite_ratios_to_long_dt(phosphosites_file,
   value_type = infer_maxquant_value_type(phosphosites_file),
-  log2_transform = TRUE, min_loc_prob = 0.75, remove_multiple_pg = FALSE)
+  log2_transform = TRUE, min_loc_prob = 0,
+  remove_multiple_pg = FALSE)
 }
 \arguments{
 \item{phosphosites_file}{phosphosites file}

@@ -5,9 +5,10 @@
 \title{Load proteingroup ratios/intensities}
 \usage{
 load_proteingroups(proteingroups_file,
-  sample_file = paste0(dirname(proteingroups_file), "/sample_design.txt"),
-  parameter_file = paste0(dirname(proteingroups_file), "/parameters.txt"),
-  log2_transform = TRUE,
+  sample_file = paste0(dirname(proteingroups_file),
+  "/sample_design.txt"),
+  parameter_file = paste0(dirname(proteingroups_file),
+  "/parameters.txt"), log2_transform = TRUE,
   value_type = autonomics.import::infer_maxquant_value_type(proteingroups_file))
 }
 \arguments{

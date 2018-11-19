@@ -4,7 +4,8 @@
 \alias{annotate_uniprot}
 \title{Annotate uniprot ids}
 \usage{
-annotate_uniprot(values, up = autonomics.annotate::connect_to_uniprot(values))
+annotate_uniprot(values,
+  up = autonomics.annotate::connect_to_uniprot(values))
 }
 \arguments{
 \item{values}{uniprot accessions (character vector)}
