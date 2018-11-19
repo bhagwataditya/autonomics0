@@ -108,8 +108,8 @@ run_ora <- function(query, universe, pathway_list, min_set_size = 5, return_only
   # Perform hypergeometric test
   # See https://mengnote.blogspot.qa/2012/12/calculate-correct-hypergeometric-p.html
   # Why is there a -1 in the q argument?
-  # > Because if lower.tail is TRUE (default), probabilities are P[X ≤ x], 
-  # > otherwise, P[X > x]. We subtract x by 1, when P[X ≥ x] is needed.
+  # > Because if lower.tail is TRUE (default), probabilities are P[X <= x], 
+  # > otherwise, P[X > x]. We subtract x by 1, when P[X >= x] is needed.
   pvalues    <- stats::phyper(q = n_selected_features_per_pathway - 1,
                        m = n_detected_features_per_pathway, 
                        n = n_non_pathway_features_per_pathway, 
