@@ -89,7 +89,7 @@ load_proteingroups <- function(
    subgroup_values  <- object %>% autonomics.import::svalues('subgroup')
    replicate_values <- object %>% autonomics.import::svalues('replicate')
    # If not specified as argument: infer sep from sampleids
-   design_sep %<>% (function(x) if (is.null(x)) object %>% autonomics.import::snames() %>% autonomics.import::infer_design_sep() else x) %>%
+   design_sep %<>% (function(x) if (is.null(x)) object %>% autonomics.import::snames() %>% autonomics.import::guess_component_sep() else x) %>%
       # If not inferrable from sampleids: set sep to '.'
       (function(x) if (is.null(x)) '.' else x)
    ok <- !is.null( subgroup_values) &

@@ -24,7 +24,7 @@
 ssep <- function(object, svar = 'subgroup'){
    possible_separators <- if (autonomics.import::contains_ratios(object)) c('.', ' ') else c('.', '_', ' ')
    object %>% autonomics.import::slevels(svar) %>%
-              autonomics.import::infer_design_sep(possible_separators = possible_separators, verbose = FALSE)
+              autonomics.import::guess_component_sep(possible_separators = possible_separators, verbose = FALSE)
 }
 
 #' @rdname ssep

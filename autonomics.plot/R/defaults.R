@@ -42,7 +42,7 @@ make_gg_colors <- function(factor_levels, show) {
 #' @export
 make_composite_colors <- function(
    svalues,
-   sep  = autonomics.import::infer_design_sep(svalues),
+   sep  = autonomics.import::guess_component_sep(svalues),
    show = FALSE
 ){
 
@@ -83,7 +83,7 @@ make_composite_colors <- function(
 #' @export
 make_colors <- function(
    x,
-   sep = autonomics.import::infer_design_sep(x, verbose = FALSE),
+   sep = autonomics.import::guess_component_sep(x, verbose = FALSE),
    show = FALSE,
    verbose = FALSE
 ){

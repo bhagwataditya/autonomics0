@@ -42,54 +42,6 @@ subgroup_varname <- function(platform){
 # INFER DESIGN FROM SAMPLEIDS
 #==================================================
 
-#' Infer design separator
-#' @param sample_ids character vector with sampleids
-#' @param possible_separators character vector with possible separators to look for
-#' @param verbose logical
-#' @return separator (string) or NULL (if no separator could be identified)
-#' @examples
-#' require(magrittr)
-#' sample_ids <- c('PERM_NON.R1[H/L]', 'PERM_NON.R2[H/L]', 'PERM_NON.R3[H/L]', 'PERM_NON.R4[H/L]')
-#' sample_ids %>% infer_design_sep()
-#'
-#' sample_ids <- c('WT untreated 1', 'WT untreated 2', 'WT treated 1')
-#' sample_ids %>% infer_design_sep()
-#'
-#' sample_ids <- c('group1', 'group2', 'group3.R1')
-#' sample_ids %>% infer_design_sep()
-#' @importFrom magrittr %>%
-#' @export
-infer_design_sep <- function(sample_ids, possible_separators = c('.', ' ', '_'), verbose = FALSE){
-   . <- NULL
-   sep_freqs <- Map(function(x) stringi::stri_split_fixed(sample_ids, x), possible_separators)        %>%
-                lapply(function(x) x %>% vapply(length, integer(1)))                                  %>%
-                magrittr::extract( vapply(., autonomics.support::has_identical_values, logical(1)))   %>%
-                vapply(unique, integer(1))
-
-   # No separator detected - return NULL
-   if (all(sep_freqs==1)){
-      if (verbose)  autonomics.support::cmessage('%s: no (consistent) separator. Returning NULL', sample_ids[1])
-      return(NULL)   # no separator detected
-   }
-
-   # Find best separator
-   best_sep <- sep_freqs %>%
-               magrittr::extract(.!=1)  %>%
-               magrittr::extract(autonomics.support::is_max(vapply(., magrittr::extract, integer(1), 1)))   %>%
-               names()
-
-   # Ambiguous separator - return NULL
-   if (length(best_sep)>1){
-      if (verbose)   autonomics.support::cmessage('%s: %s separator? Returning NULL.',
-                                                  sample_ids[1],
-                                                  paste0(sprintf("'%s'", best_sep), collapse = ' or '))
-      return(NULL)  # ambiguous separator
-   }
-
-   # Separator identified - return
-   if (verbose) autonomics.support::cmessage("\t\tInfer design sep '%s'", best_sep)
-   return(best_sep)
-}
 
 
 #' Infer design from (non-maxquant) sample ids
@@ -103,7 +55,7 @@ infer_design_sep <- function(sample_ids, possible_separators = c('.', ' ', '_'),
 #' @export
 infer_design_from_default_sampleids <- function(
    sample_ids,
-   sep = sample_ids %>% autonomics.import::infer_design_sep(c('.', ' ', '_'))
+   sep = sample_ids %>% autonomics.import::guess_component_sep(c('.', ' ', '_'))
 ){
 
    # Return dataframe with only sample ids if no separator could be infered
@@ -139,7 +91,7 @@ infer_design_from_default_sampleids <- function(
 #' @export
 infer_design_from_maxquant_sampleids <- function(
    sample_ids,
-   sep = sample_ids %>% autonomics.import::infer_design_sep(c('.', ' ', '_'))
+   sep = sample_ids %>% autonomics.import::guess_component_sep(c('.', ' ', '_'))
 ){
    sample_ids %>%
    autonomics.import::designify_maxquant_sampleids(sep = sep) %>%
@@ -163,7 +115,7 @@ infer_design_from_maxquant_sampleids <- function(
 #' @export
 infer_design_from_sampleids <- function(
    sample_ids,
-   sep = sample_ids %>% autonomics.import::infer_design_sep(c('.', ' ', '_')),
+   sep = sample_ids %>% autonomics.import::guess_component_sep(c('.', ' ', '_')),
    maxquant = FALSE
 ){
    if (maxquant){ sample_ids %>% autonomics.import::infer_design_from_maxquant_sampleids(sep = sep)
@@ -314,7 +266,7 @@ write_design <- function(
    # Infer subgroup from sampleids and add to design
    if (infer_design_from_sampleids){
       autonomics.support::cmessage('\t\tInfer design from sampleids (%s)', design_df[[sampleid_var]][1])
-      if (is.null(design_sep)) design_sep <- design_df[[sampleid_var]] %>% autonomics.import::infer_design_sep(verbose = TRUE)
+      if (is.null(design_sep)) design_sep <- design_df[[sampleid_var]] %>% autonomics.import::guess_component_sep(verbose = TRUE)
       inferred_design <- design_df[[sampleid_var]] %>% autonomics.import::infer_design_from_sampleids(sep = design_sep, maxquant = platform=='maxquant')
       design_df$sample_id <- NULL
       design_df %<>% cbind(., inferred_design)
@@ -644,7 +596,7 @@ read_maxquant_design <- function(design_file){
 #    # Either infer design from sampleids (if possible)
 #    if (infer_design){
 #       autonomics.support::cmessage('Infer design from sampleids')
-#       sep <- autonomics.import::infer_design_sep(autonomics.import::sdata(object)[[sampleid_var]])
+#       sep <- autonomics.import::guess_component_sep(autonomics.import::sdata(object)[[sampleid_var]])
 #       if (is.null(sep)){
 #          autonomics.support::cmessage('No consistent unambiguous separator - design could not be prepared')
 #       } else

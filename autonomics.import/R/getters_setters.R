@@ -661,7 +661,7 @@ subgroup_levels <- function(object){
 #' @importFrom magrittr %>%
 #' @export
 svalues <- function(object, svar){
-   autonomics.import::sdata(object) %>% magrittr::extract2(svar)
+   autonomics.import::sdata(object) %>% magrittr::extract2(svar) %>% (function(x) if (is.factor(x)) as.character(x) else x)
 }
 
 #' @rdname svalues

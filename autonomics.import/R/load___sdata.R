@@ -132,7 +132,7 @@ extract_maxquant_channels <- function(file){
 #' @export
 designify_maxquant_sampleids <- function(
    sampleids,
-   sep = sampleids %>% autonomics.import::infer_design_sep()
+   sep = sampleids %>% autonomics.import::guess_component_sep()
 ){
 
    if (is.factor(sampleids)) sampleids %<>% as.character()

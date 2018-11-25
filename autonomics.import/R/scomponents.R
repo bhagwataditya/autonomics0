@@ -1,82 +1,57 @@
 
 
-#' Split (subgroup) components
-#'
-#' Get data.table in which subgroup components have been decomposed
-#'
-#' @param values character vector with subgroup values
-#' @param sep character(1): separator
-#' @return data.table with decomposed subgroup components
+
+#' Split, arrange, count subgroups
+#' @param subgroup_values vector with subgroup values
+#' @param sep subgroup separator
 #' @examples
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::protein.ratios
-#'    object %>% subgroup_values() %>% split_components()
+#' if (require(atkin.2014)){
+#'    object <- 'extdata/soma/WCQ-18-007.hybNorm.plateScale.medNorm.calibrate.20181004.adat' %>%
+#'               system.file(package='atkin.2014') %>%
+#'               autonomics.import::load_soma()
+#'    subgroup_values <- object %>% autonomics.import::subgroup_values()
+#'    subgroup_values %>% autonomics.import::sep
+#'    subgroup_values %>% count_components()
+#'    subgroup_values %>% split_components()
+#'    subgroup_values %>% layout_subgroups()
+#'    subgroup_values %>% count_subgroups()
 #' }
-#' if (require(autonomics.data)){
-#'    autonomics.data::glutaminase %>% subgroup_values()  %>% split_components()
-#' }
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>% subgroup_values()   %>% split_components()
-#' }
-#' if (require(graumann.lfq)){
-#'    graumann.lfq::lfq.intensities %>% subgroup_values() %>% split_components()
-#' }
+#' @return integer
+
 #' @importFrom magrittr %>%
-#' @export
-split_components <- function(
-   values,
-   sep = autonomics.import::infer_design_sep(values, verbose = FALSE)
-){
-
-   # Single component
-   if (is.null(sep)) return(data.table::data.table(V1 = values))
-
-   # Multiple components
-   y <- values %>% stringi::stri_split_fixed(sep)
-   n.component <- length(y[[1]])
-   1:n.component %>% lapply(function(z) vapply(y, magrittr::extract, character(1), z)) %>%
-                     data.table::as.data.table()
+dcast_subgroups <- function(subgroup_values, fill, fun.aggregate){
+   n <- count_components(subgroup_values)
+   formula <- sprintf('V%d', 1:(n-1)) %>% paste0(collapse=' + ') %>% paste0(' ~ V', n)
+   subgroup_values %>% split_components() %>%
+      data.table::dcast(formula = formula,
+                        value.var = 'subgroup',
+                        fill = fill,
+                        fun.aggregate = fun.aggregate) %>%
+      autonomics.support::matrixify()
 }
 
-#' Split (subgroup) components
-#'
-#' Get data.table in which subgroup components have been decomposed
-#'
-#' @param object SummarizedExperiment
-#' @param svar character
-#' @return data.table with decomposed subgroup components
+#' Layout/Count subgroups
+#' @param subgroup_values vector with subgroup values
+#' @param sep subgroup separator
 #' @examples
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::protein.ratios
-#'    object %>% subgroup_components()
-#'    object %>% scomponents('subgroup')
+#' if (require(atkin.2014)){
+#'    object <- 'extdata/soma/WCQ-18-007.hybNorm.plateScale.medNorm.calibrate.20181004.adat' %>%
+#'               system.file(package='atkin.2014') %>%
+#'               autonomics.import::load_soma()
+#'    subgroup_values <- object %>% autonomics.import::subgroup_values()
+#'    subgroup_values %>% layout_subgroups()
+#'    subgroup_values %>% count_subgroups()
 #' }
-#' if (require(autonomics.data)){
-#'    object <- autonomics.data::glutaminase
-#'    object %>% subgroup_components()
-#'    object %>% scomponents('subgroup')
-#' }
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    object %>% subgroup_components()
-#'    object %>% scomponents('subgroup')
-#' }
-#' if (require(graumann.lfq)){
-#'    object <- graumann.lfq::lfq.intensities
-#'    object %>% subgroup_components()
-#'    object %>% scomponents('subgroup')
-#' }
+#' @return integer
 #' @importFrom magrittr %>%
 #' @export
-subgroup_components <- function(object){
-   object %>% autonomics.import::subgroup_values() %>% autonomics.import::split_components()
-}
+layout_subgroups <- function(subgroup_values) subgroup_values %>% as.character() %>% unique() %>%
+   dcast_subgroups(fill = '', fun.aggregate = unique)
 
-#' @rdname subgroup_components
+#' @rdname layout_subgroups
 #' @importFrom magrittr %>%
 #' @export
-scomponents <- function(object, svar){
-   object %>% autonomics.import::svalues(svar) %>% autonomics.import::split_components()
-}
+count_subgroups  <- function(subgroup_values) subgroup_values %>%
+   dcast_subgroups(fill = 0, fun.aggregate = length)
