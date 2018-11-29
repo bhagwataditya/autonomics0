@@ -159,7 +159,7 @@ rm_single_value_columns <- function(df){
 matrixify <- function(df){
   rownames1 <- df[[1]]
   df[[1]] <- NULL
-  mat <- df %>% data.matrix()
+  mat <- df %>% as.matrix() #data.matrix()
   rownames(mat) <- rownames1
   mat
 }
