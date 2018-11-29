@@ -55,7 +55,7 @@ subgroup_varname <- function(platform){
 #' @export
 infer_design_from_default_sampleids <- function(
    sample_ids,
-   sep = sample_ids %>% autonomics.import::guess_component_sep(c('.', ' ', '_'))
+   sep = sample_ids %>% autonomics.import::guess_sep(c('.', ' ', '_'))
 ){
 
    # Return dataframe with only sample ids if no separator could be infered
@@ -73,7 +73,7 @@ infer_design_from_default_sampleids <- function(
 
    # Return df
    return(data.frame(sample_id = sample_ids,
-                     subgroup  = subgroup_values,
+                     subgroup  = factor(subgroup_values),
                      replicate = replicate_values,
                      row.names = sample_ids,
                      stringsAsFactors = FALSE))
@@ -91,11 +91,11 @@ infer_design_from_default_sampleids <- function(
 #' @export
 infer_design_from_maxquant_sampleids <- function(
    sample_ids,
-   sep = sample_ids %>% autonomics.import::guess_component_sep(c('.', ' ', '_'))
+   sep = sample_ids %>% autonomics.import::guess_sep(c('.', ' ', '_'))
 ){
    sample_ids %>%
    autonomics.import::designify_maxquant_sampleids(sep = sep) %>%
-   autonomics.import::infer_design_from_sampleids(sep = sep) %>%
+   autonomics.import::infer_design_from_default_sampleids(sep = sep) %>%
    (function(x){x$sample_id <- rownames(x) <- sample_ids; x})
 }
 
@@ -115,7 +115,7 @@ infer_design_from_maxquant_sampleids <- function(
 #' @export
 infer_design_from_sampleids <- function(
    sample_ids,
-   sep = sample_ids %>% autonomics.import::guess_component_sep(c('.', ' ', '_')),
+   sep = sample_ids %>% autonomics.import::guess_sep(c('.', ' ', '_')),
    maxquant = FALSE
 ){
    if (maxquant){ sample_ids %>% autonomics.import::infer_design_from_maxquant_sampleids(sep = sep)
@@ -266,7 +266,7 @@ write_design <- function(
    # Infer subgroup from sampleids and add to design
    if (infer_design_from_sampleids){
       autonomics.support::cmessage('\t\tInfer design from sampleids (%s)', design_df[[sampleid_var]][1])
-      if (is.null(design_sep)) design_sep <- design_df[[sampleid_var]] %>% autonomics.import::guess_component_sep(verbose = TRUE)
+      if (is.null(design_sep)) design_sep <- design_df[[sampleid_var]] %>% autonomics.import::guess_sep(verbose = TRUE)
       inferred_design <- design_df[[sampleid_var]] %>% autonomics.import::infer_design_from_sampleids(sep = design_sep, maxquant = platform=='maxquant')
       design_df$sample_id <- NULL
       design_df %<>% cbind(., inferred_design)
@@ -279,7 +279,7 @@ write_design <- function(
          design_df$replicate <- ''
       } else {
          design_df$subgroup  <- sdata1[[subgroup_var]]
-         missing_subgroups <- any(autonomics.support::is_missing_or_empty_character(design_df$subgroup))
+         missing_subgroups <- any(autonomics.support::is_missing_or_empty_character(design_df$subgroup %>% as.character()))
          if (!missing_subgroups){
             design_df$subgroup %<>% autonomics.support::nameify_strings()
             design_df %<>% add_replicate_values()
@@ -596,7 +596,7 @@ read_maxquant_design <- function(design_file){
 #    # Either infer design from sampleids (if possible)
 #    if (infer_design){
 #       autonomics.support::cmessage('Infer design from sampleids')
-#       sep <- autonomics.import::guess_component_sep(autonomics.import::sdata(object)[[sampleid_var]])
+#       sep <- autonomics.import::guess_sep(autonomics.import::sdata(object)[[sampleid_var]])
 #       if (is.null(sep)){
 #          autonomics.support::cmessage('No consistent unambiguous separator - design could not be prepared')
 #       } else

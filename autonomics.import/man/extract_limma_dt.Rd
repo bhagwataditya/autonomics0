@@ -16,8 +16,10 @@ melted data.table
 Extract limma datatable
 }
 \examples{
+\dontrun{
 require(magrittr)
 if (require(subramanian.2016)){
    subramanian.2016::metabolon \%>\% autonomics.import::extract_limma_dt()
+}
 }
 }

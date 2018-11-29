@@ -5,7 +5,7 @@
 \title{Infer design from (non-maxquant) sample ids}
 \usage{
 infer_design_from_default_sampleids(sample_ids, sep = sample_ids \%>\%
-  autonomics.import::guess_component_sep(c(".", " ", "_")))
+  autonomics.import::guess_sep(c(".", " ", "_")))
 }
 \arguments{
 \item{sample_ids}{character vector}

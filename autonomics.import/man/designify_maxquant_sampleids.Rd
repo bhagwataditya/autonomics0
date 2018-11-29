@@ -5,7 +5,7 @@
 \title{Designify maxquant sampleids}
 \usage{
 designify_maxquant_sampleids(sampleids, sep = sampleids \%>\%
-  autonomics.import::guess_component_sep())
+  autonomics.import::guess_sep())
 }
 \arguments{
 \item{sampleids}{character vector}

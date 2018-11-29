@@ -2,14 +2,14 @@
 % Please edit documentation in R/extract_limma.R
 \name{extract_limma_matrix}
 \alias{extract_limma_matrix}
-\alias{value}
+\alias{effect}
 \alias{p}
 \alias{fdr}
 \title{Extract limma matrix from object}
 \usage{
 extract_limma_matrix(object, quantity)
 
-value(object)
+effect(object)
 
 p(object)
 
@@ -30,8 +30,9 @@ Extract limma matrix from object
 require(magrittr)
 if (require(subramanian.2016)){
    object <- subramanian.2016::metabolon
-   object \%>\% autonomics.import::extract_limma_matrix(quantity = 'value')
-   object \%>\% autonomics.import::value()
-   object \%>\% autonomics.import::p()
+   object \%>\% extract_limma_matrix(quantity = 'effect') \%>\% extract(1:3, 1:3)
+   object \%>\% effect() \%>\% extract(1:3, 1:3)
+   object \%>\% p()      \%>\% extract(1:3, 1:3)
+   object \%>\% fdr()    \%>\% extract(1:3, 1:3)
 }
 }

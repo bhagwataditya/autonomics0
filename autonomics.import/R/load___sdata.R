@@ -132,7 +132,7 @@ extract_maxquant_channels <- function(file){
 #' @export
 designify_maxquant_sampleids <- function(
    sampleids,
-   sep = sampleids %>% autonomics.import::guess_component_sep()
+   sep = sampleids %>% autonomics.import::guess_sep()
 ){
 
    if (is.factor(sampleids)) sampleids %<>% as.character()
@@ -317,6 +317,7 @@ load_sdata_metabolon <- function(file, sheet){
                                             stringi::stri_replace_first_fixed('CLIENT_IDENTIFIER', 'sample_id'))
    df$sample_id %<>% autonomics.support::uniquify('make.unique')
    df %<>% magrittr::set_rownames(.$sample_id)
+   df$subgroup %<>% factor()
    df %<>% autonomics.support::pull_columns(c('sample_id', 'subgroup'), verbose = FALSE)
 
    # Return
@@ -404,6 +405,7 @@ load_sdata_soma <- function(file, verbose = TRUE){
 
    sdata1$sample_id %<>% autonomics.support::uniquify('make.unique', verbose = verbose)
    sdata1 %<>% data.frame(row.names = .$sample_id, stringsAsFactors = FALSE)
+   sdata1$subgroup %<>% factor()
    sdata1 %<>% autonomics.support::pull_columns(c('sample_id', 'subgroup'), verbose = FALSE)
    sdata1
 }
