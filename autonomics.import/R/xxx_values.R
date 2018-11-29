@@ -13,38 +13,38 @@
 #' if (require(autonomics.data)){
 #'    # STEM CELL DIFFERENTIATION
 #'       x <- autonomics.data::stemdiff.proteinratios
-#'       x %>% autonomics.import::subgroup_values() %>% autonomics.import::split_composite_values()
-#'       x %>%                                          autonomics.import::split_composite_values()
-#'       x %>%                                          autonomics.import::split_composite_values(keep = TRUE)
+#'       x %>% autonomics.import::subgroup_values() %>% autonomics.import::split_values()
+#'       x %>%                                          autonomics.import::split_values()
+#'       x %>%                                          autonomics.import::split_values(keep = TRUE)
 #'    # GLUTAMINASE
 #'       x <- autonomics.data::glutaminase
-#'       x %>% autonomics.import::subgroup_values() %>% autonomics.import::split_composite_values()
-#'       x %>%                                          autonomics.import::split_composite_values()
+#'       x %>% autonomics.import::subgroup_values() %>% autonomics.import::split_values()
+#'       x %>%                                          autonomics.import::split_values()
 #' }
 #' if (require(subramanian.2016)){
 #'    x <- subramanian.2016::metabolon
-#'    x %>% autonomics.import::subgroup_values()    %>% autonomics.import::split_composite_values()
-#'    x                                             %>% autonomics.import::split_composite_values()
+#'    x %>% autonomics.import::subgroup_values()    %>% autonomics.import::split_values()
+#'    x                                             %>% autonomics.import::split_values()
 #' }
 #' if (require(graumann.lfq)){
 #'    x <- graumann.lfq::lfq.intensities
-#'    x %>% autonomics.import::subgroup_values()    %>% autonomics.import::split_composite_values()
-#'    x                                             %>% autonomics.import::split_composite_values()
+#'    x %>% autonomics.import::subgroup_values()    %>% autonomics.import::split_values()
+#'    x                                             %>% autonomics.import::split_values()
 #' }
 #' if (require(atkin.2014)){
 #'    x <- atkin.2014::soma.2018
-#'    x %>% autonomics.import::subgroup_values()    %>% autonomics.import::split_composite_values()
-#'    x                                             %>% autonomics.import::split_composite_values()
+#'    x %>% autonomics.import::subgroup_values()    %>% autonomics.import::split_values()
+#'    x                                             %>% autonomics.import::split_values()
 #' }
 #' @export
-split_composite_values <- function (x, ...) {
-   UseMethod("split_composite_values", x)
+split_values <- function (x, ...) {
+   UseMethod("split_values", x)
 }
 
-#' @rdname split_composite_values
+#' @rdname split_values
 #' @importFrom magrittr %>%
 #' @export
-split_composite_values.character <- function(
+split_values.character <- function(
    x,
    sep    = autonomics.import::guess_sep(x, verbose = FALSE),
    keep   = FALSE
@@ -68,39 +68,39 @@ split_composite_values.character <- function(
    #                   data.table::as.data.table()
 }
 
-#' @rdname split_composite_values
+#' @rdname split_values
 #' @importFrom magrittr %>%
 #' @export
-split_composite_values.factor <- function(
+split_values.factor <- function(
    x,
    sep = autonomics.import::guess_sep(x, verbose = FALSE),
    keep = FALSE
 ){
-   x %>% as.character() %>% split_composite_values(sep = sep, keep = keep)
+   x %>% as.character() %>% split_values(sep = sep, keep = keep)
 }
 
-#' @rdname split_composite_values
+#' @rdname split_values
 #' @export
 #' @importFrom magrittr %>%
-split_composite_values.SummarizedExperiment <- function(object, svar = 'subgroup', keep = FALSE){
+split_values.SummarizedExperiment <- function(object, svar = 'subgroup', keep = FALSE){
    dt <- object %>%
       autonomics.import::svalues(svar) %>%
-      autonomics.import::split_composite_values(keep = keep)
+      autonomics.import::split_values(keep = keep)
    dt
 }
 
-#' @rdname split_composite_values
+#' @rdname split_values
 #' @export
 scomponents <- function(...){
-   .Deprecated('split_composite_values')
-   split_composite_values(..., keep_x = FALSE)
+   .Deprecated('split_values')
+   split_values(..., keep_x = FALSE)
 }
 
-#' @rdname split_composite_values
+#' @rdname split_values
 #' @export
 subgroup_components <- function(...){
-   .Deprecated('split_composite_values')
-   split_composite_values(..., keep_x = FALSE)
+   .Deprecated('split_values')
+   split_values(..., keep_x = FALSE)
 }
 
 #==============================================================================================
@@ -123,22 +123,22 @@ subgroup_components <- function(...){
 #'
 #'    # STEM CELL DIFFERENTIATION
 #'       x <- autonomics.data::stemdiff.proteinratios %>% autonomics.import::subgroup_values()
-#'       x %>% autonomics.import::reshape_composite_values(fill = '', fun.aggregate = unique)
-#'       x %>% autonomics.import::reshape_composite_values(fill = 0,  fun.aggregate = length)
+#'       x %>% autonomics.import::reshape_values(fill = '', fun.aggregate = unique)
+#'       x %>% autonomics.import::reshape_values(fill = 0,  fun.aggregate = length)
 #'
 #'    # GLUTAMINASE
 #'       x <- autonomics.data::glutaminase %>% autonomics.import::subgroup_values()
-#'       x %>% autonomics.import::reshape_composite_values(fill = '', fun.aggregate = unique)
-#'       x %>% autonomics.import::reshape_composite_values(fill = 0,  fun.aggregate = length)
+#'       x %>% autonomics.import::reshape_values(fill = '', fun.aggregate = unique)
+#'       x %>% autonomics.import::reshape_values(fill = 0,  fun.aggregate = length)
 #' }
 #'
 #' @importFrom magrittr %>%
 #' @export
-reshape_composite_values <- function(x, fill, fun.aggregate, sep = autonomics.import::guess_sep(x)){
-   n <- autonomics.import::split_composite_values(x, sep = sep) %>% ncol()
+reshape_values <- function(x, fill, fun.aggregate, sep = autonomics.import::guess_sep(x)){
+   n <- autonomics.import::split_values(x, sep = sep) %>% ncol()
    formula <- if (n==1) '1' else sprintf('x%d', 1:(n-1)) %>% paste0(collapse=' + ')
    formula %<>% paste0(' ~ x', n)
-   x %>% autonomics.import::split_composite_values(keep = TRUE) %>%
+   x %>% autonomics.import::split_values(keep = TRUE) %>%
          data.table::dcast(formula = formula,
                            value.var = names(.)[1],
                            fill = fill,
@@ -165,45 +165,45 @@ reshape_composite_values <- function(x, fill, fun.aggregate, sep = autonomics.im
 #' # STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
 #'    x <- autonomics.data::stemdiff.proteinratios
-#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::count_composite_values()
-#'    x %>%                                          autonomics.import::count_composite_values()
+#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::count_values()
+#'    x %>%                                          autonomics.import::count_values()
 #' }
 #'
 #' # ATKIN
 #' if (require(atkin.2014)){
 #'    x <- atkin.2014::soma.2018
-#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::count_composite_values()
-#'    x %>%                                          autonomics.import::count_composite_values()
+#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::count_values()
+#'    x %>%                                          autonomics.import::count_values()
 #' }
 #' @return integer
 #' @export
-count_composite_values <- function(x, ...){
-   UseMethod('count_composite_values', x)
+count_values <- function(x, ...){
+   UseMethod('count_values', x)
 }
 
-#' @rdname count_composite_values
+#' @rdname count_values
 #' @importFrom magrittr %>%
 #' @export
-count_composite_values.character <- function(x){
+count_values.character <- function(x){
    x %>%
-   autonomics.import:::reshape_composite_values(fill = 0, fun.aggregate = length)
+   autonomics.import:::reshape_values(fill = 0, fun.aggregate = length)
 }
 
-#' @rdname count_composite_values
+#' @rdname count_values
 #' @importFrom magrittr %>%
 #' @export
-count_composite_values.factor <- function(x){
+count_values.factor <- function(x){
    x %>%
    as.character() %>%
-   count_composite_values()
+   count_values()
 }
 
-#' @rdname count_composite_values
+#' @rdname count_values
 #' @export
-count_composite_values.SummarizedExperiment <- function(x, svar = 'subgroup'){
+count_values.SummarizedExperiment <- function(x, svar = 'subgroup'){
    x %>%
    autonomics.import::svalues(svar) %>%
-   autonomics.import::count_composite_values()
+   autonomics.import::count_values()
 }
 
 
@@ -225,47 +225,47 @@ count_composite_values.SummarizedExperiment <- function(x, svar = 'subgroup'){
 #' # STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
 #'    x <- autonomics.data::stemdiff.proteinratios
-#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::layout_composite_values()
-#'    x                                          %>% autonomics.import::layout_composite_values()
+#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::layout_values()
+#'    x                                          %>% autonomics.import::layout_values()
 #' }
 #'
 #' # ATKIN
 #' if (require(atkin.2014)){
 #'    x <- atkin.2014::soma.2018
-#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::layout_composite_values()
-#'    x %>%                                          autonomics.import::layout_composite_values()
+#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::layout_values()
+#'    x %>%                                          autonomics.import::layout_values()
 #' }
 #' @return integer
 #' @export
-layout_composite_values <- function (x, ...) {
-   UseMethod("layout_composite_values", x)
+layout_values <- function (x, ...) {
+   UseMethod("layout_values", x)
 }
 
 
-#' @rdname layout_composite_values
+#' @rdname layout_values
 #' @importFrom magrittr %>%
 #' @export
-layout_composite_values.character <- function(x, sep = autonomics.import::guess_sep(x)){
+layout_values.character <- function(x, sep = autonomics.import::guess_sep(x)){
    x  %>%
    unique() %>%
-   autonomics.import:::reshape_composite_values(fill = '', fun.aggregate = unique, sep = sep)
+   autonomics.import:::reshape_values(fill = '', fun.aggregate = unique, sep = sep)
 }
 
-#' @rdname layout_composite_values
+#' @rdname layout_values
 #' @importFrom magrittr %>%
 #' @export
-layout_composite_values.factor <- function(x, sep = autonomics.import::guess_sep(x)){
+layout_values.factor <- function(x, sep = autonomics.import::guess_sep(x)){
    x %>%
    levels() %>%
-   autonomics.import:::reshape_composite_values(fill = '', fun.aggregate = unique, sep = sep)
+   autonomics.import:::reshape_values(fill = '', fun.aggregate = unique, sep = sep)
 }
 
-#' @rdname layout_composite_values
+#' @rdname layout_values
 #' @export
-layout_composite_values.SummarizedExperiment <- function(x, svar = 'subgroup', sep = autonomics.import::guess_sep(x)){
+layout_values.SummarizedExperiment <- function(x, svar = 'subgroup', sep = autonomics.import::guess_sep(x)){
    x %>%
    autonomics.import::svalues(svar) %>%
-   autonomics.import::layout_composite_values(sep = sep)
+   autonomics.import::layout_values(sep = sep)
 }
 
 

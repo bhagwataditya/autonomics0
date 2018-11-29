@@ -4,8 +4,8 @@
 \alias{make_composite_colors}
 \title{Make composite colors}
 \usage{
-make_composite_colors(svalues,
-  sep = autonomics.import::infer_design_sep(svalues), show = FALSE)
+make_composite_colors(svalues, sep = autonomics.import::guess_sep(svalues),
+  show = FALSE)
 }
 \arguments{
 \item{svalues}{character vector}

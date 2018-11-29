@@ -42,7 +42,7 @@ make_gg_colors <- function(factor_levels, show) {
 #' @export
 make_composite_colors <- function(
    svalues,
-   sep  = autonomics.import::guess_component_sep(svalues),
+   sep  = autonomics.import::guess_sep(svalues),
    show = FALSE
 ){
 
@@ -56,7 +56,7 @@ make_composite_colors <- function(
    #    * V1: first n-1 components => will be mapped to hue
    #    * V2: last component       => will be mapped to luminance
    # This approach works also when more than two components are present
-   # It is therefore used instead of autonomics.import::split_components()
+   # It is therefore used instead of autonomics.import::split_values()
    V1 <- svalues %>% stringi::stri_split_fixed(sep) %>% vapply(function(x) x %>% magrittr::extract(-length(x)) %>% paste0(collapse = sep), character(1))
    V2 <- svalues %>% stringi::stri_split_fixed(sep) %>% vapply(function(x) x %>% magrittr::extract( length(x)),                            character(1))
    V1levels <- sort(unique(V1))
@@ -68,7 +68,7 @@ make_composite_colors <- function(
    color_levels <- character(0)
    for (i in seq_along(hues)){
       color_levels %<>% c(colorspace::sequential_hcl(n2, h = hues[[i]], power = 1, c = c(50, 100), l = c(90, 30)) %>%
-                          magrittr::set_names(paste0(V1levels[[i]], sep, V2levels)))
+                             magrittr::set_names(paste0(V1levels[[i]], sep, V2levels)))
    }
    if (show) color_levels %>% (function(x) graphics::pie(rep(1, length(x)), names(x), col = x))
 
@@ -83,7 +83,7 @@ make_composite_colors <- function(
 #' @export
 make_colors <- function(
    x,
-   sep = autonomics.import::guess_component_sep(x, verbose = FALSE),
+   sep = autonomics.import::guess_sep(x, verbose = FALSE),
    show = FALSE,
    verbose = FALSE
 ){
@@ -148,7 +148,7 @@ default_color_values <- function(
    assertive.sets::assert_is_subset(color_var, autonomics.import::svars(object))
 
    # sep
-   sep              <- object %>% autonomics.import::ssep(color_var)
+   sep              <- object %>% autonomics.import::guess_sep(color_var)
    color_var_levels <- object %>% autonomics.import::slevels(color_var)
 
    # Make colors

@@ -20,6 +20,8 @@ Create arrow diagram
 \examples{
 if (require(autonomics.data)){
    object <- autonomics.data::stemdiff.proteinratios
+   object$subgroup
+   
    topdef <- 'fdr < 0.05'
    cat(create_arrow_diagram(object, topdef))
 }
