@@ -22,12 +22,12 @@ subset of object with reference features
 Filter subet for reference features
 }
 \examples{
-if (require(billing.differentiation.data)){
+if (require(autonomics.data)){
    require(magrittr)
    fvalues <- c("A0MZ66", "A0JLT2", "Q8NG66", "Q9NPI5")
-   object <- billing.differentiation.data::protein.ratios
+   object <- autonomics.data::stemdiff.proteinratios
    object \%>\% filter_features_on_fvalues(fvar    = 'Uniprot accessions',
-                                           split   = ';',
-                                           fvalues = fvalues)
+                                         split   = ';',
+                                         fvalues = fvalues)
 }
 }

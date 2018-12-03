@@ -71,7 +71,7 @@ guess_sep.character <- function(
    }
 
    # Separator identified - return
-   if (verbose) autonomics.support::cmessage("\t\tInfer design sep '%s'", best_sep)
+   if (verbose) autonomics.support::cmessage("\t\tGuess sep: '%s'", best_sep)
    return(best_sep)
 }
 

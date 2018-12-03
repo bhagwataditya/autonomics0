@@ -20,7 +20,7 @@ Uses \href{https://pubchemdocs.ncbi.nlm.nih.gov/pug-rest-tutorial}{PUBCHEM's RES
 require(magrittr)
 if (require(subramanian.2016)){
    subramanian.2016::metabolon \%>\%
-      autonomics.import::add_smiles_to_fdata()
+   autonomics.import::add_smiles_to_fdata()
 }
 }
 

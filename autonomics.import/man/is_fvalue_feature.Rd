@@ -19,12 +19,12 @@ is_fvalue_feature(object, fvar, split, fvalues)
 Identify reference features
 }
 \examples{
-if (require(billing.differentiation.data)){
+if (require(autonomics.data)){
    require(magrittr)
    fvalues <- c("A0MZ66", "A0JLT2", "Q8NG66", "Q9NPI5")
-   object <- billing.differentiation.data::protein.ratios
+   object <- autonomics.data::stemdiff.proteinratios
    object \%>\% is_fvalue_feature(fvar = 'Uniprot accessions',
-                                  split = ';', fvalues = fvalues) \%>\%
-                sum()
+                                split = ';', fvalues = fvalues) \%>\%
+              sum()
 }
 }

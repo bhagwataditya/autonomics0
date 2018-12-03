@@ -22,7 +22,7 @@ sampleids <- c("STD(L).EM00(M).EM01(H).R1[H/L]",
 sampleids \%>\% autonomics.import::designify_maxquant_sampleids()
 
 sampleids <- c("Gel 11 1", "Gel 11 2", "Gel Ctrl 1")
-sampleids \%>\% autonomics.import::designify_maxquant_sampleids()
+sampleids \%>\% designify_maxquant_sampleids()
 
 sampleids <- c("ESC(0).NCM(1).CM(2).MV(3).EX(4).KIT(5).R1[0]",
                "ESC(0).NCM(1).CM(2).MV(3).EX(4).KIT(5).R1[1]")

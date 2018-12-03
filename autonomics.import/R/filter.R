@@ -68,9 +68,10 @@ filter_features_ <- function(object, condition, verbose = FALSE){
 #' @return filtered eSet
 #' @examples
 #' require(magrittr)
+#' \dontrun{
 #' if (require(autonomics.data)){
 #'    autonomics.data::ALL %>%
-#'    filter_features(gene_symbols %in% c('LIG4', 'MAPK12', 'MAPK1') )
+#'    autonomics.import::filter_features(gene_symbols %in% c('LIG4', 'MAPK12', 'MAPK1') )
 #'
 #'    autonomics.data::ALL %>%
 #'    filter_features(gene_symbols %in% c('LIG4', 'MAPK12', 'MAPK1'), verbose = TRUE)
@@ -80,6 +81,7 @@ filter_features_ <- function(object, condition, verbose = FALSE){
 #'
 #'    autonomics.data::ALL %>%
 #'    filter_features_("gene_symbols %in% c('LIG4', 'MAPK12', 'MAPK1')", verbose = TRUE)
+#' }
 #' }
 #' @export
 filter_features <- function(object, condition, verbose = FALSE){
@@ -92,13 +94,13 @@ filter_features <- function(object, condition, verbose = FALSE){
 #' @param split      split
 #' @param fvalues    fvalues
 #' @examples
-#' if (require(billing.differentiation.data)){
+#' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    fvalues <- c("A0MZ66", "A0JLT2", "Q8NG66", "Q9NPI5")
-#'    object <- billing.differentiation.data::protein.ratios
+#'    object <- autonomics.data::stemdiff.proteinratios
 #'    object %>% is_fvalue_feature(fvar = 'Uniprot accessions',
-#'                                   split = ';', fvalues = fvalues) %>%
-#'                 sum()
+#'                                 split = ';', fvalues = fvalues) %>%
+#'               sum()
 #' }
 #' @importFrom magrittr  %>%
 #' @export
@@ -117,13 +119,13 @@ is_fvalue_feature <- function(object, fvar, split, fvalues){
 #' @param  split               split
 #' @param  fvalues             fvalues
 #' @examples
-#' if (require(billing.differentiation.data)){
+#' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    fvalues <- c("A0MZ66", "A0JLT2", "Q8NG66", "Q9NPI5")
-#'    object <- billing.differentiation.data::protein.ratios
+#'    object <- autonomics.data::stemdiff.proteinratios
 #'    object %>% filter_features_on_fvalues(fvar    = 'Uniprot accessions',
-#'                                            split   = ';',
-#'                                            fvalues = fvalues)
+#'                                          split   = ';',
+#'                                          fvalues = fvalues)
 #' }
 #' @return subset of object with reference features
 #' @importFrom magrittr       %>%     %<>%

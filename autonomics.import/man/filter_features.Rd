@@ -24,9 +24,10 @@ Filter features on condition
 }
 \examples{
 require(magrittr)
+\dontrun{
 if (require(autonomics.data)){
    autonomics.data::ALL \%>\%
-   filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1') )
+   autonomics.import::filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1') )
 
    autonomics.data::ALL \%>\%
    filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1'), verbose = TRUE)
@@ -36,5 +37,6 @@ if (require(autonomics.data)){
 
    autonomics.data::ALL \%>\%
    filter_features_("gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1')", verbose = TRUE)
+}
 }
 }

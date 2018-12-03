@@ -43,6 +43,13 @@
 #'    sdata(object) %>% str()
 #' }
 #'
+#' # LFQ
+#' if (require(graumann.lfq)){
+#'    file <- 'extdata/proteinGroups.txt' %>% system.file(package = 'graumann.lfq')
+#'    file %>% autonomics.import::load_proteingroups(
+#'                infer_design_from_sampleids = TRUE)
+#' }
+#'
 #' @importFrom magrittr %>%
 #' @export
 load_proteingroups <- function(
@@ -65,11 +72,21 @@ load_proteingroups <- function(
    object <- autonomics.import::load_omics(file                        = file,
                                            platform                    = 'maxquant',
                                            quantity                    = quantity,
-                                           log2_transform              = log2_transform,
+                                           log2_transform              = FALSE,
                                            log2_offset                 = log2_offset,
                                            infer_design_from_sampleids = infer_design_from_sampleids,
                                            design_sep                  = design_sep,
                                            design_file                 = design_file)
+
+   # NA zeroes (in intensity data)
+   autonomics.support::cmessage('\t\tNA zeroes')
+   autonomics.import::exprs(object) %<>% (function(x){x[x==0] <- NA; x})
+
+   # Log2 transform
+   if (log2_transform){
+      autonomics.support::cmessage('\t\tLog2 transform')
+      autonomics.import::exprs(object) %<>% log2()
+   }
 
    # Filter features
    object %<>% autonomics.import::filter_features(!is.na(feature_id), verbose = TRUE) # Max Quant earlier version had bug that created corrupted lines without feature_id columns
@@ -84,6 +101,9 @@ load_proteingroups <- function(
    if (rm_na_features){
       object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample(verbose = TRUE)
    }
+
+   # Impute consistent nondetects (in intensity data)
+   if (quantity %>% stringi::stri_detect_fixed('intensity')) object %<>% autonomics.preprocess::qrilc_consistent_nondetects()
 
    # Intuify snames
    subgroup_values  <- object %>% autonomics.import::svalues('subgroup')

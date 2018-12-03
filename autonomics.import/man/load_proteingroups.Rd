@@ -66,4 +66,11 @@ if (require(autonomics.data)){
    sdata(object) \%>\% str()
 }
 
+# LFQ
+if (require(graumann.lfq)){
+   file <- 'extdata/proteinGroups.txt' \%>\% system.file(package = 'graumann.lfq')
+   file \%>\% autonomics.import::load_proteingroups(
+               infer_design_from_sampleids = TRUE)
+}
+
 }

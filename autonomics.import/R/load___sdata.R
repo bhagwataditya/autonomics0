@@ -123,7 +123,7 @@ extract_maxquant_channels <- function(file){
 #' sampleids %>% autonomics.import::designify_maxquant_sampleids()
 #'
 #' sampleids <- c("Gel 11 1", "Gel 11 2", "Gel Ctrl 1")
-#' sampleids %>% autonomics.import::designify_maxquant_sampleids()
+#' sampleids %>% designify_maxquant_sampleids()
 #'
 #' sampleids <- c("ESC(0).NCM(1).CM(2).MV(3).EX(4).KIT(5).R1[0]",
 #'                "ESC(0).NCM(1).CM(2).MV(3).EX(4).KIT(5).R1[1]")
@@ -163,11 +163,11 @@ designify_maxquant_sampleids <- function(
          autonomics.support::vextract(label_values) %>%
          vapply(paste0, character(1), collapse = '_')
    } else {
-      parts %>% vapply(paste0, character(1), collapse = '.')
+      parts %>% vapply(paste0, character(1), collapse = sep)
    }
 
    # sampleid values
-   long_sampleid_values <- sprintf('%s.%s', subgroup_values, replicate_values)
+   long_sampleid_values <- sprintf('%s%s%s', subgroup_values, sep, replicate_values)
    sampleid_values <- long_sampleid_values %>% stringi::stri_replace_first_regex('_[HML0-9]+', '')
    idx <- sampleid_values %>% autonomics.support::cduplicated()
    sampleid_values[idx] <- long_sampleid_values[idx]
