@@ -42,5 +42,7 @@ uniquify <- function(x, method = 'make.unique.spaces', verbose = TRUE){
      autonomics.support::cmessage('\t\tRun %s() to uniquify replicated sample ids', method)
      autonomics.support::cmessage_df('\t\t\t%s', table(x[idx]))
   }
-   get(method)(x)
+  
+  # https://r4ds.had.co.nz/pipes.html
+  get(method)(x)
 }
