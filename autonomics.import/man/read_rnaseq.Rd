@@ -15,5 +15,5 @@ read_rnaseq(file, fid_var = "gene_id")
 Read data from rnaseq file
 }
 \examples{
-file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
 }

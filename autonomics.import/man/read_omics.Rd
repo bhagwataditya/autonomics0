@@ -4,23 +4,43 @@
 \alias{read_omics}
 \title{Read omics data from txt or xls file}
 \usage{
-read_omics(file, sheet, exprs_range, fid_range = NULL, sid_range = NULL,
-  fdata_range = NULL, sdata_range = NULL, transpose = FALSE)
+read_omics(file, sheet, fid_rows, fid_cols, sid_rows, sid_cols, expr_rows,
+  expr_cols, fvar_rows = NULL, fvar_cols = NULL, svar_rows = NULL,
+  svar_cols = NULL, fdata_rows = NULL, fdata_cols = NULL,
+  sdata_rows = NULL, sdata_cols = NULL, transpose = FALSE)
 }
 \arguments{
 \item{file}{character(1)}
 
 \item{sheet}{integer(1) or character(1)}
 
-\item{exprs_range}{numeric(4): c(row1, rown, col1, coln)}
+\item{fid_rows}{featureid rows: logical(n) or numeric(n)}
 
-\item{fid_range}{numeric(4): c(row1, rown, col1, coln)}
+\item{fid_cols}{featureid cols: logical(n) or numeric(n)}
 
-\item{sid_range}{numeric(4): c(row1, rown, col1, coln)}
+\item{sid_rows}{sampleid  rows: logical(n) or numeric(n)}
 
-\item{fdata_range}{numeric(4): c(row1, rown, col1, coln)}
+\item{sid_cols}{sampleid  cols: logical(n) or numeric(n)}
 
-\item{sdata_range}{numeric(4): c(row1, rown, col1, coln)}
+\item{expr_rows}{expr      rows: logical(n) or numeric(n)}
+
+\item{expr_cols}{expr      rows: logical(n) or numeric(n)}
+
+\item{fvar_rows}{fvar      rows: logical(n) or numeric(n)}
+
+\item{fvar_cols}{fvar      cols: logical(n) or numeric(n)}
+
+\item{svar_rows}{svar      rows: logical(n) or numeric(n)}
+
+\item{svar_cols}{svar      cols: logical(n) or numeric(n)}
+
+\item{fdata_rows}{fdata     rows: logical(n) or numeric(n)}
+
+\item{fdata_cols}{fdata     cols: logical(n) or numeric(n)}
+
+\item{sdata_rows}{sdata     rows: logical(n) or numeric(n)}
+
+\item{sdata_cols}{sdata     cols: logical(n) or numeric(n)}
 
 \item{transpose}{logical(1)}
 }
@@ -29,23 +49,73 @@ Read omics data from txt or xls file
 }
 \examples{
 require(magrittr)
+
+# METABOLON
 if (require(autonomics.data)){
   file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-  file \%>\% autonomics.import::read_omics(sheet       = 2,
-                                         exprs_range = c(11, 401, 15, 86),
-                                         fid_range   = c(11, 401,  5,  5),
-                                         sid_range   = c( 3,   3, 15, 86),
-                                         fdata_range = c(10, 401,  1, 14),
-                                         sdata_range = c(1,   10, 14, 86),
-                                         transpose   = FALSE)
+  file \%>\% autonomics.import::read_omics(sheet      = 2,
+                                         fid_rows   = 11:401,    fid_cols   = 5,
+                                         sid_rows   = 3,         sid_cols   = 15:86,
+                                         expr_rows  = 11:401,    expr_cols  = 15:86,
+                                         fvar_rows  = 10,        fvar_cols  = 1:14,
+                                         svar_rows  = 1:10,      svar_cols  = 14,
+                                         fdata_rows = 11:401,    fdata_cols = 1:14,
+                                         sdata_rows = 1:10,      sdata_cols = 15:86,
+                                         transpose  = FALSE)
 }
+
+# SOMASCAN
+if (require(atkin.2014)){
+   file <- system.file('extdata/soma/WCQ-18-007.hybNorm.plateScale.medNorm.calibrate.20181004.adat', package = 'atkin.2014')
+   file \%>\% autonomics.import::read_omics(fid_rows   = 73,       fid_cols   = 27:1343,
+                                          sid_rows   = 93:520,   sid_cols   = 6:6,
+                                          expr_rows  = 93:520,   expr_cols  = 27:1343,
+                                          fvar_rows  = 73:91,    fvar_cols  = 26,
+                                          svar_rows  = 92,       svar_cols  = 1:25,
+                                          fdata_rows = 73:91,    fdata_cols = 27:1343,
+                                          sdata_rows = 93:520,   sdata_cols = 1:25,
+                                          transpose = TRUE)
+
+
+}
+
+# EXIQON
+if require(subramanian.2016){
+   file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx', package = 'subramanian.2016')
+   file \%>\% autonomics.import::read_omics(sheet      = 1,
+                                          fid_rows   = 1,        fid_cols  = 2:330,
+                                          sid_rows   = 2:73,     sid_cols  = 1,
+                                          expr_rows  = 2:73,     expr_cols = 2:330,
+                                          fvar_rows  = 74:76,    fvar_cols = 1,
+                                          svar_rows  = 1,        svar_cols = 331:332,
+                                          fdata_rows = 74:76,    fdata_cols = 2:330,
+                                          sdata_rows = 2:73,     sdata_cols = 331:332,
+                                          transpose  = TRUE)
+}
+
+# PROTEINGROUPS LABELFREE
+if (require(graumann.lfq)){
+   file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
+   file \%>\% autonomics.import::read_omics(fid_rows   = 2:6839,   fid_cols   = 275,
+                                          sid_rows   = 1,        sid_cols   = 227:248,
+                                          expr_rows  = 2:6839,   expr_cols  = 227:248,
+                                          fvar_rows  = 1,        fvar_cols  = 1:8,
+                                          fdata_rows = 2:6839,   fdata_cols = 1:8,
+                                          transpose = FALSE)
+}
+
+# PROTEINGROUPS LABELED
+if (require(autonomics.data)){
+   file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt', package = 'autonomics.data')
+   file \%>\% autonomics.import::read_omics()
+}
+
+# RNASEQ
 if (require(subramanian.2016)){
    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
-   fdata_range <- c(1, 48821, 1, 4)
-   sdata_range <- c(1, 1, 5, 86)
-   exprs_range <- c(2, 48821, 5, 86)
-   transpose <- FALSE
-   sid_var <- NULL
-   fid_var <- 'gene_id'
+   fdata_rows = 1:48821,  fdata_cols = 1:4,
+   sdata_rows = 1,        sdata_cols = 5:86,
+   expr_rows  = 2:48821,  expr_cols  = 5:86,
+   transpose  = FALSE
 }
 }

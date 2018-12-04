@@ -30,7 +30,10 @@ load_exiqon <- function(
    infer_design_from_sampleids = FALSE,
    design_sep                  = NULL
 ){
+   # Satisfy Check
    . <- `#RefGenes` <- `#Spike` <- NULL
+
+   # Load
    object <- autonomics.import::load_omics(file                        = file,
                                            platform                    = 'exiqon',
                                            log2_transform              = FALSE,

@@ -21,9 +21,9 @@ Read SOMAScan data
 }
 \examples{
 require(magrittr)
-file <- system.file('extdata/soma/WCQ-18-007.hybNorm.plateScale.medNorm.calibrate.20181004.adat',
-                     package = 'atkin.2014')
-if (file.exists(file)){
+if (require(atkin.2014)){
+   file <- system.file('extdata/soma/WCQ-18-007.hybNorm.plateScale.medNorm.calibrate.20181004.adat',
+                        package = 'atkin.2014')
    file \%>\% autonomics.import::read_somascan()
 }
 }
