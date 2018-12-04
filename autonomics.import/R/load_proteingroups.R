@@ -3,17 +3,17 @@
 #=============================
 
 #' Load proteingroups
-#' @param file            path to proteinGroups.txt
-#' @param quantity       'Ratio normalized', 'Ratio', 'Intensity', 'LFQ intensity', 'Reporter intensity'
-#' @param infer_design_from_sampleids  logical: whether to infer design from sampleids
-#' @param design_sep      string: design separator
-#' @param design_file     path to design file (created with write_maxquant_design)
-#' @param fasta_file      path to uniprot fasta database
-#' @param log2_transform  logical: whether to log2 transform
-#' @param log2_offset     numeric: offset used in mapping: x -> log2(offset + x)
-#' @param rm_reverse_features      logical: whether to rm reverse features
-#' @param rm_contaminant_features logical: whether to rm contaminant features
-#' @param rm_na_features  logical: whether to rm features which are NA, NaN or 0 in all samples
+#' @param file                          path to proteinGroups.txt
+#' @param quantity                     'Ratio normalized', 'Ratio', 'Intensity', 'LFQ intensity', 'Reporter intensity'
+#' @param infer_design_from_sampleids   logical: whether to infer design from sampleids
+#' @param design_sep                    string: design separator
+#' @param design_file                   path to design file (created with write_maxquant_design)
+#' @param fasta_file                    path to uniprot fasta database
+#' @param log2_transform                logical: whether to log2 transform
+#' @param rm_reverse_features           logical: whether to rm reverse features
+#' @param rm_contaminant_features       logical: whether to rm contaminant features
+#' @param rm_na_features                logical: whether to rm features which are NA, NaN or 0 in all samples
+#' @param impute_consistent_nondetects: logical(1)
 #' @examples
 #' require(magrittr)
 #'
@@ -23,7 +23,7 @@
 #'                         package = 'autonomics.data')
 #'
 #'    # The sample design can be inferred from the sample ids
-#'       object <- file %>% autonomics.import::load_proteingroups(infer_design_from_sampleids = TRUE)
+#'       object <- file %>% autonomics.import::load_proteingroups()
 #'       object %>% autonomics.import::sdata()
 #'
 #'    # Or it can be loaded through a sample file
@@ -38,32 +38,30 @@
 #' if (require(autonomics.data)){
 #'    file <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
-#'    object <- file %>% autonomics.import::load_proteingroups(
-#'                          infer_design_from_sampleids = TRUE)
+#'    object <- file %>% autonomics.import::load_proteingroups()
 #'    sdata(object) %>% str()
 #' }
 #'
 #' # LFQ
 #' if (require(graumann.lfq)){
 #'    file <- 'extdata/proteinGroups.txt' %>% system.file(package = 'graumann.lfq')
-#'    file %>% autonomics.import::load_proteingroups(
-#'                infer_design_from_sampleids = TRUE)
+#'    file %>% autonomics.import::load_proteingroups()
 #' }
 #'
 #' @importFrom magrittr %>%
 #' @export
 load_proteingroups <- function(
    file,
-   quantity                    = autonomics.import::infer_maxquant_quantity(file),
-   infer_design_from_sampleids = FALSE,
-   design_sep                  = NULL,
-   design_file                 = NULL,
-   fasta_file                  = NULL,
-   log2_transform              = TRUE,
-   log2_offset                 = 0,
-   rm_reverse_features         = TRUE,
-   rm_contaminant_features     = TRUE,
-   rm_na_features              = TRUE
+   quantity                     = autonomics.import::infer_maxquant_quantity(file),
+   infer_design_from_sampleids  = TRUE,
+   design_sep                   = NULL,
+   design_file                  = NULL,
+   fasta_file                   = NULL,
+   log2_transform               = TRUE,
+   rm_reverse_features          = TRUE,
+   rm_contaminant_features      = TRUE,
+   rm_na_features               = TRUE,
+   impute_consistent_nondetects = quantity %>% stringi::stri_detect_fixed('intensity')
 ){
    # Satisfy CHECK
    Reverse <- Contaminant <- feature_id <- NULL
@@ -73,7 +71,7 @@ load_proteingroups <- function(
                                            platform                    = 'maxquant',
                                            quantity                    = quantity,
                                            log2_transform              = FALSE,
-                                           log2_offset                 = log2_offset,
+                                           log2_offset                 = 0,
                                            infer_design_from_sampleids = infer_design_from_sampleids,
                                            design_sep                  = design_sep,
                                            design_file                 = design_file)
@@ -103,7 +101,7 @@ load_proteingroups <- function(
    }
 
    # Impute consistent nondetects (in intensity data)
-   if (quantity %>% stringi::stri_detect_fixed('intensity')) object %<>% autonomics.preprocess::qrilc_consistent_nondetects()
+   if (impute_consistent_nondetects) object %<>% autonomics.preprocess::qrilc_consistent_nondetects()
 
    # Intuify snames
    subgroup_values  <- object %>% autonomics.import::svalues('subgroup')

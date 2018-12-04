@@ -4,15 +4,16 @@
 #======================
 
 #' Load metabolon data
-#' @param file                metabolon xlsx file
-#' @param design_file         NULL or character (sample design file)
-#' @param sheet               xls sheet name  or number
-#' @param log2_transform      logical: whether to log2 transform
-#' @param log2_offset         offset in mapping x -> log2(offset + x)
-#' @param infer_design_from_sampleids        logical: whether to infer design from sample ids
-#' @param design_sep          string: sample id separator
-#' @param add_kegg_pathways   logical: whether to add KEGG pathways to fdata
-#' @param add_smiles          logical: whether to add SMILES to fdata
+#' @param file                          metabolon xlsx file
+#' @param design_file                   NULL or character (sample design file)
+#' @param sheet                         xls sheet name  or number
+#' @param log2_transform                logical: whether to log2 transform
+#' @param log2_offset                   offset in mapping x -> log2(offset + x)
+#' @param infer_design_from_sampleids   logical: whether to infer design from sample ids
+#' @param design_sep                    string: sample id separator
+#' @param impute_consistent_nondetects  logical(1)
+#' @param add_kegg_pathways             logical(1): whether to add KEGG pathways to fdata
+#' @param add_smiles                    logical(1): whether to add SMILES to fdata
 #' @return SummarizedExperiment
 #' @examples
 #' require(magrittr)
@@ -46,13 +47,13 @@
 load_metabolon <- function(
    file,
    sheet = 2,
-   design_file                 = NULL,
-   log2_transform              = TRUE,
-   log2_offset                 = 0,
-   infer_design_from_sampleids = FALSE,
-   design_sep                  = NULL,
-   add_kegg_pathways           = FALSE,
-   add_smiles                  = FALSE
+   design_file                  = NULL,
+   log2_transform               = TRUE,
+   infer_design_from_sampleids  = FALSE,
+   design_sep                   = NULL,
+   impute_consistent_nondetects = TRUE,
+   add_kegg_pathways            = FALSE,
+   add_smiles                   = FALSE
 ){
    # Satisfy CHECK
    . <- NULL
@@ -67,15 +68,15 @@ load_metabolon <- function(
                                            sheet                       = sheet,
                                            platform                    = 'metabolon',
                                            log2_transform              = log2_transform,
-                                           log2_offset                 = log2_offset,
+                                           log2_offset                 = 0,
                                            design_file                 = design_file,
                                            infer_design_from_sampleids = infer_design_from_sampleids,
                                            design_sep                  = design_sep)
    autonomics.import::prepro(object) <- list(assay='lcms', entity='metabolite', quantity='intensities', software='metabolon')
    autonomics.import::annotation(object) <- ''
 
-   # Zero consistent nas
-   #object %<>% autonomics.preprocess::zero_consistent_nas(verbose = TRUE)
+   # Impute consistent nondetects (in intensity data)
+   if (impute_consistent_nondetects) object %<>% autonomics.preprocess::qrilc_consistent_nondetects()
 
    # Annotate
    if (add_kegg_pathways){

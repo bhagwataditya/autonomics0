@@ -266,10 +266,12 @@ write_design <- function(
    # Infer subgroup from sampleids and add to design
    if (infer_design_from_sampleids){
       if (is.null(design_sep)) design_sep <- design_df[[sampleid_var]] %>% autonomics.import::guess_sep(verbose = TRUE)
-      inferred_design <- design_df[[sampleid_var]] %>% autonomics.import::infer_design_from_sampleids(sep = design_sep, maxquant = platform=='maxquant')
-      design_df$sample_id <- NULL
-      design_df %<>% cbind(., inferred_design)
-      autonomics.support::cmessage('\t\tInfer subgroup from sampleids: %s => %s', design_df[[sampleid_var]][1], design_df$subgroup[1])
+      if (!is.null(design_sep)){
+         inferred_design <- design_df[[sampleid_var]] %>% autonomics.import::infer_design_from_sampleids(sep = design_sep, maxquant = platform=='maxquant')
+         design_df$sample_id <- NULL
+         design_df %<>% cbind(., inferred_design)
+         autonomics.support::cmessage('\t\tInfer subgroup from sampleids: %s => %s', design_df[[sampleid_var]][1], design_df$subgroup[1])
+      }
 
    # Merge in design file
    } else {

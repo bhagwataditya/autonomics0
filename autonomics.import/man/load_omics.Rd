@@ -47,7 +47,7 @@ if (require(subramanian.2016)){
                infer_design_from_sampleids = TRUE)
 }
 
-# PROTEINGROUPS
+# LABELED LCMSPROT
 if (require(autonomics.data)){
    file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
                         package = 'autonomics.data')

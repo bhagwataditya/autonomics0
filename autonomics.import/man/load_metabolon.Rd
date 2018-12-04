@@ -5,8 +5,9 @@
 \title{Load metabolon data}
 \usage{
 load_metabolon(file, sheet = 2, design_file = NULL, log2_transform = TRUE,
-  log2_offset = 0, infer_design_from_sampleids = FALSE, design_sep = NULL,
-  add_kegg_pathways = FALSE, add_smiles = FALSE)
+  infer_design_from_sampleids = FALSE, design_sep = NULL,
+  impute_consistent_nondetects = TRUE, add_kegg_pathways = FALSE,
+  add_smiles = FALSE)
 }
 \arguments{
 \item{file}{metabolon xlsx file}
@@ -17,15 +18,17 @@ load_metabolon(file, sheet = 2, design_file = NULL, log2_transform = TRUE,
 
 \item{log2_transform}{logical: whether to log2 transform}
 
-\item{log2_offset}{offset in mapping x -> log2(offset + x)}
-
 \item{infer_design_from_sampleids}{logical: whether to infer design from sample ids}
 
 \item{design_sep}{string: sample id separator}
 
-\item{add_kegg_pathways}{logical: whether to add KEGG pathways to fdata}
+\item{impute_consistent_nondetects}{logical(1)}
 
-\item{add_smiles}{logical: whether to add SMILES to fdata}
+\item{add_kegg_pathways}{logical(1): whether to add KEGG pathways to fdata}
+
+\item{add_smiles}{logical(1): whether to add SMILES to fdata}
+
+\item{log2_offset}{offset in mapping x -> log2(offset + x)}
 }
 \value{
 SummarizedExperiment
