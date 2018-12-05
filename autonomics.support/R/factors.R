@@ -32,17 +32,22 @@ make.unique.spaces <- function(x, verbose=TRUE){
 #' @param verbose logical
 #' @seealso \code{\link[base]{make.unique}}
 #' @examples 
+#' require(magrittr)
 #' x <- c('A', 'B', 'C', 'A', 'D')
-#' x %>% uniquify('make.unique')
-#' x %>% uniquify('make.unique.spaces')
+#' x %>% autonomics.support::uniquify('make.unique')
+#' x %>% autonomics.support::uniquify('make.unique.spaces')
 #' @export
 uniquify <- function(x, method = 'make.unique.spaces', verbose = TRUE){
   idx <- autonomics.support::cduplicated(x)
-  if (verbose & any(idx)){
-     autonomics.support::cmessage('\t\tRun %s() to uniquify replicated sample ids', method)
-     autonomics.support::cmessage_df('\t\t\t%s', table(x[idx]))
+  if (any(idx)){
+    uniquefun <- get(method)
+    uniquex <- uniquefun(x)
+    if (verbose){
+      autonomics.support::cmessage(   '\t\tUniquify ( %s -> %s ) duplicates of', x[idx][1], uniquefun(x[idx][c(1, 1)])[2])
+      autonomics.support::cmessage_df("\t\t\t  %s", table(x[idx]) %>% as.list() %>% unlist)                    # unlist(as.list(.)) is to prevent empty line
+    }
+  } else {
+    uniquex <- x
   }
-  
-  # https://r4ds.had.co.nz/pipes.html
-  get(method)(x)
+  uniquex
 }

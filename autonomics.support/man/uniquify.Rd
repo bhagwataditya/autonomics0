@@ -17,9 +17,10 @@ uniquify(x, method = "make.unique.spaces", verbose = TRUE)
 Make vector components unique by appending spaces
 }
 \examples{
+require(magrittr)
 x <- c('A', 'B', 'C', 'A', 'D')
-x \%>\% uniquify('make.unique')
-x \%>\% uniquify('make.unique.spaces')
+x \%>\% autonomics.support::uniquify('make.unique')
+x \%>\% autonomics.support::uniquify('make.unique.spaces')
 }
 \seealso{
 \code{\link[base]{make.unique}}
