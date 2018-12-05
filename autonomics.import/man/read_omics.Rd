@@ -2,15 +2,15 @@
 % Please edit documentation in R/read_omics.R
 \name{read_omics}
 \alias{read_omics}
-\title{Read omics data from txt or xls file}
+\title{Read omics data}
 \usage{
-read_omics(file, sheet, fid_rows, fid_cols, sid_rows, sid_cols, expr_rows,
+read_omics(file, sheet = 1, fid_rows, fid_cols, sid_rows, sid_cols, expr_rows,
   expr_cols, fvar_rows = NULL, fvar_cols = NULL, svar_rows = NULL,
   svar_cols = NULL, fdata_rows = NULL, fdata_cols = NULL,
   sdata_rows = NULL, sdata_cols = NULL, transpose = FALSE)
 }
 \arguments{
-\item{file}{character(1)}
+\item{file}{character(1): name of text (txt, csv, tsv) or excel (xls, xlsx) file}
 
 \item{sheet}{integer(1) or character(1)}
 
@@ -45,7 +45,7 @@ read_omics(file, sheet, fid_rows, fid_cols, sid_rows, sid_cols, expr_rows,
 \item{transpose}{logical(1)}
 }
 \description{
-Read omics data from txt or xls file
+Read omics data
 }
 \examples{
 require(magrittr)
@@ -74,20 +74,18 @@ if (require(atkin.2014)){
                                           svar_rows  = 92,       svar_cols  = 1:25,
                                           fdata_rows = 73:91,    fdata_cols = 27:1343,
                                           sdata_rows = 93:520,   sdata_cols = 1:25,
-                                          transpose = TRUE)
-
-
+                                          transpose  = TRUE)
 }
 
 # EXIQON
 if require(subramanian.2016){
    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx', package = 'subramanian.2016')
    file \%>\% autonomics.import::read_omics(sheet      = 1,
-                                          fid_rows   = 1,        fid_cols  = 2:330,
-                                          sid_rows   = 2:73,     sid_cols  = 1,
-                                          expr_rows  = 2:73,     expr_cols = 2:330,
-                                          fvar_rows  = 74:76,    fvar_cols = 1,
-                                          svar_rows  = 1,        svar_cols = 331:332,
+                                          fid_rows   = 1,        fid_cols   = 2:330,
+                                          sid_rows   = 2:73,     sid_cols   = 1,
+                                          expr_rows  = 2:73,     expr_cols  = 2:330,
+                                          fvar_rows  = 74:76,    fvar_cols  = 1,
+                                          svar_rows  = 1,        svar_cols  = 331:332,
                                           fdata_rows = 74:76,    fdata_cols = 2:330,
                                           sdata_rows = 2:73,     sdata_cols = 331:332,
                                           transpose  = TRUE)
@@ -96,26 +94,33 @@ if require(subramanian.2016){
 # PROTEINGROUPS LABELFREE
 if (require(graumann.lfq)){
    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-   file \%>\% autonomics.import::read_omics(fid_rows   = 2:6839,   fid_cols   = 275,
+   file \%>\% autonomics.import::read_omics(fid_rows   = 2:5893,   fid_cols   = 275,
                                           sid_rows   = 1,        sid_cols   = 227:248,
-                                          expr_rows  = 2:6839,   expr_cols  = 227:248,
+                                          expr_rows  = 2:5893,   expr_cols  = 227:248,
                                           fvar_rows  = 1,        fvar_cols  = 1:8,
-                                          fdata_rows = 2:6839,   fdata_cols = 1:8,
-                                          transpose = FALSE)
+                                          fdata_rows = 2:5893,   fdata_cols = 1:8,
+                                          transpose  = FALSE)
 }
 
 # PROTEINGROUPS LABELED
 if (require(autonomics.data)){
    file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt', package = 'autonomics.data')
-   file \%>\% autonomics.import::read_omics()
+   file \%>\% autonomics.import::read_omics(fid_rows   = 2:9783,  fid_cols   = 383,
+                                          sid_rows   = 1,       sid_cols   = seq(124, 316, by = 6),
+                                          expr_rows  = 2:9783,  expr_cols  = seq(124, 316, by = 6),
+                                          fvar_rows  = 1,       fvar_cols  = c(2, 6, 7, 383),
+                                          fdata_rows = 2:9783,  fdata_cols = c(2, 6, 7, 383),
+                                          transpose  = FALSE)
 }
 
 # RNASEQ
 if (require(subramanian.2016)){
    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
-   fdata_rows = 1:48821,  fdata_cols = 1:4,
-   sdata_rows = 1,        sdata_cols = 5:86,
-   expr_rows  = 2:48821,  expr_cols  = 5:86,
-   transpose  = FALSE
+   file \%>\% autonomics.import::read_omics(fid_rows   = 2:48821,   fid_cols   = 1,
+                                          sid_rows   = 1,         sid_cols   = 5:86,
+                                          expr_rows  = 2:48821,   expr_cols  = 5:86,
+                                          fvar_rows  = 1,         fvar_cols  = 1:4,
+                                          fdata_rows = 2:48821,   fdata_cols = 1:4,
+                                          transpose  = FALSE)
 }
 }

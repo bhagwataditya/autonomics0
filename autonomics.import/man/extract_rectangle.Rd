@@ -2,10 +2,9 @@
 % Please edit documentation in R/read_omics.R
 \name{extract_rectangle}
 \alias{extract_rectangle}
-\title{Extract rectangle from raw omics datatable}
+\title{Extract rectangle from omics datatable}
 \usage{
-extract_rectangle(dt, rows, cols, transpose = FALSE, drop = FALSE,
-  uniquify = FALSE)
+extract_rectangle(dt, rows, cols, transpose = FALSE, drop = FALSE)
 }
 \arguments{
 \item{dt}{datatable with raw omics data}
@@ -17,11 +16,9 @@ extract_rectangle(dt, rows, cols, transpose = FALSE, drop = FALSE,
 \item{transpose}{logical(1)}
 
 \item{drop}{logical(1)}
-
-\item{uniquify}{logical(1)}
 }
 \description{
-Extract rectangle from raw omics datatable
+Extract rectangle from omics datatable
 }
 \examples{
 require(magrittr)

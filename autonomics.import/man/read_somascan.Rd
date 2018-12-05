@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_omics.R
 \name{read_somascan}
 \alias{read_somascan}
-\title{Read SOMAScan data}
+\title{Read somascan data}
 \usage{
 read_somascan(file, fid_var = "SeqId", sid_var = "SampleId")
 }
@@ -17,7 +17,7 @@ read_somascan(file, fid_var = "SeqId", sid_var = "SampleId")
 Summarizedexperiment
 }
 \description{
-Read SOMAScan data
+Read somascan data
 }
 \examples{
 require(magrittr)

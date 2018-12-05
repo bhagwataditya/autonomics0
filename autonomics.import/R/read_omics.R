@@ -1,24 +1,3 @@
-# require(magrittr)
-#
-# # Metabolon
-# file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-# sheet <- 2
-# fdata_range <- c(10, 401,  1, 14)
-# sdata_range <- c(1,   10, 14, 86)
-# exprs_range <- c(11, 401, 15, 86)
-# sid_var  <- 'CLIENT_IDENTIFIER'
-# fid_var <- 'COMP_ID'
-# features_in_rows <- TRUE
-#
-# # Somascan
-# file <- system.file('extdata/soma/WCQ-18-007.hybNorm.plateScale.medNorm.calibrate.20181004.adat', package = 'atkin.2014')
-# fdata_range <- c(73,  91,  26, 1343)
-# sdata_range <- c(92, 520,  1,    25)
-# exprs_range <- c(93, 520, 1343,  27)
-# transpose <- TRUE
-# sid_var <- 'SampleId'
-# fid_var <- 'SeqId'
-
 
 #' Read omics data as is from file
 #' @param file character(1)
@@ -39,13 +18,12 @@ extract_dt_row <- function(dt, i) dt %>% magrittr::extract(i,) %>% as.matrix() %
 extract_dt_col <- function(dt, i) dt[[i]]
 
 
-#' Extract rectangle from raw omics datatable
+#' Extract rectangle from omics datatable
 #' @param dt         datatable with raw omics data
 #' @param rows       row selector: logical(n), numeric(n), or character(n)
 #' @param cols       col selector: logical(n), numeric(n), or character(n)
 #' @param transpose  logical(1)
 #' @param drop       logical(1)
-#' @param uniquify   logical(1)
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
@@ -59,18 +37,16 @@ extract_dt_col <- function(dt, i) dt[[i]]
 #' }
 #' @importFrom magrittr %>% %<>%
 #' @export
-extract_rectangle <- function(dt, rows, cols, transpose = FALSE, drop = FALSE, uniquify = FALSE){
+extract_rectangle <- function(dt, rows, cols, transpose = FALSE, drop = FALSE){
    dt %<>% magrittr::extract(rows, cols, with = FALSE)
    rectangle <- dt %>% as.matrix()
    if (transpose) rectangle %<>% t()
-   if (drop) if (nrow(rectangle)==1 | ncol(rectangle)==1) rectangle %<>%
-                                                          as.vector('character') %>%
-                                                         (function(y) if (uniquify) y %>% autonomics.support::uniquify(method = 'make.unique', verbose = TRUE) else y)
+   if (drop) if (nrow(rectangle)==1 | ncol(rectangle)==1) rectangle %<>% as.vector('character')
    rectangle
 }
 
-#' Read omics data from txt or xls file
-#' @param file       character(1)
+#' Read omics data
+#' @param file       character(1): name of text (txt, csv, tsv) or excel (xls, xlsx) file
 #' @param sheet      integer(1) or character(1)
 #' @param fid_rows   featureid rows: logical(n) or numeric(n)
 #' @param fid_cols   featureid cols: logical(n) or numeric(n)
@@ -114,20 +90,18 @@ extract_rectangle <- function(dt, rows, cols, transpose = FALSE, drop = FALSE, u
 #'                                           svar_rows  = 92,       svar_cols  = 1:25,
 #'                                           fdata_rows = 73:91,    fdata_cols = 27:1343,
 #'                                           sdata_rows = 93:520,   sdata_cols = 1:25,
-#'                                           transpose = TRUE)
-#'
-#'
+#'                                           transpose  = TRUE)
 #' }
 #'
 #' # EXIQON
 #' if require(subramanian.2016){
 #'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx', package = 'subramanian.2016')
 #'    file %>% autonomics.import::read_omics(sheet      = 1,
-#'                                           fid_rows   = 1,        fid_cols  = 2:330,
-#'                                           sid_rows   = 2:73,     sid_cols  = 1,
-#'                                           expr_rows  = 2:73,     expr_cols = 2:330,
-#'                                           fvar_rows  = 74:76,    fvar_cols = 1,
-#'                                           svar_rows  = 1,        svar_cols = 331:332,
+#'                                           fid_rows   = 1,        fid_cols   = 2:330,
+#'                                           sid_rows   = 2:73,     sid_cols   = 1,
+#'                                           expr_rows  = 2:73,     expr_cols  = 2:330,
+#'                                           fvar_rows  = 74:76,    fvar_cols  = 1,
+#'                                           svar_rows  = 1,        svar_cols  = 331:332,
 #'                                           fdata_rows = 74:76,    fdata_cols = 2:330,
 #'                                           sdata_rows = 2:73,     sdata_cols = 331:332,
 #'                                           transpose  = TRUE)
@@ -136,33 +110,40 @@ extract_rectangle <- function(dt, rows, cols, transpose = FALSE, drop = FALSE, u
 #' # PROTEINGROUPS LABELFREE
 #' if (require(graumann.lfq)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-#'    file %>% autonomics.import::read_omics(fid_rows   = 2:6839,   fid_cols   = 275,
+#'    file %>% autonomics.import::read_omics(fid_rows   = 2:5893,   fid_cols   = 275,
 #'                                           sid_rows   = 1,        sid_cols   = 227:248,
-#'                                           expr_rows  = 2:6839,   expr_cols  = 227:248,
+#'                                           expr_rows  = 2:5893,   expr_cols  = 227:248,
 #'                                           fvar_rows  = 1,        fvar_cols  = 1:8,
-#'                                           fdata_rows = 2:6839,   fdata_cols = 1:8,
-#'                                           transpose = FALSE)
+#'                                           fdata_rows = 2:5893,   fdata_cols = 1:8,
+#'                                           transpose  = FALSE)
 #' }
 #'
 #' # PROTEINGROUPS LABELED
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt', package = 'autonomics.data')
-#'    file %>% autonomics.import::read_omics()
+#'    file %>% autonomics.import::read_omics(fid_rows   = 2:9783,  fid_cols   = 383,
+#'                                           sid_rows   = 1,       sid_cols   = seq(124, 316, by = 6),
+#'                                           expr_rows  = 2:9783,  expr_cols  = seq(124, 316, by = 6),
+#'                                           fvar_rows  = 1,       fvar_cols  = c(2, 6, 7, 383),
+#'                                           fdata_rows = 2:9783,  fdata_cols = c(2, 6, 7, 383),
+#'                                           transpose  = FALSE)
 #' }
 #'
 #' # RNASEQ
 #' if (require(subramanian.2016)){
 #'    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
-#'    fdata_rows = 1:48821,  fdata_cols = 1:4,
-#'    sdata_rows = 1,        sdata_cols = 5:86,
-#'    expr_rows  = 2:48821,  expr_cols  = 5:86,
-#'    transpose  = FALSE
+#'    file %>% autonomics.import::read_omics(fid_rows   = 2:48821,   fid_cols   = 1,
+#'                                           sid_rows   = 1,         sid_cols   = 5:86,
+#'                                           expr_rows  = 2:48821,   expr_cols  = 5:86,
+#'                                           fvar_rows  = 1,         fvar_cols  = 1:4,
+#'                                           fdata_rows = 2:48821,   fdata_cols = 1:4,
+#'                                           transpose  = FALSE)
 #' }
 #' @importFrom magrittr %>% %<>%
 #' @export
 read_omics <- function(
    file,
-   sheet,
+   sheet = 1,
    fid_rows,           fid_cols,
    sid_rows,           sid_cols,
    expr_rows,          expr_cols,
@@ -176,38 +157,56 @@ read_omics <- function(
    assertive.types::assert_is_a_bool(transpose)
 
    # read
-   dt <- read_asis(file, sheet)
+   dt <- autonomics.import::read_asis(file, sheet)
 
-   # exprs
-   fids1  <- dt %>% autonomics.import::extract_rectangle(fid_rows,  fid_cols,  transpose = transpose, drop = TRUE, uniquify = TRUE)
-   sids1  <- dt %>% autonomics.import::extract_rectangle(sid_rows,  sid_cols,  transpose = transpose, drop = TRUE, uniquify = TRUE)
-   exprs1 <- dt %>% autonomics.import::extract_rectangle(expr_rows, expr_cols, transpose = transpose) %>%
-                    autonomics.support::set_dimnames(list(fids1, sids1)) %>% (function(y){class(y) <- 'numeric'; y})
-   object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs = exprs1))
+   # Extract exprs
+   fids1  <- dt %>% autonomics.import::extract_rectangle(fid_rows,  fid_cols,  transpose = transpose, drop = TRUE)
+   sids1  <- dt %>% autonomics.import::extract_rectangle(sid_rows,  sid_cols,  transpose = transpose, drop = TRUE)
+   exprs1 <- dt %>% autonomics.import::extract_rectangle(expr_rows, expr_cols, transpose = transpose) %>% (function(y){class(y) <- 'numeric'; y})
 
-   # fdata
-   if (!is.null(fvar_rows) & !is.null(fvar_cols)){
+   # Extract feature and sample annotations
+   fdata_available <- !is.null(fvar_rows) & !is.null(fvar_cols)
+   sdata_available <- !is.null(svar_rows) & !is.null(svar_cols)
+   if (fdata_available){
       fvars1 <- dt %>% autonomics.import::extract_rectangle(fvar_rows,  fvar_cols,  transpose = transpose, drop = TRUE)
-      fdata1 <- dt %>% autonomics.import::extract_rectangle(fdata_rows, fdata_cols, transpose = transpose) %>% autonomics.support::set_dimnames(list(fids1, fvars1))     %>%
-                                                                                                               data.frame(stringsAsFactors = FALSE, check.names = FALSE) %>%
-                                                                                                               cbind(feature_id = fids1, .)
-      autonomics.import::fdata(object) <- fdata1
+      fdata1 <- dt %>% autonomics.import::extract_rectangle(fdata_rows, fdata_cols, transpose = transpose) %>%
+                       magrittr::set_colnames(fvars1) %>%
+                       data.frame(stringsAsFactors = FALSE, check.names = FALSE)
    }
-
-   # sdata
-   if (!is.null(svar_rows) & !is.null(svar_cols)){
+   if (sdata_available){
       svars1 <- dt %>% autonomics.import::extract_rectangle(svar_rows,  svar_cols,  transpose =  transpose, drop = TRUE)
-      sdata1 <- dt %>% autonomics.import::extract_rectangle(sdata_rows, sdata_cols, transpose = !transpose) %>% autonomics.support::set_dimnames(list(sids1, svars1))      %>%
-                                                                                                                data.frame(stringsAsFactors = FALSE, check.names = FALSE)  %>%
-                                                                                                                cbind(sample_id = sids1)
-      autonomics.import::sdata(object) <- sdata1
+      sdata1 <- dt %>% autonomics.import::extract_rectangle(sdata_rows, sdata_cols, transpose = !transpose) %>%
+                       magrittr::set_colnames(svars1) %>%
+                       data.frame(stringsAsFactors = FALSE, check.names = FALSE)
    }
 
-   # return
+   # Remove features with missing identifiers (happens in MaxQuant files due to empty interspersed lines)
+   valid_rows <- !is.na(fids1)
+   if (any(!valid_rows)){
+      autonomics.support::cmessage('\t\tRm %d features with missing feature_ids', sum(!valid_rows))
+      fids1  %<>% magrittr::extract(valid_rows)
+      fdata1 %<>% magrittr::extract(valid_rows,)
+      exprs1 %<>% magrittr::extract(valid_rows, )
+   }
+
+   # Name features and samples
+   fids1 %<>% autonomics.support::uniquify('make.unique')
+   sids1 %<>% autonomics.support::uniquify('make.unique')
+   rownames(exprs1) <- fids1
+   colnames(exprs1) <- sids1
+   if (fdata_available){   rownames(fdata1) <- fids1;  fdata1 %<>% cbind(feature_id = fids1, .)  }
+   if (sdata_available){   rownames(sdata1) <- sids1;  sdata1 %<>% cbind(sample_id  = sids1, .)  }
+
+   # Wrap into Sumexp
+   object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs = exprs1))
+   if (fdata_available) autonomics.import::fdata(object) <- fdata1
+   if (sdata_available) autonomics.import::sdata(object) <- sdata1
+
+   # Return
    object
 }
 
-#' Read SOMAScan data
+#' Read somascan data
 #' @param file character(1)
 #' @param fid_var  character(1): feature id variable
 #' @param sid_var  character(1): sample id variable
@@ -228,8 +227,8 @@ read_somascan <- function(file, fid_var = 'SeqId', sid_var = 'SampleId'){
    fvar_col <- which(dt %>% extract_dt_row(fdata_row1) != '')[1]
    svar_row <- which(dt[[1]] != '' &  (1:nrow(dt) > fdata_row1))[1]
 
-   fvars <- dt %>% extract_dt_col(fdata_col) %>% magrittr::extract(fdata_row1:svar_row)
-   svars <- dt %>% extract_dt_row(svar_row) %>% magrittr::extract(1:fdata_col-1)
+   fvars <- dt %>% extract_dt_col(fvar_col) %>% magrittr::extract(fdata_row1:svar_row)
+   svars <- dt %>% extract_dt_row(svar_row) %>% magrittr::extract(1:fvar_col-1)
 
    fid_row <- fdata_row1 + -1 + which(fvars == fid_var)
    sid_col <- which(svars == sid_var)
@@ -246,7 +245,7 @@ read_somascan <- function(file, fid_var = 'SeqId', sid_var = 'SampleId'){
 
 }
 
-#' Read data from metabolon file
+#' Read meabolon data
 #' @param file     character(1)
 #' @param sheet    numeric(1) or character(1)
 #' @param fid_var  character(1): feature id variable
@@ -277,21 +276,51 @@ read_metabolon <- function(file, sheet = 2, fid_var = 'COMP_ID', sid_var = 'CLIE
                        transpose  = FALSE)
 }
 
-#' Read data from rnaseq file
+#' Read rnaseq data
 #' @param file     character(1)
 #' @param fid_var  character(1): feature id variable
 #' @examples
-#' #file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#' if (require(subramanian.2016)){
+#'    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#'    file %>% read_rnaseq()
+#' }
+#' @importFrom magrittr %>%
+#' @export
 read_rnaseq <- function(file, fid_var = 'gene_id'){
 
    dt <- data.table::fread(file, integer64='numeric')
    expr_cols   <- dt %>% vapply(is.integer, logical(1)) %>% unname() %>% which()
+   fdata_cols  <- dt %>% vapply(is.integer, logical(1)) %>% magrittr::not() %>% unname() %>% which()
    fid_col     <- which(names(dt)==fid_var)
 
-   file %>% read_omics(sheet = NULL,
-                       expr_rows = 2:(nrow(dt)+1),   expr_cols = min(expr_cols):max(expr_cols),
-                       fid_rows  = 2:nrow(dt),       fid_cols  = fid_col,
-                       sid_rows  = 1,                sid_cols  = min(expr_cols):max(expr_cols))
-
+   file %>% autonomics.import::read_omics(sheet      = NULL,
+                                          fid_rows   = 2:nrow(dt),   fid_cols   = fid_col,
+                                          sid_rows   = 1,            sid_cols   = expr_cols,
+                                          expr_rows  = 2:nrow(dt),   expr_cols  = expr_cols,
+                                          fvar_rows  = 1,            fvar_cols  = fdata_cols,
+                                          fdata_rows = 2:nrow(dt),   fdata_cols = fdata_cols,
+                                          transpose  = FALSE)
 }
 
+
+#' Read exiqon data
+#' @param file     character(1)
+#' @examples
+#' if require(subramanian.2016){
+#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx', package = 'subramanian.2016')
+#'    file %>% read_exiqon()
+#' }
+#' @importFrom magrittr %>%
+#' @export
+read_exiqon <- function(file){
+   dt <- autonomics.import::read_asis(file, sheet=1)
+   file %>% autonomics.import::read_omics(sheet = 1,
+                                          fid_rows   = 1,                       fid_cols   = 2:(ncol(dt)-2),
+                                          sid_rows   = 2:(nrow(dt)-3),          sid_cols   = 1,
+                                          expr_rows  = 2:(nrow(dt)-3),          expr_cols  = 2:(ncol(dt)-2),
+                                          fvar_rows  = (nrow(dt)-2):nrow(dt),   fvar_cols  = 1,
+                                          svar_rows  = 1,                       svar_cols  = (ncol(dt)-1):ncol(dt),
+                                          fdata_rows = (nrow(dt)-2):nrow(dt),   fdata_cols = 2:(ncol(dt)-2),
+                                          sdata_rows = 2:(nrow(dt)-3),          sdata_cols = (ncol(dt)-1):ncol(dt),
+                                          transpose  = TRUE)
+}

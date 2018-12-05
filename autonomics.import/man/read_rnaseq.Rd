@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_omics.R
 \name{read_rnaseq}
 \alias{read_rnaseq}
-\title{Read data from rnaseq file}
+\title{Read rnaseq data}
 \usage{
 read_rnaseq(file, fid_var = "gene_id")
 }
@@ -12,8 +12,11 @@ read_rnaseq(file, fid_var = "gene_id")
 \item{fid_var}{character(1): feature id variable}
 }
 \description{
-Read data from rnaseq file
+Read rnaseq data
 }
 \examples{
-#file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+if (require(subramanian.2016)){
+   file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+   file \%>\% read_rnaseq()
+}
 }

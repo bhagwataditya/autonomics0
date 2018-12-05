@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_omics.R
 \name{read_metabolon}
 \alias{read_metabolon}
-\title{Read data from metabolon file}
+\title{Read meabolon data}
 \usage{
 read_metabolon(file, sheet = 2, fid_var = "COMP_ID",
   sid_var = "CLIENT_IDENTIFIER")
@@ -20,7 +20,7 @@ read_metabolon(file, sheet = 2, fid_var = "COMP_ID",
 SummarizedExperiment
 }
 \description{
-Read data from metabolon file
+Read meabolon data
 }
 \examples{
 require(magrittr)
