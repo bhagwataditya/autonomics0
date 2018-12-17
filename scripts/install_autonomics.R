@@ -16,7 +16,7 @@ check_version_compatibility <- function(){
     utils::packageVersion('ggplot2') > package_version('2.2.1'))
   {
     warning("'autonomics' is currently incompatible with 'ggplot2' > v2.2.1. Downgrading.")
-    devtools::install_version('ggplot2', version = '2.2.1')
+    remotes::install_version('ggplot2', version = '2.2.1')
   }
   
   if(
@@ -24,7 +24,7 @@ check_version_compatibility <- function(){
     utils::packageVersion('ggstance') > package_version('0.3'))
   {
     warning("'autonomics' is currently incompatible with 'ggstance' > v0.3 (which depends on 'ggplot2' v3.0). Downgrading.")
-    devtools::install_version('ggstance', version = '0.3')
+    remotes::install_version('ggstance', version = '0.3')
   } 
   
    #install.packages('assertive.reflection')
@@ -43,37 +43,37 @@ check_version_compatibility <- function(){
 
 install_autonomics <- function(){
    
-   # devtools
-   install_if_not_available('devtools')
+   # remotes
+   install_if_not_available('remotes')
 
    # Check version compatibility
    check_version_compatibility()
 
    # autonomics.data & autonomics.support
-   devtools::install_github('bhagwataditya/autonomics/autonomics.data',       repos = biocinstallRepos(), upgrade_dependencies = FALSE)
-   devtools::install_github('bhagwataditya/autonomics/autonomics.support',    repos = biocinstallRepos(), upgrade_dependencies = FALSE)
+   remotes::install_github('bhagwataditya/autonomics/autonomics.data',       repos = biocinstallRepos(), upgrade_dependencies = FALSE)
+   remotes::install_github('bhagwataditya/autonomics/autonomics.support',    repos = biocinstallRepos(), upgrade_dependencies = FALSE)
 
    # autonomics.preprocess
    install_if_not_available('imputeLCMD')
-   devtools::install_github('bhagwataditya/autonomics/autonomics.preprocess', repos = biocinstallRepos(), upgrade_dependencies = FALSE)
+   remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess', repos = biocinstallRepos(), upgrade_dependencies = FALSE)
    
    # autonomics.annotate & autonomics.import
    install_if_not_available(c('SummarizedExperiment', 'GenomeInfoDbData'))
-   devtools::install_github('bhagwataditya/autonomics/autonomics.annotate',   repos = biocinstallRepos(), upgrade_dependencies = FALSE)
-   devtools::install_github('bhagwataditya/autonomics/autonomics.import',     repos = biocinstallRepos(), upgrade_dependencies = FALSE)
+   remotes::install_github('bhagwataditya/autonomics/autonomics.annotate',   repos = biocinstallRepos(), upgrade_dependencies = FALSE)
+   remotes::install_github('bhagwataditya/autonomics/autonomics.import',     repos = biocinstallRepos(), upgrade_dependencies = FALSE)
 
    # autonomics.plot
-   devtools::install_github('bhagwataditya/autonomics/autonomics.plot',       repos = biocinstallRepos(), upgrade_dependencies = FALSE)
-   devtools::install_github('bhagwataditya/autonomics/autonomics.explore',    repos = biocinstallRepos(), upgrade_dependencies = FALSE)
-   devtools::install_github('bhagwataditya/autonomics/autonomics.find',       repos = biocinstallRepos(), upgrade_dependencies = FALSE)
+   remotes::install_github('bhagwataditya/autonomics/autonomics.plot',       repos = biocinstallRepos(), upgrade_dependencies = FALSE)
+   remotes::install_github('bhagwataditya/autonomics/autonomics.explore',    repos = biocinstallRepos(), upgrade_dependencies = FALSE)
+   remotes::install_github('bhagwataditya/autonomics/autonomics.find',       repos = biocinstallRepos(), upgrade_dependencies = FALSE)
 
    # autonomics.ora
    install_if_not_available(c('GO.db', 'PANTHER.db'))
-   devtools::install_github('bhagwataditya/autonomics/autonomics.ora',        repos = biocinstallRepos(), upgrade_dependencies = FALSE)
-   devtools::install_github('bhagwataditya/autonomics/autonomics.integrate',  repos = biocinstallRepos(), upgrade_dependencies = FALSE)
+   remotes::install_github('bhagwataditya/autonomics/autonomics.ora',        repos = biocinstallRepos(), upgrade_dependencies = FALSE)
+   remotes::install_github('bhagwataditya/autonomics/autonomics.integrate',  repos = biocinstallRepos(), upgrade_dependencies = FALSE)
 
    # autonomics
-   devtools::install_github('bhagwataditya/autonomics/autonomics',            repos = biocinstallRepos(), upgrade_dependencies = FALSE)
+   remotes::install_github('bhagwataditya/autonomics/autonomics',            repos = biocinstallRepos(), upgrade_dependencies = FALSE)
 
    check_version_compatibility()
 }
