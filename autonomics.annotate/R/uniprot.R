@@ -388,28 +388,28 @@ load_uniprot_fasta_annotations <- function(
                                 annotation = fasta  %>% vapply(attr, character(1), 'Annot') %>% unname())
 
    # REVIEWED
-   autonomics.support::cmessage('\t\tExtract REVIEWED: 0=trembl, 1=swissprot')
+   autonomics.support::cmessage('\t\t\tExtract REVIEWED: 0=trembl, 1=swissprot')
    dt %>% magrittr::extract(, REVIEWED := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 1) %>% magrittr::equals('sp') %>% as.numeric())
 
    # ENTRYNAME
-   autonomics.support::cmessage('\t\tExtract ENTRYNAME')
+   autonomics.support::cmessage('\t\t\tExtract ENTRYNAME')
    dt %>% magrittr::extract(, ENTRYNAME := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 3))
 
    # VERSION
    pattern <- ' SV=[0-9]'
-   autonomics.support::cmessage('\t\tExtract (sequence) VERSION')
+   autonomics.support::cmessage('\t\t\tExtract (sequence) VERSION')
    dt  %>% magrittr::extract(, VERSION   := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,5) %>% as.numeric())
    dt %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
 
    # EXISTENCE
    pattern <- ' PE=[0-9]'
-   autonomics.support::cmessage('\t\tExtract EXISTENCE: 1=protein, 2=transcript, 3=homology, 4=prediction, 5=uncertain, NA=isoform')
+   autonomics.support::cmessage('\t\t\tExtract EXISTENCE: 1=protein, 2=transcript, 3=homology, 4=prediction, 5=uncertain, NA=isoform')
    dt  %>% magrittr::extract(, EXISTENCE  := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,5) %>% as.numeric())
    dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
 
    # GENES
    pattern <- ' GN=.+$'
-   autonomics.support::cmessage('\t\tExtract GENES')
+   autonomics.support::cmessage('\t\t\tExtract GENES')
    dt  %>% magrittr::extract(, GENES      := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
    dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
 
@@ -425,7 +425,7 @@ load_uniprot_fasta_annotations <- function(
 
    # PROTEIN-NAMES
    pattern <- ' .+$'
-   autonomics.support::cmessage('\t\tExtract PROTEIN-NAMES')
+   autonomics.support::cmessage('\t\t\tExtract PROTEIN-NAMES')
    dt %>% magrittr::extract(, `PROTEIN-NAMES` := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(2,nchar(.)))
    dt %>% magrittr::extract(, annotation      := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
 
