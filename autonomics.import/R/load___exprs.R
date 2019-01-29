@@ -107,29 +107,6 @@ extract_maxquant_ratio_colnames <- function(file, quantity){
       magrittr::extract(. %in% possible_ratio_columns)
 }
 
-#' Infer maxquant quantity
-#' @param file path to maxquant file
-#' @return string
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
-#'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics.import::infer_maxquant_quantity()
-#' }
-#' if (require(graumann.lfq)){
-#'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-#'    file %>% autonomics.import::infer_maxquant_quantity()
-#' }
-#' @importFrom magrittr %>%
-#' @export
-infer_maxquant_quantity <- function(file){
-   x <- autonomics.support::cfread(file) %>% names()
-   if (any(stringi::stri_detect_fixed(x, 'Ratio') & stringi::stri_detect_fixed(x, 'normalized')))   return('Ratio normalized')
-   if (any(stringi::stri_detect_fixed(x, 'Reporter intensity')))                                    return('Reporter intensity')
-   if (any(stringi::stri_detect_fixed(x, 'LFQ intensity')))                                         return('LFQ intensity')
-   return('Intensity')
-}
 
 
 #' Load maxquant exprs
