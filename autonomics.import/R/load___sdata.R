@@ -113,66 +113,7 @@ extract_maxquant_channels <- function(file){
 }
 
 
-#' Designify maxquant sampleids
-#' @param sampleids character vector
-#' @param sep string: design separator
-#' @examples
-#' require(magrittr)
-#' sampleids <- c("STD(L).EM00(M).EM01(H).R1[H/L]",
-#'                "STD(L).EM00(M).EM01(H).R1[M/L]")
-#' sampleids %>% autonomics.import::designify_maxquant_sampleids()
-#'
-#' sampleids <- c("Gel 11 1", "Gel 11 2", "Gel Ctrl 1")
-#' sampleids %>% designify_maxquant_sampleids()
-#'
-#' sampleids <- c("ESC(0).NCM(1).CM(2).MV(3).EX(4).KIT(5).R1[0]",
-#'                "ESC(0).NCM(1).CM(2).MV(3).EX(4).KIT(5).R1[1]")
-#' sampleids %>% autonomics.import::designify_maxquant_sampleids()
-#' @importFrom magrittr %>%
-#' @export
-designify_maxquant_sampleids <- function(
-   sampleids,
-   sep = sampleids %>% autonomics.import::guess_sep()
-){
 
-   if (is.factor(sampleids)) sampleids %<>% as.character()
-
-   # Break into parts         #pattern <- '(.*)\\.R\\((.+)\\)\\[(.+)\\]'
-   parts <- strsplit(sampleids, split = sep, fixed = TRUE)
-   n <- length(parts[[1]])
-
-   # replicate values
-   replicate_values <- parts %>% vapply(extract, character(1), n)
-   is_labeled <- parts %>% vapply(extract, character(1), n) %>% stringi::stri_detect_fixed('[') %>% any()
-   if (is_labeled){
-      label_values <- parts %>% vapply(extract, character(1), n) %>%
-                                stringi::stri_extract_first_regex('(?<=\\[)(.+)(?=\\])')  %>%
-                                strsplit(split = '/', fixed = TRUE)
-      replicate_values %<>% stringi::stri_replace_first_regex('(.+)(\\[.+\\])', '$1')
-      replicate_values %<>% paste0('_', label_values %>% vapply(paste0, character(1), collapse = ''))
-   }
-   parts %<>% lapply(function(x)x %>% magrittr::extract(1:(length(x)-1)))
-
-   # subgroup values
-   subgroup_values <- if (is_labeled){
-      parts %>% lapply(function(x){
-         cursample <- x %>% stringi::stri_replace_first_regex('(.+)\\(([HML0-9]+)\\)', '$1')
-         curname   <- x %>% stringi::stri_replace_first_regex('(.+)\\(([HML0-9]+)\\)', '$2')
-         cursample %>% magrittr::set_names(curname)
-      }) %>%
-         autonomics.support::vextract(label_values) %>%
-         vapply(paste0, character(1), collapse = '_')
-   } else {
-      parts %>% vapply(paste0, character(1), collapse = sep)
-   }
-
-   # sampleid values
-   long_sampleid_values <- sprintf('%s%s%s', subgroup_values, sep, replicate_values)
-   sampleid_values <- long_sampleid_values %>% stringi::stri_replace_first_regex('_[HML0-9]+', '')
-   idx <- sampleid_values %>% autonomics.support::cduplicated()
-   sampleid_values[idx] <- long_sampleid_values[idx]
-   sampleid_values
-}
 
 
 #' Load maxquant snames
