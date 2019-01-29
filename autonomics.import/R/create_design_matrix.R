@@ -18,7 +18,11 @@
 #' }
 #' @importFrom magrittr  %<>%
 #' @export
-create_design_matrix <- function(object, intercept = FALSE, confounders = character(0)){
+create_design_matrix <- function(
+   object,
+   intercept   = length(unique(autonomics.import::sdata(object)$subgroup)) == 1,
+   confounders = character(0)
+){
 
    # Assert
    if (assertive.types::is_inherited_from(object, 'eSet')){ # Can also be EList
@@ -33,10 +37,12 @@ create_design_matrix <- function(object, intercept = FALSE, confounders = charac
    }
 
    # Create formula
-   formula <- if (length(unique(sdata1$subgroup)) < 2){   '~ 1'
-              } else if (intercept){                      '~ 1 + subgroup'
-              } else {                                    '~ 0 + subgroup'
-              }
+   formula <- if (intercept) '~ 1' else '~ 0'
+   if (length(unique(autonomics.import::sdata(object)$subgroup)) > 1) formula %<>% paste0(' + subgroup')
+   # formula <- if (length(unique(sdata1$subgroup)) < 2){   '~ 1'
+   #            } else if (intercept){                      '~ 1 + subgroup'
+   #            } else {                                    '~ 0 + subgroup'
+   #            }
    if (length(confounders)>0){
       formula %<>% sprintf('%s + %s', ., paste0(confounders, collapse = ' + '))
    }
