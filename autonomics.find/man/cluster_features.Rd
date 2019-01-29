@@ -14,20 +14,8 @@ Cluster features
 }
 \examples{
 require(magrittr)
-
-if (require(autonomics.data)){
-
-   # Stem Cell Comparison (LCMSPROT)
-   #--------------------------------
-   object <- autonomics.data::stemcomp.proteinratios
-   
-   # Stem Cell differentiation (LCMSPROT)
-   #-------------------------------------
-   object <- autonomics.data::stemdiff.proteinratios
-
-   # Glutaminase inhibitor (METABOLON)
-   #----------------------------------
-   object <- autonomics.data::glutaminase
-   
+if (require(subramanian.2016)){
+   object <- subramanian.2016::exiqon
+   object \%>\% autonomics.plot::plot_overlayed_sample_distributions()
 }
 }

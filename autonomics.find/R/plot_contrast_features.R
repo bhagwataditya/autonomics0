@@ -164,14 +164,14 @@ plot_contrast_features <- function(
   my_title <- autonomics.find:::create_feature_plot_title(object, contrast, topdef)
   
   # Limit object to top features (abort if none)
-  top <- object %>% autonomics.find::filter_n_arrange_top_features(contrast_name = names(contrast), topdef = topdef, nmax = nplot)
+  top <- object %>% autonomics.find::filter_n_arrange_contrast_features(contrast_name = names(contrast), topdef = topdef, nmax = nplot)
   if (nrow(top)==0){
      autonomics.support::cmessage('\t\tAbort, since no %s features: %s', names(contrast), topdef)
      return(NULL)
   }
 
   # Set alpha
-  composite_colors_used <- top %>% autonomics.import::ssep(color_var) %>% is.null() %>% magrittr::not()
+  composite_colors_used <- top %>% autonomics.import::guess_sep(color_var) %>% is.null() %>% magrittr::not()
   autonomics.import::sdata(top)[['plot.alpha']] <- if (composite_colors_used){ TRUE 
                                                    } else {                    top %>% autonomics.find::are_relevant_samples(design, contrast) }
   
