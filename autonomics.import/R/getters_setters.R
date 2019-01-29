@@ -445,6 +445,41 @@ setReplaceMethod("limma", signature("SummarizedExperiment", "NULL"), function(ob
 
 
 
+#=========================================================================
+
+#' @title Get/Set occupancies
+#' @description Get / Set occupancies matrix
+#' @param object SummarizedExperiment
+#' @param value occupancy matrix (features x samples)
+#' @return occpuancy matrix (get) or updated object (set)
+#' @rdname occupancies
+
+# Get
+#====
+#' @rdname occupancies
+#' @export
+setGeneric('occupancies',                                        function(object)   standardGeneric("occupancies"))
+
+#' @rdname occupancies
+setMethod("occupancies",    signature("SummarizedExperiment"),   function(object)   SummarizedExperiment::assays(object)$occupancies)
+
+
+# Set
+#====
+#' @rdname occupancies
+#' @export
+setGeneric(      'occupancies<-',                                                function(object, value) standardGeneric("occupancies<-"))
+
+#' @rdname occupancies
+setReplaceMethod("occupancies",    signature("SummarizedExperiment", "matrix"),  function(object, value){
+   SummarizedExperiment::assays(object)$occupancies <- value
+   object })
+#' @rdname occupancies
+setReplaceMethod("occupancies",    signature("SummarizedExperiment", "numeric"), function(object, value){
+   SummarizedExperiment::assays(object)$occupancies[] <- value
+   object })
+
+
 #=================================================================================================
 #' @title Get/Set prepro
 #' @description Get/Set preprocessing details
