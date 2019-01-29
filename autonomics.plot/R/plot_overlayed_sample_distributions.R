@@ -21,3 +21,15 @@ plot_overlayed_sample_distributions <- function(
    ggplot2::scale_color_manual(values = color_values) +
    ggplot2::geom_hline(yintercept=0, colour="white", size=1)
 }
+
+plot_overlayed_feature_distributions <- function(
+   object,
+   color_var    = autonomics.plot::default_color_var(object),
+   color_values = autonomics.plot::default_color_values(object, color_var)
+){
+
+   plotdt <- object[1:10, ] %>% autonomics.import::sumexp_to_long_dt()
+   ggplot2::ggplot(plotdt, ggplot2::aes_string(x = 'value', group = 'feature_id', color = 'feature_id')) +
+   ggplot2::geom_density(na.rm=TRUE)
+
+}

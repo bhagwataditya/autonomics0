@@ -53,21 +53,16 @@ stemdiff.proteinratios %>% autonomics.plot::default_color_values(color_var = 'su
 
 # Glutaminase (METABOLON)
 #========================
-
+require(magrittr)
 glutaminase <- 'extdata/glutaminase/glutaminase.xlsx'     %>% 
                 system.file(package = 'autonomics.data')  %>% 
-                autonomics.import::load_metabolon()
-glutaminase %>% autonomics.import::sdata() %>% head()
-
-glutaminase %>% autonomics.find::make_ref_contrasts()
-
-%>% 
-                autonomics.import::set_contrastdefs(autonomics.find::make_ref_contrasts(.)) %>% 
-                autonomics.find::add_limma()
-autonomics.import::sdata(glutaminase) %>% magrittr::extract(, c('SAMPLE_NAME', 'SAMPLE_ID', 'CLIENT_IDENTIFIER', 'EXPERIMENT', ))
-
-save(glutaminase, file = 'data/glutaminase.RData', compress = 'xz')
-
+                autonomics.import::load_metabolon()       #%>% 
+                #autonomics.import::set_contrastdefs(autonomics.find::make_ref_contrasts(.)) %>% 
+                #autonomics.find::add_limma()
+autonomics.import::sdata(glutaminase) %>% str()
+glutaminase$subgroup %<>% factor(autonomics.support::vsprintf('%s_%s', c('UT', 'Veh', 'uM05', 'uM10'), 
+                                                                       c('h10', 'h24', 'h48', 'h72')))
+devtools::use_data(glutaminase, compress = 'xz', overwrite = TRUE)
 
 
 #' Save eset with preprocessed Billing 2016 data
