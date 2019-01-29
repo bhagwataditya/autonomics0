@@ -24,7 +24,7 @@ Extract rectangle from omics datatable
 require(magrittr)
 if (require(autonomics.data)){
    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-   dt <- file \%>\% read_asis(sheet = 2)
+   dt <- file \%>\% read_file(sheet = 2)
    dt \%>\% extract_rectangle(rows = 11:401, cols = 15:86)                    \%>\% extract(1:3, 1:3)           # exprs
    dt \%>\% extract_rectangle(rows = 11:401, cols = 5    )                    \%>\% extract(1:3, , drop=FALSE)  # fids
    dt \%>\% extract_rectangle(rows = 2,      cols = 15:86)                    \%>\% extract(, 1:3, drop=FALSE)  # sids

@@ -2,74 +2,62 @@
 % Please edit documentation in R/write_design.R
 \name{write_design}
 \alias{write_design}
-\title{Write design for metabolon, metabolonlipids, or soma data}
+\title{Write design}
 \usage{
-write_design(file, platform, infer_design_from_sampleids = FALSE,
-  design_sep = NULL, design_file = NULL, sheet = 2, quantity = if
-  (platform == "maxquant") autonomics.import::infer_maxquant_quantity(file) else
-  NULL)
+write_design(object, subgroup_var = NULL, sep = object \%>\%
+  autonomics.import:::guess_sep.SummarizedExperiment(verbose = TRUE),
+  file = NULL)
 }
 \arguments{
-\item{file}{string: path to metabolon file}
+\item{object}{SummarizedExperiment}
 
-\item{platform}{'metabolon', 'metabolonlipids', or 'soma'}
+\item{subgroup_var}{character(1)}
 
-\item{infer_design_from_sampleids}{logical: whether to infer design from CLIENT_IDENTIFIER}
+\item{sep}{design separator}
 
-\item{design_sep}{design separator}
-
-\item{design_file}{string: path to design file}
-
-\item{sheet}{character(1) or numeric(1): xls sheet}
-
-\item{quantity}{either NULL, or any of: 'Ratio', 'Ratio normalized', 'Intensities', 'LFQ intensities', 'Reporter intensities'}
+\item{file}{character(1)}
 }
 \value{
 design dataframe
 }
 \description{
-Write design for metabolon, metabolonlipids, or soma data
+Write design
 }
 \examples{
 require(magrittr)
 
-# EXIQON
-if (require(subramanian.2016)){
-   file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
-                        package = 'subramanian.2016')
-   file \%>\% write_design('exiqon')
-   file \%>\% write_design('exiqon', infer_design_from_sampleids = TRUE)
-}
-
-# MAXQUANT
-if (require(autonomics.data)){
-   file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
-            system.file(package = 'autonomics.data')
-   file \%>\% write_design('maxquant')
-   file \%>\% write_design('maxquant', infer_design_from_sampleids = TRUE)
-}
-
 # METABOLON
 if (require(autonomics.data)){
-   file <- system.file('extdata/glutaminase/glutaminase.xlsx',
-                                  package = 'autonomics.data')
-   file \%>\% write_design('metabolon') \%>\% head()
-   file \%>\% write_design('metabolon') \%>\% head()
-   file \%>\% write_design('metabolon', infer_design_from_sampleids = TRUE) \%>\% head()
+   object <- 'extdata/glutaminase/glutaminase.xlsx'     \%>\%
+              system.file(package = 'autonomics.data')  \%>\%
+              autonomics.import::read_metabolon()
+   object \%>\% autonomics.import::write_design() \%>\% head()
+   object \%>\% autonomics.import::write_design(subgroup_var = "Group   HMDB_ID") \%>\% head()
 }
 
-# METABOLONLIPIDS
-file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
-if (file.exists(file)){
-   file \%>\% write_design('metabolonlipids') \%>\% head(3)
-   file \%>\% write_design('metabolonlipids', infer_design_from_sampleids = TRUE) \%>\% head(3)
-}
-
-# SOMA
+# SOMASCAN
 if (require(autonomics.data)){
-   soma_file <- system.file('extdata/stemcomp/soma/stemcomp.adat',
-                             package = 'autonomics.data')
-   soma_file \%>\% autonomics.import::write_design('soma')
-   soma_file \%>\% autonomics.import::write_design('soma', infer_design_from_sampleids = TRUE)
+   object <- 'extdata/stemcomp/soma/stemcomp.adat'     \%>\%
+              system.file(package = 'autonomics.data') \%>\%
+              autonomics.import::read_somascan()
+   object \%>\% autonomics.import::write_design()
+   object \%>\% autonomics.import::write_design(subgroup_var = 'SampleGroup')
 }
+
+# EXIQON
+if (require(subramanian.2016)){
+   object <- 'extdata/exiqon/subramanian.2016.exiqon.xlsx'  \%>\%
+              system.file(package = 'subramanian.2016')     \%>\%
+              autonomics.import::read_exiqon()
+   object \%>\% write_design() \%>\% head()
+}
+
+# PROTEINGROUPS
+if (require(autonomics.data)){
+   object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
+              system.file(package = 'autonomics.data')     \%>\%
+              autonomics.import::read_proteingroups(simplify_snames = TRUE)
+   object \%>\% write_design()
+}
+
 }
