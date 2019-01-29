@@ -44,40 +44,6 @@ subgroup_varname <- function(platform){
 
 
 
-#' Infer design from (non-maxquant) sample ids
-#' @param sample_ids  character vector
-#' @param sep         string: design separator
-#' @examples
-#' require(magrittr)
-#' sample_ids <- c("UT_10h_R1", "UT_10h_R2", "UT_10h_R3", "UT_10h_R4")
-#' sample_ids %>% autonomics.import::infer_design_from_default_sampleids()
-#' @importFrom magrittr %>%
-#' @export
-infer_design_from_default_sampleids <- function(
-   sample_ids,
-   sep = sample_ids %>% autonomics.import::guess_sep(c('.', ' ', '_'))
-){
-
-   # Return dataframe with only sample ids if no separator could be infered
-   if (is.null(sep))   return(data.frame(sample_id = sample_ids,
-                                         subgroup  = '',
-                                         replicate = '',
-                                         row.names = sample_ids))
-
-   # Extract subgroup and replicate
-   subgroup_values  <- sample_ids %>% stringi::stri_split_fixed(sep) %>%
-                                      vapply(function(y) y %>% magrittr::extract(1:(length(y)-1)) %>%
-                                                               paste0(collapse = sep), character(1))
-   replicate_values <- sample_ids %>% stringi::stri_split_fixed(sep) %>%
-                                      vapply(function(y) y %>% magrittr::extract(length(y)), character(1))
-
-   # Return df
-   return(data.frame(sample_id = sample_ids,
-                     subgroup  = factor(subgroup_values),
-                     replicate = replicate_values,
-                     row.names = sample_ids,
-                     stringsAsFactors = FALSE))
-}
 
 
 #' Infer design from maxquant sample ids
@@ -91,7 +57,7 @@ infer_design_from_default_sampleids <- function(
 #' @export
 infer_design_from_maxquant_sampleids <- function(
    sample_ids,
-   sep = sample_ids %>% autonomics.import::guess_sep(c('.', ' ', '_'))
+   sep = sample_ids %>% autonomics.import::guess_sep()
 ){
    sample_ids %>%
    autonomics.import::designify_maxquant_sampleids(sep = sep) %>%
@@ -185,112 +151,69 @@ add_replicate_values <- function(design_df){
 # WRITE DESIGN
 #========================================
 
-#' Write design for metabolon, metabolonlipids, or soma data
-#' @param file                   string: path to metabolon file
-#' @param platform               'metabolon', 'metabolonlipids', or 'soma'
-#' @param infer_design_from_sampleids   logical: whether to infer design from CLIENT_IDENTIFIER
-#' @param design_sep             design separator
-#' @param design_file            string: path to design file
-#' @param sheet                  character(1) or numeric(1): xls sheet
-#' @param quantity               either NULL, or any of: 'Ratio', 'Ratio normalized', 'Intensities', 'LFQ intensities', 'Reporter intensities'
+#' Write design
+#' @param object        SummarizedExperiment
+#' @param subgroup_var  character(1)
+#' @param sep           design separator
+#' @param file          character(1)
 #' @return design dataframe
 #' @examples
 #' require(magrittr)
 #'
-#' # EXIQON
-#' if (require(subramanian.2016)){
-#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
-#'                         package = 'subramanian.2016')
-#'    file %>% write_design('exiqon')
-#'    file %>% write_design('exiqon', infer_design_from_sampleids = TRUE)
-#' }
-#'
-#' # MAXQUANT
-#' if (require(autonomics.data)){
-#'    file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
-#'             system.file(package = 'autonomics.data')
-#'    file %>% write_design('maxquant')
-#'    file %>% write_design('maxquant', infer_design_from_sampleids = TRUE)
-#' }
-#'
 #' # METABOLON
 #' if (require(autonomics.data)){
-#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx',
-#'                                   package = 'autonomics.data')
-#'    file %>% write_design('metabolon') %>% head()
-#'    file %>% write_design('metabolon') %>% head()
-#'    file %>% write_design('metabolon', infer_design_from_sampleids = TRUE) %>% head()
+#'    object <- 'extdata/glutaminase/glutaminase.xlsx'     %>%
+#'               system.file(package = 'autonomics.data')  %>%
+#'               autonomics.import::read_metabolon()
+#'    object %>% autonomics.import::write_design() %>% head()
+#'    object %>% autonomics.import::write_design(subgroup_var = "Group   HMDB_ID") %>% head()
 #' }
 #'
-#' # METABOLONLIPIDS
-#' file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
-#' if (file.exists(file)){
-#'    file %>% write_design('metabolonlipids') %>% head(3)
-#'    file %>% write_design('metabolonlipids', infer_design_from_sampleids = TRUE) %>% head(3)
-#' }
-#'
-#' # SOMA
+#' # SOMASCAN
 #' if (require(autonomics.data)){
-#'    soma_file <- system.file('extdata/stemcomp/soma/stemcomp.adat',
-#'                              package = 'autonomics.data')
-#'    soma_file %>% autonomics.import::write_design('soma')
-#'    soma_file %>% autonomics.import::write_design('soma', infer_design_from_sampleids = TRUE)
+#'    object <- 'extdata/stemcomp/soma/stemcomp.adat'     %>%
+#'               system.file(package = 'autonomics.data') %>%
+#'               autonomics.import::read_somascan()
+#'    object %>% autonomics.import::write_design()
+#'    object %>% autonomics.import::write_design(subgroup_var = 'SampleGroup')
 #' }
+#'
+#' # EXIQON
+#' if (require(subramanian.2016)){
+#'    object <- 'extdata/exiqon/subramanian.2016.exiqon.xlsx'  %>%
+#'               system.file(package = 'subramanian.2016')     %>%
+#'               autonomics.import::read_exiqon()
+#'    object %>% write_design() %>% head()
+#' }
+#'
+#' # PROTEINGROUPS
+#' if (require(autonomics.data)){
+#'    object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
+#'               system.file(package = 'autonomics.data')     %>%
+#'               autonomics.import::read_proteingroups(simplify_snames = TRUE)
+#'    object %>% write_design()
+#' }
+#'
 #' @importFrom magrittr %>%
 #' @export
 write_design <- function(
-   file,
-   platform,
-   infer_design_from_sampleids = FALSE,
-   design_sep = NULL,
-   design_file  = NULL,
-   sheet = 2,
-   quantity = if (platform=='maxquant') autonomics.import::infer_maxquant_quantity(file) else NULL
+   object,
+   subgroup_var = NULL,
+   sep          = object %>% autonomics.import:::guess_sep.SummarizedExperiment(verbose = TRUE),
+   file         = NULL
 ){
 
-   # sdata
-   sdata1 <- autonomics.import::load_sdata(file     = file,
-                                           platform = platform,
-                                           sheet    = sheet,
-                                           quantity = quantity)
-   sampleid_var <- autonomics.import::sampleid_varname(platform)
-   subgroup_var <- autonomics.import::subgroup_varname(platform)
-
-   # Construct design
-   design_df <- data.frame(x                = sdata1[[sampleid_var]],
-                           row.names        = sdata1[[sampleid_var]],
+   # Create design dataframe
+   sampleid_values <- object %>% autonomics.import::sampleid_values()
+   subgroup_values <- object %>% autonomics.import::guess_subgroup_values(subgroup_var, verbose = TRUE)
+   design_df <- data.frame(sample_id        = sampleid_values,
+                           subgroup         = subgroup_values,
+                           row.names        = sampleid_values,
                            check.names      = FALSE,
-                           stringsAsFactors = FALSE) %>%
-                magrittr::set_names(names(.) %>% stringi::stri_replace_first_fixed('x', sampleid_var))
-
-   # Infer subgroup from sampleids and add to design
-   if (infer_design_from_sampleids){
-      if (is.null(design_sep)) design_sep <- design_df[[sampleid_var]] %>% autonomics.import::guess_sep(verbose = TRUE)
-      if (!is.null(design_sep)){
-         inferred_design <- design_df[[sampleid_var]] %>% autonomics.import::infer_design_from_sampleids(sep = design_sep, maxquant = platform=='maxquant')
-         design_df$sample_id <- NULL
-         design_df %<>% cbind(., inferred_design)
-         autonomics.support::cmessage('\t\tInfer subgroup from sampleids: %s => %s', design_df[[sampleid_var]][1], design_df$subgroup[1])
-      }
-
-   # Merge in design file
-   } else {
-      design_df$sample_id <- sdata1[[sampleid_var]]
-      if (is.null(subgroup_var)){
-         design_df$subgroup <- ''
-         design_df$replicate <- ''
-      } else {
-         design_df$subgroup  <- sdata1[[subgroup_var]]
-         missing_subgroups <- any(autonomics.support::is_missing_or_empty_character(design_df$subgroup %>% as.character()))
-         if (!missing_subgroups){
-            design_df$subgroup %<>% autonomics.support::nameify_strings()
-            design_df %<>% add_replicate_values()
-         }
-      }
-   }
+                           stringsAsFactors = FALSE)
 
    # Write to file
-   if (!is.null(design_file))  design_df %>% autonomics.import::write_design_file(design_file)
+   if (!is.null(file))  design_df %>% autonomics.import::write_design_file(file)
 
    # Return
    design_df
