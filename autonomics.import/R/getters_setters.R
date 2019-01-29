@@ -121,7 +121,7 @@ setMethod("contrastdefs", signature("SummarizedExperiment"),  function(object) S
 #' @description Get / Set counts matrix
 #' @param object SummarizedExperiment
 #' @param value count matrix (features x samples)
-#' @return exprs matrix (get) or updated object (set)
+#' @return count matrix (get) or updated object (set)
 #' @rdname counts
 
 # Get
@@ -130,7 +130,7 @@ setMethod("contrastdefs", signature("SummarizedExperiment"),  function(object) S
 #' @export
 setGeneric('counts',                                        function(object)   standardGeneric("counts"))
 
-#' @rdname exprs
+#' @rdname counts
 setMethod("counts",    signature("SummarizedExperiment"),   function(object)   SummarizedExperiment::assays(object)$counts)
 
 
@@ -140,11 +140,11 @@ setMethod("counts",    signature("SummarizedExperiment"),   function(object)   S
 #' @export
 setGeneric(      'counts<-',                                                function(object, value) standardGeneric("counts<-"))
 
-#' @rdname exprs
+#' @rdname counts
 setReplaceMethod("counts",    signature("SummarizedExperiment", "matrix"),  function(object, value){
    SummarizedExperiment::assays(object)$counts <- value
    object })
-#' @rdname exprs
+#' @rdname counts
 setReplaceMethod("counts",    signature("SummarizedExperiment", "numeric"), function(object, value){
    SummarizedExperiment::assays(object)$counts[] <- value
    object })
