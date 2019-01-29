@@ -41,7 +41,9 @@ filter_exprs_replicated_in_some_subgroup <- function(
    replicated_features <- dt %>% magrittr::extract(replicated_in_any_subgroup == TRUE, get(fidvar))
    idx <- autonomics.import::fid_values(object) %in% replicated_features
    autonomics.support::cmessage('\t\tFilter %d/%d features: expr %s %s, for at least two samples in some subgroup', sum(idx), length(idx), comparator, as.character(lod))
-   object %>% magrittr::extract(idx, )
+   object %>% autonomics.import::extract_features(idx)
+      # use this rather than magrittr::extract() directly
+      # to ensure that the limma(.) object is properly taken care of
 }
 
 
