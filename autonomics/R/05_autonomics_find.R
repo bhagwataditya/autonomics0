@@ -7,20 +7,20 @@
 NULL
 
 
-#' Add limma to fdata
+#' Add limma to SummarizedExperiment
 #' 
-#' \code{\link[autonomics.find]{add_limma_to_fdata}}
-#' @name add_limma_to_fdata
-#' @importFrom autonomics.find  add_limma_to_fdata
-#' @export   add_limma_to_fdata
+#' \code{\link[autonomics.find]{add_limma}}
+#' @name add_limma
+#' @importFrom autonomics.find  add_limma
+#' @export   add_limma
 NULL
 
 
-#' Plot top features
+#' Plot contrast features
 #' 
-#' \code{\link[autonomics.find]{plot_top_features}}
-#' @name plot_top_features
-#' @importFrom autonomics.find   plot_top_features
-#' @export  plot_top_features
+#' \code{\link[autonomics.find]{plot_contrast_features}}
+#' @name plot_contrast_features
+#' @importFrom autonomics.find   plot_contrast_features
+#' @export  plot_contrast_features
 NULL
 

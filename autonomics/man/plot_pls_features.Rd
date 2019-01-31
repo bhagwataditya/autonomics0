@@ -4,5 +4,5 @@
 \alias{plot_pls_features}
 \title{Plot PLS features}
 \description{
-\code{\link[autonomics.explore]{plot_pls_features}}
+\code{\link[autonomics.explore]{plot_projection_features}}
 }

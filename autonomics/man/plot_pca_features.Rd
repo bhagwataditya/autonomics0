@@ -4,5 +4,5 @@
 \alias{plot_pca_features}
 \title{Plot PCA features}
 \description{
-\code{\link[autonomics.explore]{plot_pca_features}}
+\code{\link[autonomics.explore]{plot_projection_features}}
 }

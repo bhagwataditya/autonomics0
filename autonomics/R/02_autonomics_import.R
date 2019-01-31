@@ -74,51 +74,6 @@ NULL
 NULL
 
 
-#' Load exiqon data
-#' 
-#' \code{\link[autonomics.import]{load_exiqon}}
-#' @name load_exiqon
-#' @importFrom autonomics.import   load_exiqon
-#' @export   load_exiqon
-NULL
-
-
-#' Load proteingroups data
-#' 
-#' \code{\link[autonomics.import]{load_proteingroups}}
-#' @name load_proteingroups
-#' @importFrom autonomics.import   load_proteingroups
-#' @export   load_proteingroups
-NULL
-
-
-#' Load metabolon data
-#' 
-#' \code{\link[autonomics.import]{load_metabolon}}
-#' @name load_metabolon
-#' @importFrom autonomics.import   load_metabolon
-#' @export load_metabolon
-NULL
-
-
-#' Load metabolon complex lipid panel data
-#' 
-#' \code{\link[autonomics.import]{load_metabolonlipids}}
-#' @name load_metabolonlipids
-#' @importFrom autonomics.import   load_metabolonlipids
-#' @export load_metabolonlipids
-NULL
-
-
-#' Load somascan data
-#' 
-#' \code{\link[autonomics.import]{load_soma}}
-#' @name load_soma
-#' @importFrom autonomics.import   load_soma
-#' @export load_soma
-NULL
-
-
 #' sdata
 #' 
 #' \code{\link[autonomics.import]{sdata}}

@@ -4,5 +4,5 @@
 \alias{plot_pca_samples}
 \title{Plot PCA samples}
 \description{
-\code{\link[autonomics.explore]{plot_pca_samples}}
+\code{\link[autonomics.explore]{plot_projected_samples}}
 }

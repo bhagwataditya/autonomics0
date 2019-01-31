@@ -18,10 +18,10 @@ NULL
 
 #' Plot venn diagrams 
 #' 
-#' \code{\link[autonomics.plot]{plot_venns}}
-#' @importFrom autonomics.plot  plot_venns
-#' @export  plot_venns
-#' @name plot_venns
+#' \code{\link[autonomics.plot]{plot_venn}}
+#' @importFrom autonomics.plot  plot_venn
+#' @export  plot_venn
+#' @name plot_venn
 NULL
 
 

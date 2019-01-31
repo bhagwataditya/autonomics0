@@ -4,5 +4,5 @@
 \alias{plot_lda_samples_and_features}
 \title{Plot LDA samples and features}
 \description{
-\code{\link[autonomics.explore]{plot_lda_samples_and_features}}
+\code{\link[autonomics.explore]{plot_projected_samples_and_features}}
 }

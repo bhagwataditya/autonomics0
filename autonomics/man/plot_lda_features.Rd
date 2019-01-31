@@ -4,5 +4,5 @@
 \alias{plot_lda_features}
 \title{Plot LDA features}
 \description{
-\code{\link[autonomics.explore]{plot_lda_features}}
+\code{\link[autonomics.explore]{plot_projection_features}}
 }
