@@ -1,56 +1,3 @@
-#' Add subgroup values to object
-#'
-#' Three methods: (1) take values from existing svar
-#'                (2) guess from sampleids
-#'                (3) merge designfile (with one column sample_id) into sdata
-#'
-#' @param object SummarizedExperiment
-#' @param take_from_svar        character(1)
-#' @param guess_from_sampleids  logical(1)
-#' @param merge_designfile      character(1): designfile path
-#' @return SummarizedExperiment
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    object <- file %>% autonomics.import::read_metabolon_asis()
-#' }
-#' @importFrom magrittr %>%
-#' @export
-add_subgroup <- function(
-   object,
-   take_from_svar        = NULL,
-   guess_from_sampleids  = FALSE,
-   merge_designfile      = NULL
-){
-
-   # Assert
-   if (!is.null(take_from_svar)){ assertive.types::assert_is_character(take_from_svar);
-      assertive.types::assert_is_subset(take_from_svar, autonomics.import::svars(object)) }
-   assertive.types::assert_is_logical(guess_from_sampleids)
-   if (!is.null(merge_designfile)) assertive.files::assert_all_are_existing_files(merge_design_file)
-
-   # Either take from svar
-   if (!is.null(take_from_svar)){
-      autonomics.support::cmessage("Add subgroup: take from svar '%s'", take_from_svar)
-      autonomics.import::sdata(object) %<>% cbind(subgroup = .[[svar]], .)
-
-      # Or guess from sampleids
-   } else if (guess_from_sampleids){
-      autonomics.support::cmessage('Add subgroup: guess from sampleids')
-      autonomics.import::sdata(object) %<>% cbind(subgroup = autonomics.import::guess_subgroup_values(.$sample_id), .)
-
-      # Or merge in designfile
-   } else if (merge_designfile){
-      autonomics.support::cmessage("Add subgroup: merge in designfile '%s'", merge_designfile)
-      design_df <- autonomics.support::cfread(merge_designfile, data.table = FALSE)
-      assertive.sets::assert_is_subset('sample_id', names(design_df))
-      autonomics.import::sdata(object) %<>% merge(design_df, by = 'sample_id', sort = FALSE, all.x =TRUE)
-   }
-
-   # Return
-   return(object)
-}
 
 #======================
 # METABOLON
@@ -819,4 +766,58 @@ read_proteingroups <- function(
 
    # Return
    object
+}
+
+#' Add subgroup values to object
+#'
+#' Three methods: (1) take values from existing svar
+#'                (2) guess from sampleids
+#'                (3) merge designfile (with one column sample_id) into sdata
+#'
+#' @param object SummarizedExperiment
+#' @param take_from_svar        character(1)
+#' @param guess_from_sampleids  logical(1)
+#' @param merge_designfile      character(1): designfile path
+#' @return SummarizedExperiment
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+#'    object <- file %>% autonomics.import::read_metabolon_asis()
+#' }
+#' @importFrom magrittr %>%
+#' @export
+add_subgroup <- function(
+   object,
+   take_from_svar        = NULL,
+   guess_from_sampleids  = FALSE,
+   merge_designfile      = NULL
+){
+   
+   # Assert
+   if (!is.null(take_from_svar)){ assertive.types::assert_is_character(take_from_svar);
+      assertive.types::assert_is_subset(take_from_svar, autonomics.import::svars(object)) }
+   assertive.types::assert_is_logical(guess_from_sampleids)
+   if (!is.null(merge_designfile)) assertive.files::assert_all_are_existing_files(merge_design_file)
+   
+   # Either take from svar
+   if (!is.null(take_from_svar)){
+      autonomics.support::cmessage("Add subgroup: take from svar '%s'", take_from_svar)
+      autonomics.import::sdata(object) %<>% cbind(subgroup = .[[svar]], .)
+      
+      # Or guess from sampleids
+   } else if (guess_from_sampleids){
+      autonomics.support::cmessage('Add subgroup: guess from sampleids')
+      autonomics.import::sdata(object) %<>% cbind(subgroup = autonomics.import::guess_subgroup_values(.$sample_id), .)
+      
+      # Or merge in designfile
+   } else if (merge_designfile){
+      autonomics.support::cmessage("Add subgroup: merge in designfile '%s'", merge_designfile)
+      design_df <- autonomics.support::cfread(merge_designfile, data.table = FALSE)
+      assertive.sets::assert_is_subset('sample_id', names(design_df))
+      autonomics.import::sdata(object) %<>% merge(design_df, by = 'sample_id', sort = FALSE, all.x =TRUE)
+   }
+   
+   # Return
+   return(object)
 }
