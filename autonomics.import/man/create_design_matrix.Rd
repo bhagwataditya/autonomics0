@@ -9,7 +9,9 @@ create_design_matrix(object,
   confounders = character(0))
 }
 \arguments{
-\item{object}{eSet or eList}
+\item{object}{SummarizedExperiment}
+
+\item{intercept}{logical(1): whether to include an intercept in the design}
 
 \item{confounders}{confounder svars (character)}
 }

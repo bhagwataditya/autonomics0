@@ -26,7 +26,12 @@ filter_exprs_replicated_in_some_subgroup <- function(
    lod = 0
 ){
 
+   # Return if no subgroup (filtering not possible) or no replicates (filtering leads to empty SumExp )
+   if (!'subgroup' %in% autonomics.import::svars(object))             return(object)
+   if (all(!duplicated(autonomics.import::sdata(object)$subgroup)))   return(object)
+
    # Datatablify
+   replicated_in_its_subgroup <- replicated_in_any_subgroup <- value <- NULL
    fidvar <- object %>% autonomics.import::fid_var()
    dt     <- object %>% autonomics.import::sumexp_to_long_dt(svars = 'subgroup')
 

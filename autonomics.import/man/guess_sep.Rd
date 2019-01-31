@@ -11,10 +11,10 @@
 guess_sep(x, ...)
 
 \method{guess_sep}{character}(x, possible_separators = c(".", " ", "_"),
-  verbose = FALSE)
+  verbose = FALSE, ...)
 
 \method{guess_sep}{SummarizedExperiment}(x, svar = "sample_id",
-  possible_separators = c(".", "_", " "), verbose = FALSE)
+  possible_separators = c(".", "_", " "), verbose = FALSE, ...)
 
 ssep(...)
 
@@ -22,6 +22,8 @@ subgroup_sep(...)
 }
 \arguments{
 \item{x}{character vector or SummarizedExperiment}
+
+\item{...}{used for proper S3 method dispatch}
 
 \item{possible_separators}{character vector with possible separators to look for}
 

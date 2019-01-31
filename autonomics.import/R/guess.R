@@ -4,6 +4,7 @@
 #' @param svar                string
 #' @param possible_separators character vector with possible separators to look for
 #' @param verbose             logical
+#' @param ...                 used for proper S3 method dispatch
 #' @return separator (string) or NULL (if no separator could be identified)
 #' @examples
 #' require(magrittr)
@@ -40,7 +41,8 @@ guess_sep <- function (x, ...) {
 guess_sep.character <- function(
    x,
    possible_separators = c('.', ' ', '_'),
-   verbose = FALSE
+   verbose = FALSE,
+   ...
 ){
    . <- NULL
    sep_freqs <- Map(function(y) stringi::stri_split_fixed(x, y), possible_separators)        %>%
@@ -79,7 +81,8 @@ guess_sep.SummarizedExperiment <- function(
    x,
    svar = 'sample_id',
    possible_separators = c('.', '_', ' '),# if (autonomics.import::contains_ratios(x)) c('.', ' ') else c('.', '_', ' '),
-   verbose = FALSE
+   verbose = FALSE,
+   ...
 ){
    x %>%
    autonomics.import::svalues(svar) %>%
@@ -115,6 +118,7 @@ subgroup_sep <- function(...){
 #' @param x             charactervector, SummarizedExperiment
 #' @param sep           character(1)
 #' @param verbose       logical(1)
+#' @param ...           used for proper S3 method dispatch
 #' @return character(n)
 #' @examples
 #' require(magrittr)
@@ -142,7 +146,8 @@ guess_subgroup_values <- function (x, ...) {
 guess_subgroup_values.character <- function(
    x,
    sep     = x %>% autonomics.import::guess_sep(),
-   verbose = FALSE
+   verbose = FALSE,
+   ...
 ){
    # Guess
    subgroup_values <- if (is.null(sep)){ x
@@ -164,19 +169,19 @@ guess_subgroup_values.character <- function(
 guess_subgroup_values.SummarizedExperiment <- function(
    x,
    sep          = x %>% autonomics.import::guess_sep(),
-   verbose      = FALSE
+   verbose      = FALSE,
+   ...
 ){
 
-   # already in object
-   if ('subgroup' %in% autonomics.import::svars(object)){
-      if (verbose) autonomics.support::cmessage("\t\tUse 'subgroup' values in object ")
-      return(autonomics.import::sdata(object)$subgroup)
+   # already in x
+   if ('subgroup' %in% autonomics.import::svars(x)){
+      if (verbose) autonomics.support::cmessage("\t\tUse 'subgroup' values in x ")
+      return(autonomics.import::sdata(x)$subgroup)
    }
 
    # guess from sampleid values
-   if (verbose) autonomics.support::cmessage("\t\tGuess 'subgroup' from 'sample_id' values")
    x %>% autonomics.import::sampleid_values() %>%
-         autonomics.import:::guess_subgroup_values.character(verbose = verbose)
+         autonomics.import::guess_subgroup_values(verbose = verbose)
 }
 
 

@@ -9,7 +9,7 @@ write_features(object, file)
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{result_dir}{dir where to save results}
+\item{file}{txt file where to write results to}
 }
 \description{
 Write features to file

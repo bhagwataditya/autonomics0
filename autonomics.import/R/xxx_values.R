@@ -47,7 +47,8 @@ split_values <- function (x, ...) {
 split_values.character <- function(
    x,
    sep    = autonomics.import::guess_sep(x, verbose = FALSE),
-   keep   = FALSE
+   keep   = FALSE,
+   ...
 ){
 
    dt <- data.table::data.table(x = x)
@@ -74,7 +75,8 @@ split_values.character <- function(
 split_values.factor <- function(
    x,
    sep = autonomics.import::guess_sep(x, verbose = FALSE),
-   keep = FALSE
+   keep = FALSE,
+   ...
 ){
    x %>% as.character() %>% split_values(sep = sep, keep = keep)
 }
@@ -82,10 +84,15 @@ split_values.factor <- function(
 #' @rdname split_values
 #' @export
 #' @importFrom magrittr %>%
-split_values.SummarizedExperiment <- function(object, svar = 'subgroup', keep = FALSE){
-   dt <- object %>%
-      autonomics.import::svalues(svar) %>%
-      autonomics.import::split_values(keep = keep)
+split_values.SummarizedExperiment <- function(
+   x,
+   svar = 'subgroup',
+   keep = FALSE,
+   ...
+){
+   dt <- x %>%
+         autonomics.import::svalues(svar) %>%
+         autonomics.import::split_values(keep = keep)
    dt
 }
 
@@ -158,7 +165,7 @@ reshape_values <- function(x, fill, fun.aggregate, sep = autonomics.import::gues
 #'
 #' @param x      character(n) factor(n), or SummarizedExperiment with composite (s)values.
 #' @param svar   character(1)
-#' @param sep    subgroup separator
+#' @param ...    used for S3 method dispatch
 #' @examples
 #' require(magrittr)
 #'
@@ -184,15 +191,15 @@ count_values <- function(x, ...){
 #' @rdname count_values
 #' @importFrom magrittr %>%
 #' @export
-count_values.character <- function(x){
+count_values.character <- function(x, ...){
    x %>%
-   autonomics.import:::reshape_values(fill = 0, fun.aggregate = length)
+   autonomics.import::reshape_values(fill = 0, fun.aggregate = length)
 }
 
 #' @rdname count_values
 #' @importFrom magrittr %>%
 #' @export
-count_values.factor <- function(x){
+count_values.factor <- function(x, ...){
    x %>%
    as.character() %>%
    count_values()
@@ -200,7 +207,7 @@ count_values.factor <- function(x){
 
 #' @rdname count_values
 #' @export
-count_values.SummarizedExperiment <- function(x, svar = 'subgroup'){
+count_values.SummarizedExperiment <- function(x, svar = 'subgroup', ...){
    x %>%
    autonomics.import::svalues(svar) %>%
    autonomics.import::count_values()
@@ -219,6 +226,7 @@ count_values.SummarizedExperiment <- function(x, svar = 'subgroup'){
 #' @param x      character(n), factor(n), or SummarizedExperiment with composite (s)values
 #' @param sep    character(1)
 #' @param svar   character(1)
+#' @param ...    used for proper S3 dispatching
 #' @examples
 #' require(magrittr)
 #'
@@ -245,24 +253,24 @@ layout_values <- function (x, ...) {
 #' @rdname layout_values
 #' @importFrom magrittr %>%
 #' @export
-layout_values.character <- function(x, sep = autonomics.import::guess_sep(x)){
+layout_values.character <- function(x, sep = autonomics.import::guess_sep(x), ...){
    x  %>%
    unique() %>%
-   autonomics.import:::reshape_values(fill = '', fun.aggregate = unique, sep = sep)
+   autonomics.import::reshape_values(fill = '', fun.aggregate = unique, sep = sep)
 }
 
 #' @rdname layout_values
 #' @importFrom magrittr %>%
 #' @export
-layout_values.factor <- function(x, sep = autonomics.import::guess_sep(x)){
+layout_values.factor <- function(x, sep = autonomics.import::guess_sep(x), ...){
    x %>%
    levels() %>%
-   autonomics.import:::reshape_values(fill = '', fun.aggregate = unique, sep = sep)
+   autonomics.import::reshape_values(fill = '', fun.aggregate = unique, sep = sep)
 }
 
 #' @rdname layout_values
 #' @export
-layout_values.SummarizedExperiment <- function(x, svar = 'subgroup', sep = autonomics.import::guess_sep(x)){
+layout_values.SummarizedExperiment <- function(x, svar = 'subgroup', sep = autonomics.import::guess_sep(x), ...){
    x %>%
    autonomics.import::svalues(svar) %>%
    autonomics.import::layout_values(sep = sep)

@@ -336,7 +336,7 @@ robustify_protein_group_ids <- function(pg_ids){
 
 
 prettify_sample_names <- function(value_matrix, sample_file){
-   sample_design <- read_maxquant_design(sample_file)
+   sample_design <- autonomics.support::cfread(sample_file)
    idx <- match(colnames(value_matrix),
                 paste0(sample_design$experiment, '_',
                        stringi::stri_replace_first_fixed(sample_design$labels, '_', ''))

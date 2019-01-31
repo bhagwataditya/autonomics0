@@ -52,9 +52,9 @@ sumexp_to_long_dt <- function(
   sdata1 <- autonomics.import::sdata(object) %>% magrittr::extract(, c('sample_id', svars), drop = FALSE)
   # Note: unique is to avoid duplication of same fields in fid and fvars
   object %>% autonomics.import::sumexp_to_wide_dt(fid, fvars) %>%
-               data.table::melt.data.table(id.vars = unique(c(fid, fvars)), variable.name = sid, value.name = 'value') %>%
-               merge(sdata1, by = sid) %>%
-               magrittr::extract(, unique(c(fid, fvars, sid, svars, 'value')), with = FALSE)
+             data.table::melt.data.table(id.vars = unique(c(fid, fvars)), variable.name = sid, value.name = 'value') %>%
+             merge(sdata1, by = sid) %>%
+             magrittr::extract(, unique(c(fid, fvars, sid, svars, 'value')), with = FALSE)
 }
 
 #' @rdname sumexp_to_long_dt

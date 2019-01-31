@@ -4,14 +4,14 @@
 \alias{load_omics}
 \title{Load omics}
 \usage{
-load_omics(file, platform, sheet = 2, quantity = NULL,
+load_omics(object, platform, sheet = 2, quantity = NULL,
   log2_transform = TRUE, log2_offset = 0, design_file = NULL,
   infer_design_from_sampleids = FALSE, design_sep = NULL)
 }
 \arguments{
-\item{file}{path to omics data file}
+\item{object}{SummarizedExperiment}
 
-\item{platform}{'exiqon', 'maxquant', 'metabolon', 'metabolonlipids', 'soma'}
+\item{platform}{'exiqon', 'maxquant', 'metabolon', 'soma'}
 
 \item{sheet}{excel sheet number or name if applicable}
 
@@ -26,52 +26,10 @@ load_omics(file, platform, sheet = 2, quantity = NULL,
 \item{infer_design_from_sampleids}{logical}
 
 \item{design_sep}{string: design separator}
-
-\item{zero_subgroup_nas}{logical: whether to zero subgroup NAs (i.e. NA value for all samples in a subgroup)}
 }
 \value{
 sample dataframe
 }
 \description{
 Load omics
-}
-\examples{
- require(magrittr)
-
-# EXIQON
-if (require(subramanian.2016)){
-   file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
-                        package = 'subramanian.2016')
-   file \%>\% autonomics.import::load_omics(
-               platform = 'exiqon',
-               infer_design_from_sampleids = TRUE)
-}
-
-# LABELED LCMSPROT
-if (require(autonomics.data)){
-   file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt',
-                        package = 'autonomics.data')
-   object <- file \%>\% autonomics.import::load_omics(
-                         platform = 'maxquant',
-                         quantity = 'Ratio normalized',
-                         infer_design_from_sampleids = TRUE)
-}
-
-# METABOLON
-if (require(autonomics.data)){
-   file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-   file \%>\% load_omics(sheet=2, platform = 'metabolon')
-}
-
-# METABOLONLIPIDS
-file <- '../../datasets/WCQA-01-18MLCLP-1/WCQA-01-18MLCLP CLP  6-TAB FILE (180710).XLSX'
-if (file.exists(file)){
-   file \%>\% load_omics(sheet = 'Lipid Class Concentrations', platform = 'metabolonlipids')
-}
-
-# RNASEQ
-if (require(subramanian.2016)){
-   file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
-   infer_design_from_sampleids <- TRUE
-}
 }

@@ -416,6 +416,7 @@ object})
 
 #================================================================================================
 #'@title Get/set limma results
+#'@description Get/Set limma results
 #'@param object SummarizedExperiment
 #'@param value list
 #'@return limma results (get) or updated object (set)

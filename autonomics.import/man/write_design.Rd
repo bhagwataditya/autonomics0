@@ -5,8 +5,7 @@
 \title{Write design}
 \usage{
 write_design(object, subgroup_var = NULL, sep = object \%>\%
-  autonomics.import:::guess_sep.SummarizedExperiment(verbose = TRUE),
-  file = NULL)
+  autonomics.import::guess_sep(verbose = TRUE), file = NULL)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

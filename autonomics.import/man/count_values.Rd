@@ -9,18 +9,18 @@
 \usage{
 count_values(x, ...)
 
-\method{count_values}{character}(x)
+\method{count_values}{character}(x, ...)
 
-\method{count_values}{factor}(x)
+\method{count_values}{factor}(x, ...)
 
-\method{count_values}{SummarizedExperiment}(x, svar = "subgroup")
+\method{count_values}{SummarizedExperiment}(x, svar = "subgroup", ...)
 }
 \arguments{
 \item{x}{character(n) factor(n), or SummarizedExperiment with composite (s)values.}
 
-\item{svar}{character(1)}
+\item{...}{used for S3 method dispatch}
 
-\item{sep}{subgroup separator}
+\item{svar}{character(1)}
 }
 \value{
 integer

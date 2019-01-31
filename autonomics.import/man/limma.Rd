@@ -27,3 +27,6 @@ limma(object) <- value
 \value{
 limma results (get) or updated object (set)
 }
+\description{
+Get/Set limma results
+}

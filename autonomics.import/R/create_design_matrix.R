@@ -1,5 +1,6 @@
 #' Create design matrix for statistical analysis
-#' @param object      eSet or eList
+#' @param object      SummarizedExperiment
+#' @param intercept   logical(1): whether to include an intercept in the design
 #' @param confounders confounder svars (character)
 #' @return design matrix
 #' @examples

@@ -56,6 +56,8 @@ flatten <- function(
    object,
    limma_quantities = c('effect', 'p', 'fdr')
 ){
+   # check
+   fasta_hdrs <- F.p <- NULL
 
    # fdata
    dt   <- autonomics.import::fdata(object) %>% data.table::data.table()
@@ -90,8 +92,8 @@ flatten <- function(
 
 
 #' Write features to file
-#' @param object         SummarizedExperiment
-#' @param result_dir     dir where to save results
+#' @param object SummarizedExperiment
+#' @param file   txt file where to write results to
 #' @examples
 #' require(magrittr)
 #'
@@ -111,9 +113,3 @@ write_features <- function(
    autonomics.support::cmessage("\t\tall   %s", basename(file))
 }
 
-
-#' @export
-write_fdata_to_file <- function(object, file = ""){
-   .Deprecated('flatten')
-   object %>% flatten(object) %>% autonomics.support::print2txt(file)
-}

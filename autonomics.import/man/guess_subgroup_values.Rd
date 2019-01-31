@@ -9,13 +9,15 @@
 guess_subgroup_values(x, ...)
 
 \method{guess_subgroup_values}{character}(x, sep = x \%>\%
-  autonomics.import::guess_sep(), verbose = FALSE)
+  autonomics.import::guess_sep(), verbose = FALSE, ...)
 
 \method{guess_subgroup_values}{SummarizedExperiment}(x, sep = x \%>\%
-  autonomics.import::guess_sep(), verbose = FALSE)
+  autonomics.import::guess_sep(), verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{charactervector, SummarizedExperiment}
+
+\item{...}{used for proper S3 method dispatch}
 
 \item{sep}{character(1)}
 
