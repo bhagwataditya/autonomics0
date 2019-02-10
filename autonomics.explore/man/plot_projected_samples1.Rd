@@ -10,12 +10,12 @@
 \usage{
 plot_projected_samples1(object, method = "pca", implementation = NULL,
   dims = 1:2, color_var = "subgroup",
-  color_values = autonomics.plot::default_color_values(object, color_var),
-  shape_var = autonomics.plot::default_shape_var(object), size_var = NULL,
-  txt_var = autonomics.plot::default_txt_var(object), group_var = NULL,
-  split_var = NULL, facet_var = split_var, scales = if
-  (is.null(split_var)) "fixed" else "free", nrow = NULL, title = NULL,
-  na.impute = FALSE, legend.position = "right")
+  color_values = autonomics.plot::default_color_values(object,
+  color_var), shape_var = autonomics.plot::default_shape_var(object),
+  size_var = NULL, txt_var = autonomics.plot::default_txt_var(object),
+  group_var = NULL, split_var = NULL, facet_var = split_var,
+  scales = if (is.null(split_var)) "fixed" else "free", nrow = NULL,
+  title = NULL, na.impute = FALSE, legend.position = "right")
 
 plot_pca_samples1(object, ...)
 

@@ -8,13 +8,14 @@
 \alias{plot_pls_samples_and_features}
 \title{Plot pca samples and features}
 \usage{
-plot_projected_samples_and_features(object, method, implementation = NULL,
-  dims = c(1, 2), na.impute = FALSE,
+plot_projected_samples_and_features(object, method,
+  implementation = NULL, dims = c(1, 2), na.impute = FALSE,
   geom = autonomics.plot::default_feature_plots(object)[1],
   result_dir = NULL, x = autonomics.plot::default_x(object, geom),
   color_var = autonomics.plot::default_color_var(object),
-  color_values = autonomics.plot::default_color_values(object, color_var),
-  shape_var = NULL, group_var = autonomics.plot::default_group_var(object),
+  color_values = autonomics.plot::default_color_values(object,
+  color_var), shape_var = NULL,
+  group_var = autonomics.plot::default_group_var(object),
   txt_var = autonomics.plot::default_txt_var(object),
   line = autonomics.plot::default_line(object), n = 9)
 
