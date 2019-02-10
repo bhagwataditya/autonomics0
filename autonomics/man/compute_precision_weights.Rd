@@ -4,8 +4,8 @@
 \alias{compute_precision_weights}
 \title{Compute voom precision weights}
 \usage{
-compute_precision_weights(object, design = object \%>\%
-  autonomics.import::create_voom_design(), plot = TRUE, verbose = FALSE)
+compute_precision_weights(object, design = object \%>\% create_voom_design(),
+  plot = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{object}{SummarizedExperiment: exprs(.) with log2cpm, counts(.) with raw counts.}
@@ -26,9 +26,9 @@ require(magrittr)
 if (require(subramanian.2016)){
    object <- 'extdata/rnaseq/gene_counts.txt'            \%>\%
               system.file(package = 'subramanian.2016')  \%>\%
-              autonomics.import::read_rnaseq_asis()
+              read_rnaseq_asis()
    autonomics.import::counts(object) <- autonomics.import::exprs(object)
    object$subgroup <- object \%>\% autonomics.import::guess_subgroup_values()
-   object \%>\% autonomics.import::compute_precision_weights()
+   object \%>\% compute_precision_weights()
 }
 }

@@ -21,13 +21,18 @@ guess_maxquant_quantity(x, ...)
 \item{...}{used for proper S3 method dispatch}
 }
 \value{
-character(1): value from names(autonomics.import::maxquant_patterns)
+character(1): value from names(maxquant_patterns)
 }
 \description{
 charactervector, dataframe, or SummarizedExperiment.
 }
 \examples{
 require(magrittr)
+
+# file
+   x <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
+         system.file(package = 'autonomics.data')
+   guess_maxquant_quantity(x)
 
 # charactervector
     guess_maxquant_quantity("Ratio M/L normalized STD(L)_EM00(M)_EM01(H)_R1")
@@ -42,14 +47,14 @@ require(magrittr)
       x <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data') \%>\%
             data.table::fread()
-      autonomics.import::guess_maxquant_quantity(x)
+      guess_maxquant_quantity(x)
     }
 
 # SummarizedExperiment
     if (require(autonomics.data)){
       x <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data') \%>\%
-            autonomics.import::read_proteingroups_asis()
-      autonomics.import::guess_maxquant_quantity(x)
+            read_proteingroups()
+      guess_maxquant_quantity(x)
     }
 }

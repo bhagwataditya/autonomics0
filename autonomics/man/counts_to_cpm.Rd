@@ -17,6 +17,8 @@ cpm_to_counts(cpm, lib.size)
 
 \item{lib.size}{scaled library sizes (vector)}
 
+\item{verbose}{logical(1)}
+
 \item{cpm}{cpm matrix (counts per million scaled reads)}
 }
 \value{
@@ -30,11 +32,11 @@ require(magrittr)
 if (require(subramanian.2016)){
    counts <- 'extdata/rnaseq/gene_counts.txt' \%>\%
               system.file(package = 'subramanian.2016') \%>\%
-              autonomics.import::read_rnaseq_asis()     \%>\%
+              read_rnaseq_asis()     \%>\%
               autonomics.import::exprs()
-   lib.size <- counts \%>\% autonomics.import::libsizes()
-   cpm      <- counts \%>\% autonomics.import::counts_to_cpm(lib.size)
-   counts2  <- cpm    \%>\% autonomics.import::cpm_to_counts(lib.size)
+   lib.size <- counts \%>\% libsizes()
+   cpm      <- counts \%>\% counts_to_cpm(lib.size)
+   counts2  <- cpm    \%>\% cpm_to_counts(lib.size)
    sum(counts-counts2)
 }
 }

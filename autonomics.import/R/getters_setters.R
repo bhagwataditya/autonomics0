@@ -85,6 +85,15 @@ setReplaceMethod("annotation", signature("EList",                "character"), f
 #' }
 #' @rdname contrastdefs
 
+# Get
+#====
+#' @rdname contrastdefs
+#' @export
+setGeneric("contrastdefs",                                    function(object)   standardGeneric("contrastdefs") )
+
+#' @rdname contrastdefs
+setMethod("contrastdefs", signature("SummarizedExperiment"),  function(object) S4Vectors::metadata(object)$contrastdefs )
+
 # Set
 #====
 #' @rdname contrastdefs
@@ -103,17 +112,6 @@ set_contrastdefs <- function(object, value){
    autonomics.import::contrastdefs(object) <- value
    object
 }
-
-
-# Get
-#====
-#' @rdname contrastdefs
-#' @export
-setGeneric("contrastdefs",                                    function(object)   standardGeneric("contrastdefs") )
-
-#' @rdname contrastdefs
-setMethod("contrastdefs", signature("SummarizedExperiment"),  function(object) S4Vectors::metadata(object)$contrastdefs )
-
 
 #=========================================================================
 
@@ -235,10 +233,10 @@ setGeneric('fdata',                                                           fu
 #' @rdname fdata
 #' @importFrom magrittr %>%
 setMethod(        'fdata',  signature('SummarizedExperiment'),                function(object){
-                                                                                 object@elementMetadata@listData %>%
-                                                                                 as.data.frame(check.names      = FALSE,
-                                                                                               row.names        = object@elementMetadata@rownames,
-                                                                                               stringsAsFactors = FALSE)})
+   object@elementMetadata@listData %>%
+      as.data.frame(check.names      = FALSE,
+                    row.names        = object@elementMetadata@rownames,
+                    stringsAsFactors = FALSE)})
 # NOTES: (1) as.data.frame(object@elementMetadata) doesn't handle check.names correctly!
 #        (2) SummarizedExperiment::rowData returns a DataFrame (which is not generic to e.g. EList objects)
 #' @rdname fdata
@@ -285,8 +283,8 @@ setReplaceMethod( 'fdata', signature('EList',                'data.frame'),   fu
 #' @export
 flevels <- function(object, fvar){
    object %>%
-   autonomics.import::fvalues(fvar) %>%
-  (function(x)if (is.factor(x)) levels(x) else unique(x))
+      autonomics.import::fvalues(fvar) %>%
+      (function(x)if (is.factor(x)) levels(x) else unique(x))
 }
 
 
@@ -363,8 +361,8 @@ fvalues <- function(object, fvar){
 
    # Extract and return
    object %>%
-   autonomics.import::fdata() %>%
-   magrittr::extract2(fvar)
+      autonomics.import::fdata() %>%
+      magrittr::extract2(fvar)
 }
 
 
@@ -413,6 +411,60 @@ object})
 #' @rdname fvars
 setReplaceMethod("fvars",  signature("EList", "character"),                  function(object, value){ names(object$genes) <- value
 object})
+
+
+#================================================================================================
+#'@title Get/set is_imputed
+#'@description Get/Set is_imputed
+#'@param object SummarizedExperiment
+#'@param value matrix
+#'@return matrix (get) or updated object (set)
+#'@rdname is_imputed
+
+# Get
+#====
+#' @rdname is_imputed
+#' @export
+setGeneric("is_imputed",                                    function(object) standardGeneric("is_imputed") )
+
+#' @rdname is_imputed
+setMethod("is_imputed", signature("SummarizedExperiment"),  function(object){
+   if ('is_imputed' %in% names(SummarizedExperiment::assays(object))){
+      SummarizedExperiment::assays(object)$is_imputed
+   } else {
+      matrix(FALSE, nrow = nrow(object), ncol = ncol(object), dimnames = dimnames(object))
+   }
+})
+
+# Set
+#====
+
+#' @rdname is_imputed
+#' @export
+setGeneric("is_imputed<-",                                                  function(object, value)  standardGeneric("is_imputed<-") )
+
+#' @rdname is_imputed
+setReplaceMethod("is_imputed", signature("SummarizedExperiment", "matrix"), function(object, value){ SummarizedExperiment::assays(object)$is_imputed <- value; object})
+
+#' @rdname is_imputed
+setReplaceMethod("is_imputed", signature("SummarizedExperiment", "NULL"),   function(object, value){object})
+
+
+#================================================================================================
+#'@title Is NA?
+#'@description is.na equivalent for SummarizedExperiment
+#'@param object SummarizedExperiment
+#'@return matrix
+#'@rdname is_na
+
+#' @rdname is_na
+#' @export
+setGeneric("is_na",                                    function(object)   standardGeneric("is_na") )
+
+#' @rdname is_na
+setMethod("is_na", signature("SummarizedExperiment"),  function(object) SummarizedExperiment::assays(object)$exprs %>% is.na() )
+
+
 
 #================================================================================================
 #'@title Get/set limma results
@@ -553,9 +605,9 @@ setMethod('sdata',  signature('EList'),                function(object){ object$
 #' @rdname sdata
 #' @importFrom magrittr %>%
 setMethod('sdata',  signature('SummarizedExperiment'), function(object){ object@colData@listData %>%
-                                                                         as.data.frame(check.names      = FALSE,
-                                                                                       row.names        = object@colData@rownames,
-                                                                                       stringsAsFactors = FALSE) })
+      as.data.frame(check.names      = FALSE,
+                    row.names        = object@colData@rownames,
+                    stringsAsFactors = FALSE) })
 # NOTES: (1) "as.data.frame(object@colData)" doesn't handle check.names correctly!
 #        (2)  SummarizedExperiment::colData returns a DataFrame, which is not generic (to e.g. EList)
 
@@ -568,20 +620,20 @@ setGeneric(      'sdata<-',                                                   fu
 
 #' @rdname sdata
 setReplaceMethod('sdata',  signature('SummarizedExperiment', 'data.frame'),   function(object, value){
-                                                                                 SummarizedExperiment::colData(object) <- S4Vectors::DataFrame(
-                                                                                    value,
-                                                                                    check.names = FALSE)
-                                                                                 object })
+   SummarizedExperiment::colData(object) <- S4Vectors::DataFrame(
+      value,
+      check.names = FALSE)
+   object })
 
 #' @rdname sdata
 setReplaceMethod('sdata',  signature('eSet',                 'data.frame'),   function(object, value){
-                                                                                 Biobase::pData(object) <- value
-                                                                                 object })
+   Biobase::pData(object) <- value
+   object })
 
 #' @rdname sdata
 setReplaceMethod('sdata',  signature('EList',                'data.frame'),   function(object, value){
-                                                                                 object$targets <- value
-                                                                                 object })
+   object$targets <- value
+   object })
 
 
 #=======================================================================
@@ -665,8 +717,8 @@ setReplaceMethod("snames", signature("EList", "character"),                 func
 #' @export
 slevels <- function(object, svar){
    object %>%
-   autonomics.import::svalues(svar) %>%
-   (function(x) if (is.factor(x)) levels(x) else unique(x))
+      autonomics.import::svalues(svar) %>%
+      (function(x) if (is.factor(x)) levels(x) else unique(x))
 }
 
 #' @rdname slevels
@@ -697,7 +749,7 @@ subgroup_levels <- function(object){
 #' @importFrom magrittr %>%
 #' @export
 svalues <- function(object, svar){
-   autonomics.import::sdata(object) %>% magrittr::extract2(svar) %>% (function(x) if (is.factor(x)) as.character(x) else x)
+   autonomics.import::sdata(object) %>% magrittr::extract2(svar)
 }
 
 #' @rdname svalues

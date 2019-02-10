@@ -85,7 +85,7 @@ guess_sep.SummarizedExperiment <- function(
    ...
 ){
    x %>%
-   autonomics.import::svalues(svar) %>%
+   autonomics.import::slevels(svar) %>%
    guess_sep(possible_separators = possible_separators,
              verbose             = verbose)
 }

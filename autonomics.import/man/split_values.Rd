@@ -27,6 +27,8 @@ subgroup_components(...)
 \arguments{
 \item{x}{character(n), factor(n), or SummarizedExperiment}
 
+\item{...}{used for proper S3 method dispatch}
+
 \item{sep}{character(1):  separator}
 
 \item{keep}{logical(1_: whether to keep original values (in first column)}

@@ -11,7 +11,11 @@ Depends:
 License: GPL-3
 LazyData: true
 Imports:
+    assertive.base, 
+    assertive.files,
+    assertive.numbers,
     assertive.properties,
+    assertive.sets, 
     assertive.types,
     autonomics.annotate,
     autonomics.explore,
@@ -22,10 +26,17 @@ Imports:
     autonomics.plot,
     autonomics.preprocess,
     autonomics.support,
+    data.table, 
+    edgeR,
     ggplot2,
+    limma,
     magrittr,
+    matrixStats,
     plyr,
+    readxl,
     stringr,
+    SummarizedExperiment, 
+    tidyr,
     utils
 RoxygenNote: 6.0.1
 Suggests: 
@@ -33,7 +44,6 @@ Suggests:
     alnoubi.2017,
     atkin.2014,
     billing.differentiation.data,
-    halama.2016,
     knitr,
     stringi,
     statmod,

@@ -29,7 +29,7 @@ if (require(autonomics.data)){
    if (file.exists(fastafile)){
       object <- 'extdata/stemcomp/maxquant/proteinGroups.txt'            \%>\%
                  system.file(package='autonomics.data')                  \%>\%
-                 load_proteingroups(infer_design_from_sampleids = TRUE)
+                 read_proteingroups()
       autonomics.import::fdata(object) \%>\% head()
 
       object \%<>\% magrittr::extract(1:100, )                             \%>\%

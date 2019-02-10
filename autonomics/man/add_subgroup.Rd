@@ -28,6 +28,6 @@ Three methods: (1) take values from existing svar
 require(magrittr)
 if (require(autonomics.data)){
    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-   object <- file \%>\% autonomics.import::read_metabolon_asis()
+   object <- file \%>\% read_metabolon_asis()
 }
 }

@@ -4,8 +4,10 @@
 #======================
 
 #' Read metabolon
-#' @param file                          metabolon xlsx file
-#' @param sheet                         xls sheet name  or number
+#' @param file                          character(1): path to metabolon xlsx file
+#' @param sheet                         character(1) or numeric(1): xls sheet name or number
+#' @param fid_var                       character(1): feature id variable
+#' @param sid_var                       character(1): sample id variable
 #' @param log2transform                 logical: whether to log2 transform
 #' @param qirlc_consistent_nondetects   logical(1)
 #' @param add_kegg_pathways             logical(1): whether to add KEGG pathways to fdata
@@ -16,12 +18,14 @@
 #' if (require(autonomics.data)){
 #'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>%
 #'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics.import::read_metabolon()
+#'    file %>% read_metabolon_asis()
+#'    file %>% read_metabolon()
 #' }
 #' if (require(subramanian.2016)){
 #'    file <- 'extdata/metabolon/subramanian.2016.metabolon.xlsx' %>%
 #'            system.file(package='subramanian.2016')
-#'    object <- file %>% autonomics.import::load_metabolon(sheet = 5)
+#'    file %>% read_metabolon_asis(sheet = 5)
+#'    file %>% read_metabolon(sheet = 5)
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -30,7 +34,7 @@ read_metabolon <- function(
    sheet                       = 2,
    fid_var                     = 'COMP_ID',
    sid_var                     = 'CLIENT_IDENTIFIER',
-   log2_transform              = TRUE,
+   log2transform              = TRUE,
    qirlc_consistent_nondetects = FALSE,
    add_kegg_pathways           = FALSE,
    add_smiles                  = FALSE
@@ -42,10 +46,10 @@ read_metabolon <- function(
    all_sheets <- readxl::excel_sheets(file)
    cur_sheet <- all_sheets %>% (function(x){ names(x) <- x; x}) %>% magrittr::extract2(sheet)
    autonomics.support::cmessage('\t\tRead  %s  %s', basename(file), cur_sheet)
-   object <- file %>% autonomics.import::read_metabolon_asis(sheet = sheet, fid_var = fid_var, sid_var = sid_var)
+   object <- file %>% read_metabolon_asis(sheet = sheet, fid_var = fid_var, sid_var = sid_var)
    
    # exprs
-   if (log2transform) object %<>% autonomics.import::log2transform(verbose = TRUE)
+   if (log2transform) object %<>% log2transform(verbose = TRUE)
    
    # Impute consistent nondetects (in intensity data)
    if (qrilc_consistent_nondetects) object %<>% autonomics.preprocess::qrilc_consistent_nondetects()
@@ -53,11 +57,11 @@ read_metabolon <- function(
    # fdata
    if (add_kegg_pathways){
       autonomics.support::cmessage('\tAdd KEGG pathways to fdata')
-      object %<>% autonomics.import::add_kegg_pathways_to_fdata()
+      object %<>% add_kegg_pathways_to_fdata()
    }
    if (add_smiles){
       autonomics.support::cmessage('\tAdd SMILES to fdata')
-      object %<>% autonomics.import::add_smiles_to_fdata()
+      object %<>% add_smiles_to_fdata()
    }
    
    # Return
@@ -71,33 +75,35 @@ read_metabolon <- function(
 # RNASEQ
 #==========================================================
 
-#' Load RNAseq cpm
-#' @param file    rnaseq counts file
-#' @param fid_var feature id variable
-#' @param filter_exprs_replicated_in_some_subgroup logical(1)
+#' Read rnaseq counts
+#' @param file                                      character(1): path to rnaseq counts file
+#' @param fid_var                                   character(1): feature id variable
+#' @param filter_exprs_replicated_in_some_subgroup  logical(1)
 #' @param plot logical(1)
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    file <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>% 
 #'             system.file(package = 'autonomics.data')
+#'    file %>% autonomics::read_rnaseq_asis()
 #'    file %>% autonomics::read_rnaseq()
 #' }
 #' if (require(subramanian.2016)){
 #'    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
+#'    file %>% autonomics::read_rnaseq_asis()
 #'    file %>% autonomics::read_rnaseq()
 #' }
 #' @export
 read_rnaseq <- function(
    file,
-   fid_var = 'gene_id', 
+   fid_var                                  = 'gene_id', 
    filter_exprs_replicated_in_some_subgroup = FALSE, 
-   plot = TRUE
+   plot                                     = TRUE
 ){
    
    # Read
    autonomics.support::cmessage('\t\tRead counts')
-   object <- autonomics.import::read_rnaseq_asis(file, fid_var = fid_var)
+   object <- read_rnaseq_asis(file, fid_var = fid_var)
    
    # Sdata
    autonomics.import::sdata(object)$subgroup <- object %>% autonomics.import::guess_subgroup_values(verbose = TRUE)
@@ -109,14 +115,14 @@ read_rnaseq <- function(
        autonomics.support::cmessage('\t\tStore counts in autonomics.import::counts(object)')
        autonomics.import::counts(object) <- autonomics.import::exprs(object)
      # TMM-normalize
-       autonomics.import::exprs(object) %<>% autonomics.import::counts_to_cpm()
+       autonomics.import::exprs(object) %<>% counts_to_cpm()
      # Filter for replications
        if (filter_exprs_replicated_in_some_subgroup) object %<>% autonomics.import::filter_exprs_replicated_in_some_subgroup('>', 1)
      # Log2 transform
        message('\t\tLog2 transform exprs: cpm -> log2cpm')
-       object %<>% autonomics.import::log2transform(verbose = FALSE)
+       object %<>% log2transform(verbose = FALSE)
      # Add precision weights
-       SummarizedExperiment::assays(object)$weights <- object %>% autonomics.import::compute_precision_weights(plot = plot, verbose = TRUE)
+       SummarizedExperiment::assays(object)$weights <- object %>% compute_precision_weights(plot = plot, verbose = TRUE)
    
    # Return
    object
@@ -136,8 +142,8 @@ read_rnaseq <- function(
 # EXIQON
 #===========================================================
 
-#' Read exiqon and prepare for analysis
-#' @param file                         character(1)
+#' Read exiqon
+#' @param file                         character(1): path to exiqon (GenEx) file
 #' @param filter_features              character(1): fvar expression on which to filter features
 #' @param align_sample_means           logical(1)
 #' @param lod                          numeric(1): Ct value beyond which to consider signal as NA
@@ -149,6 +155,7 @@ read_rnaseq <- function(
 #' require(magrittr)
 #' if (require(subramanian.2016)){
 #'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx', package = 'subramanian.2016')
+#'    file %>% autonomics::read_exiqon_asis()
 #'    file %>% autonomics::read_exiqon(lod = 36)
 #' }
 #' @importFrom magrittr %>%
@@ -166,7 +173,7 @@ read_exiqon <- function(
    
    # Read 
    #-----
-   object <- autonomics.import::read_exiqon_asis(file)
+   object <- read_exiqon_asis(file)
    
    # Plot function
    #--------------
@@ -226,26 +233,27 @@ read_exiqon <- function(
 # SOMASCAN
 #============================================================
 
-#' Read somascan and prepare for analysis
-#' @param file character(1)
-#' @param fid_var  character(1): feature id variable
-#' @param sid_var  character(1): sample id variable
-#' @param filter_sample_type         character(.): sample  types to be filtered for.     Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').
-#' @param filter_feature_type        character(.): feature types to be filtered for.     Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').
-#' @param filter_sample_quality      character(.): sample  qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')
-#' @param filter_feature_quality     character(.): feature qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')
-#' @param filter_na_svars            logical(1)  : whether to rm NA svars
-#' @param filter_single_value_svars  logical(1)  : whether to rm single value svars
-#' @param infer_design               logical(1)  : whether to infer design from sampleids
-#' @param log2_transform             logical(1)  : whether to log2 transform
+#' Read somascan
+#' 
+#' @param file                   character(1): path to *.adat file
+#' @param fid_var                character(1): feature id variable
+#' @param sid_var                character(1): sample id variable
+#' @param filter_sample_type     character(.): sample  types to be filtered for.     Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').
+#' @param filter_feature_type    character(.): feature types to be filtered for.     Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').
+#' @param filter_sample_quality  character(.): sample  qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')
+#' @param filter_feature_quality character(.): feature qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')
+#' @param rm_na_svars            logical(1)  : whether to rm NA svars
+#' @param rm_single_value_svars  logical(1)  : whether to rm single value svars
+#' @param infer_design           logical(1)  : whether to infer design from sampleids
+#' @param log2transform          logical(1)  : whether to log2 transform
 #' @return Summarizedexperiment
 #' @examples
 #' require(magrittr)
 #' if (require(atkin.2014)){
 #'    file <- system.file('extdata/soma/WCQ-18-007.hybNorm.plateScale.medNorm.calibrate.20181004.adat',
 #'                         package = 'atkin.2014')
-#'    file %>% autonomics.import::read_somascan_asis()
-#'    file %>% autonomics.import::read_somascan()
+#'    file %>% read_somascan_asis()
+#'    file %>% read_somascan()
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -260,60 +268,55 @@ read_somascan <- function(
    rm_na_svars             = TRUE,
    rm_single_value_svars   = TRUE,
    infer_design            = FALSE,
-   log2_transform          = TRUE
+   log2transform           = TRUE
 ){
+   # Comply
+      SampleType <- RowCheck <- Type <- ColCheck <- NULL
+   
    # Assert
-   #-------
-   assertive.types::assert_is_character(c(filter_sample_type, filter_feature_type, filter_sample_quality, filter_feature_quality))
-   assertive.types::assert_is_logical(c(rm_na_svars, rm_single_value_svars, infer_design, log2_transform))
+      assertive.types::assert_is_character(c(filter_sample_type, filter_feature_type, filter_sample_quality, filter_feature_quality))
+      assertive.types::assert_is_logical(c(rm_na_svars, rm_single_value_svars, infer_design, log2transform))
 
    # Read
-   #-----
-   autonomics.support::cmessage('\t\tRead %s', file)
-   object <- file %>% autonomics.import::read_somascan_asis(fid_var = fid_var, sid_var = sid_var)
+      autonomics.support::cmessage('\t\tRead %s', file)
+      object <- file %>% read_somascan_asis(fid_var = fid_var, sid_var = sid_var)
 
    # Filter
-   #-------
-   if ('SampleType' %in% autonomics.import::svars(object)){ # sample type - older versions don't have it
-      message('\t\t=========================================================================')
-      autonomics.support::cmessage_df('\t\t%s', table(`Sample types` = autonomics.import::sdata(object)$SampleType))
-      object %<>% autonomics.import::filter_samples(SampleType %in% filter_sample_type, verbose = TRUE)
-   }
-   if ('RowCheck'   %in% autonomics.import::svars(object)){ # sample quality
-      message('\t\t=========================================================================')
-      autonomics.support::cmessage_df('\t\t%s', table(`Sample qualities ("RowCheck")` = autonomics.import::sdata(object)$RowCheck))
-      object %<>% autonomics.import::filter_samples(RowCheck %in% filter_sample_quality, verbose = TRUE)
-   }
-   if ('Type'       %in% autonomics.import::fvars(object)){ # feature type
-      message('\t\t=========================================================================')
-      autonomics.support::cmessage_df('\t\t%s', table(`Type` = autonomics.import::fdata(object)$Type))
-      object %<>% autonomics.import::filter_features(Type %in% filter_feature_type, verbose = TRUE)
-   }
-   if ('ColCheck'   %in% autonomics.import::fvars(object)){ # feature quality
-      message('\t\t=========================================================================')
-      autonomics.support::cmessage_df('\t\t%s', table(`Feature qualities ("ColCheck")` = autonomics.import::fdata(object)$ColCheck))
-      object %<>% autonomics.import::filter_features(ColCheck %in% filter_feature_quality, verbose = TRUE)
-      message('\t\t=========================================================================')
-   }
+      if ('SampleType' %in% autonomics.import::svars(object)){ # sample type - older versions don't have it
+         message('\t\t=========================================================================')
+         autonomics.support::cmessage_df('\t\t%s', table(`Sample types` = autonomics.import::sdata(object)$SampleType))
+         object %<>% autonomics.import::filter_samples(SampleType %in% !!rlang::enquo(filter_sample_type), verbose = TRUE)
+      }
+      if ('RowCheck'   %in% autonomics.import::svars(object)){ # sample quality
+         message('\t\t=========================================================================')
+         autonomics.support::cmessage_df('\t\t%s', table(`Sample qualities ("RowCheck")` = autonomics.import::sdata(object)$RowCheck))
+         object %<>% autonomics.import::filter_samples(RowCheck %in% !!rlang::enquo(filter_sample_quality), verbose = TRUE)
+      }
+      if ('Type'       %in% autonomics.import::fvars(object)){ # feature type
+         message('\t\t=========================================================================')
+         autonomics.support::cmessage_df('\t\t%s', table(`Type` = autonomics.import::fdata(object)$Type))
+         object %<>% autonomics.import::filter_features(Type %in% !!rlang::enquo(filter_feature_type), verbose = TRUE)
+      }
+      if ('ColCheck'   %in% autonomics.import::fvars(object)){ # feature quality
+         message('\t\t=========================================================================')
+         autonomics.support::cmessage_df('\t\t%s', table(`Feature qualities ("ColCheck")` = autonomics.import::fdata(object)$ColCheck))
+         object %<>% autonomics.import::filter_features(ColCheck %in% !!rlang::enquo(filter_feature_quality), verbose = TRUE)
+         message('\t\t=========================================================================')
+      }
 
    # Design
-   #-------
-   if (autonomics.support::all_svalues_available(object, 'SampleGroup')){
-      autonomics.import::sdata(object) %<>% cbind(subgroup = .$SampleGroup, .)
-   }
+      if (autonomics.support::all_svalues_available(object, 'SampleGroup')){
+         autonomics.import::sdata(object) %<>% cbind(subgroup = .$SampleGroup, .)
+      }
 
    # Select
-   #------
-   if (rm_na_svars)            autonomics.import::sdata(object) %<>% autonomics.support::rm_na_columns()
-   if (rm_single_value_svars)  autonomics.import::sdata(object) %<>% autonomics.support::rm_single_value_columns()
+      if (rm_na_svars)            autonomics.import::sdata(object) %<>% autonomics.support::rm_na_columns()
+      if (rm_single_value_svars)  autonomics.import::sdata(object) %<>% autonomics.support::rm_single_value_columns()
 
    # Log2 transform
-   #---------------
-   if (log2_transform) object %<>% autonomics.import::log2transform(verbose = TRUE)
-
+      if (log2transform) object %<>% log2transform(verbose = TRUE)
 
    # Return
-   #-------
    object
 }
 
@@ -321,198 +324,6 @@ read_somascan <- function(
 #===============================================
 # LCMS PROTEINGROUPS and PHOSPHOSITES
 #===============================================
-
-#' Clean maxquant snames
-#'
-#' For charactervector or SummarizedExperiment
-#'
-#' Drop "Ratio normalized", "LFQ intensity" etc from maxquant snames & sample_id values
-#'
-#' @param x        character(.) or SummarizedExperiment
-#' @param verbose  logical(1)
-#' @examples
-#' require(magrittr)
-#'
-#' # character vector
-#'     autonomics.import::clean_maxquant_snames("Ratio M/L normalized STD(L)_EM00(M)_EM01(H)_R1")
-#'     autonomics.import::clean_maxquant_snames("Ratio M/L STD(L)_EM00(M)_EM01(H)_R1")
-#'     autonomics.import::clean_maxquant_snames('LFQ intensity STD_R1')
-#'     autonomics.import::clean_maxquant_snames('LFQ intensity L STD(L)_EM00(M)_EM01(H)_R1')
-#'     autonomics.import::clean_maxquant_snames('Reporter intensity 0 A(0)_B(1)_C(2)_D(3)_E(4)_F(5)_R1')
-#'     autonomics.import::clean_maxquant_snames('Reporter intensity corrected 0 A(0)_B(1)_C(2)_D(3)_E(4)_F(5)_R1')
-#'
-#' # SummarizedExperiment
-#' if (require(autonomics.data)){
-#'      x <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
-#'            system.file(package = 'autonomics.data')     %>%
-#'            autonomics.import::read_proteingroups_asis()
-#'      x %>% autonomics.import::clean_maxquant_snames(verbose = TRUE)
-#' }
-#' @importFrom magrittr %>%
-#' @export
-clean_maxquant_snames <- function (x, ...) {
-   UseMethod("clean_maxquant_snames", x)
-}
-
-
-#' @importFrom magrittr %>%
-#' @export
-#' @rdname clean_maxquant_snames
-clean_maxquant_snames.character <- function(
-   x,
-   quantity = autonomics.import::guess_maxquant_quantity(x),
-   verbose  = FALSE
-){
-   # x = mix + channel. Return mix if single channel.
-   pattern <- autonomics.import::maxquant_patterns %>% magrittr::extract2(quantity)
-   channel <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
-   mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$2')
-   if (all(channel=='')){ cleanx <- mix
-   } else               { cleanx <- sprintf('%s{%s}', mix, channel)
-   }
-   autonomics.support::cmessage('\t\tClean snames: %s  ->  %s', x[1], cleanx[1])
-   return(cleanx)
-}
-
-#' @importFrom magrittr %>%
-#' @export
-#' @rdname clean_maxquant_snames
-clean_maxquant_snames.SummarizedExperiment <- function(
-   x,
-   quantity = autonomics.import::guess_maxquant_quantity(x),
-   verbose  = FALSE
-){
-   newsnames <- autonomics.import::snames(x) %>% clean_maxquant_snames(quantity = quantity, verbose=verbose)
-   autonomics.import::snames(x) <- autonomics.import::sdata(x)$sample_id <- newsnames
-   x
-}
-
-
-#' Uniplex snames
-#'
-#' For charactervector or SummarizedExperiment
-#'
-#' @param x        character vector or SummarizedExperiment
-#' @param verbose  logical(1)
-#' @examples
-#' require(magrittr)
-#'
-#' # character vector
-#'     # Alternate multiplexing forms supported
-#'      autonomics.import::uniplex_snames("STD(L)_EM00(M)_EM01(H)_R1{M/L}")     # Label Ratio
-#'      autonomics.import::uniplex_snames('A(0)_B(1)_C(2)_D(3)_R1{0}'     )     # Reporter intensity
-#'      autonomics.import::uniplex_snames('STD(L)_EM00(M)_EM01(H)_R1{L}')       # Label Intensity
-#'
-#'    # Alternate separators supported
-#'      autonomics.import::uniplex_snames('STD(L)_EM00(M)_EM01(H)_R1{L}')       # underscore
-#'      autonomics.import::uniplex_snames('STD(L).EM00(M).EM01(H).R1{L}')       # dot
-#'      autonomics.import::uniplex_snames('STD(L)EM00(M)EM01(H).R1{L}')         # no separator
-#'
-#'    # Composite snames supported
-#'      autonomics.import::uniplex_snames("WT.t0(L)_WT.t1(M)_WT.t2(H)_R1{H/L}") # composite snames
-#'
-#'    # Uniqueness ensured by appending labels when necessary
-#'      autonomics.import::uniplex_snames(c("STD(L).BM00(M).BM00(H).R10{M/L}",  # implicit uniquification
-#'                                          "STD(L).BM00(M).BM00(H).R10{H/L}"))
-#'    # Uniplexed snames are returned unchanged
-#'      autonomics.import::uniplex_snames(c('STD_R1', 'EM0_R1'))
-#'
-#' # SummarizedExperiment
-#'   if (require(autonomics.data)){
-#'      x <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
-#'            system.file(package = 'autonomics.data')     %>%
-#'            autonomics.import::read_proteingroups_asis() %>%
-#'            autonomics.import::clean_maxquant_snames()
-#'      x %>% autonomics.import::uniplex_snames(verbose = TRUE)
-#'   }
-#'
-#' @export
-uniplex_snames <- function (x, ...) {
-   UseMethod("uniplex_snames", x)
-}
-
-#' @rdname uniplex_snames
-#' @export
-uniplex_snames.character <- function(x, verbose = FALSE){
-   
-   # Return unchanged if not multiplexed
-   # KD(H)WT(L){H/L}
-   pattern <- '(.+)\\{(.+)\\}'
-   n_open   <- x %>% stringi::stri_count_fixed('(')
-   n_closed <- x %>% stringi::stri_count_fixed(')')
-   is_multiplexed <- all(stringi::stri_detect_regex(x, pattern) & (n_open==n_closed) & (n_open>0))
-   if (!is_multiplexed) return(x)
-   
-   # Separate mix and channel
-   mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
-   channel <- x %>% stringi::stri_replace_first_regex(pattern, '$2')
-   
-   # Separate labels and samples
-   pattern <- '\\(.+?\\)'
-   labels  <- mix %>% stringi::stri_extract_all_regex(pattern) %>% lapply(stringi::stri_replace_first_fixed, '(', '') %>%
-      lapply(stringi::stri_replace_first_fixed, ')', '')
-   samples <- mix %>% stringi::stri_split_regex(pattern) %>%
-      # rm sep from samples (but not from replicate - needed to glue back later!)
-      lapply(function(y){y[1:length(labels[[1]])] %<>% stringi::stri_replace_first_regex('^[_. ]', ''); y})
-   
-   # Return unchanged if mixes differ in no of labels or samples
-   are_all_identical <- function(y) if (length(y)==1) TRUE else all(y[-1] == y[1])
-   n_samples <- vapply(samples,  length, integer(1))
-   n_labels  <- vapply(labels, length, integer(1))
-   if (!are_all_identical(n_samples) | !are_all_identical(n_labels)){
-      autonomics.support::cmessage('\t\tCannot demultiplexing snames: mixes differ in number of samples or labels')
-      return(x)
-   }
-   
-   # Extract replicate
-   n_samples %<>% unique()
-   n_labels  %<>% unique()
-   if (n_samples > n_labels){ replicate <- mix %>% stringi::stri_split_regex(pattern) %>% vapply((function(y) y %>% magrittr::extract(length(y))), character(1))
-   samples %<>% lapply(extract, 1:(n_samples-1))
-   } else {                   replicate <- rep('', length(samples))
-   }
-   
-   # Extract channel samples from mix
-   is_ratio <- channel %>% stringi::stri_detect_fixed('/') %>% all()
-   samples %<>% mapply(set_names, ., labels, SIMPLIFY = FALSE)
-   if (is_ratio){
-      num_label <- channel %>% stringi::stri_split_fixed('/') %>% vapply(extract, character(1), 1)
-      den_label <- channel %>% stringi::stri_split_fixed('/') %>% vapply(extract, character(1), 2)
-      den_samples <- mapply(extract, samples, den_label)
-      num_samples <- mapply(extract, samples, num_label)
-      xdemultiplex <- sprintf('%s_%s%s', num_samples, den_samples, replicate)
-   } else {
-      samples %<>% mapply(extract, ., channel)
-      xdemultiplex <- sprintf('%s%s', samples, replicate)
-   }
-   if (verbose) autonomics.support::cmessage('\t\tDemultiplex snames: %s  ->  %s', x[1], xdemultiplex[1])
-   
-   # Ensure uniqueness. Add labels if required.
-   idx <- autonomics.support::cduplicated(xdemultiplex) %>% which()
-   if (length(idx)>0){
-      label_tags <- channel[idx] %>% stringi::stri_replace_first_fixed('/', '')
-      if (verbose)   autonomics.support::cmessage('\t\tUniquify snames: %s -> %s%s (for %d/%d snames)',
-                                                  xdemultiplex[idx][1], xdemultiplex[idx][1], label_tags[1],
-                                                  length(idx), length(xdemultiplex))
-      xdemultiplex[idx] %<>% paste0(label_tags)
-   }
-   
-   # Return
-   return(xdemultiplex)
-}
-
-#' @rdname uniplex_snames
-#' @importFrom magrittr %>%
-#' @export
-uniplex_snames.SummarizedExperiment <- function(
-   x,
-   verbose  = FALSE
-){
-   newsnames <- autonomics.import::snames(x) %>% autonomics.import::uniplex_snames(verbose = verbose)
-   autonomics.import::snames(x) <- autonomics.import::sdata(x)$sample_id <- newsnames
-   x
-}
-
 
 #' Deconvolute proteingroups
 #' @param object             SummerizedExperiment with proteinGroups data
@@ -527,7 +338,7 @@ uniplex_snames.SummarizedExperiment <- function(
 #'    if (file.exists(fastafile)){
 #'       object <- 'extdata/stemcomp/maxquant/proteinGroups.txt'            %>%
 #'                  system.file(package='autonomics.data')                  %>%
-#'                  load_proteingroups(infer_design_from_sampleids = TRUE)
+#'                  read_proteingroups()
 #'       autonomics.import::fdata(object) %>% head()
 #'
 #'       object %<>% magrittr::extract(1:100, )                             %>%
@@ -536,6 +347,7 @@ uniplex_snames.SummarizedExperiment <- function(
 #'    }
 #' }
 #' @importFrom magrittr %>% %<>%
+#' @importFrom data.table data.table := .N
 #' @export
 deconvolute_proteingroups <- function(
    object,
@@ -688,84 +500,133 @@ deconvolute_proteingroups <- function(
 
 }
 
+filter_samples_new <- function(object, sample_filter) rlang::eval_tidy(rlang::enexpr(sample_filter), autonomics.import::sdata(object))
+# do_filter_samples  <- function(file, sample_filter){ 
+#                          object <- autonomics::read_proteingroups(file)
+#                          object %>% filter_samples_new(object, !!rlang::enexpr(sample_filter))
+#                       }
+# file %>% do_filter_samples((subgroup %>% substr(nchar(.)-2, nchar(.))) == 'STD')
 
-#' Read proteingroups and prepare for analysis
-#' @param file                    character(1)
-#' @param quantity                character(1): any value in names(maxquant_patterns)
-#' @param fvars                   character(n): names of fvar columns
-#' @param rm_reverse              logical(1)
-#' @param rm_contaminants         logical(1)
-#' @param rm_complete_nondetects  logical(1)
-#' @param clean_snames            logical(1)
-#' @param uniplex_snames          logical(1)
-#' @param log2transform           logical(1)
-#' @param fastafile               NULL or character(1): if provided, heuristic proteingroups deconvolution is attempted
-#' @param verbose                 logical(1)
+#' Prepare proteingroups
+#' @param filter_reverse             logical(1).           Filter out "reverse peptide" groups (used for peptide identification FDR computation)?
+#' @param filter_contaminants        logical(1).           Filter out contaminant groups?
+#' @param filter_complete_nondetects logical(1).           Filter out proteingroups with no quantification for any sample?
+#' @param log2transform              logical(1).           log2 transform?
+#' @param impute_consistent_nas      logical(1).           Whether to impute consistent NA values (i.e. NA values replicated in all samples of the same subgroup)
+#' @param deconvolution_fastafile    NULL or character(1). Deconvolute proteingroups using this fastafile (optional)
+#' @param verbose                    logical(1).           Message progress?
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
-#'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics.import::read_proteingroups_asis()
+#' 
+#'    # Read
+#'    object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
+#'               system.file(package = 'autonomics.data') %>%  
+#'               autonomics::read_proteingroups()
+#'               
+#'    # Check and remedy subgroup definitions
+#'    object$subgroup %>% unique()
+#'    object %<>% autonomics.import::filter_samples(
+#'                   stringi::stri_detect_fixed(subgroup, 'STD') &
+#'                   stringi::stri_detect_fixed(subgroup, 'BLANK', negate = TRUE), 
+#'                   verbose = TRUE)
+#'    object$subgroup %<>% stringi::stri_replace_first_fixed('_STD', '')
+#'    object$subgroup %<>% factor(c('EM00', 'EM01', 'EM02', 'EM05', 'EM15', 'EM30', 'BM00'))
+#'    
+#'    # Prepare
+#'    object %<>% autonomics::prepare_proteingroups()
+#'    object %>% autonomics::plot_detects_per_subgroup()
 #' }
 #' if (require(graumann.lfq)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-#'    file %>% read_proteingroups()
+#'    object <- file %>% autonomics::read_proteingroups()
+#'    object %>% autonomics::prepare_proteingroups()
 #' }
 #' @importFrom magrittr %>% %<>%
 #' @export
-read_proteingroups <- function(
-   file,
-   quantity               = NULL,
-   fvars                  = autonomics.import::proteingroups_fvars,
-   rm_reverse             = TRUE,
-   rm_contaminants        = TRUE,
-   rm_complete_nondetects = TRUE,
-   clean_snames           = TRUE,
-   uniplex_snames         = TRUE,
-   log2transform          = TRUE,
-   fastafile              = NULL,
-   verbose                = TRUE
+prepare_proteingroups <- function(
+   object,
+   filter_reverse              = TRUE,
+   filter_contaminants         = TRUE,
+   filter_complete_nondetects  = TRUE,
+   log2transform               = TRUE,
+   impute_consistent_nas       = TRUE,
+   deconvolution_fastafile     = NULL,
+   verbose                     = TRUE, 
+   plot                        = TRUE
 ){
 
    # Assert
-   assertive.types::assert_is_logical(c(rm_reverse, rm_contaminants, rm_complete_nondetects, 
-                                        clean_snames, uniplex_snames, log2transform, verbose))
-   if (!is.null(fastafile)) assertive.files::assert_all_are_existing_files(fastafile)
+   assertive.types::assert_is_logical(c(filter_reverse, filter_contaminants, filter_complete_nondetects, 
+                                        log2transform, verbose))
+   if (!is.null(deconvolution_fastafile)) assertive.files::assert_all_are_existing_files(deconvolution_fastafile)
    
-   # Read
-   if (verbose) autonomics.support::cmessage('\tRead proteinGroups.txt')
-   object <- file %>% autonomics.import::read_proteingroups_asis(quantity       = quantity,
-                                                                 fvars          = fvars,
-                                                                 verbose        = verbose)
-   # Process exprs
+   #if (!is.null(sample_filter))  object %<>% autonomics.import::filter_samples(!!rlang::enexpr(sample_filter), verbose = verbose)
+   
+   # Filter features
    if (verbose) autonomics.support::cmessage('\texprs')
-   if (rm_reverse)              object %<>% autonomics.import::filter_features_("Reverse != '+'", verbose = verbose)
-   if (rm_contaminants){        contaminant_var <- c('Potential contaminant', 'Contaminant') %>% intersect(autonomics.import::fvars(object))
-   object %<>% autonomics.import::filter_features_(sprintf("`%s` != '+'", contaminant_var), verbose = verbose)
-   }
-   if (rm_complete_nondetects)  object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample(verbose = verbose)
-   #object %>% autonomics.preprocess::qrilc_consistent_nondetects()
-   if (log2transform){
-      if (verbose) autonomics.support::cmessage('\t\tLog2 transform')
-      autonomics.import::exprs(object) %<>% log2()
-   }
-
-   # Process sdata
-   if (verbose) autonomics.support::cmessage('\tsdata')
-   if (clean_snames)    object %<>% autonomics.import::clean_maxquant_snames(verbose = verbose)
-   if (uniplex_snames)  object %<>% autonomics.import::uniplex_snames(verbose = verbose)
-   object$subgroup <- object$sample_id %>% autonomics.import::guess_subgroup_values(verbose = verbose)
-   #object$block    <- object$sample_id %>% autonomics.import::guess_subject_values( verbose = TRUE)
+   if (filter_reverse)              object %<>% autonomics.import::filter_features_("Reverse != '+'", verbose = verbose)
+   if (filter_contaminants){        contaminant_var <- c('Potential contaminant', 'Contaminant') %>% intersect(autonomics.import::fvars(object))
+                                    object %<>% autonomics.import::filter_features_(sprintf("`%s` != '+'", contaminant_var), verbose = verbose)}
+   if (filter_complete_nondetects)  object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample(verbose = verbose)
+   
+   # Transform exprs
+   object %<>% autonomics::zero_to_na(verbose = verbose)
+   object %<>% autonomics::nan_to_na(verbose = verbose)
+   if (log2transform)         object %<>% autonomics::log2transform(verbose = verbose)
+   if (impute_consistent_nas) object %<>% autonomics::impute_consistent_nas(verbose = verbose, plot = FALSE)
+   if (plot)                  object %>%  autonomics::plot_detects_per_subgroup() %>% print()
 
    # Process fdata
    if (verbose) autonomics.support::cmessage('\tfdata')
    if (verbose) autonomics.support::cmessage("\t\tRename: 'Majority protein IDs' -> 'Uniprot accessions'")
    autonomics.import::fvars(object) %<>% stringi::stri_replace_first_fixed('Majority protein IDs', 'Uniprot accessions')
-   if (!is.null(fastafile)) object %>% autonomics.import::deconvolute_proteingroups(fastafile)
+   if (!is.null(deconvolution_fastafile)) object %>% deconvolute_proteingroups(deconvolution_fastafile)
 
    # Return
    object
+}
+
+#' Prepare phosphosites
+#' @param file                   character(1)
+#' @param quantity               NULL or value in names(maxquant_patterns)
+#' @param fvars                  character(n)
+#' @param min_localization_prob  numeric(1)
+#' @param proteingroups_file     character(1)
+#' @param verbose                logical(1)
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/stemdiff/maxquant/phospho (STY)Sites.txt' %>%
+#'             system.file(package = 'autonomics.data')
+#'    file %>% read_phosphosites()
+#'    file %>% read_phosphosites() %>% prep_phosphosites()
+#' }
+#' @param min_localization_prob  numeric(1)
+#' @param proteingroups_file     character(1)
+#' @param verbose                logical(1)
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/stemdiff/maxquant/phospho (STY)Sites.txt' %>%
+#'             system.file(package = 'autonomics.data')
+#'    file %>% read_phosphosites()
+#'    file %>% read_phosphosites() %>% prep_phosphosites()
+#' }
+prep_phosphosites <- function(
+   object,
+   min_localization_prob = 0.75,
+   proteingroups_file    = paste0(dirname(file), '/proteinGroups.txt'),
+   verbose               = FALSE
+){
+
+   # Filter phosphosites
+   phosphosites %<>% autonomics.import::filter_features(!stringi::stri_detect_fixed(`Protein group IDs`, ';'), verbose = TRUE)
+   assertive.numbers::assert_all_are_in_range(min_localization_prob, 0, 1)
+   phosphosites %<>% autonomics.import::filter_features_(sprintf("`Localization prob` >= %s", as.character(min_localization_prob)),verbose = TRUE)
+   
+   # Return
+   phosphosites
 }
 
 #' Add subgroup values to object
@@ -783,7 +644,7 @@ read_proteingroups <- function(
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    object <- file %>% autonomics.import::read_metabolon_asis()
+#'    object <- file %>% read_metabolon_asis()
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -796,7 +657,7 @@ add_subgroup <- function(
    
    # Assert
    if (!is.null(take_from_svar)){ assertive.types::assert_is_character(take_from_svar);
-      assertive.types::assert_is_subset(take_from_svar, autonomics.import::svars(object)) }
+      assertive.sets::assert_is_subset(take_from_svar, autonomics.import::svars(object)) }
    assertive.types::assert_is_logical(guess_from_sampleids)
    if (!is.null(merge_designfile)) assertive.files::assert_all_are_existing_files(merge_design_file)
    

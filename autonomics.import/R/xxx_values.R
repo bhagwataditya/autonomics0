@@ -7,6 +7,7 @@
 #' @param svar character(1)
 #' @param sep  character(1):  separator
 #' @param keep logical(1_: whether to keep original values (in first column)
+#' @param ...  used for proper S3 method dispatch
 #' @return data.table(x, x1, x2, ...) or data.table(x1, x2, ...)
 #' @examples
 #' require(magrittr)

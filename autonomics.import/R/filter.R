@@ -92,7 +92,15 @@ filter_features_ <- function(object, condition, verbose = FALSE){
 #' }
 #' @export
 filter_features <- function(object, condition, verbose = FALSE){
-   filter_features_(object, lazyeval::lazy(condition), verbose = verbose)
+   # earlier version based on lazyeval (still functional, but soft deprecated by Hadley and co)
+   # filter_features_(object, lazyeval::lazy(condition), verbose = verbose)
+   condition <- rlang::enquo(condition)
+   idx <- rlang::eval_tidy(condition, autonomics.import::fdata(object))
+   idx <- idx & !is.na(idx)
+   if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' features: ', rlang::expr_text(condition))
+   object %<>% magrittr::extract(idx,)
+   autonomics.import::fdata(object) %<>% droplevels()
+   object
 }
 
 #' Identify reference features
@@ -167,14 +175,22 @@ filter_samples_ <- function(object, condition, verbose = FALSE){
 #' @param object SummarizedExperiment
 #' @param condition filter condition
 #' @param verbose logical
-#' @return filtered eSet
+#' @return filtered SummarizedExperiment
 #' @examples
 #' if (require(autonomics.data)){
-#'    filter_samples( ALL,  sex == 'M')
-#'    filter_samples_(ALL, "sex == 'M'")
+#'    autonomics.import::filter_samples( autonomics.data::ALL,  sex == 'M')
+#'    autonomics.import::filter_samples_(autonomics.data::ALL, "sex == 'M'")
 #' }
 #' @export
 filter_samples <- function(object, condition, verbose = FALSE){
-   filter_samples_(object, lazyeval::lazy(condition), verbose = verbose)
+   # earlier version based on lazyeval (still functional, but soft deprecated by Hadley and co)
+   # filter_samples_(object, lazyeval::lazy(condition), verbose = verbose)
+   condition <- rlang::enquo(condition)
+   idx <- rlang::eval_tidy(condition, autonomics.import::sdata(object))
+   idx <- idx & !is.na(idx)
+   if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' samples: ', rlang::expr_text(condition))
+   object %<>% magrittr::extract(, idx)
+   autonomics.import::sdata(object) %<>% droplevels()
+   object
 }
 
