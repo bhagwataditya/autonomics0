@@ -4,7 +4,8 @@
 \alias{add_limma}
 \title{Run limma and add results}
 \usage{
-add_limma(object, contrastdefs = autonomics.find::default_contrasts(object),
+add_limma(object,
+  contrastdefs = autonomics.find::default_contrasts(object),
   design = autonomics.import::create_design_matrix(object))
 }
 \arguments{

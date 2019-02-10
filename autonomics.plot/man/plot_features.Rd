@@ -12,17 +12,17 @@ plot_features(object,
   geom = autonomics.plot::default_feature_plots(object)[1],
   x = autonomics.plot::default_x(object, geom[1]),
   color_var = autonomics.plot::default_color_var(object),
-  color_values = autonomics.plot::default_color_values(object, color_var),
-  shape_var = autonomics.plot::default_shape_var(object),
+  color_values = autonomics.plot::default_color_values(object,
+  color_var), shape_var = autonomics.plot::default_shape_var(object),
   group_var = autonomics.plot::default_group_var(object),
   txt_var = autonomics.plot::default_txt_var(object), facet_var = NULL,
   alpha_var = NULL, fvars = autonomics.plot::default_fvars(object),
   title = "", scales = "free_y", x_text_angle = 90,
   line = autonomics.plot::default_line(object),
-  zero_hline = autonomics.plot::default_zero_hline(object), xlab = NULL,
-  ylab = NULL, dodge_width = 0, verbose = FALSE, file = NULL,
-  width = NULL, height = NULL, theme = ggplot2::theme_bw(),
-  legend.position = "right")
+  zero_hline = autonomics.plot::default_zero_hline(object),
+  xlab = NULL, ylab = NULL, dodge_width = 0, verbose = FALSE,
+  file = NULL, width = NULL, height = NULL,
+  theme = ggplot2::theme_bw(), legend.position = "right")
 
 plot_feature_bars(...)
 

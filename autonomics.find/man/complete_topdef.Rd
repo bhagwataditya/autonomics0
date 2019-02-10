@@ -4,7 +4,8 @@
 \alias{complete_topdef}
 \title{Complete top definition}
 \usage{
-complete_topdef(topdef, contrast_name, direction = c("both", "neg", "both"))
+complete_topdef(topdef, contrast_name, direction = c("both", "neg",
+  "both"))
 }
 \arguments{
 \item{topdef}{top definition}
