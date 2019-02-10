@@ -4,7 +4,8 @@
 \alias{reshape_values}
 \title{Reshape composite values}
 \usage{
-reshape_values(x, fill, fun.aggregate, sep = autonomics.import::guess_sep(x))
+reshape_values(x, fill, fun.aggregate,
+  sep = autonomics.import::guess_sep(x))
 }
 \arguments{
 \item{x}{character(n) with composite values}

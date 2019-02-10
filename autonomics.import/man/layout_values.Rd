@@ -13,10 +13,11 @@ Reshapes a vector with composite values into a 2d matrix:
 \usage{
 layout_values(x, ...)
 
-\method{layout_values}{character}(x, sep = autonomics.import::guess_sep(x),
-  ...)
+\method{layout_values}{character}(x,
+  sep = autonomics.import::guess_sep(x), ...)
 
-\method{layout_values}{factor}(x, sep = autonomics.import::guess_sep(x), ...)
+\method{layout_values}{factor}(x, sep = autonomics.import::guess_sep(x),
+  ...)
 
 \method{layout_values}{SummarizedExperiment}(x, svar = "subgroup",
   sep = autonomics.import::guess_sep(x), ...)
