@@ -33,6 +33,7 @@ if (require(autonomics.data)){
    b \%>\% autonomics.plot::gg_colvars()
    b \%>\% autonomics.plot::gg_nchar_rowvars()
    b \%>\% autonomics.plot::gg_panelvars()
+   b \%>\% autonomics.plot::gg_panelvar_width()
 }
 if (require(atkin.2014)){
    object <- atkin.2014::soma \%>\% magrittr::extract(1:9, )
@@ -43,5 +44,6 @@ if (require(atkin.2014)){
    b \%>\% autonomics.plot::gg_colvars()
    b \%>\% autonomics.plot::gg_nchar_rowvars()
    b \%>\% autonomics.plot::gg_panelvars()
+   b \%>\% autonomics.plot::gg_panelvar_width()
 }
 }

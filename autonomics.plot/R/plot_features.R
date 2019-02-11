@@ -14,10 +14,10 @@
 #' @export
 gg_nrow <- function(b){
    assertive.sets::assert_are_set_equal(names(b), c('data', 'layout', 'plot'))
-   b %>% magrittr::extract2('layout')       %>%
-         magrittr::extract2('panel_layout') %>%
-         magrittr::extract2('ROW')          %>%
-         unique()                           %>%
+   b %>% magrittr::extract2('layout')  %>%
+         magrittr::extract2('layout')  %>%
+         magrittr::extract2('ROW')     %>%
+         unique()                      %>%
          length()
 }
 
@@ -27,7 +27,7 @@ gg_nrow <- function(b){
 gg_ncol <- function(b){
    assertive.sets::assert_are_set_equal(names(b), c('data', 'layout', 'plot'))
    b %>% magrittr::extract2('layout')       %>%
-         magrittr::extract2('panel_layout') %>%
+         magrittr::extract2('layout') %>%
          magrittr::extract2('COL')          %>%
          unique()                           %>%
          length()
@@ -72,15 +72,8 @@ gg_xvalues <- function(b){
 #' @export
 gg_xlabels <- function(b){
    assertive.sets::assert_are_set_equal(names(b), c('data', 'layout', 'plot'))
-   b %>% magrittr::extract2('layout') %>%
-         magrittr::extract2('panel_ranges') %>%
-         magrittr::extract2(1) %>%
-         magrittr::extract2('x.labels')
-         # ggplot2::ggplot_build(p) %>%
-         # magrittr::extract2('data') %>%
-         # magrittr::extract2(which.max(vapply(., nrow, integer(1)))) %>%
-         # magrittr::extract2('x') %>% unique() %>%
-         # length()
+   b$layout$coord$labels(b$layout$panel_params)[[1]]$x.labels
+   #https://stackoverflow.com/questions/31223818/accessing-vector-of-axis-ticks-for-an-existing-plot-in-ggplot2
 }
 
 #' @title       Get column variables
@@ -96,6 +89,7 @@ gg_xlabels <- function(b){
 #'    b %>% autonomics.plot::gg_colvars()
 #'    b %>% autonomics.plot::gg_nchar_rowvars()
 #'    b %>% autonomics.plot::gg_panelvars()
+#'    b %>% autonomics.plot::gg_panelvar_width()
 #' }
 #' if (require(atkin.2014)){
 #'    object <- atkin.2014::soma %>% magrittr::extract(1:9, )
@@ -106,6 +100,7 @@ gg_xlabels <- function(b){
 #'    b %>% autonomics.plot::gg_colvars()
 #'    b %>% autonomics.plot::gg_nchar_rowvars()
 #'    b %>% autonomics.plot::gg_panelvars()
+#'    b %>% autonomics.plot::gg_panelvar_width()
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -145,7 +140,7 @@ gg_panelvars <- function(b){
    assertive.sets::assert_are_set_equal(names(b), c('data', 'layout', 'plot'))
 
    b %>% magrittr::extract2('layout') %>%
-         magrittr::extract2('panel_layout') %>%
+         magrittr::extract2('layout') %>%
          names() %>%
          setdiff(c('PANEL', 'ROW', 'COL', 'SCALE_X', 'SCALE_Y')) %>%
          setdiff(gg_rowvars(b)) %>%
@@ -154,10 +149,10 @@ gg_panelvars <- function(b){
 
 #' @importFrom magrittr %>%
 gg_panelvar_width <- function(b){
-   b$layout$panel_layout %>%
-      magrittr::extract(, gg_panelvars(b), drop = FALSE) %>%
-      unlist() %>% unname() %>% as.character() %>% nchar() %>%
-      max()
+   b$layout$layout %>%
+   magrittr::extract(, gg_panelvars(b), drop = FALSE) %>%
+   unlist() %>% unname() %>% as.character() %>% nchar() %>%
+  (function(x) (if (length(x)==0) 0 else max(x)))
 }
 
 #' Get name of variable mapped to a aesthetic
@@ -212,7 +207,7 @@ gg_aesvar <- function(b, aesthetic){
    b$plot$layers %>% magrittr::extract2(selected_layer) %>%
                      magrittr::extract2('mapping')      %>%
                      magrittr::extract2(aesthetic)      %>%
-                     as.character()
+                     rlang::quo_name()
 }
 
 #' Get levels of variable mapped to aesthetic
