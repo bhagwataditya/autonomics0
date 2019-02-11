@@ -8,18 +8,19 @@
 \alias{plot_pls_samples}
 \title{Plot PCA/LDA/PLS sample scores}
 \usage{
-plot_projected_samples(object, ..., listed_objects = NULL, method = c("pca",
-  "lda", "sma", "pls")[1], implementation = c("mixOmics::plsda",
-  "mixOmics::splsda", "ropls::opls")[1], dims = 1:2, color_var = "subgroup",
-  color_values = autonomics.plot::default_color_values(object, color_var),
-  shape_var = autonomics.plot::default_shape_var(object), size_var = NULL,
-  txt_var = autonomics.plot::default_txt_var(object), txt_outliers = FALSE,
-  group_var = NULL, split_var = NULL, facet_var = NULL,
-  scales = ifelse(is.null(facet_var), "fixed", "free"), labs = list(color =
-  stringi::stri_trans_totitle(color_var), shape =
-  stringi::stri_trans_totitle(shape_var)), nrow = NULL,
-  mention_method = ifelse(is.null(facet_var), TRUE, FALSE), title = NULL,
-  na.impute = FALSE, legend.position = "right")
+plot_projected_samples(object, ..., listed_objects = NULL,
+  method = c("pca", "lda", "sma", "pls")[1],
+  implementation = c("mixOmics::plsda", "mixOmics::splsda",
+  "ropls::opls")[1], dims = 1:2, color_var = "subgroup",
+  color_values = autonomics.plot::default_color_values(object,
+  color_var), shape_var = autonomics.plot::default_shape_var(object),
+  size_var = NULL, txt_var = autonomics.plot::default_txt_var(object),
+  txt_outliers = FALSE, group_var = NULL, split_var = NULL,
+  facet_var = NULL, scales = ifelse(is.null(facet_var), "fixed",
+  "free"), labs = list(color = stringi::stri_trans_totitle(color_var),
+  shape = stringi::stri_trans_totitle(shape_var)), nrow = NULL,
+  mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
+  title = NULL, na.impute = FALSE, legend.position = "right")
 
 plot_pca_samples(object, ...)
 

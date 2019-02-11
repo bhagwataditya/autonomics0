@@ -14,8 +14,8 @@ split_values(x, ...)
 \method{split_values}{character}(x, sep = autonomics.import::guess_sep(x,
   verbose = FALSE), keep = FALSE, ...)
 
-\method{split_values}{factor}(x, sep = autonomics.import::guess_sep(x, verbose
-  = FALSE), keep = FALSE, ...)
+\method{split_values}{factor}(x, sep = autonomics.import::guess_sep(x,
+  verbose = FALSE), keep = FALSE, ...)
 
 \method{split_values}{SummarizedExperiment}(x, svar = "subgroup",
   keep = FALSE, ...)

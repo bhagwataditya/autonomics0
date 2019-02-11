@@ -17,14 +17,14 @@ filter_samples(object, condition, verbose = FALSE)
 \item{verbose}{logical}
 }
 \value{
-filtered eSet
+filtered SummarizedExperiment
 }
 \description{
 Filter samples on condition
 }
 \examples{
 if (require(autonomics.data)){
-   filter_samples( ALL,  sex == 'M')
-   filter_samples_(ALL, "sex == 'M'")
+   autonomics.import::filter_samples( autonomics.data::ALL,  sex == 'M')
+   autonomics.import::filter_samples_(autonomics.data::ALL, "sex == 'M'")
 }
 }

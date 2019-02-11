@@ -61,4 +61,4 @@ Suggests:
     org.Xl.eg.db,
     subramanian.2016
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

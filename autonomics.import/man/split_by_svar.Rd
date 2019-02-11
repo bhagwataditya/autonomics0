@@ -21,6 +21,6 @@ Split SummarizedExperiment by svar
 require(magrittr)
 if (require(autonomics.data)){
    autonomics.data::stemdiff.proteinratios \%>\%
-   split_by_svar()
+   autonomics.import::split_by_svar()
 }
 }

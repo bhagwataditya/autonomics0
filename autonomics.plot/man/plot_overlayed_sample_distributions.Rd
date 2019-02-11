@@ -6,7 +6,8 @@
 \usage{
 plot_overlayed_sample_distributions(object,
   color_var = autonomics.plot::default_color_var(object),
-  color_values = autonomics.plot::default_color_values(object, color_var))
+  color_values = autonomics.plot::default_color_values(object,
+  color_var))
 }
 \arguments{
 \item{object}{SummarizedExperiment}
