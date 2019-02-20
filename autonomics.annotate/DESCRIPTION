@@ -26,7 +26,7 @@ Imports:
    stringi,
    UniProt.ws,
    xml2
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Suggests:
    billing.differentiation.data, 
    halama.2016,

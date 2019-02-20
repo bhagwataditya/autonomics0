@@ -11,7 +11,7 @@
 read_file <- function(file, sheet){
    assertive.files::assert_all_are_existing_files(file)
    if (tools::file_ext(file) %in% c('xls', 'xlsx')){
-      file %>% readxl::read_excel(sheet = sheet, col_names = FALSE) %>% data.table::data.table()
+      file %>% readxl::read_excel(sheet = sheet, col_names = FALSE, .name_repair = 'minimal') %>% data.table::data.table()
    } else {
       file %>% data.table::fread(na.strings = "", header = FALSE, integer64 = 'numeric')
    }
@@ -256,7 +256,7 @@ read_somascan_asis <- function(
    svar_row <- which(dt[[1]] != '' &  (1:nrow(dt) > fdata_row1))[1]
    fvars <- dt %>% extract_dt_col(fvar_col) %>% magrittr::extract(fdata_row1:svar_row)
    svars <- dt %>% extract_dt_row(svar_row) %>% magrittr::extract(1:fvar_col-1)
-   fid_row <- fdata_row1 + -1 + which(fvars == fid_var)
+   fid_row <- fdata_row1 -1 + which(fvars == fid_var)
    sid_col <- which(svars == sid_var)
    
    # Read
@@ -287,7 +287,7 @@ read_metabolon_asis <- function(file, sheet = 2, fid_var = 'COMP_ID', sid_var = 
    
    assertive.files::assert_all_are_existing_files(file)
    
-   d_f <- readxl::read_excel(file, sheet, col_names = FALSE)
+   d_f <- readxl::read_excel(file, sheet, col_names = FALSE, .name_repair = 'minimal')
    
    fvar_rows <- which(!is.na(d_f %>% extract_dt_col(1))) %>% magrittr::extract(1)
    svar_cols <- which(!is.na(d_f %>% extract_dt_row(1))) %>% magrittr::extract(1)
@@ -813,21 +813,21 @@ demultiplex_snames.character <- function(x, verbose = FALSE, ...){
    n_samples %<>% unique()
    n_labels  %<>% unique()
    if (n_samples > n_labels){ replicate <- mix %>% stringi::stri_split_regex(pattern) %>% vapply((function(y) y %>% magrittr::extract(length(y))), character(1))
-   samples %<>% lapply(extract, 1:(n_samples-1))
+                              samples %<>% lapply(magrittr::extract, 1:(n_samples-1))
    } else {                   replicate <- rep('', length(samples))
    }
    
    # Extract channel samples from mix
    is_ratio <- channel %>% stringi::stri_detect_fixed('/') %>% all()
-   samples %<>% mapply(set_names, ., labels, SIMPLIFY = FALSE)
+   samples %<>% mapply(magrittr::set_names, ., labels, SIMPLIFY = FALSE)
    if (is_ratio){
-      num_label <- channel %>% stringi::stri_split_fixed('/') %>% vapply(extract, character(1), 1)
-      den_label <- channel %>% stringi::stri_split_fixed('/') %>% vapply(extract, character(1), 2)
-      den_samples <- mapply(extract, samples, den_label)
-      num_samples <- mapply(extract, samples, num_label)
+      num_label <- channel %>% stringi::stri_split_fixed('/') %>% vapply(magrittr::extract, character(1), 1)
+      den_label <- channel %>% stringi::stri_split_fixed('/') %>% vapply(magrittr::extract, character(1), 2)
+      den_samples <- mapply(magrittr::extract, samples, den_label)
+      num_samples <- mapply(magrittr::extract, samples, num_label)
       xdemultiplex <- sprintf('%s_%s%s', num_samples, den_samples, replicate)
    } else {
-      samples %<>% mapply(extract, ., channel)
+      samples %<>% mapply(magrittr::extract, ., channel)
       xdemultiplex <- sprintf('%s%s', samples, replicate)
    }
    if (verbose) autonomics.support::cmessage('\t\tDemultiplex snames: %s  ->  %s', x[1], xdemultiplex[1])

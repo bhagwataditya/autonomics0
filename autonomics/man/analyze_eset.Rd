@@ -11,8 +11,9 @@ analyze_contrasts(object, result_dir = default_result_dir(object),
   direction = c("neg", "pos"),
   topdef = autonomics.find::default_topdef(object), universe = NULL,
   cluster_features = autonomics::default_cluster_features(),
-  nplot = autonomics.find::default_nplot(object), feature_plot_width = NULL,
-  feature_plot_height = NULL, min_set_size = 5, max_set_size = Inf, ...)
+  nplot = autonomics.find::default_nplot(object),
+  feature_plot_width = NULL, feature_plot_height = NULL,
+  min_set_size = 5, max_set_size = Inf, ...)
 
 analyze_eset(object, result_dir = default_result_dir(object),
   design = autonomics.import::create_design_matrix(object),
@@ -20,9 +21,9 @@ analyze_eset(object, result_dir = default_result_dir(object),
   topdef = autonomics.find::default_topdef(object), universe = NULL,
   dodge_width = 0, do_pca = TRUE,
   cluster_features = default_cluster_features(),
-  nplot = autonomics.find::default_nplot(object), feature_plot_width = NULL,
-  feature_plot_height = NULL, min_set_size = 5, max_set_size = Inf,
-  zip_results = FALSE, ...)
+  nplot = autonomics.find::default_nplot(object),
+  feature_plot_width = NULL, feature_plot_height = NULL,
+  min_set_size = 5, max_set_size = Inf, zip_results = FALSE, ...)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -84,6 +85,12 @@ require(magrittr)
 # Compare each subgroup level to zero
 #------------------------------------
 if (require(autonomics.data)){
+   object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\% 
+              system.file(package = 'autonomics.data')     \%>\% 
+              autonomics::read_proteingroups()             \%>\%
+              autonomics.preprocess::invert_ratios(c('E_BM', 'EM_BM', 'E_EM'), '_') \%>\% 
+              autonomics::prepare_proteingroups()
+              
    result_dir <- tempdir() \%>\% paste0('/analysis.results') \%T>\% message()
    dir.create(result_dir, showWarnings = FALSE)
    object <- autonomics.data::billing2016

@@ -13,7 +13,7 @@ impute_common_nas <- function(
 
    # Assert no NaN or -Inf (nondetects should be represented as NA)
    assertive.numbers::assert_any_are_not_nan(autonomics.import::exprs(object))
-   assertive.numbers::assert_all_are_finite(autonomics.import::exprs(object) %>% c() %>% na.exclude())
+   assertive.numbers::assert_all_are_finite(autonomics.import::exprs(object) %>% c() %>% stats::na.exclude())
 
    # Typify nondetects
    is_na <- is.na(autonomics.import::exprs(object))
@@ -27,7 +27,7 @@ impute_common_nas <- function(
    # Replace inconsistent nondetects by median
    exprs1 <- autonomics.import::exprs(object)
    for (sample in 1:ncol(object)){
-      exprs1[, sample] %<>% (function(x){x[is_inconsistent_na[, sample]] <- median(x, na.rm=TRUE); x})
+      exprs1[, sample] %<>% (function(x){x[is_inconsistent_na[, sample]] <- stats::median(x, na.rm=TRUE); x})
    }
 
    # Impute consistent nondetects

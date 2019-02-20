@@ -68,10 +68,10 @@ create_cor_plot_dt <- function(
 
    # eset -> long table
    long1  <- autonomics.import::sumexp_to_long_dt(eset1, fvars = fvars1)  %>%
-             data.table::setnames(autonomics.import::fid_var(eset1), name1)  %>%
+             data.table::setnames('feature_id', name1)  %>%
              data.table::setnames('value', 'x')
    long2  <- autonomics.import::sumexp_to_long_dt(eset2, fvars = fvars2)  %>%
-             data.table::setnames(autonomics.import::fid_var(eset2), name2) %>%
+             data.table::setnames('feature_id', name2) %>%
              data.table::setnames('value', 'y')
    svars1 <- c('sample_id', color_var)
    if (!is.null(shape_var)) svars1 %<>% c(shape_var)

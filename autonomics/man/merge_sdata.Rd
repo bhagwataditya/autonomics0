@@ -4,7 +4,8 @@
 \alias{merge_sdata}
 \title{Merge sdata into SummarizedExperiment}
 \usage{
-merge_sdata(object, newdata, by, newdata_first = FALSE, verbose = TRUE)
+merge_sdata(object, newdata, by = "sample_id", newdata_first = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -28,14 +29,13 @@ require(magrittr)
 if (require(autonomics.data)){
    object <- system.file('extdata/stemcomp/soma/stemcomp.adat',
                           package = 'autonomics.data') \%>\%
-             autonomics.import::load_soma()
+             autonomics::read_somascan()
    newdata <- autonomics.import::sdata(object) \%>\%
-              magrittr::extract(, 'SampleId', drop = FALSE) \%>\%
+              magrittr::extract(, 'sample_id', drop = FALSE) \%>\%
               cbind(Letter = letters[1:nrow(.)])
    object \%>\% autonomics.import::sdata()
-   object \%>\% autonomics.import::merge_sdata(newdata, by = 'SampleId') \%>\%
+   object \%>\% autonomics::merge_sdata(newdata) \%>\%
               autonomics.import::sdata()
-   object \%>\% autonomics.import::merge_sdata(newdata, by = 'SampleId', newdata_first = TRUE) \%>\%
-              autonomics.import::sdata()
+   object \%>\% autonomics.import::merge_sdata(newdata, newdata_first = TRUE) \%>\% autonomics.import::sdata()
 }
 }

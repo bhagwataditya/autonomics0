@@ -127,12 +127,10 @@ annotate_correlations <- function(cor_dt, eset1, eset2, fvars1 = character(0), f
 
   # Annotate
   if (length(fvars1)>0){
-     autonomics.import::fdata(eset1)$feature_id <- autonomics.import::fdata(eset1)[[autonomics.import::fid_var(eset1)]]
      annotations1 <- autonomics.import::fdata(eset1) %>% magrittr::extract(, c('feature_id', fvars1), drop = FALSE)
      cor_dt %<>% merge(annotations1, by.x = name1, by.y='feature_id')
   }
   if (length(fvars2)>0){
-     autonomics.import::fdata(eset2)$feature_id <- autonomics.import::fdata(eset2)[[autonomics.import::fid_var(eset2)]]
      annotations2 <- autonomics.import::fdata(eset2) %>% magrittr::extract(, c('feature_id', fvars2))
      cor_dt %<>% merge(annotations2, by.x = name2, by.y='feature_id')
   }

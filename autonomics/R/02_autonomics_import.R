@@ -104,12 +104,3 @@ NULL
 NULL
 
 
-
-#' Write sample design
-#' 
-#' \code{\link[autonomics.import]{write_design}}
-#' @name write_design
-#' @importFrom autonomics.import   write_design
-#' @export   write_design
-NULL
-

@@ -32,18 +32,17 @@ filter_exprs_replicated_in_some_subgroup <- function(
 
    # Datatablify
    replicated_in_its_subgroup <- replicated_in_any_subgroup <- value <- NULL
-   fidvar <- object %>% autonomics.import::fid_var()
-   dt     <- object %>% autonomics.import::sumexp_to_long_dt(svars = 'subgroup')
+   dt <- object %>% autonomics.import::sumexp_to_long_dt(svars = 'subgroup')
 
    # Is expr replicated in its subgroup?
-   if (comparator ==  '>') dt %>% magrittr::extract(, replicated_in_its_subgroup := sum(value  > lod, na.rm=TRUE) > 1,   by = c(fidvar, 'subgroup'))
-   if (comparator == '!=') dt %>% magrittr::extract(, replicated_in_its_subgroup := sum(value != lod, na.rm=TRUE) > 1,   by = c(fidvar, 'subgroup'))
+   if (comparator ==  '>') dt %>% magrittr::extract(, replicated_in_its_subgroup := sum(value  > lod, na.rm=TRUE) > 1,   by = c('feature_id', 'subgroup'))
+   if (comparator == '!=') dt %>% magrittr::extract(, replicated_in_its_subgroup := sum(value != lod, na.rm=TRUE) > 1,   by = c('feature_id', 'subgroup'))
 
    # Is it replicated in any subgroup
-   dt %>% magrittr::extract(, replicated_in_any_subgroup := any(replicated_in_its_subgroup),    by =  fidvar)
+   dt %>% magrittr::extract(, replicated_in_any_subgroup := any(replicated_in_its_subgroup),    by =  'feature_id')
 
    # Keep only replicated features
-   replicated_features <- dt %>% magrittr::extract(replicated_in_any_subgroup == TRUE, get(fidvar))
+   replicated_features <- dt %>% magrittr::extract(replicated_in_any_subgroup == TRUE, 'feature_id')
    idx <- autonomics.import::fid_values(object) %in% replicated_features
    autonomics.support::cmessage('\t\tFilter %d/%d features: expr %s %s, for at least two samples in some subgroup', sum(idx), length(idx), comparator, as.character(lod))
    object %>% autonomics.import::extract_features(idx)

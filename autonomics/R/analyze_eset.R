@@ -42,6 +42,12 @@
 #' # Compare each subgroup level to zero
 #' #------------------------------------
 #' if (require(autonomics.data)){
+#'    object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>% 
+#'               system.file(package = 'autonomics.data')     %>% 
+#'               autonomics::read_proteingroups()             %>%
+#'               autonomics.preprocess::invert_ratios(c('E_BM', 'EM_BM', 'E_EM'), '_') %>% 
+#'               autonomics::prepare_proteingroups()
+#'               
 #'    result_dir <- tempdir() %>% paste0('/analysis.results') %T>% message()
 #'    dir.create(result_dir, showWarnings = FALSE)
 #'    object <- autonomics.data::billing2016

@@ -25,7 +25,8 @@ Imports:
     rlist,
     stringi,
     utils
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Suggests:
    autonomics.data, 
    SummarizedExperiment
+Encoding: UTF-8

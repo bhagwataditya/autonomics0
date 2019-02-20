@@ -8,12 +8,6 @@
 #' @param ... passed to add_projection_to_eset
 #' @examples 
 #' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>% autonomics.explore::add_pca_to_eset()
-#'    subramanian.2016::metabolon %>% autonomics.explore::add_lda_to_eset()
-#'    subramanian.2016::metabolon %>% autonomics.explore::add_pls_to_eset()
-#' }
-#' 
 #' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios
@@ -60,10 +54,8 @@ add_projection_to_eset <- function(
                                                         implementation = implementation, 
                                                         na.impute      = na.impute, 
                                                         ndim           = ndim)
-   my_fid_var   <- object %>% autonomics.import::fid_var()
-   pca_features <- data.frame(rownames(projection$features), projection$features) %>% 
-                  (function(x){names(x)[1] <- my_fid_var; x})
-   autonomics.import::fdata(object) %<>% autonomics.support::left_join_keeping_rownames(pca_features, by = my_fid_var)
+   pca_features <- data.frame(feature_id = rownames(projection$features), projection$features)
+   autonomics.import::fdata(object) %<>% autonomics.support::left_join_keeping_rownames(pca_features, by = 'feature_id')
    object
 }
 

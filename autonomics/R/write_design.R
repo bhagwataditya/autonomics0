@@ -1,42 +1,3 @@
-#=======================================
-# sampleid_varname & subgroup_varname
-#=======================================
-
-#' Get sampleid svar name
-#' @param platform  'exiqon', 'maxquant', 'metabolonlipids', 'metabolon', 'soma'
-#' @return string
-#' @examples
-#' sampleid_varname('metabolonlipids')
-#' sampleid_varname('metabolon')
-#' sampleid_varname('soma')
-#' @export
-sampleid_varname <- function(platform){
-   switch(platform,
-          exiqon          = 'sample_id',
-          maxquant        = 'sample_id',
-          metabolonlipids = 'Client Identifier',
-          metabolon       = 'sample_id',
-          soma            = 'sample_id',
-          rnaseq          = 'sample_id')
-}
-
-#' Get subgroup svar name
-#' @param platform   'exiqon', 'maxquant', 'metabolonlipids', 'metabolon', 'soma'
-#' @return string
-#' @examples
-#' subgroup_varname('metabolonlipids')
-#' subgroup_varname('metabolon')
-#' subgroup_varname('soma')
-#' @export
-subgroup_varname <- function(platform){
-   switch(platform,
-          exiqon          = NULL,
-          maxquant        = NULL,
-          metabolonlipids = 'Group',
-          metabolon       = 'subgroup',
-          soma            = 'subgroup',
-          rnaseq          = NULL)
-}
 
 #========================================
 # WRITE DESIGN FILE
@@ -113,25 +74,25 @@ add_replicate_values <- function(design_df){
 #' if (require(autonomics.data)){
 #'    object <- 'extdata/glutaminase/glutaminase.xlsx'     %>%
 #'               system.file(package = 'autonomics.data')  %>%
-#'               autonomics.import::read_metabolon()
-#'    object %>% autonomics.import::write_design() %>% head()
-#'    object %>% autonomics.import::write_design(subgroup_var = "Group   HMDB_ID") %>% head()
+#'               autonomics::read_metabolon()
+#'    object %>% autonomics::write_design() %>% head()
+#'    object %>% autonomics::write_design(subgroup_var = "Group   HMDB_ID") %>% head()
 #' }
 #'
 #' # SOMASCAN
 #' if (require(autonomics.data)){
 #'    object <- 'extdata/stemcomp/soma/stemcomp.adat'     %>%
 #'               system.file(package = 'autonomics.data') %>%
-#'               autonomics.import::read_somascan()
-#'    object %>% autonomics.import::write_design()
-#'    object %>% autonomics.import::write_design(subgroup_var = 'SampleGroup')
+#'               autonomics::read_somascan()
+#'    object %>% autonomics::write_design()
+#'    object %>% autonomics::write_design(subgroup_var = 'SampleGroup')
 #' }
 #'
 #' # EXIQON
 #' if (require(subramanian.2016)){
 #'    object <- 'extdata/exiqon/subramanian.2016.exiqon.xlsx'  %>%
 #'               system.file(package = 'subramanian.2016')     %>%
-#'               autonomics.import::read_exiqon()
+#'               autonomics::read_exiqon()
 #'    object %>% write_design() %>% head()
 #' }
 #'
@@ -139,7 +100,7 @@ add_replicate_values <- function(design_df){
 #' if (require(autonomics.data)){
 #'    object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
 #'               system.file(package = 'autonomics.data')     %>%
-#'               autonomics.import::read_proteingroups(simplify_snames = TRUE)
+#'               autonomics::read_proteingroups(simplify_snames = TRUE)
 #'    object %>% write_design()
 #' }
 #'
@@ -162,7 +123,7 @@ write_design <- function(
                            stringsAsFactors = FALSE)
 
    # Write to file
-   if (!is.null(file))  design_df %>% autonomics.import::write_design_file(file)
+   if (!is.null(file))  design_df %>% autonomics::write_design_file(file)
 
    # Return
    design_df

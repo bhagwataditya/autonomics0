@@ -2,71 +2,17 @@
 # FID
 #=====================================
 
-#' Get fid var/values
-#' @param object eset
-#' @return feature id variable / values
-#' @examples
-#' library(magrittr)
-#' if (require(autonomics.data)){
-#'    autonomics.data::ALL %>% autonomics.import::fid_var()
-#'    autonomics.data::ALL %>% autonomics.import::fid_values() %>% head(1)
-#' }
-#' if (require(atkin.2014)){
-#'    atkin.2014::soma %>% autonomics.import::fid_var()
-#' }
-#' if (require(billing.differentiation.data)){
-#'    billing.differentiation.data::rna.voomcounts %>% autonomics.import::fid_var()
-#'    billing.differentiation.data::protein.ratios %>% autonomics.import::fid_var()
-#' }
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>% autonomics.import::fid_var()
-#'    subramanian.2016::exiqon    %>% autonomics.import::fid_var()
-#'    subramanian.2016::rnaseq    %>% autonomics.import::fid_var()
-#'
-#'    subramanian.2016::metabolon %>% autonomics.import::fid_values() %>% head(3)
-#'    subramanian.2016::exiqon    %>% autonomics.import::fid_values() %>% head(3)
-#'    subramanian.2016::rnaseq    %>% autonomics.import::fid_values() %>% head(3)
-#' }
+#' Get feature id variable
+#' @param object SummarizedExperiment
 #' @importFrom magrittr   %<>%
 #' @export
-fid_var <- function(object){
+fid_var <- function(object) 'feature_id'
 
-   # Keep default for esets without prepro
-   fvar_name <- 'feature_id'
-   if (autonomics.import::is_rnaseq_eset(object))    fvar_name <- 'feature_id'  # rnaseq
-   if (autonomics.import::is_exiqon_eset(object))    fvar_name <- 'feature_id'  # exiqon
-   if (autonomics.import::is_maxquant_eset(object))  fvar_name <- 'feature_id'  # max quant
-   if (autonomics.import::is_soma_eset(object))      fvar_name <- 'feature_id'  # somascan
-   if (autonomics.import::is_metabolon_eset(object)) fvar_name <- 'feature_id'  # metabolon:  M + COMPOUNDID
-
-   assertive.sets::is_subset(fvar_name, autonomics.import::fvars(object))
-   fvalues <- autonomics.import::fdata(object)[[fvar_name]]
-   if (is.factor(fvalues))   fvalues %<>% as.character()
-   assertive.strings::assert_any_are_non_empty_character(fvalues)    # feature ids MUST be present
-   return(fvar_name)
-}
 
 #' @rdname fid_var
 #' @importFrom magrittr %>%
 #' @export
-fid_values <- function(object){
-   . <- NULL
-   object %>% autonomics.import::fvalues(autonomics.import::fid_var(.))
-}
-
-#' @rdname fid_var
-#' @export
-get_feature_id_var <- function(object){
-   .Deprecated('fid_var')
-   fid_var(object)
-}
-
-#' @rdname fid_var
-#' @export
-get_feature_id_values <- function(object){
-   .Deprecated('fid_values')
-   fid_values(object)
-}
+fid_values <- function(object) object %>% autonomics.import::fvalues('feature_id')
 
 
 #================================================================
@@ -311,42 +257,15 @@ get_sep <- function(object){
 #======================================================
 
 #' Get sample id var
-#' @param object   eset
+#' @param object   SummarizedExperiment
 #' @return sample id var (character)
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    autonomics.data::billing2016 %>% get_sample_id_var()
-#'    autonomics.data::billing2016 %>% get_sample_id_values()
-#' }
-#' if (require(atkin.2014)){
-#'    atkin.2014::soma %>% autonomics.import::get_sample_id_var()
-#'    atkin.2014::soma %>% autonomics.import::get_sample_id_values()
-#' }
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::rnaseq %>% autonomics.import::get_sample_id_var()
-#'    subramanian.2016::rnaseq %>% autonomics.import::get_sample_id_values()
-#' }
 #' @importFrom magrittr           %<>%
 #' @export
-get_sample_id_var <- function(object){
-   sample_id_var <- 'sample_id'           # metabolon
-   if      (is_maxquant_eset(object)){  sample_id_var <- 'sample_id'
-   } else if (is_soma_eset(object)){    sample_id_var <- 'SampleId'
-   } else if (is_rnaseq_eset(object)){  sample_id_var <- 'sample_id'
-   }
-   assertive.sets::assert_is_subset(sample_id_var, autonomics.import::svars(object))
-   sample_id_values <- autonomics.import::sdata(object)[[sample_id_var]]
-   if (is.factor(sample_id_values))   sample_id_values %<>% as.character()
-   assertive.strings::assert_all_are_non_empty_character(sample_id_values)
-   return(sample_id_var)
-}
+get_sample_id_var <- function(object) 'sample_id'
 
 #' @rdname get_sample_id_var
 #' @importFrom magrittr %>%
 #' @export
-get_sample_id_values <- function(object){
-   . <- NULL
-   object %>% autonomics.import::svalues(autonomics.import::get_sample_id_var(.))
-}
+get_sample_id_values <- function(object) object %>% autonomics.import::svalues('sample_id')
+
 

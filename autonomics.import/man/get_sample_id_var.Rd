@@ -10,26 +10,11 @@ get_sample_id_var(object)
 get_sample_id_values(object)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 }
 \value{
 sample id var (character)
 }
 \description{
 Get sample id var
-}
-\examples{
-require(magrittr)
-if (require(autonomics.data)){
-   autonomics.data::billing2016 \%>\% get_sample_id_var()
-   autonomics.data::billing2016 \%>\% get_sample_id_values()
-}
-if (require(atkin.2014)){
-   atkin.2014::soma \%>\% autonomics.import::get_sample_id_var()
-   atkin.2014::soma \%>\% autonomics.import::get_sample_id_values()
-}
-if (require(subramanian.2016)){
-   subramanian.2016::rnaseq \%>\% autonomics.import::get_sample_id_var()
-   subramanian.2016::rnaseq \%>\% autonomics.import::get_sample_id_values()
-}
 }

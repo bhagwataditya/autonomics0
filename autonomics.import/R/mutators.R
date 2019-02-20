@@ -126,29 +126,3 @@ split_on_svar <- function(object, svar = NULL){
 }
 
 
-#================================================================================
-#' Extract first from collapsed fvalues
-#' @param object SummarizedExperiment
-#' @param fvar   fvar
-#' @param sep    separator
-#' @return updated object
-#' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>%
-#'       autonomics.import::uncollapse_n_pick_first(
-#'          fvar = 'PUBCHEM',
-#'          sep = ';')
-#' }
-#' @importFrom magrittr %>% %<>%
-#' @export
-uncollapse_n_pick_first <- function(object, fvar, sep){
-   idx <- autonomics.import::fdata(object)[[fvar]] %>% stringi::stri_detect_fixed(sep, ) %>% which()
-   if (length(idx)>0){
-      autonomics.support::cmessage('\t\tUncollapse and pick first %s for:', fvar)
-      columns <- autonomics.import::fvars(object)[1:2] %>% c(fvar)
-      autonomics.support::cmessage_df('\t\t\t%s', autonomics.import::fdata(object)[idx, columns])
-      autonomics.import::fdata(object)[[fvar]] %<>% autonomics.support::strsplit_extract_first(sep)
-   }
-   object
-}

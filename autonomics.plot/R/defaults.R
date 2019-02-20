@@ -177,9 +177,8 @@ default_fvars <- function(object){
    if (autonomics.import::is_metabolon_eset(object)){
       return(c('BIOCHEMICAL', 'SUB_PATHWAY'))
    } else {
-      fidvar   <- object %>% autonomics.import::fid_var()
       fnamevar <- object %>% autonomics.import::fname_var()
-      tmp <- c(fnamevar, fidvar)
+      tmp <- c(fnamevar, 'feature_id')
       if (assertive.properties::is_empty(tmp)) NULL else tmp
    }
 }

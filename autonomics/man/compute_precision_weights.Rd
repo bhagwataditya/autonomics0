@@ -4,8 +4,8 @@
 \alias{compute_precision_weights}
 \title{Compute voom precision weights}
 \usage{
-compute_precision_weights(object, design = object \%>\% create_voom_design(),
-  plot = TRUE, verbose = FALSE)
+compute_precision_weights(object, design = object \%>\%
+  create_voom_design(), plot = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{object}{SummarizedExperiment: exprs(.) with log2cpm, counts(.) with raw counts.}

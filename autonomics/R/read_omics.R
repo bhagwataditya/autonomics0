@@ -21,23 +21,17 @@
 #'    file %>% read_metabolon_asis()
 #'    file %>% read_metabolon()
 #' }
-#' if (require(subramanian.2016)){
-#'    file <- 'extdata/metabolon/subramanian.2016.metabolon.xlsx' %>%
-#'            system.file(package='subramanian.2016')
-#'    file %>% read_metabolon_asis(sheet = 5)
-#'    file %>% read_metabolon(sheet = 5)
-#' }
 #' @importFrom magrittr %>%
 #' @export
 read_metabolon <- function(
    file,
-   sheet                       = 2,
-   fid_var                     = 'COMP_ID',
-   sid_var                     = 'CLIENT_IDENTIFIER',
-   log2transform              = TRUE,
-   qirlc_consistent_nondetects = FALSE,
-   add_kegg_pathways           = FALSE,
-   add_smiles                  = FALSE
+   sheet                  = 2,
+   fid_var                = 'COMP_ID',
+   sid_var                = 'CLIENT_IDENTIFIER',
+   log2transform          = TRUE,
+   impute_consistent_nas  = FALSE,
+   add_kegg_pathways      = FALSE,
+   add_smiles             = FALSE
 ){
    # Satisfy CHECK
    . <- NULL
@@ -51,19 +45,13 @@ read_metabolon <- function(
    # exprs
    if (log2transform) object %<>% log2transform(verbose = TRUE)
    
-   # Impute consistent nondetects (in intensity data)
-   if (qrilc_consistent_nondetects) object %<>% autonomics.preprocess::qrilc_consistent_nondetects()
+   # Impute consistent nas (in intensity data)
+   if (impute_consistent_nas) object %<>% autonomics::impute_consistent_nas()
    
    # fdata
-   if (add_kegg_pathways){
-      autonomics.support::cmessage('\tAdd KEGG pathways to fdata')
-      object %<>% add_kegg_pathways_to_fdata()
-   }
-   if (add_smiles){
-      autonomics.support::cmessage('\tAdd SMILES to fdata')
-      object %<>% add_smiles_to_fdata()
-   }
-   
+   if (add_kegg_pathways) object %<>% autonomics::kegg_entry_to_pathways(entry_var = 'KEGG',    pathway_var = 'KEGGPATHWAY')
+   if (add_smiles)        object %<>% autonomics::pubchem_to_smiles(   pubchem_var = 'PUBCHEM', smiles_var  = 'SMILES')
+
    # Return
    object
 }
@@ -171,6 +159,10 @@ read_exiqon <- function(
    verbose                     = TRUE
 ){
    
+   # Check
+   #------
+   number <- NULL
+   
    # Read 
    #-----
    object <- read_exiqon_asis(file)
@@ -197,7 +189,7 @@ read_exiqon <- function(
        if (align_sample_means){
          autonomics.support::cmessage('\t\tAlign sample means')
          sample_means <- object %>% autonomics.import::exprs() %>% (function(y){y[y>32] <- NA; y}) %>% colMeans(na.rm = TRUE)
-         sample_diffs <- sample_means - median(sample_means)
+         sample_diffs <- sample_means - stats::median(sample_means)
          autonomics.import::exprs(object) %<>% sweep(2, sample_diffs)
          if (plot) object %>% plotfun('Ct', 'Align sample means') %>% print()
        }
@@ -209,10 +201,10 @@ read_exiqon <- function(
        autonomics.import::exprs(object) %<>% magrittr::subtract(lod, .)
        newmetric <- sprintf('%d - Ct', lod)
        if (plot) object %>% plotfun(newmetric, newmetric) %>% print()
-     # Zero consistent NAs
+     # Impute consistent NAs
        if (qrilc_consistent_nondetects){
-         object %<>% autonomics.preprocess::qrilc_consistent_nondetects()
-         if (plot) object %>% plotfun(newmetric, 'Zero consistent NA values') %>% print()
+         object %<>% autonomics::impute_consistent_nas()
+         if (plot) object %>% plotfun(newmetric, 'Impute consistent NA values') %>% print()
        }
      # Filter for mirs conserved in human
        if (filter_conserved_in_human){
@@ -322,7 +314,7 @@ read_somascan <- function(
 
 
 #===============================================
-# LCMS PROTEINGROUPS and PHOSPHOSITES
+# LCMSMS PROTEINGROUPS and PHOSPHOSITES
 #===============================================
 
 #' Deconvolute proteingroups
@@ -613,7 +605,7 @@ prepare_proteingroups <- function(
 #'    file %>% read_phosphosites()
 #'    file %>% read_phosphosites() %>% prep_phosphosites()
 #' }
-prep_phosphosites <- function(
+prepare_phosphosites <- function(
    object,
    min_localization_prob = 0.75,
    proteingroups_file    = paste0(dirname(file), '/proteinGroups.txt'),
@@ -621,64 +613,11 @@ prep_phosphosites <- function(
 ){
 
    # Filter phosphosites
-   phosphosites %<>% autonomics.import::filter_features(!stringi::stri_detect_fixed(`Protein group IDs`, ';'), verbose = TRUE)
+   object %<>% autonomics.import::filter_features(!stringi::stri_detect_fixed(`Protein group IDs`, ';'), verbose = TRUE)
    assertive.numbers::assert_all_are_in_range(min_localization_prob, 0, 1)
-   phosphosites %<>% autonomics.import::filter_features_(sprintf("`Localization prob` >= %s", as.character(min_localization_prob)),verbose = TRUE)
+   object %<>% autonomics.import::filter_features_(sprintf("`Localization prob` >= %s", as.character(min_localization_prob)),verbose = TRUE)
    
    # Return
-   phosphosites
+   object
 }
 
-#' Add subgroup values to object
-#'
-#' Three methods: (1) take values from existing svar
-#'                (2) guess from sampleids
-#'                (3) merge designfile (with one column sample_id) into sdata
-#'
-#' @param object SummarizedExperiment
-#' @param take_from_svar        character(1)
-#' @param guess_from_sampleids  logical(1)
-#' @param merge_designfile      character(1): designfile path
-#' @return SummarizedExperiment
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    object <- file %>% read_metabolon_asis()
-#' }
-#' @importFrom magrittr %>%
-#' @export
-add_subgroup <- function(
-   object,
-   take_from_svar        = NULL,
-   guess_from_sampleids  = FALSE,
-   merge_designfile      = NULL
-){
-   
-   # Assert
-   if (!is.null(take_from_svar)){ assertive.types::assert_is_character(take_from_svar);
-      assertive.sets::assert_is_subset(take_from_svar, autonomics.import::svars(object)) }
-   assertive.types::assert_is_logical(guess_from_sampleids)
-   if (!is.null(merge_designfile)) assertive.files::assert_all_are_existing_files(merge_design_file)
-   
-   # Either take from svar
-   if (!is.null(take_from_svar)){
-      autonomics.support::cmessage("Add subgroup: take from svar '%s'", take_from_svar)
-      autonomics.import::sdata(object) %<>% cbind(subgroup = .[[svar]], .)
-      
-      # Or guess from sampleids
-   } else if (guess_from_sampleids){
-      autonomics.support::cmessage('Add subgroup: guess from sampleids')
-      autonomics.import::sdata(object) %<>% cbind(subgroup = autonomics.import::guess_subgroup_values(.$sample_id), .)
-      
-      # Or merge in designfile
-   } else if (merge_designfile){
-      autonomics.support::cmessage("Add subgroup: merge in designfile '%s'", merge_designfile)
-      design_df <- autonomics.support::cfread(merge_designfile, data.table = FALSE)
-      assertive.sets::assert_is_subset('sample_id', names(design_df))
-      autonomics.import::sdata(object) %<>% merge(design_df, by = 'sample_id', sort = FALSE, all.x =TRUE)
-   }
-   
-   # Return
-   return(object)
-}

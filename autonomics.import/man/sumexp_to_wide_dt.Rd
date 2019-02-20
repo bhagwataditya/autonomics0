@@ -5,8 +5,7 @@
 \alias{eset_to_wide_table}
 \title{Convert sumexp into wide datatable}
 \usage{
-sumexp_to_wide_dt(object, fid = autonomics.import::fid_var(object),
-  fvars = character(0))
+sumexp_to_wide_dt(object, fid = "feature_id", fvars = character(0))
 
 eset_to_wide_table(...)
 }

@@ -4,8 +4,8 @@
 \alias{cfread}
 \title{convenient fread}
 \usage{
-cfread(file, verbose = FALSE, integer64 = "numeric", data.table = TRUE,
-  ...)
+cfread(file, verbose = FALSE, integer64 = "numeric",
+  data.table = TRUE, ...)
 }
 \arguments{
 \item{file}{Either the file name to read (containing no \\n character), a 

@@ -3,47 +3,15 @@
 \name{fid_var}
 \alias{fid_var}
 \alias{fid_values}
-\alias{get_feature_id_var}
-\alias{get_feature_id_values}
-\title{Get fid var/values}
+\title{Get feature id variable}
 \usage{
 fid_var(object)
 
 fid_values(object)
-
-get_feature_id_var(object)
-
-get_feature_id_values(object)
 }
 \arguments{
-\item{object}{eset}
-}
-\value{
-feature id variable / values
+\item{object}{SummarizedExperiment}
 }
 \description{
-Get fid var/values
-}
-\examples{
-library(magrittr)
-if (require(autonomics.data)){
-   autonomics.data::ALL \%>\% autonomics.import::fid_var()
-   autonomics.data::ALL \%>\% autonomics.import::fid_values() \%>\% head(1)
-}
-if (require(atkin.2014)){
-   atkin.2014::soma \%>\% autonomics.import::fid_var()
-}
-if (require(billing.differentiation.data)){
-   billing.differentiation.data::rna.voomcounts \%>\% autonomics.import::fid_var()
-   billing.differentiation.data::protein.ratios \%>\% autonomics.import::fid_var()
-}
-if (require(subramanian.2016)){
-   subramanian.2016::metabolon \%>\% autonomics.import::fid_var()
-   subramanian.2016::exiqon    \%>\% autonomics.import::fid_var()
-   subramanian.2016::rnaseq    \%>\% autonomics.import::fid_var()
-
-   subramanian.2016::metabolon \%>\% autonomics.import::fid_values() \%>\% head(3)
-   subramanian.2016::exiqon    \%>\% autonomics.import::fid_values() \%>\% head(3)
-   subramanian.2016::rnaseq    \%>\% autonomics.import::fid_values() \%>\% head(3)
-}
+Get feature id variable
 }

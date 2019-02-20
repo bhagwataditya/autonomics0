@@ -1,7 +1,7 @@
 #===================================================================================================
 #' Guess separator
 #' @param x                   character vector or SummarizedExperiment
-#' @param svar                string
+#' @param var                 svar or fvar
 #' @param possible_separators character vector with possible separators to look for
 #' @param verbose             logical
 #' @param ...                 used for proper S3 method dispatch
@@ -9,26 +9,25 @@
 #' @examples
 #' require(magrittr)
 #'
-#' x <- c('PERM_NON.R1[H/L]', 'PERM_NON.R2[H/L]', 'PERM_NON.R3[H/L]', 'PERM_NON.R4[H/L]')
-#' x %>% guess_sep()
+#' # charactervector
+#'    x <- c('PERM_NON.R1[H/L]', 'PERM_NON.R2[H/L]', 'PERM_NON.R3[H/L]', 'PERM_NON.R4[H/L]')
+#'    x %>% autonomics.import::guess_sep()
 #'
-#' x <- c('WT untreated 1', 'WT untreated 2', 'WT treated 1')
-#' x %>% guess_sep()
+#'    x <- c('WT untreated 1', 'WT untreated 2', 'WT treated 1')
+#'    x %>% autonomics.import::guess_sep()
 #'
-#' x <- c('group1', 'group2', 'group3.R1')
-#' x %>% guess_sep()
+#'    x <- c('group1', 'group2', 'group3.R1')
+#'    x %>% autonomics.import::guess_sep()
 #'
-#' if (require(autonomics.data))   autonomics.data::glutaminase %>%
-#'                                 autonomics.import::guess_sep()
+#' # SummarizedExperiment
+#'    if (require(autonomics.data))   autonomics.data::glutaminase %>%
+#'                                    autonomics.import::guess_sep()
 #'
-#' if (require(autonomics.data))   autonomics.data::stemcomp.proteinratios %>%
-#'                                 autonomics.import::guess_sep()
+#'    if (require(autonomics.data))   autonomics.data::stemcomp.proteinratios %>%
+#'                                    autonomics.import::guess_sep()
 #'
-#' if (require(subramanian.2016))  subramanian.2016::metabolon  %>%
-#'                                 autonomics.import::guess_sep()
-#'
-#' if (require(graumann.lfq))      graumann.lfq::lfq.intensities %>%
-#'                                 autonomics.import::guess_sep()
+#'    if (require(graumann.lfq))      graumann.lfq::lfq.intensities %>%
+#'                                    autonomics.import::guess_sep()
 #' @export
 guess_sep <- function (x, ...) {
    UseMethod("guess_sep", x)
@@ -73,19 +72,24 @@ guess_sep.character <- function(
    return(best_sep)
 }
 
+#' @rdname guess_sep
+#' @importFrom magrittr %>%
+#' @export
+guess_sep.factor <- function(x, ...) x %>% levels %>% guess_sep.character()
+
 
 #' @rdname guess_sep
 #' @importFrom magrittr %>%
 #' @export
 guess_sep.SummarizedExperiment <- function(
    x,
-   svar = 'sample_id',
+   var = 'sample_id',
    possible_separators = c('.', '_', ' '),# if (autonomics.import::contains_ratios(x)) c('.', ' ') else c('.', '_', ' '),
    verbose = FALSE,
    ...
 ){
-   x %>%
-   autonomics.import::slevels(svar) %>%
+   assertive.sets::assert_is_subset(var, c(autonomics.import::svars(x), autonomics.import::fvars(x)))
+  (if (var %in% autonomics.import::svars(x)) autonomics.import::slevels(x, var) else autonomics.import::flevels(x, var)) %>%
    guess_sep(possible_separators = possible_separators,
              verbose             = verbose)
 }

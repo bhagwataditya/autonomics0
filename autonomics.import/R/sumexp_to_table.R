@@ -9,7 +9,7 @@
 #' @export
 sumexp_to_wide_dt <- function(
    object,
-   fid = autonomics.import::fid_var(object),
+   fid = 'feature_id',
    fvars = character(0)
 ){
   fdata1 <- autonomics.import::fdata(object) %>% magrittr::extract(, unique(c(fid, fvars)), drop = FALSE) %>% data.table::data.table()
@@ -44,7 +44,7 @@ eset_to_wide_table <- function(...){
 #' @export
 sumexp_to_long_dt <- function(
    object,
-   fid = autonomics.import::fid_var(object),
+   fid = 'feature_id',
    fvars = character(0),
    sid = 'sample_id',
    svars = character(0)

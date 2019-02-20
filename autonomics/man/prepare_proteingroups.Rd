@@ -51,7 +51,7 @@ if (require(autonomics.data)){
 }
 if (require(graumann.lfq)){
    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-   file \%>\% autonomics::read_proteingroups()
-   file \%>\% autonomics::read_proteingroups() \%>\% prepare_proteingroups()
+   object <- file \%>\% autonomics::read_proteingroups()
+   object \%>\% autonomics::prepare_proteingroups()
 }
 }

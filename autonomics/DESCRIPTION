@@ -15,7 +15,9 @@ Imports:
     assertive.files,
     assertive.numbers,
     assertive.properties,
+    assertive.reflection,
     assertive.sets, 
+    assertive.strings,
     assertive.types,
     autonomics.annotate,
     autonomics.explore,
@@ -28,17 +30,22 @@ Imports:
     autonomics.support,
     data.table, 
     edgeR,
+    forcats,
     ggplot2,
     limma,
     magrittr,
     matrixStats,
     plyr,
+    RCurl, 
     readxl,
+    rlang,
+    rvest,
     stringr,
     SummarizedExperiment, 
     tidyr,
-    utils
-RoxygenNote: 6.0.1
+    utils,
+    xml2
+RoxygenNote: 6.1.1
 Suggests: 
     autonomics.data,
     alnoubi.2017,
@@ -50,3 +57,4 @@ Suggests:
     subramanian.2016,
     testthat
 VignetteBuilder: knitr
+Encoding: UTF-8

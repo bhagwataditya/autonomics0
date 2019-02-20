@@ -2,7 +2,6 @@
 % Please edit documentation in R/02_autonomics_import.R
 \name{fdata}
 \alias{fdata}
-\alias{fdata}
 \title{fdata}
 \description{
 \code{\link[autonomics.import]{fdata}}

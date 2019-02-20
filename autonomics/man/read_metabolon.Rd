@@ -7,7 +7,7 @@
 \usage{
 read_metabolon(file, sheet = 2, fid_var = "COMP_ID",
   sid_var = "CLIENT_IDENTIFIER", log2transform = TRUE,
-  qirlc_consistent_nondetects = FALSE, add_kegg_pathways = FALSE,
+  impute_consistent_nas = FALSE, add_kegg_pathways = FALSE,
   add_smiles = FALSE)
 
 read_metabolon_asis(file, sheet = 2, fid_var = "COMP_ID",
@@ -24,11 +24,11 @@ read_metabolon_asis(file, sheet = 2, fid_var = "COMP_ID",
 
 \item{log2transform}{logical: whether to log2 transform}
 
-\item{qirlc_consistent_nondetects}{logical(1)}
-
 \item{add_kegg_pathways}{logical(1): whether to add KEGG pathways to fdata}
 
 \item{add_smiles}{logical(1): whether to add SMILES to fdata}
+
+\item{qirlc_consistent_nondetects}{logical(1)}
 }
 \value{
 SummarizedExperiment
@@ -43,11 +43,5 @@ if (require(autonomics.data)){
             system.file(package = 'autonomics.data')
    file \%>\% read_metabolon_asis()
    file \%>\% read_metabolon()
-}
-if (require(subramanian.2016)){
-   file <- 'extdata/metabolon/subramanian.2016.metabolon.xlsx' \%>\%
-           system.file(package='subramanian.2016')
-   file \%>\% read_metabolon_asis(sheet = 5)
-   file \%>\% read_metabolon(sheet = 5)
 }
 }

@@ -31,6 +31,8 @@ plot_detects_per_subgroup <- function(
    svar = 'subgroup', 
    color_values = autonomics.plot::default_color_values(object, svar)
 ){
+   # Initialize variables
+   variable <- subgroup <- value <- NULL
    
    # Assert
    assertive.sets::assert_is_subset('SummarizedExperiment', class(object))

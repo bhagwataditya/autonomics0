@@ -6,7 +6,8 @@
 \title{Read exiqon}
 \usage{
 read_exiqon(file, filter_features = "`#RefGenes`==0 & `#Spike`   ==0",
-  align_sample_means = TRUE, lod = 37, qrilc_consistent_nondetects = TRUE,
+  align_sample_means = TRUE, lod = 37,
+  qrilc_consistent_nondetects = TRUE,
   filter_conserved_in_human = FALSE, plot = TRUE, verbose = TRUE)
 
 read_exiqon_asis(file)

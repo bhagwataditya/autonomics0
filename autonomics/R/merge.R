@@ -15,19 +15,18 @@
 #' if (require(autonomics.data)){
 #'    object <- system.file('extdata/stemcomp/soma/stemcomp.adat',
 #'                           package = 'autonomics.data') %>%
-#'              autonomics.import::load_soma()
+#'              autonomics::read_somascan()
 #'    newdata <- autonomics.import::sdata(object) %>%
-#'               magrittr::extract(, 'SampleId', drop = FALSE) %>%
+#'               magrittr::extract(, 'sample_id', drop = FALSE) %>%
 #'               cbind(Letter = letters[1:nrow(.)])
 #'    object %>% autonomics.import::sdata()
-#'    object %>% autonomics.import::merge_sdata(newdata, by = 'SampleId') %>%
+#'    object %>% autonomics::merge_sdata(newdata) %>%
 #'               autonomics.import::sdata()
-#'    object %>% autonomics.import::merge_sdata(newdata, by = 'SampleId', newdata_first = TRUE) %>%
-#'               autonomics.import::sdata()
+#'    object %>% autonomics.import::merge_sdata(newdata, newdata_first = TRUE) %>% autonomics.import::sdata()
 #' }
 #' @importFrom magrittr %>%
 #' @export
-merge_sdata <- function(object, newdata, by, newdata_first = FALSE, verbose = TRUE){
+merge_sdata <- function(object, newdata, by = 'sample_id', newdata_first = FALSE, verbose = TRUE){
 
    # Assert
    assertive.sets::assert_is_subset(by, autonomics.import::svars(object))
@@ -71,19 +70,19 @@ merge_sdata <- function(object, newdata, by, newdata_first = FALSE, verbose = TR
 #' if (require(autonomics.data)){
 #'    object <- system.file('extdata/stemcomp/soma/stemcomp.adat',
 #'                           package = 'autonomics.data') %>%
-#'              autonomics.import::load_soma()
+#'              autonomics::read_somascan()
 #'    newdata <- autonomics.import::fdata(object)           %>%
-#'               magrittr::extract(, 'SeqId', drop = FALSE) %>%
+#'               magrittr::extract(, 'feature_id', drop = FALSE) %>%
 #'               cbind(Letter = sample(letters, nrow(.), TRUE))
 #'    object %>% autonomics.import::fdata() %>% head()
-#'    object %>% autonomics.import::merge_fdata(newdata, by = 'SeqId') %>%
+#'    object %>% autonomics::merge_fdata(newdata) %>%
 #'               autonomics.import::fdata() %>% head()
-#'    object %>% autonomics.import::merge_fdata(newdata, by = 'SeqId', newdata_first = TRUE) %>%
+#'    object %>% autonomics.import::merge_fdata(newdata, newdata_first = TRUE) %>%
 #'               autonomics.import::fdata() %>% head()
 #' }
 #' @importFrom magrittr %>%
 #' @export
-merge_fdata <- function(object, newdata, by, newdata_first = FALSE){
+merge_fdata <- function(object, newdata, by = 'feature_id', newdata_first = FALSE){
 
    # Assert
    assertive.sets::assert_is_subset(by, autonomics.import::fvars(object))

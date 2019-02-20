@@ -3,6 +3,7 @@
 \name{guess_sep}
 \alias{guess_sep}
 \alias{guess_sep.character}
+\alias{guess_sep.factor}
 \alias{guess_sep.SummarizedExperiment}
 \alias{ssep}
 \alias{subgroup_sep}
@@ -13,7 +14,9 @@ guess_sep(x, ...)
 \method{guess_sep}{character}(x, possible_separators = c(".", " ", "_"),
   verbose = FALSE, ...)
 
-\method{guess_sep}{SummarizedExperiment}(x, svar = "sample_id",
+\method{guess_sep}{factor}(x, ...)
+
+\method{guess_sep}{SummarizedExperiment}(x, var = "sample_id",
   possible_separators = c(".", "_", " "), verbose = FALSE, ...)
 
 ssep(...)
@@ -29,7 +32,7 @@ subgroup_sep(...)
 
 \item{verbose}{logical}
 
-\item{svar}{string}
+\item{var}{svar or fvar}
 }
 \value{
 separator (string) or NULL (if no separator could be identified)
@@ -40,24 +43,23 @@ Guess separator
 \examples{
 require(magrittr)
 
-x <- c('PERM_NON.R1[H/L]', 'PERM_NON.R2[H/L]', 'PERM_NON.R3[H/L]', 'PERM_NON.R4[H/L]')
-x \%>\% guess_sep()
+# charactervector
+   x <- c('PERM_NON.R1[H/L]', 'PERM_NON.R2[H/L]', 'PERM_NON.R3[H/L]', 'PERM_NON.R4[H/L]')
+   x \%>\% autonomics.import::guess_sep()
 
-x <- c('WT untreated 1', 'WT untreated 2', 'WT treated 1')
-x \%>\% guess_sep()
+   x <- c('WT untreated 1', 'WT untreated 2', 'WT treated 1')
+   x \%>\% autonomics.import::guess_sep()
 
-x <- c('group1', 'group2', 'group3.R1')
-x \%>\% guess_sep()
+   x <- c('group1', 'group2', 'group3.R1')
+   x \%>\% autonomics.import::guess_sep()
 
-if (require(autonomics.data))   autonomics.data::glutaminase \%>\%
-                                autonomics.import::guess_sep()
+# SummarizedExperiment
+   if (require(autonomics.data))   autonomics.data::glutaminase \%>\%
+                                   autonomics.import::guess_sep()
 
-if (require(autonomics.data))   autonomics.data::stemcomp.proteinratios \%>\%
-                                autonomics.import::guess_sep()
+   if (require(autonomics.data))   autonomics.data::stemcomp.proteinratios \%>\%
+                                   autonomics.import::guess_sep()
 
-if (require(subramanian.2016))  subramanian.2016::metabolon  \%>\%
-                                autonomics.import::guess_sep()
-
-if (require(graumann.lfq))      graumann.lfq::lfq.intensities \%>\%
-                                autonomics.import::guess_sep()
+   if (require(graumann.lfq))      graumann.lfq::lfq.intensities \%>\%
+                                   autonomics.import::guess_sep()
 }
