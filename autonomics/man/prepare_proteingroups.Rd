@@ -6,52 +6,66 @@
 \usage{
 prepare_proteingroups(object, filter_reverse = TRUE,
   filter_contaminants = TRUE, filter_complete_nondetects = TRUE,
-  log2transform = TRUE, impute_consistent_nas = TRUE,
-  deconvolution_fastafile = NULL, verbose = TRUE, plot = TRUE)
+  invert_subgroups = character(0), log2transform = TRUE,
+  impute_consistent_nas = TRUE, deconvolution_fastafile = NULL,
+  verbose = TRUE, plot = TRUE)
 }
 \arguments{
-\item{filter_reverse}{logical(1).           Filter out "reverse peptide" groups (used for peptide identification FDR computation)?}
+\item{filter_reverse}{logical(1):   filter out "reverse peptide" groups (used for peptide identification FDR computation)?}
 
-\item{filter_contaminants}{logical(1).           Filter out contaminant groups?}
+\item{filter_contaminants}{logical(1):   filter out contaminant groups?}
 
-\item{filter_complete_nondetects}{logical(1).           Filter out proteingroups with no quantification for any sample?}
+\item{filter_complete_nondetects}{logical(1):   filter out proteingroups with no quantification for any sample?}
 
-\item{log2transform}{logical(1).           log2 transform?}
+\item{invert_subgroups}{character(.): names of subgroups that require inversion (e.g. WT_KD -> KD_WT)}
 
-\item{impute_consistent_nas}{logical(1).           Whether to impute consistent NA values (i.e. NA values replicated in all samples of the same subgroup)}
+\item{log2transform}{logical(1):   log2 transform?}
 
-\item{deconvolution_fastafile}{NULL or character(1). Deconvolute proteingroups using this fastafile (optional)}
+\item{impute_consistent_nas}{logical(1):   impute consistent NA values (i.e. those replicated in all samples of the same subgroup)?}
 
-\item{verbose}{logical(1).           Message progress?}
+\item{deconvolution_fastafile}{NULL or character(1): deconvolute proteingroups using this fastafile (optional)}
+
+\item{verbose}{logical(1):   message progress?}
 }
 \description{
 Prepare proteingroups
 }
 \examples{
 require(magrittr)
-if (require(autonomics.data)){
 
-   # Read
-   object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
-              system.file(package = 'autonomics.data') \%>\%  
-              autonomics::read_proteingroups()
-              
-   # Check and remedy subgroup definitions
-   object$subgroup \%>\% unique()
-   object \%<>\% autonomics.import::filter_samples(
-                  stringi::stri_detect_fixed(subgroup, 'STD') &
-                  stringi::stri_detect_fixed(subgroup, 'BLANK', negate = TRUE), 
-                  verbose = TRUE)
-   object$subgroup \%<>\% stringi::stri_replace_first_fixed('_STD', '')
-   object$subgroup \%<>\% factor(c('EM00', 'EM01', 'EM02', 'EM05', 'EM15', 'EM30', 'BM00'))
+# Stem cell comparison: triple SILAC design
+   if (require(autonomics.data)){
+      object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
+                 system.file(package = 'autonomics.data') \%>\%  
+                 autonomics::read_proteingroups()
+      object \%>\% autonomics::prepare_proteingroups(invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'))
+   }
    
-   # Prepare
-   object \%<>\% autonomics::prepare_proteingroups()
-   object \%>\% autonomics::plot_detects_per_subgroup()
-}
-if (require(graumann.lfq)){
-   file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-   object <- file \%>\% autonomics::read_proteingroups()
-   object \%>\% autonomics::prepare_proteingroups()
-}
+# Stem cell differentiation: internal standard design
+   if (require(autonomics.data)){
+      # Read
+      object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
+                 system.file(package = 'autonomics.data') \%>\%  
+                 autonomics::read_proteingroups()
+              
+      # Check and remedy subgroup definitions
+      object$subgroup \%>\% unique()
+      object \%<>\% autonomics.import::filter_samples(
+                     stringi::stri_detect_fixed(subgroup, 'STD') &
+                     stringi::stri_detect_fixed(subgroup, 'BLANK', negate = TRUE), 
+                     verbose = TRUE)
+      object$subgroup \%<>\% stringi::stri_replace_first_fixed('_STD', '')
+      object$subgroup \%<>\% factor(c('EM00', 'EM01', 'EM02', 'EM05', 'EM15', 'EM30', 'BM00'))
+   
+      # Prepare
+      object \%<>\% autonomics::prepare_proteingroups()
+      object \%>\% autonomics::plot_detects_per_subgroup()
+   }
+
+# LFQ design
+   if (require(graumann.lfq)){
+      file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
+      object <- file \%>\% autonomics::read_proteingroups()
+      object \%>\% autonomics::prepare_proteingroups()
+   }
 }

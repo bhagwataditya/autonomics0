@@ -16,8 +16,8 @@ analyze_contrasts(object, result_dir = default_result_dir(object),
   min_set_size = 5, max_set_size = Inf, ...)
 
 analyze_eset(object, result_dir = default_result_dir(object),
-  design = autonomics.import::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
+  design = autonomics.import::create_design_matrix(object),
   topdef = autonomics.find::default_topdef(object), universe = NULL,
   dodge_width = 0, do_pca = TRUE,
   cluster_features = default_cluster_features(),
@@ -88,13 +88,10 @@ if (require(autonomics.data)){
    object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\% 
               system.file(package = 'autonomics.data')     \%>\% 
               autonomics::read_proteingroups()             \%>\%
-              autonomics.preprocess::invert_ratios(c('E_BM', 'EM_BM', 'E_EM'), '_') \%>\% 
-              autonomics::prepare_proteingroups()
+              autonomics::prepare_proteingroups(invert_subgroups = c('E_BM', 'EM_BM', 'E_EM'))
               
    result_dir <- tempdir() \%>\% paste0('/analysis.results') \%T>\% message()
    dir.create(result_dir, showWarnings = FALSE)
-   object <- autonomics.data::billing2016
-   unique(object$subgroup)
    object \%>\% autonomics::analyze_eset(result_dir, universe = NULL)
 }
 
