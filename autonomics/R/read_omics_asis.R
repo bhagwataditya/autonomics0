@@ -9,9 +9,21 @@
 #' @importFrom magrittr %>%
 #' @export
 read_file <- function(file, sheet){
+   
+   # Assert
    assertive.files::assert_all_are_existing_files(file)
+   nfields <- count.fields(file, quote = '', sep='\t')
+   if (any(nfields!=nfields[1])){
+      stop(basename(file),
+           "\n\tThis file has a variable no of columns", 
+           "\n\tRerun after fixing the no of columns using Excel, LibrOffice, or another program.")
+   }
+
+   # Read Excel file
    if (tools::file_ext(file) %in% c('xls', 'xlsx')){
       file %>% readxl::read_excel(sheet = sheet, col_names = FALSE, .name_repair = 'minimal') %>% data.table::data.table()
+   
+   # Read Delimited file
    } else {
       file %>% data.table::fread(na.strings = "", header = FALSE, integer64 = 'numeric')
    }
@@ -250,7 +262,7 @@ read_somascan_asis <- function(
    assertive.types::assert_is_a_string(sid_var)
    
    # Peak
-   dt <- data.table::fread(file, header = FALSE)
+   dt <- autonomics::read_file(file)
    fdata_row1 <- 1 + which(dt[[1]] == '^TABLE_BEGIN')[1]
    fvar_col <- which(dt %>% extract_dt_row(fdata_row1) != '')[1]
    svar_row <- which(dt[[1]] != '' &  (1:nrow(dt) > fdata_row1))[1]

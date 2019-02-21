@@ -500,40 +500,52 @@ filter_samples_new <- function(object, sample_filter) rlang::eval_tidy(rlang::en
 # file %>% do_filter_samples((subgroup %>% substr(nchar(.)-2, nchar(.))) == 'STD')
 
 #' Prepare proteingroups
-#' @param filter_reverse             logical(1).           Filter out "reverse peptide" groups (used for peptide identification FDR computation)?
-#' @param filter_contaminants        logical(1).           Filter out contaminant groups?
-#' @param filter_complete_nondetects logical(1).           Filter out proteingroups with no quantification for any sample?
-#' @param log2transform              logical(1).           log2 transform?
-#' @param impute_consistent_nas      logical(1).           Whether to impute consistent NA values (i.e. NA values replicated in all samples of the same subgroup)
-#' @param deconvolution_fastafile    NULL or character(1). Deconvolute proteingroups using this fastafile (optional)
-#' @param verbose                    logical(1).           Message progress?
+#' @param filter_reverse             logical(1):   filter out "reverse peptide" groups (used for peptide identification FDR computation)?
+#' @param filter_contaminants        logical(1):   filter out contaminant groups?
+#' @param filter_complete_nondetects logical(1):   filter out proteingroups with no quantification for any sample?
+#' @param invert_subgroups           character(.): names of subgroups that require inversion (e.g. WT_KD -> KD_WT)
+#' @param log2transform              logical(1):   log2 transform?
+#' @param impute_consistent_nas      logical(1):   impute consistent NA values (i.e. those replicated in all samples of the same subgroup)?
+#' @param deconvolution_fastafile    NULL or character(1): deconvolute proteingroups using this fastafile (optional)
+#' @param verbose                    logical(1):   message progress?
 #' @examples
 #' require(magrittr)
-#' if (require(autonomics.data)){
 #' 
-#'    # Read
-#'    object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
-#'               system.file(package = 'autonomics.data') %>%  
-#'               autonomics::read_proteingroups()
-#'               
-#'    # Check and remedy subgroup definitions
-#'    object$subgroup %>% unique()
-#'    object %<>% autonomics.import::filter_samples(
-#'                   stringi::stri_detect_fixed(subgroup, 'STD') &
-#'                   stringi::stri_detect_fixed(subgroup, 'BLANK', negate = TRUE), 
-#'                   verbose = TRUE)
-#'    object$subgroup %<>% stringi::stri_replace_first_fixed('_STD', '')
-#'    object$subgroup %<>% factor(c('EM00', 'EM01', 'EM02', 'EM05', 'EM15', 'EM30', 'BM00'))
+#' # Stem cell comparison: triple SILAC design
+#'    if (require(autonomics.data)){
+#'       object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
+#'                  system.file(package = 'autonomics.data') %>%  
+#'                  autonomics::read_proteingroups()
+#'       object %>% autonomics::prepare_proteingroups(invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'))
+#'    }
 #'    
-#'    # Prepare
-#'    object %<>% autonomics::prepare_proteingroups()
-#'    object %>% autonomics::plot_detects_per_subgroup()
-#' }
-#' if (require(graumann.lfq)){
-#'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-#'    object <- file %>% autonomics::read_proteingroups()
-#'    object %>% autonomics::prepare_proteingroups()
-#' }
+#' # Stem cell differentiation: internal standard design
+#'    if (require(autonomics.data)){
+#'       # Read
+#'       object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
+#'                  system.file(package = 'autonomics.data') %>%  
+#'                  autonomics::read_proteingroups()
+#'               
+#'       # Check and remedy subgroup definitions
+#'       object$subgroup %>% unique()
+#'       object %<>% autonomics.import::filter_samples(
+#'                      stringi::stri_detect_fixed(subgroup, 'STD') &
+#'                      stringi::stri_detect_fixed(subgroup, 'BLANK', negate = TRUE), 
+#'                      verbose = TRUE)
+#'       object$subgroup %<>% stringi::stri_replace_first_fixed('_STD', '')
+#'       object$subgroup %<>% factor(c('EM00', 'EM01', 'EM02', 'EM05', 'EM15', 'EM30', 'BM00'))
+#'    
+#'       # Prepare
+#'       object %<>% autonomics::prepare_proteingroups()
+#'       object %>% autonomics::plot_detects_per_subgroup()
+#'    }
+#' 
+#' # LFQ design
+#'    if (require(graumann.lfq)){
+#'       file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
+#'       object <- file %>% autonomics::read_proteingroups()
+#'       object %>% autonomics::prepare_proteingroups()
+#'    }
 #' @importFrom magrittr %>% %<>%
 #' @export
 prepare_proteingroups <- function(
@@ -541,6 +553,7 @@ prepare_proteingroups <- function(
    filter_reverse              = TRUE,
    filter_contaminants         = TRUE,
    filter_complete_nondetects  = TRUE,
+   invert_subgroups            = character(0),
    log2transform               = TRUE,
    impute_consistent_nas       = TRUE,
    deconvolution_fastafile     = NULL,
@@ -549,20 +562,22 @@ prepare_proteingroups <- function(
 ){
 
    # Assert
-   assertive.types::assert_is_logical(c(filter_reverse, filter_contaminants, filter_complete_nondetects, 
-                                        log2transform, verbose))
+   assertive.types::assert_is_logical(c(filter_reverse, filter_contaminants, filter_complete_nondetects, log2transform, verbose))
+   assertive.sets::assert_is_subset(invert_subgroups, autonomics.import::subgroup_levels(object))
    if (!is.null(deconvolution_fastafile)) assertive.files::assert_all_are_existing_files(deconvolution_fastafile)
    
    #if (!is.null(sample_filter))  object %<>% autonomics.import::filter_samples(!!rlang::enexpr(sample_filter), verbose = verbose)
    
    # Filter features
-   if (verbose) autonomics.support::cmessage('\texprs')
+   if (verbose) autonomics.support::cmessage('\tFilter features')
    if (filter_reverse)              object %<>% autonomics.import::filter_features_("Reverse != '+'", verbose = verbose)
    if (filter_contaminants){        contaminant_var <- c('Potential contaminant', 'Contaminant') %>% intersect(autonomics.import::fvars(object))
                                     object %<>% autonomics.import::filter_features_(sprintf("`%s` != '+'", contaminant_var), verbose = verbose)}
    if (filter_complete_nondetects)  object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample(verbose = verbose)
    
    # Transform exprs
+   if (verbose) autonomics.support::cmessage('\tTransform exprs')
+   object %<>% invert.SummarizedExperiment(subgroups = invert_subgroups)
    object %<>% autonomics::zero_to_na(verbose = verbose)
    object %<>% autonomics::nan_to_na(verbose = verbose)
    if (log2transform)         object %<>% autonomics::log2transform(verbose = verbose)
@@ -570,7 +585,7 @@ prepare_proteingroups <- function(
    if (plot)                  object %>%  autonomics::plot_detects_per_subgroup() %>% print()
 
    # Process fdata
-   if (verbose) autonomics.support::cmessage('\tfdata')
+   if (verbose) autonomics.support::cmessage('\tImprove fdata')
    if (verbose) autonomics.support::cmessage("\t\tRename: 'Majority protein IDs' -> 'Uniprot accessions'")
    autonomics.import::fvars(object) %<>% stringi::stri_replace_first_fixed('Majority protein IDs', 'Uniprot accessions')
    if (!is.null(deconvolution_fastafile)) object %>% deconvolute_proteingroups(deconvolution_fastafile)
