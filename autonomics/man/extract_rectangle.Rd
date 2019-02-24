@@ -2,29 +2,40 @@
 % Please edit documentation in R/read_omics_asis.R
 \name{extract_rectangle}
 \alias{extract_rectangle}
-\title{Extract rectangle from omics datatable}
+\alias{extract_rectangle.data.frame}
+\title{Extract rectangle from omics file or datatable}
 \usage{
-extract_rectangle(dt, rows, cols, transpose = FALSE, drop = FALSE)
+extract_rectangle(x, ...)
+
+\method{extract_rectangle}{data.frame}(x, rows, cols, transpose = FALSE,
+  drop = FALSE, ...)
 }
 \arguments{
-\item{dt}{datatable with raw omics data}
+\item{x}{omics datafile or datatable}
 
-\item{rows}{row selector: logical(n), numeric(n), or character(n)}
+\item{rows}{numeric(.)}
 
-\item{cols}{col selector: logical(n), numeric(n), or character(n)}
+\item{cols}{numeric(.)}
 
 \item{transpose}{logical(1)}
 
 \item{drop}{logical(1)}
+
+\item{sheet}{numeric(1) or character(1)}
+
+\item{verbose}{logical(1)}
+}
+\value{
+data.table
 }
 \description{
-Extract rectangle from omics datatable
+Extract rectangle from omics file or datatable
 }
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-   dt <- file \%>\% read_file(sheet = 2)
+   x <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+   dt <- x \%>\% autonomics::extract_rectangle(sheet = 2)
    dt \%>\% extract_rectangle(rows = 11:401, cols = 15:86) \%>\% extract(1:3, 1:3)           # exprs
    dt \%>\% extract_rectangle(rows = 11:401, cols = 5    ) \%>\% extract(1:3, , drop=FALSE)  # fids
    dt \%>\% extract_rectangle(rows = 2,      cols = 15:86) \%>\% extract(, 1:3, drop=FALSE)  # sids

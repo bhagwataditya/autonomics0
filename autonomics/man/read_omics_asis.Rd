@@ -56,15 +56,16 @@ require(magrittr)
 # METABOLON
 if (require(autonomics.data)){
   file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-  file \%>\% read_omics_asis(sheet      = 2,
-                           fid_rows   = 11:401,    fid_cols   = 5,
-                           sid_rows   = 3,         sid_cols   = 15:86,
-                           expr_rows  = 11:401,    expr_cols  = 15:86,
-                           fvar_rows  = 10,        fvar_cols  = 1:14,
-                           svar_rows  = 1:10,      svar_cols  = 14,
-                           fdata_rows = 11:401,    fdata_cols = 1:14,
-                           sdata_rows = 1:10,      sdata_cols = 15:86,
-                           transpose  = FALSE)
+  file \%>\% autonomics::read_omics_asis(
+              sheet      = 2,
+              fid_rows   = 11:401,    fid_cols   = 5,
+              sid_rows   = 3,         sid_cols   = 15:86,
+              expr_rows  = 11:401,    expr_cols  = 15:86,
+              fvar_rows  = 10,        fvar_cols  = 1:14,
+              svar_rows  = 1:10,      svar_cols  = 14,
+              fdata_rows = 11:401,    fdata_cols = 1:14,
+              sdata_rows = 1:10,      sdata_cols = 15:86,
+              transpose  = FALSE)
 }
 
 # SOMASCAN

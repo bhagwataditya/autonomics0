@@ -2,49 +2,42 @@
 # GENERIC
 #=================================================
 
-#' Read omics data as is from file
-#' @param file character(1)
-#' @param sheet numeric(1) or character(1)
-#' @return data.table
-#' @importFrom magrittr %>%
-#' @export
-read_file <- function(file, sheet){
-   
-   # Assert
-   assertive.files::assert_all_are_existing_files(file)
-   nfields <- count.fields(file, quote = '', sep='\t')
-   if (any(nfields!=nfields[1])){
-      stop(basename(file),
-           "\n\tThis file has a variable no of columns", 
-           "\n\tRerun after fixing the no of columns using Excel, LibrOffice, or another program.")
-   }
-
-   # Read Excel file
-   if (tools::file_ext(file) %in% c('xls', 'xlsx')){
-      file %>% readxl::read_excel(sheet = sheet, col_names = FALSE, .name_repair = 'minimal') %>% data.table::data.table()
-   
-   # Read Delimited file
+nrows <- function(x, sheet=1){
+   if (tools::file_ext(x) %in% c('xls', 'xlsx')){
+      x %>% readxl::read_excel(sheet = sheet, .name_repair = 'minimal') %>%  nrow()
    } else {
-      file %>% data.table::fread(na.strings = "", header = FALSE, integer64 = 'numeric')
+      x %>% readLines(warn=FALSE) %>% length()
    }
 }
 
-# Extract row
-extract_dt_row <- function(dt, i) dt %>% magrittr::extract(i,) %>% as.matrix() %>% magrittr::extract(1, ) %>% unname()
-extract_dt_col <- function(dt, i) dt[[i]]
 
+ncols <- function(x, sheet=1){
+   if (tools::file_ext(x) %in% c('xls', 'xlsx')){
+      x %>% readxl::read_excel(sheet=sheet, .name_repair = 'minimal') %>% ncol()
+   } else {
+      x %>% count.fields(quote = "", sep = '\t') %>% max()
+   }
+}
 
-#' Extract rectangle from omics datatable
-#' @param dt         datatable with raw omics data
-#' @param rows       row selector: logical(n), numeric(n), or character(n)
-#' @param cols       col selector: logical(n), numeric(n), or character(n)
+#=================================================
+# extract_rectangle
+#=================================================
+
+#' Extract rectangle from omics file or datatable
+#' 
+#' @param x          omics datafile or datatable
+#' @param sheet      numeric(1) or character(1)
+#' @param rows       numeric(.)
+#' @param cols       numeric(.)
+#' @param verbose    logical(1)
 #' @param transpose  logical(1)
 #' @param drop       logical(1)
+#' @return data.table
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'    dt <- file %>% read_file(sheet = 2)
+#'    x <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
+#'    dt <- x %>% autonomics::extract_rectangle(sheet = 2)
 #'    dt %>% extract_rectangle(rows = 11:401, cols = 15:86) %>% extract(1:3, 1:3)           # exprs
 #'    dt %>% extract_rectangle(rows = 11:401, cols = 5    ) %>% extract(1:3, , drop=FALSE)  # fids
 #'    dt %>% extract_rectangle(rows = 2,      cols = 15:86) %>% extract(, 1:3, drop=FALSE)  # sids
@@ -54,48 +47,114 @@ extract_dt_col <- function(dt, i) dt[[i]]
 #' }
 #' @importFrom magrittr %>% %<>%
 #' @export
-extract_rectangle <- function(dt, rows, cols, transpose = FALSE, drop = FALSE){
-   dt %<>% magrittr::extract(rows, cols, with = FALSE)
+extract_rectangle <- function(x, ...){
+   UseMethod('extract_rectangle')
+}
+
+#' @importFrom magrittr %>%
+#' @export
+extract_rectangle.character <- function(
+   x, 
+   sheet   = 1,
+   rows    = 1:nrows(x, sheet=sheet),
+   cols    = 1:ncols(x, sheet=sheet), 
+   verbose = FALSE, 
+   ...
+){
+   
+   # Assert
+   assertive.files::assert_all_are_existing_files(x)
+   assertive.types::assert_is_numeric(rows)
+   assertive.types::assert_is_numeric(cols)
+   row1 <- min(rows); rown <- max(rows)
+   col1 <- min(cols); coln <- max(cols)
+
+   # Read file
+   dt <- if (tools::file_ext(x) %in% c('xls', 'xlsx')){
+            x %>% 
+            readxl::read_excel(sheet       = sheet, 
+                               col_names   = FALSE, 
+                               range       = sprintf('R%dC%d:R%dC%d', row1, col1, rown, coln),
+                              .name_repair = 'minimal') %>% 
+            data.table::data.table()
+      
+         } else {
+            x %>% 
+            data.table::fread(na.strings = "", 
+                              header     = FALSE, 
+                              integer64  = 'numeric', 
+                              skip       = row1-1, 
+                              nrow       = 1+rown-row1, 
+                              select     = col1:coln)
+         }
+   
+   # Make into rectangular matrix
    rectangle <- dt %>% as.matrix()
+   if (transpose) rectangle %<>% t()
+   if (drop) if (nrow(rectangle)==1 | ncol(rectangle)==1) rectangle %<>% as.vector('character')
+   rectangle
+   
+}
+
+# Extract row
+extract_dt_row <- function(dt, i) dt %>% magrittr::extract(i,) %>% as.matrix() %>% magrittr::extract(1, ) %>% unname()
+extract_dt_col <- function(dt, i) dt[[i]]
+
+
+#' @rdname extract_rectangle
+#' @importFrom magrittr %<>% %>% 
+#' @export
+extract_rectangle.data.frame <- function(
+   x, 
+   rows, 
+   cols, 
+   transpose = FALSE, 
+   drop = FALSE, 
+   ...
+){
+   x %<>% magrittr::extract(rows, cols, with = FALSE)
+   rectangle <- x %>% as.matrix()
    if (transpose) rectangle %<>% t()
    if (drop) if (nrow(rectangle)==1 | ncol(rectangle)==1) rectangle %<>% as.vector('character')
    rectangle
 }
 
+
 #' Read omics data
-#' @param file       character(1): name of text (txt, csv, tsv) or excel (xls, xlsx) file
-#' @param sheet      integer(1) or character(1)
-#' @param fid_rows   featureid rows: logical(n) or numeric(n)
-#' @param fid_cols   featureid cols: logical(n) or numeric(n)
-#' @param sid_rows   sampleid  rows: logical(n) or numeric(n)
-#' @param sid_cols   sampleid  cols: logical(n) or numeric(n)
-#' @param expr_rows  expr      rows: logical(n) or numeric(n)
-#' @param expr_cols  expr      rows: logical(n) or numeric(n)
-#' @param fvar_rows  fvar      rows: logical(n) or numeric(n)
-#' @param fvar_cols  fvar      cols: logical(n) or numeric(n)
-#' @param svar_rows  svar      rows: logical(n) or numeric(n)
-#' @param svar_cols  svar      cols: logical(n) or numeric(n)
-#' @param fdata_rows fdata     rows: logical(n) or numeric(n)
-#' @param fdata_cols fdata     cols: logical(n) or numeric(n)
-#' @param sdata_rows sdata     rows: logical(n) or numeric(n)
-#' @param sdata_cols sdata     cols: logical(n) or numeric(n)
-#' @param transpose  logical(1)
-#' @param verbose    logical(1)
+#' @param file           character(1): name of text (txt, csv, tsv) or excel (xls, xlsx) file
+#' @param sheet          integer(1) or character(1)
+#' @param fid_rows       featureid rows: logical(n) or numeric(n)
+#' @param fid_cols       featureid cols: logical(n) or numeric(n)
+#' @param sid_rows       sampleid  rows: logical(n) or numeric(n)
+#' @param sid_cols       sampleid  cols: logical(n) or numeric(n)
+#' @param expr_rows      expr      rows: logical(n) or numeric(n)
+#' @param expr_cols      expr      rows: logical(n) or numeric(n)
+#' @param fvar_rows      fvar      rows: logical(n) or numeric(n)
+#' @param fvar_cols      fvar      cols: logical(n) or numeric(n)
+#' @param svar_rows      svar      rows: logical(n) or numeric(n)
+#' @param svar_cols      svar      cols: logical(n) or numeric(n)
+#' @param fdata_rows     fdata     rows: logical(n) or numeric(n)
+#' @param fdata_cols     fdata     cols: logical(n) or numeric(n)
+#' @param sdata_rows     sdata     rows: logical(n) or numeric(n)
+#' @param sdata_cols     sdata     cols: logical(n) or numeric(n)
+#' @param transpose      logical(1)
+#' @param verbose        logical(1)
 #' @examples
 #' require(magrittr)
 #'
 #' # METABOLON
 #' if (require(autonomics.data)){
 #'   file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'   file %>% read_omics_asis(sheet      = 2,
-#'                            fid_rows   = 11:401,    fid_cols   = 5,
-#'                            sid_rows   = 3,         sid_cols   = 15:86,
-#'                            expr_rows  = 11:401,    expr_cols  = 15:86,
-#'                            fvar_rows  = 10,        fvar_cols  = 1:14,
-#'                            svar_rows  = 1:10,      svar_cols  = 14,
-#'                            fdata_rows = 11:401,    fdata_cols = 1:14,
-#'                            sdata_rows = 1:10,      sdata_cols = 15:86,
-#'                            transpose  = FALSE)
+#'   file %>% autonomics::read_omics_asis(
+#'               sheet      = 2,
+#'               fid_rows   = 11:401,    fid_cols   = 5,
+#'               sid_rows   = 3,         sid_cols   = 15:86,
+#'               expr_rows  = 11:401,    expr_cols  = 15:86,
+#'               fvar_rows  = 10,        fvar_cols  = 1:14,
+#'               svar_rows  = 1:10,      svar_cols  = 14,
+#'               fdata_rows = 11:401,    fdata_cols = 1:14,
+#'               sdata_rows = 1:10,      sdata_cols = 15:86,
+#'               transpose  = FALSE)
 #' }
 #'
 #' # SOMASCAN
@@ -178,12 +237,13 @@ read_omics_asis <- function(
    assertive.types::assert_is_a_bool(transpose)
    
    # read
-   dt <- read_file(file, sheet)
+   fixed_no_of_cols <- count.fields(file, quote = "", sep = '\t') %>% (function(x)all(x==x[1]))
+   x <- if (fixed_no_of_cols) extract_rectangle(file, sheet=sheet) else file
    
    # Extract exprs
-   fids1  <- dt %>% extract_rectangle(fid_rows,  fid_cols,  transpose = transpose, drop = TRUE)
-   sids1  <- dt %>% extract_rectangle(sid_rows,  sid_cols,  transpose = transpose, drop = TRUE)
-   exprs1 <- dt %>% extract_rectangle(expr_rows, expr_cols, transpose = transpose) %>% (function(y){class(y) <- 'numeric'; y})
+   fids1  <- x %>% extract_rectangle(rows = fid_rows,  cols = fid_cols,  transpose = transpose, drop = TRUE)
+   sids1  <- x %>% extract_rectangle(rows = sid_rows,  cols = sid_cols,  transpose = transpose, drop = TRUE)
+   exprs1 <- x %>% extract_rectangle(rows = expr_rows, cols = expr_cols, transpose = transpose) %>% (function(y){class(y) <- 'numeric'; y})
    
    # Extract feature annotations
    #    Leave rownames(fdata1) empty: fids1 may contain non-valid values
@@ -191,8 +251,8 @@ read_omics_asis <- function(
    fdata1 <- data.frame(feature_id = fids1, stringsAsFactors = FALSE)
    fdata_available <- !is.null(fvar_rows) & !is.null(fvar_cols)
    if (fdata_available){
-      fvars1 <- dt %>% extract_rectangle(fvar_rows,  fvar_cols,  transpose = transpose, drop = TRUE)
-      fdata1 %<>% cbind(extract_rectangle(dt, fdata_rows, fdata_cols, transpose = transpose) %>%
+      fvars1 <- x %>% extract_rectangle(fvar_rows,  fvar_cols,  transpose = transpose, drop = TRUE)
+      fdata1 %<>% cbind(extract_rectangle(x, fdata_rows, fdata_cols, transpose = transpose) %>%
                            magrittr::set_colnames(fvars1) %>%
                            data.frame(stringsAsFactors = FALSE, check.names = FALSE))
    }
@@ -203,8 +263,8 @@ read_omics_asis <- function(
    sdata1 <- data.frame(sample_id = sids1, stringsAsFactors = FALSE)
    sdata_available <- !is.null(svar_rows) & !is.null(svar_cols)
    if (sdata_available){
-      svars1 <- dt %>% extract_rectangle(svar_rows,  svar_cols,  transpose =  transpose, drop = TRUE)
-      sdata1 %<>% cbind(extract_rectangle(dt, sdata_rows, sdata_cols, transpose = !transpose) %>%
+      svars1 <- x %>% extract_rectangle(svar_rows,  svar_cols,  transpose =  transpose, drop = TRUE)
+      sdata1 %<>% cbind(extract_rectangle(x, sdata_rows, sdata_cols, transpose = !transpose) %>%
                            magrittr::set_colnames(svars1) %>%
                            data.frame(stringsAsFactors = FALSE, check.names = FALSE))
    }
@@ -262,24 +322,49 @@ read_somascan_asis <- function(
    assertive.types::assert_is_a_string(sid_var)
    
    # Peak
-   dt <- autonomics::read_file(file)
-   fdata_row1 <- 1 + which(dt[[1]] == '^TABLE_BEGIN')[1]
-   fvar_col <- which(dt %>% extract_dt_row(fdata_row1) != '')[1]
-   svar_row <- which(dt[[1]] != '' &  (1:nrow(dt) > fdata_row1))[1]
-   fvars <- dt %>% extract_dt_col(fvar_col) %>% magrittr::extract(fdata_row1:svar_row)
-   svars <- dt %>% extract_dt_row(svar_row) %>% magrittr::extract(1:fvar_col-1)
-   fid_row <- fdata_row1 -1 + which(fvars == fid_var)
-   sid_col <- which(svars == sid_var)
+   content <- readLines(file)
+   n_row <- length(content)
+   n_col <- count.fields(file, quote='', sep='\t') %>% max()
    
+   f_row <- 1 + which(stringi::stri_detect_fixed(content, '^TABLE_BEGIN'))
+   
+   s_row <- content                                 %>% 
+            magrittr::extract(f_row:length(.)) %>% 
+            purrr::detect_index(function(y) stringi::stri_detect_regex(y, '^\t+', negate=TRUE)) %>% 
+            magrittr::add(f_row-1)
+   
+   f_col <- content                                    %>% 
+            magrittr::extract(f_row)                   %>% 
+            stringi::stri_extract_first_regex('^\\t+') %>% 
+            stringi::stri_count_fixed('\t')            %>% 
+            magrittr::add(1)
+   
+   fid_cols <- (1+f_col):n_col
+   fid_rows <- content                             %>% 
+               magrittr::extract(f_row:(s_row-1))  %>% 
+               stringi::stri_extract_first_words() %>% 
+               magrittr::equals(fid_var)           %>% 
+               which()                             %>% 
+               magrittr::add(f_row-1)
+   
+   
+   sid_rows <- (1+s_row):n_row
+   sid_cols <- content                           %>% 
+               magrittr::extract(s_row)          %>% 
+               stringi::stri_extract_all_words() %>% 
+               unlist()                          %>%
+               magrittr::equals(sid_var)         %>% 
+               which()
+
    # Read
    file %>% read_omics_asis(sheet      =  NULL,
-                            fid_rows   =  fid_row,                   fid_cols   = (fvar_col+1):ncol(dt),
-                            sid_rows   = (svar_row+1):nrow(dt),      sid_cols   =  sid_col,
-                            expr_rows  = (svar_row+1):nrow(dt),      expr_cols  = (fvar_col+1):ncol(dt),
-                            fvar_rows  =  fdata_row1:(svar_row-1),   fvar_cols  =  fvar_col,
-                            fdata_rows =  fdata_row1:(svar_row-1),   fdata_cols = (fvar_col+1):ncol(dt),
-                            svar_rows  =  svar_row,                  svar_cols  = 1:(fvar_col-1),
-                            sdata_rows = (svar_row+1):nrow(dt),      sdata_cols = 1:(fvar_col-1),
+                            fid_rows   =  fid_rows,         fid_cols   =  fid_cols,
+                            sid_rows   =  sid_rows,         sid_cols   =  sid_cols,
+                            expr_rows  = (s_row+1):n_row,   expr_cols  = (f_col+1):n_col,
+                            fvar_rows  =  f_row:(s_row-1),  fvar_cols  =  f_col,
+                            fdata_rows =  f_row:(s_row-1),  fdata_cols  = (f_col+1):n_col,
+                            svar_rows  =  s_row,            svar_cols  = 1:(f_col-1),
+                            sdata_rows = (s_row+1):n_row,   sdata_cols = 1:(f_col-1),
                             transpose  = TRUE,
                             verbose    = TRUE)
 }
@@ -556,7 +641,7 @@ explicitly_compute_precision_weights_once <- function(
 #' @export
 read_exiqon_asis <- function(file){
    assertive.files::assert_all_are_existing_files(file)
-   dt <- read_file(file, sheet=1)
+   dt <- extract_rectangle(file, sheet=1)
    file %>% read_omics_asis(sheet = 1,
                             fid_rows   = 1,                       fid_cols   = 2:(ncol(dt)-2),
                             sid_rows   = 2:(nrow(dt)-3),          sid_cols   = 1,

@@ -16,8 +16,8 @@ analyze_contrasts(object, result_dir = default_result_dir(object),
   min_set_size = 5, max_set_size = Inf, ...)
 
 analyze_eset(object, result_dir = default_result_dir(object),
-  contrasts = autonomics.find::default_contrasts(object),
   design = autonomics.import::create_design_matrix(object),
+  contrasts = autonomics.find::default_contrasts(object),
   topdef = autonomics.find::default_topdef(object), universe = NULL,
   dodge_width = 0, do_pca = TRUE,
   cluster_features = default_cluster_features(),
