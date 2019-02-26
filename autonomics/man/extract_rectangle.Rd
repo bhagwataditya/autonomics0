@@ -2,13 +2,17 @@
 % Please edit documentation in R/read_omics_asis.R
 \name{extract_rectangle}
 \alias{extract_rectangle}
-\alias{extract_rectangle.data.frame}
-\title{Extract rectangle from omics file or datatable}
+\alias{extract_rectangle.data.table}
+\alias{extract_rectangle.matrix}
+\title{Extract rectangle from omics file, data.table, or matrix}
 \usage{
 extract_rectangle(x, ...)
 
-\method{extract_rectangle}{data.frame}(x, rows, cols, transpose = FALSE,
-  drop = FALSE, ...)
+\method{extract_rectangle}{data.table}(x, rows = 1:nrow(x),
+  cols = 1:ncol(x), transpose = FALSE, drop = FALSE, ...)
+
+\method{extract_rectangle}{matrix}(x, rows = 1:nrow(x),
+  cols = 1:ncol(x), transpose = FALSE, drop = FALSE, ...)
 }
 \arguments{
 \item{x}{omics datafile or datatable}
@@ -29,7 +33,7 @@ extract_rectangle(x, ...)
 data.table
 }
 \description{
-Extract rectangle from omics file or datatable
+Extract rectangle from omics file, data.table, or matrix
 }
 \examples{
 require(magrittr)

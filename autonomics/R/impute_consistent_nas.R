@@ -72,7 +72,7 @@ impute_common_nas <- function(
 #' @return SummarizedExperiment with updated exprs
 #' @importFrom magrittr %>%
 #' @export
-impute_consistent_nas = function(
+impute_consistent_nas <- function(
    object,
    imputefun    = function(x) imputeLCMD::impute.QRILC(x)[[1]],
    svar         = 'subgroup',

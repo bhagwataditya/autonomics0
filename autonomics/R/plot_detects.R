@@ -46,17 +46,21 @@ plot_detects_per_subgroup <- function(
    partialdetects <- split_objects %>% vapply(function(x) x %>% autonomics.import::is_na()      %>% matrixStats::rowAnys() %>% sum(), numeric(1)) %>% 
                      magrittr::subtract(nondetects)
    fulldetects    <- nrow(object) - partialdetects - imputes - nondetects
-   plot_dt <- data.table::data.table(subgroup       = names(split_objects) %>% factor(autonomics.import::slevels(object, svar)), 
-                                     fulldetects    = fulldetects, 
-                                     partialdetects = partialdetects,
-                                     nondetects     = nondetects + imputes) %>% 
-              data.table::melt(id.vars = 'subgroup') %>% 
-              magrittr::extract(, variable := factor(variable, c('nondetects', 'partialdetects', 'fulldetects')))
+   plot_dt <- data.table::data.table(subgroup       = names(split_objects) %>% factor(autonomics.import::slevels(object, svar)))
+   if (fulldetects   !=0)  plot_dt %<>% magrittr::extract(,  fulldetects    := fulldetects)
+   if (partialdetects!=0)  plot_dt %<>% magrittr::extract(,  partialdetects := partialdetects)
+   if (nondetects    !=0)  plot_dt %<>% magrittr::extract(,  nondetects     := nondetects + imputes)
+   plot_dt %<>% data.table::melt(id.vars = 'subgroup')
+   
+   # Set order of variable levels
+   variable_levels <- c('nondetects', 'partialdetects', 'fulldetects') %>%  
+                      magrittr::extract(.%in% plot_dt$variable)
+   plot_dt$variable %<>% factor(variable_levels)
    
    # Plot
    title <- if        ( all(imputes==0) & !all(nondetects==0)){ 'fulldetects  |  partialdetects  |  nondetects' 
             } else if (!all(imputes==0) &  all(nondetects==0)){ 'fulldetects  |  partialdetects  |  imputed nondetects'
-            } else {stop('something wrong here: imputes and nondetects are both nonzero')}
+            } else if ( all(imputes==0) &  all(nondetects==0)){ 'fulldetects  |  partialdetects'}
    ggplot2::ggplot(plot_dt, ggplot2::aes(x=forcats::fct_rev(subgroup), y = value, fill = subgroup, group = variable)) +
    ggplot2::ggtitle(title) + ggplot2::theme_bw() +
    ggplot2::geom_col(color = 'black', position = ggplot2::position_stack()) +

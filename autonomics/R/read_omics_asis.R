@@ -23,7 +23,7 @@ ncols <- function(x, sheet=1){
 # extract_rectangle
 #=================================================
 
-#' Extract rectangle from omics file or datatable
+#' Extract rectangle from omics file, data.table, or matrix
 #' 
 #' @param x          omics datafile or datatable
 #' @param sheet      numeric(1) or character(1)
@@ -55,10 +55,12 @@ extract_rectangle <- function(x, ...){
 #' @export
 extract_rectangle.character <- function(
    x, 
-   sheet   = 1,
-   rows    = 1:nrows(x, sheet=sheet),
-   cols    = 1:ncols(x, sheet=sheet), 
-   verbose = FALSE, 
+   sheet     = 1,
+   rows      = 1:nrows(x, sheet=sheet),
+   cols      = 1:ncols(x, sheet=sheet), 
+   verbose   = FALSE, 
+   transpose = FALSE,
+   drop      = FALSE,
    ...
 ){
    
@@ -88,12 +90,9 @@ extract_rectangle.character <- function(
                               select     = col1:coln)
          }
    
-   # Make into rectangular matrix
-   rectangle <- dt %>% as.matrix()
-   if (transpose) rectangle %<>% t()
-   if (drop) if (nrow(rectangle)==1 | ncol(rectangle)==1) rectangle %<>% as.vector('character')
-   rectangle
-   
+   # Extract rectangle
+   dt %>% extract_rectangle.data.table(transpose = transpose, drop = drop)
+
 }
 
 # Extract row
@@ -104,16 +103,33 @@ extract_dt_col <- function(dt, i) dt[[i]]
 #' @rdname extract_rectangle
 #' @importFrom magrittr %<>% %>% 
 #' @export
-extract_rectangle.data.frame <- function(
+extract_rectangle.data.table <- function(
    x, 
-   rows, 
-   cols, 
+   rows = 1:nrow(x), 
+   cols = 1:ncol(x), 
    transpose = FALSE, 
    drop = FALSE, 
    ...
 ){
-   x %<>% magrittr::extract(rows, cols, with = FALSE)
-   rectangle <- x %>% as.matrix()
+   x %>% 
+   magrittr::extract(rows, cols, with = FALSE) %>% 
+   as.matrix() %>% 
+   extract_rectangle.matrix(transpose = transpose, drop = drop)
+}
+
+
+#' @rdname extract_rectangle
+#' @importFrom magrittr %<>% %>% 
+#' @export
+extract_rectangle.matrix <- function(
+   x, 
+   rows      = 1:nrow(x), 
+   cols      = 1:ncol(x),
+   transpose = FALSE, 
+   drop      = FALSE, 
+   ...
+){
+   rectangle <- x %>% magrittr::extract(rows, cols, drop = FALSE)
    if (transpose) rectangle %<>% t()
    if (drop) if (nrow(rectangle)==1 | ncol(rectangle)==1) rectangle %<>% as.vector('character')
    rectangle
@@ -238,7 +254,7 @@ read_omics_asis <- function(
    
    # read
    fixed_no_of_cols <- count.fields(file, quote = "", sep = '\t') %>% (function(x)all(x==x[1]))
-   x <- if (fixed_no_of_cols) extract_rectangle(file, sheet=sheet) else file
+   x <- if (fixed_no_of_cols) extract_rectangle.character(file, sheet=sheet) else file
    
    # Extract exprs
    fids1  <- x %>% extract_rectangle(rows = fid_rows,  cols = fid_cols,  transpose = transpose, drop = TRUE)
