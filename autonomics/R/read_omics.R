@@ -329,14 +329,6 @@ read_omics_asis <- function(
 #' @param file                   character(1): path to *.adat file
 #' @param fid_var                character(1): feature id variable
 #' @param sid_var                character(1): sample id variable
-#' @param filter_sample_type     character(.): sample  types to be filtered for.     Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').
-#' @param filter_feature_type    character(.): feature types to be filtered for.     Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').
-#' @param filter_sample_quality  character(.): sample  qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')
-#' @param filter_feature_quality character(.): feature qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')
-#' @param rm_na_svars            logical(1)  : whether to rm NA svars
-#' @param rm_single_value_svars  logical(1)  : whether to rm single value svars
-#' @param infer_design           logical(1)  : whether to infer design from sampleids
-#' @param log2transform          logical(1)  : whether to log2 transform
 #' @return Summarizedexperiment
 #' @seealso prepare_somascan
 #' @examples
