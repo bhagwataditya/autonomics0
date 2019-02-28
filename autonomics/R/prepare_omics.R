@@ -292,10 +292,12 @@ prepare_somascan <- function(
       }
 
    # subgroup
-      assertive::assert_all_are_non_missing_nor_empty_character(object %>% autonomics.import::svalues(subgroup_var))
-      autonomics.import::sdata(object) %<>% (function(x){
-                                               x$subgroup <- x[[subgroup_var]]; 
-                                               x %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
+      if (autonomics.support::all_svalues_available(object, subgroup_var)){
+         assertive::assert_all_are_non_missing_nor_empty_character(object %>% autonomics.import::svalues(subgroup_var))
+         autonomics.import::sdata(object) %<>% (function(x){
+                                                  x$subgroup <- x[[subgroup_var]]; 
+                                                  x %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
+      }
 
    # Select
       if (rm_na_svars)            autonomics.import::sdata(object) %<>% autonomics.support::rm_na_columns()
