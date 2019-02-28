@@ -7,8 +7,8 @@
 prepare_somascan(object, filter_sample_type = "Sample",
   filter_feature_type = "Protein", filter_sample_quality = c("FLAG",
   "PASS"), filter_feature_quality = c("FLAG", "PASS"),
-  subgroup_var = "SampleGroup", rm_na_svars = TRUE,
-  rm_single_value_svars = TRUE, log2transform = TRUE)
+  rm_na_svars = TRUE, rm_single_value_svars = TRUE,
+  log2transform = TRUE)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -36,8 +36,8 @@ Summarizedexperiment
 Prepare somascan
 }
 \examples{
-require(magrittr)
 if (require(autonomics.data)){
+   require(magrittr)
    object <- 'extdata/stemcomp/soma/stemcomp.adat' \%>\% 
               system.file(package = 'autonomics.data') \%>\% 
               read_somascan()

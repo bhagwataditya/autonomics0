@@ -27,34 +27,33 @@ character(1): value from names(maxquant_patterns)
 charactervector, dataframe, or SummarizedExperiment.
 }
 \examples{
-require(magrittr)
+if (require(autonomics.data)){
+   require(magrittr)
 
-# file
-   x <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
-         system.file(package = 'autonomics.data')
-   guess_maxquant_quantity(x)
+   # file
+      x <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
+            system.file(package = 'autonomics.data')
+      guess_maxquant_quantity(x)
 
-# charactervector
-    guess_maxquant_quantity("Ratio M/L normalized STD(L)_EM00(M)_EM01(H)_R1")
-    guess_maxquant_quantity("Ratio M/L STD(L)_EM00(M)_EM01(H)_R1")
-    guess_maxquant_quantity("LFQ intensity EM00.R1")
-    guess_maxquant_quantity("Reporter intensity corrected 0 STD(0)EM00(1)EM01(2)_R1")
-    guess_maxquant_quantity("Reporter intensity 0 STD(0)EM00(1)EM01(2)_R1")
-    guess_maxquant_quantity("Intensity H STD(L)_EM00(M)_EM01(H)_R1")
+   # charactervector
+       guess_maxquant_quantity("Ratio M/L normalized STD(L)_EM00(M)_EM01(H)_R1")
+       guess_maxquant_quantity("Ratio M/L STD(L)_EM00(M)_EM01(H)_R1")
+       guess_maxquant_quantity("LFQ intensity EM00.R1")
+       guess_maxquant_quantity("Reporter intensity corrected 0 STD(0)EM00(1)EM01(2)_R1")
+       guess_maxquant_quantity("Reporter intensity 0 STD(0)EM00(1)EM01(2)_R1")
+       guess_maxquant_quantity("Intensity H STD(L)_EM00(M)_EM01(H)_R1")
 
-# dataframe
-    if (require(autonomics.data)){
+   # dataframe
+       x <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
+             system.file(package = 'autonomics.data') \%>\%
+             data.table::fread()
+       guess_maxquant_quantity(x)
+
+   # SummarizedExperiment
       x <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data') \%>\%
-            data.table::fread()
+            read_proteingroups(standardize_snames = FALSE,
+                               demultiplex_snames = FALSE)
       guess_maxquant_quantity(x)
-    }
-
-# SummarizedExperiment
-    if (require(autonomics.data)){
-      x <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
-            system.file(package = 'autonomics.data') \%>\%
-            read_proteingroups()
-      guess_maxquant_quantity(x)
-    }
+}
 }

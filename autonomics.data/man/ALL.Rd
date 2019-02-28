@@ -4,7 +4,7 @@
 \name{ALL}
 \alias{ALL}
 \title{Annotated and autonomics-ready version of ALL data}
-\format{An object of class \code{ExpressionSet} with 8596 rows and 125 columns.}
+\format{An object of class \code{ExpressionSet} with 8585 rows and 125 columns.}
 \usage{
 ALL
 }

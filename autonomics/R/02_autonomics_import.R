@@ -74,6 +74,58 @@ NULL
 NULL
 
 
+#' read_exiqon
+#' 
+#' \code{\link[autonomics.import]{read_exiqon}}
+#' @name read_exiqon
+#' @importFrom autonomics.import  read_exiqon
+#' @export read_exiqon
+NULL
+
+
+#' read_metabolon
+#' 
+#' \code{\link[autonomics.import]{read_metabolon}}
+#' @name read_metabolon
+#' @importFrom autonomics.import  read_metabolon
+#' @export read_metabolon
+NULL
+
+
+#' read_proteingroups
+#' 
+#' \code{\link[autonomics.import]{read_proteingroups}}
+#' @name read_proteingroups
+#' @importFrom autonomics.import  read_proteingroups
+#' @export read_proteingroups
+NULL
+
+#' read_phosphosites
+#' 
+#' \code{\link[autonomics.import]{read_phosphosites}}
+#' @name read_phosphosites
+#' @importFrom autonomics.import  read_phosphosites
+#' @export read_phosphosites
+NULL
+
+#' read_rnaseq
+#' 
+#' \code{\link[autonomics.import]{read_rnaseq}}
+#' @name read_rnaseq
+#' @importFrom autonomics.import  read_rnaseq
+#' @export read_rnaseq
+NULL
+
+
+#' read_somascan
+#' 
+#' \code{\link[autonomics.import]{read_somascan}}
+#' @name read_somascan
+#' @importFrom autonomics.import  read_somascan
+#' @export read_somascan
+NULL
+
+
 #' sdata
 #' 
 #' \code{\link[autonomics.import]{sdata}}

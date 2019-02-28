@@ -15,6 +15,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     assertive.base,
+    assertive.files,
     assertive.numbers,
     assertive.properties,
     assertive.reflection,
@@ -31,7 +32,9 @@ Imports:
     magrittr,
     matrixStats,
     methods,
+    purrr,
     reshape2,
+    readxl,
     rlang,
     stringi, 
     S4Vectors,

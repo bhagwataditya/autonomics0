@@ -1,91 +1,220 @@
-
-#======================
-# METABOLON
-#======================
-
-#' Prepare metabolon sumexp for analysis
-#' @param object                        SummarizedExperiment
-#' @param log2transform                 logical: whether to log2 transform
-#' @param qirlc_consistent_nondetects   logical(1)
-#' @param add_kegg_pathways             logical(1): whether to add KEGG pathways to fdata
-#' @param add_smiles                    logical(1): whether to add SMILES to fdata
-#' @return SummarizedExperiment
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    object <- 'extdata/glutaminase/glutaminase.xlsx' %>%
-#'               system.file(package = 'autonomics.data') %>% 
-#'               read_metabolon()
-#'    object %>% prepare_metabolon()
-#' }
-#' @importFrom magrittr %>%
-#' @export
-prepare_metabolon <- function(
-   object,
-   log2transform          = TRUE,
-   impute_consistent_nas  = FALSE,
-   add_kegg_pathways      = FALSE,
-   add_smiles             = FALSE
-){
-   # Satisfy CHECK
-   . <- NULL
-   
-   object <- file %>% read_metabolon_asis(sheet = sheet, fid_var = fid_var, sid_var = sid_var)
-   
-   # exprs
-   if (log2transform) object %<>% log2transform(verbose = TRUE)
-   
-   # Impute consistent nas (in intensity data)
-   if (impute_consistent_nas) object %<>% autonomics::impute_consistent_nas()
-   
-   # fdata
-   if (add_kegg_pathways) object %<>% autonomics::kegg_entry_to_pathways(entry_var = 'KEGG',    pathway_var = 'KEGGPATHWAY')
-   if (add_smiles)        object %<>% autonomics::pubchem_to_smiles(   pubchem_var = 'PUBCHEM', smiles_var  = 'SMILES')
-
-   # Return
-   object
-}
-
-
-
-
 #==========================================================
 # RNASEQ
 #==========================================================
 
-#' Read rnaseq counts
-#' @param file                                      character(1): path to rnaseq counts file
-#' @param fid_var                                   character(1): feature id variable
-#' @param filter_exprs_replicated_in_some_subgroup  logical(1)
-#' @param plot logical(1)
+#' @rdname counts_to_cpm
+#' @export
+libsizes <- function(counts){
+   colSums(counts) * edgeR::calcNormFactors(counts)
+}
+
+#' Convert between counts and cpm (counts per million scaled reads)
+#' @param counts    count matrix
+#' @param cpm       cpm matrix (counts per million scaled reads)
+#' @param lib.size  scaled library sizes (vector)
+#' @param verbose   logical(1)
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>% 
-#'             system.file(package = 'autonomics.data')
-#'    file %>% autonomics::read_rnaseq_asis()
-#'    file %>% autonomics::read_rnaseq()
+#'    counts <- system.file('extdata/stemdiff/rnaseq/gene_counts.txt', 
+#'                           package = 'autonomics.data') %>% 
+#'              read_rnaseq() %>%
+#'              autonomics::exprs()
+#'    lib.size <- counts %>% libsizes()
+#'    cpm      <- counts %>% counts_to_cpm(lib.size)
+#'    counts2  <- cpm    %>% cpm_to_counts(lib.size)
+#'    sum(counts-counts2)
 #' }
-#' if (require(subramanian.2016)){
-#'    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
-#'    file %>% autonomics::read_rnaseq_asis()
-#'    file %>% autonomics::read_rnaseq()
+#' @return cpm matrix
+#' @export
+counts_to_cpm <- function(counts, lib.size = libsizes(counts), verbose = FALSE){
+   if (verbose)  message('\t\tTMM normalize exprs: counts -> cpm')
+   t(t(counts + 0.5)/(lib.size + 1) * 1e+06)
+}
+
+#' @rdname counts_to_cpm
+#' @export
+cpm_to_counts <- function(cpm, lib.size){
+   1e-06 * t(t(cpm) * (lib.size + 1)) - 0.5
+}
+
+#' @importFrom    magrittr %>%
+compute_precision_weights_once <- function(
+   object,
+   design = object %>% autonomics.import::create_design_matrix(),
+   plot   = TRUE,
+   ...
+){
+   # Compute
+   counts   <- object %>% autonomics.import::counts()
+   lib.size <- counts %>% libsizes()
+   counts %>% limma::voom(design = design, lib.size = lib.size, plot = plot, ...) %>%
+      magrittr::extract2('weights') %>%
+      magrittr::set_rownames(rownames(object)) %>%
+      magrittr::set_colnames(colnames(object))
+}
+
+#' Does object contain subgroup replicates?
+#' @param object SummarizedExperiment
+#' @return logical
+#' @importFrom magrittr %>%
+#' @export
+contains_replicates <- function(object){
+   if (!'subgroup' %in% autonomics.import::svars(object)) return(FALSE)
+   autonomics.import::sdata(object)$subgroup %>% duplicated() %>% any()
+}
+
+#' Create design for voom transformation
+#' @param object SummarizedExperiment
+#' @param verbose logical(1)
+#' @return NULL (if no replicates) or design matrix
+#' @export
+create_voom_design <- function(object, verbose = TRUE){
+   
+   # Replicates
+   if (contains_replicates(object)) return(autonomics.import::create_design_matrix(object))
+   
+   # No replicates
+   autonomics.support::cmessage('\t\t\tsubgroup values not replicated: voom(design=NULL)')
+   return(NULL)
+   
+}
+
+#' Log2 transform
+#' @param object SummarizedExperiment
+#' @param verbose logical(1)
+#' @return Updated SummarizedExperiment
+#' @importFrom magrittr %<>%
+#' @export
+log2transform <- function(object, verbose = FALSE){
+   if (verbose) message('\t\tLog2 transform')
+   autonomics.import::exprs(object) %<>% log2()
+   return(object)
+}
+
+#' Compute voom precision weights
+#' @param object  SummarizedExperiment: exprs(.) with log2cpm, counts(.) with raw counts.
+#' @param design  design matrix
+#' @param plot    logical
+#' @param verbose logical(1)
+#' @param ...     passed to limma::voom() -> limma::lmFit()
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- 'extdata/stemdiff/rnaseq/gene_counts.txt'  %>%
+#'               system.file(package = 'autonomics.data')  %>%
+#'               read_rnaseq()
+#'    autonomics.import::counts(object) <- autonomics.import::exprs(object)
+#'    object %>% compute_precision_weights() %>% extract(1:3, 1:3)
+#' }
+#' @importFrom magrittr %>%
+#' @export
+compute_precision_weights <- function(
+   object,
+   design  = object %>% create_voom_design(),
+   plot    = TRUE,
+   verbose = FALSE
+){
+   
+   # Assert & message
+   assertive.properties::assert_is_not_null(autonomics.import::counts(object))
+   if (verbose) autonomics.support::cmessage('\t\tCompute and add precision weights')
+   
+   # Estimate precision weights
+   has_block <- autonomics.import::has_complete_block_values(object)
+   weights <- object %>% compute_precision_weights_once(design = design, plot = !has_block)
+   
+   # Update precision weights using block correlation
+   if (has_block){
+      correlation <- autonomics.import::counts(object) %>% counts_to_cpm() %>% log2() %>%
+         limma::duplicateCorrelation(design = design, block = object$block, weights = weights) %>%
+         magrittr::extract2('consensus')
+      weights <- object %>% compute_precision_weights_once(design      = design,
+                                                           block       = object$block,
+                                                           correlation = correlation,
+                                                           plot        = TRUE)
+   }
+   
+   # Return
+   dimnames(weights) <- dimnames(object)
+   weights
+}
+
+#' @importFrom magrittr %>%
+explicitly_compute_precision_weights_once <- function(
+   object,
+   design = object %>% create_voom_design(),
+   plot   = TRUE,
+   ...
+){
+   
+   # Extract
+   log2cpm  <- autonomics.import::exprs(object)
+   lib.size <- autonomics.import::sdata(object)$libsize
+   
+   # Assert
+   n <- nrow(log2cpm)
+   if (n < 2L) stop("Need at least two genes to fit a mean-variance trend")
+   
+   # Fit linear model
+   fit <- limma::lmFit(log2cpm, design=design, ...)
+   
+   # Predict
+   if (is.null(fit$Amean)) fit$Amean <- rowMeans(log2cpm, na.rm = TRUE)
+   if (fit$rank < ncol(design)) {
+      j <- fit$pivot[1:fit$rank]
+      fitted.log2cpm <- fit$coef[, j, drop = FALSE] %*% t(fit$design[,j, drop = FALSE])
+   } else {
+      fitted.log2cpm <- fit$coef %*% t(fit$design)
+   }
+   fitted.log2count <- (2^fitted.log2cpm) %>% cpm_to_counts(lib.size) %>% log2()
+   
+   # Fit mean-variance trend
+   mean.log2count <- fit$Amean + mean(log2(lib.size + 1)) - log2(1e+06)  # mean log2 count
+   sdrt.log2count <- sqrt(fit$sigma)                                     # sqrtsd(resid)
+   all.identical <- matrixStats::rowVars(log2cpm)==0
+   if (any(all.identical)) {
+      mean.log2count <- mean.log2count[!all.identical]
+      sdrt.log2count <- sdrt.log2count[!all.identical]
+   }
+   l <- stats::lowess(mean.log2count, sdrt.log2count, f = 0.5)
+   f <- stats::approxfun(l, rule = 2)
+   
+   # Compute precision weights
+   w <- 1/f(fitted.log2count)^4     # f(.) = sqrt(sd(.)) --> f(.)^4 = var(.)
+   dim(w) <- dim(fitted.log2count)
+   
+   # Plot
+   if (plot) {
+      plot(mean.log2count, sdrt.log2count, xlab = "mean log2count", ylab = "sdrt log2count",
+           pch = 16, cex = 0.25)
+      graphics::title("voom: Mean-variance trend")
+      graphics::lines(l, col = "red")
+   }
+   
+   # Return
+   return(w)
+}
+
+#' Prepare rnaseq counts for analysis
+#' @param object SummarizedExperiment
+#' @param filter_exprs_replicated_in_some_subgroup  logical
+#' @param plot logical
+#' @examples
+#' if (require(autonomics.data)){
+#'    require(magrittr)
+#'    object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>% 
+#'               system.file(package = 'autonomics.data') %>% 
+#'               autonomics::read_rnaseq()
+#'    object %>% autonomics::prepare_rnaseq()
 #' }
 #' @export
-read_rnaseq <- function(
-   file,
-   fid_var                                  = 'gene_id', 
+prepare_rnaseq <- function(
+   object,
    filter_exprs_replicated_in_some_subgroup = FALSE, 
    plot                                     = TRUE
 ){
    
-   # Read
-   autonomics.support::cmessage('\t\tRead counts')
-   object <- read_rnaseq_asis(file, fid_var = fid_var)
-   
-   # Sdata
-   autonomics.import::sdata(object)$subgroup <- object %>% autonomics.import::guess_subgroup_values(verbose = TRUE)
-
    # Exprs
      # Filter nonzero in some sample
        object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample(verbose = TRUE)
@@ -115,31 +244,30 @@ read_rnaseq <- function(
 }
 
 
-
 #===========================================================
 # EXIQON
 #===========================================================
 
-#' Read exiqon
-#' @param file                         character(1): path to exiqon (GenEx) file
-#' @param filter_features              character(1): fvar expression on which to filter features
-#' @param align_sample_means           logical(1)
-#' @param lod                          numeric(1): Ct value beyond which to consider signal as NA
-#' @param qrilc_consistent_nondetects  logical(1)
-#' @param filter_conserved_in_human    logical(1)
-#' @param plot                         logical(1)
-#' @param verbose                      logical(1)
+#' Prepare exiqon sumexp for analysis
+#' @param filter_features              string: fvar condition on which to filter features
+#' @param align_sample_means           logical
+#' @param lod                          number: Ct value beyond which to consider signal as NA
+#' @param qrilc_consistent_nondetects  logical
+#' @param filter_conserved_in_human    logical
+#' @param plot                         logical
+#' @param verbose                      logical
 #' @examples
-#' require(magrittr)
 #' if (require(subramanian.2016)){
-#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx', package = 'subramanian.2016')
-#'    file %>% autonomics::read_exiqon_asis()
-#'    file %>% autonomics::read_exiqon(lod = 36)
+#'    require(magrittr)
+#'    object <- 'extdata/exiqon/subramanian.2016.exiqon.xlsx' %>% 
+#'               system.file(package = 'subramanian.2016')    %>% 
+#'               read_exiqon()
+#'    object %>% prepare_exiqon(lod = 36)
 #' }
 #' @importFrom magrittr %>%
 #' @export
-read_exiqon <- function(
-   file,
+prepare_exiqon <- function(
+   object,
    filter_features             = '`#RefGenes`==0 & `#Spike`   ==0',
    align_sample_means          = TRUE,
    lod                         = 37,
@@ -152,10 +280,6 @@ read_exiqon <- function(
    # Check
    #------
    number <- NULL
-   
-   # Read 
-   #-----
-   object <- read_exiqon_asis(file)
    
    # Plot function
    #--------------
@@ -208,9 +332,8 @@ read_exiqon <- function(
    object
    
 }
+
    
-
-
 #============================================================
 # SOMASCAN
 #============================================================
@@ -228,8 +351,8 @@ read_exiqon <- function(
 #' @param log2transform          logical(1)  : whether to log2 transform
 #' @return Summarizedexperiment
 #' @examples
-#' require(magrittr)
 #' if (require(autonomics.data)){
+#'    require(magrittr)
 #'    object <- 'extdata/stemcomp/soma/stemcomp.adat' %>% 
 #'               system.file(package = 'autonomics.data') %>% 
 #'               read_somascan()
@@ -245,7 +368,6 @@ prepare_somascan <- function(
    filter_feature_type     = 'Protein',
    filter_sample_quality   = c('FLAG', 'PASS'),
    filter_feature_quality  = c('FLAG', 'PASS'),
-   subgroup_var            = 'SampleGroup',
    rm_na_svars             = TRUE,
    rm_single_value_svars   = TRUE,
    log2transform           = TRUE
@@ -255,7 +377,7 @@ prepare_somascan <- function(
    
    # Assert
       assertive.types::assert_is_character(c(filter_sample_type, filter_feature_type, filter_sample_quality, filter_feature_quality))
-      assertive.types::assert_is_logical(c(rm_na_svars, rm_single_value_svars, infer_design, log2transform))
+      assertive.types::assert_is_logical(c(rm_na_svars, rm_single_value_svars, log2transform))
 
    # Filter
       if ('SampleType' %in% autonomics.import::svars(object)){ # sample type - older versions don't have it
@@ -280,14 +402,6 @@ prepare_somascan <- function(
          message('\t\t=========================================================================')
       }
 
-   # subgroup
-      if (autonomics.support::all_svalues_available(object, subgroup_var)){
-         assertive::assert_all_are_non_missing_nor_empty_character(object %>% autonomics.import::svalues(subgroup_var))
-         autonomics.import::sdata(object) %<>% (function(x){
-                                                  x$subgroup <- x[[subgroup_var]]; 
-                                                  x %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
-      }
-
    # Select
       if (rm_na_svars)            autonomics.import::sdata(object) %<>% autonomics.support::rm_na_columns()
       if (rm_single_value_svars)  autonomics.import::sdata(object) %<>% autonomics.support::rm_single_value_columns()
@@ -296,6 +410,42 @@ prepare_somascan <- function(
       if (log2transform) object %<>% log2transform(verbose = TRUE)
 
    # Return
+   object
+}
+
+
+#======================
+# METABOLON
+#======================
+
+#' Prepare metabolon sumexp for analysis
+#' @param object                        SummarizedExperiment
+#' @param log2transform                 logical: whether to log2 transform
+#' @param qirlc_consistent_nondetects   logical(1)
+#' @param add_kegg_pathways             logical(1): whether to add KEGG pathways to fdata
+#' @param add_smiles                    logical(1): whether to add SMILES to fdata
+#' @return SummarizedExperiment
+#' @examples
+#' if (require(autonomics.data)){
+#'    require(magrittr)
+#'    object <- 'extdata/glutaminase/glutaminase.xlsx' %>%
+#'               system.file(package = 'autonomics.data') %>% 
+#'               read_metabolon()
+#'    object %>% prepare_metabolon()
+#' }
+#' @importFrom magrittr %>%
+#' @export
+prepare_metabolon <- function(
+   object,
+   log2transform          = TRUE,
+   impute_consistent_nas  = FALSE,
+   add_kegg_pathways      = FALSE,
+   add_smiles             = FALSE
+){
+   if (log2transform)         object %<>% log2transform(verbose = TRUE)
+   if (impute_consistent_nas) object %<>% autonomics::impute_consistent_nas()
+   if (add_kegg_pathways)     object %<>% autonomics::kegg_entry_to_pathways(entry_var = 'KEGG',    pathway_var = 'KEGGPATHWAY')
+   if (add_smiles)            object %<>% autonomics::pubchem_to_smiles(   pubchem_var = 'PUBCHEM', smiles_var  = 'SMILES')
    object
 }
 

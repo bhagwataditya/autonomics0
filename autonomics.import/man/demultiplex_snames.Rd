@@ -16,7 +16,9 @@ demultiplex_snames(x, ...)
 \arguments{
 \item{x}{character vector or SummarizedExperiment}
 
-\item{verbose}{logical(1)}
+\item{...}{allow for S3 dispatch}
+
+\item{verbose}{logical}
 }
 \description{
 For charactervector or SummarizedExperiment

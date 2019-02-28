@@ -4,7 +4,7 @@
 \alias{standardize_maxquant_snames}
 \alias{standardize_maxquant_snames.character}
 \alias{standardize_maxquant_snames.SummarizedExperiment}
-\title{Clean maxquant snames}
+\title{Standardize maxquant snames}
 \usage{
 standardize_maxquant_snames(x, ...)
 
@@ -44,7 +44,7 @@ require(magrittr)
 if (require(autonomics.data)){
      x <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
            system.file(package = 'autonomics.data')     \%>\%
-           read_proteingroups(standardize_snames = FALSE, 
+           read_proteingroups(standardize_snames = FALSE,
                               demultiplex_snames = FALSE)
      x \%>\% standardize_maxquant_snames(verbose = TRUE)
 }
