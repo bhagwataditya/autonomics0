@@ -3,11 +3,8 @@
 # METABOLON
 #======================
 
-#' Read metabolon
-#' @param file                          character(1): path to metabolon xlsx file
-#' @param sheet                         character(1) or numeric(1): xls sheet name or number
-#' @param fid_var                       character(1): feature id variable
-#' @param sid_var                       character(1): sample id variable
+#' Prepare metabolon sumexp for analysis
+#' @param object                        SummarizedExperiment
 #' @param log2transform                 logical: whether to log2 transform
 #' @param qirlc_consistent_nondetects   logical(1)
 #' @param add_kegg_pathways             logical(1): whether to add KEGG pathways to fdata
@@ -16,18 +13,15 @@
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>%
-#'             system.file(package = 'autonomics.data')
-#'    file %>% read_metabolon_asis()
-#'    file %>% read_metabolon()
+#'    object <- 'extdata/glutaminase/glutaminase.xlsx' %>%
+#'               system.file(package = 'autonomics.data') %>% 
+#'               read_metabolon()
+#'    object %>% prepare_metabolon()
 #' }
 #' @importFrom magrittr %>%
 #' @export
-read_metabolon <- function(
-   file,
-   sheet                  = 2,
-   fid_var                = 'COMP_ID',
-   sid_var                = 'CLIENT_IDENTIFIER',
+prepare_metabolon <- function(
+   object,
    log2transform          = TRUE,
    impute_consistent_nas  = FALSE,
    add_kegg_pathways      = FALSE,
@@ -36,10 +30,6 @@ read_metabolon <- function(
    # Satisfy CHECK
    . <- NULL
    
-   # Read
-   all_sheets <- readxl::excel_sheets(file)
-   cur_sheet <- all_sheets %>% (function(x){ names(x) <- x; x}) %>% magrittr::extract2(sheet)
-   autonomics.support::cmessage('\t\tRead  %s  %s', basename(file), cur_sheet)
    object <- file %>% read_metabolon_asis(sheet = sheet, fid_var = fid_var, sid_var = sid_var)
    
    # exprs

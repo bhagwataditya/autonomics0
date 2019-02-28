@@ -4,7 +4,7 @@
 
 nrows <- function(x, sheet=1){
    if (tools::file_ext(x) %in% c('xls', 'xlsx')){
-      x %>% readxl::read_excel(sheet = sheet, .name_repair = 'minimal') %>%  nrow()
+      x %>% readxl::read_excel(sheet = sheet, .name_repair = 'minimal', col_names = FALSE) %>%  nrow()
    } else {
       x %>% readLines(warn=FALSE) %>% length()
    }
@@ -13,7 +13,7 @@ nrows <- function(x, sheet=1){
 
 ncols <- function(x, sheet=1){
    if (tools::file_ext(x) %in% c('xls', 'xlsx')){
-      x %>% readxl::read_excel(sheet=sheet, .name_repair = 'minimal') %>% ncol()
+      x %>% readxl::read_excel(sheet=sheet, .name_repair = 'minimal', col_names = FALSE) %>% ncol()
    } else {
       x %>% count.fields(quote = "", sep = '\t') %>% max()
    }
@@ -161,7 +161,7 @@ extract_rectangle.matrix <- function(
 #' # METABOLON
 #' if (require(autonomics.data)){
 #'   file <- system.file('extdata/glutaminase/glutaminase.xlsx', package = 'autonomics.data')
-#'   file %>% autonomics::read_omics_asis(
+#'   file %>% autonomics::read_omics(
 #'               sheet      = 2,
 #'               fid_rows   = 11:401,    fid_cols   = 5,
 #'               sid_rows   = 3,         sid_cols   = 15:86,
@@ -177,7 +177,7 @@ extract_rectangle.matrix <- function(
 #' if (require(atkin.2014)){
 #'    file <- 'extdata/soma/WCQ-18-007.hybNorm.plateScale.medNorm.calibrate.20181004.adat' %>%
 #'             system.file(package = 'atkin.2014')
-#'    file %>% read_omics_asis(fid_rows   = 73,       fid_cols   = 27:1343,
+#'    file %>% read_omics(fid_rows   = 73,       fid_cols   = 27:1343,
 #'                             sid_rows   = 93:520,   sid_cols   = 6:6,
 #'                             expr_rows  = 93:520,   expr_cols  = 27:1343,
 #'                             fvar_rows  = 73:91,    fvar_cols  = 26,
@@ -190,7 +190,7 @@ extract_rectangle.matrix <- function(
 #' # EXIQON
 #' if (require(subramanian.2016)){
 #'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx', package = 'subramanian.2016')
-#'    file %>% read_omics_asis(sheet      = 1,
+#'    file %>% read_omics(sheet      = 1,
 #'                             fid_rows   = 1,        fid_cols   = 2:330,
 #'                             sid_rows   = 2:73,     sid_cols   = 1,
 #'                             expr_rows  = 2:73,     expr_cols  = 2:330,
@@ -204,7 +204,7 @@ extract_rectangle.matrix <- function(
 #' # PROTEINGROUPS LABELFREE
 #' if (require(graumann.lfq)){
 #'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
-#'    file %>% read_omics_asis(fid_rows   = 2:5893,   fid_cols   = 275,
+#'    file %>% read_omics(fid_rows   = 2:5893,   fid_cols   = 275,
 #'                             sid_rows   = 1,        sid_cols   = 227:248,
 #'                             expr_rows  = 2:5893,   expr_cols  = 227:248,
 #'                             fvar_rows  = 1,        fvar_cols  = 1:8,
@@ -215,7 +215,7 @@ extract_rectangle.matrix <- function(
 #' # PROTEINGROUPS LABELED
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/stemdiff/maxquant/proteinGroups.txt', package = 'autonomics.data')
-#'    file %>% read_omics_asis(fid_rows   = 2:9783,  fid_cols   = 383,
+#'    file %>% read_omics(fid_rows   = 2:9783,  fid_cols   = 383,
 #'                             sid_rows   = 1,       sid_cols   = seq(124, 316, by = 6),
 #'                             expr_rows  = 2:9783,  expr_cols  = seq(124, 316, by = 6),
 #'                             fvar_rows  = 1,       fvar_cols  = c(2, 6, 7, 383),
@@ -226,7 +226,7 @@ extract_rectangle.matrix <- function(
 #' # RNASEQ
 #' if (require(subramanian.2016)){
 #'    file <- system.file('extdata/rnaseq/gene_counts.txt', package = 'subramanian.2016')
-#'    file %>% read_omics_asis(fid_rows   = 2:48821,   fid_cols   = 1,
+#'    file %>% read_omics(fid_rows   = 2:48821,   fid_cols   = 1,
 #'                             sid_rows   = 1,         sid_cols   = 5:86,
 #'                             expr_rows  = 2:48821,   expr_cols  = 5:86,
 #'                             fvar_rows  = 1,         fvar_cols  = 1:4,
@@ -235,7 +235,7 @@ extract_rectangle.matrix <- function(
 #' }
 #' @importFrom magrittr %>% %<>%
 #' @export
-read_omics_asis <- function(
+read_omics <- function(
    file,
    sheet = 1,
    fid_rows,           fid_cols,
@@ -384,7 +384,7 @@ read_somascan <- function(
                which()
 
    # Read
-   file %>% read_omics_asis(sheet      =  NULL,
+   file %>% read_omics(sheet      =  NULL,
                             fid_rows   =  fid_rows,         fid_cols   =  fid_cols,
                             sid_rows   =  sid_rows,         sid_cols   =  sid_cols,
                             expr_rows  = (s_row+1):n_row,   expr_cols  = (f_col+1):n_col,
@@ -409,10 +409,21 @@ load_soma <- function(file, keepOnlyPasses = TRUE, keepOnlySamples = TRUE, verbo
 # METABOLON
 #======================================================
 
-#' @rdname read_metabolon
+#' Read metabolon
+#' @param file                          character(1): path to metabolon xlsx file
+#' @param sheet                         character(1) or numeric(1): xls sheet name or number
+#' @param fid_var                       character(1): feature id variable
+#' @param sid_var                       character(1): sample id variable
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    file <- 'extdata/glutaminase/glutaminase.xlsx' %>%
+#'             system.file(package = 'autonomics.data')
+#'    file %>% read_metabolon()
+#' }
 #' @importFrom magrittr %>%
 #' @export
-read_metabolon_asis <- function(file, sheet = 2, fid_var = 'COMP_ID', sid_var = 'CLIENT_IDENTIFIER'){
+read_metabolon <- function(file, sheet = 2, fid_var = 'COMP_ID', sid_var = 'CLIENT_IDENTIFIER'){
    
    assertive.files::assert_all_are_existing_files(file)
    
@@ -428,16 +439,16 @@ read_metabolon_asis <- function(file, sheet = 2, fid_var = 'COMP_ID', sid_var = 
    fid_cols  <-  d_f %>% extract_dt_row(fvar_rows) %>% magrittr::extract(1:svar_cols) %>% magrittr::equals(fid_var) %>% which()
    sid_rows  <-  d_f %>% extract_dt_col(svar_cols) %>% magrittr::extract(1:fvar_rows) %>% magrittr::equals(sid_var) %>% which()
    
-   file %>% read_omics_asis(sheet      = sheet,
-                            fid_rows   = fid_rows,      fid_cols   = fid_cols,
-                            sid_rows   = sid_rows,      sid_cols   = sid_cols,
-                            expr_rows  = expr_rows,     expr_cols  = expr_cols,
-                            fvar_rows  = fvar_rows,     fvar_cols  = fvar_cols,
-                            svar_rows  = svar_rows,     svar_cols  = svar_cols,
-                            fdata_rows = fdata_rows,    fdata_cols = fdata_cols,
-                            sdata_rows = svar_rows,     sdata_cols = sdata_cols,
-                            transpose  = FALSE,
-                            verbose    = TRUE)
+   file %>% read_omics(sheet      = sheet,
+                       fid_rows   = fid_rows,      fid_cols   = fid_cols,
+                       sid_rows   = sid_rows,      sid_cols   = sid_cols,
+                       expr_rows  = expr_rows,     expr_cols  = expr_cols,
+                       fvar_rows  = fvar_rows,     fvar_cols  = fvar_cols,
+                       svar_rows  = svar_rows,     svar_cols  = svar_cols,
+                       fdata_rows = fdata_rows,    fdata_cols = fdata_cols,
+                       sdata_rows = svar_rows,     sdata_cols = sdata_cols,
+                       transpose  = FALSE,
+                       verbose    = TRUE)
 }
 
 
@@ -457,7 +468,7 @@ read_rnaseq_asis <- function(file, fid_var = 'gene_id'){
    fdata_cols  <- dt %>% vapply(is.integer, logical(1)) %>% magrittr::not() %>% unname() %>% which()
    fid_col     <- which(names(dt)==fid_var)
    
-   file %>% read_omics_asis(sheet      = NULL,
+   file %>% read_omics(sheet      = NULL,
                             fid_rows   = 2:nrow(dt),   fid_cols   = fid_col,
                             sid_rows   = 1,            sid_cols   = expr_cols,
                             expr_rows  = 2:nrow(dt),   expr_cols  = expr_cols,
@@ -674,7 +685,7 @@ explicitly_compute_precision_weights_once <- function(
 read_exiqon_asis <- function(file){
    assertive.files::assert_all_are_existing_files(file)
    dt <- extract_rectangle(file, sheet=1)
-   file %>% read_omics_asis(sheet = 1,
+   file %>% read_omics(sheet = 1,
                             fid_rows   = 1,                       fid_cols   = 2:(ncol(dt)-2),
                             sid_rows   = 2:(nrow(dt)-3),          sid_cols   = 1,
                             expr_rows  = 2:(nrow(dt)-3),          expr_cols  = 2:(ncol(dt)-2),
@@ -1037,7 +1048,7 @@ read_proteingroups <- function(
    fdata_cols <- fvar_cols
 
    # Read sumexp
-   object <- file %>% read_omics_asis(fid_rows   = fid_rows,     fid_cols   = fid_cols,
+   object <- file %>% read_omics(fid_rows   = fid_rows,     fid_cols   = fid_cols,
                                       sid_rows   = sid_rows,     sid_cols   = sid_cols,
                                       expr_rows  = expr_rows,    expr_cols  = expr_cols,
                                       fvar_rows  = fvar_rows,    fvar_cols  = fvar_cols,
@@ -1112,7 +1123,7 @@ read_phosphosites <- function(
    fvar_cols  <- fvar_cols
    fdata_rows <- 2:nrow(dt)
    fdata_cols <- fvar_cols
-   phosphosites  <- file  %>% read_omics_asis(fid_rows   = fid_rows,     fid_cols   = fid_cols,
+   phosphosites  <- file  %>% read_omics(fid_rows   = fid_rows,     fid_cols   = fid_cols,
                                                                  sid_rows   = sid_rows,     sid_cols   = sid_cols,
                                                                  expr_rows  = expr_rows,    expr_cols  = expr_cols,
                                                                  fvar_rows  = fvar_rows,    fvar_cols  = fvar_cols,
