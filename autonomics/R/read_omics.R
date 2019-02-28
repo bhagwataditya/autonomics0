@@ -335,7 +335,7 @@ read_omics_asis <- function(
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    file <- system.file('extdata/stemcomp/soma/stemcomp.adat', package = 'autonomics.data')
-#'    file %>% read_somascan_asis()
+#'    file %>% read_somascan()
 #' }
 #' @importFrom magrittr %>%
 #' @export
