@@ -8,8 +8,7 @@ prepare_somascan(object, filter_sample_type = "Sample",
   filter_feature_type = "Protein", filter_sample_quality = c("FLAG",
   "PASS"), filter_feature_quality = c("FLAG", "PASS"),
   subgroup_var = "SampleGroup", rm_na_svars = TRUE,
-  rm_single_value_svars = TRUE, infer_design = FALSE,
-  log2transform = TRUE)
+  rm_single_value_svars = TRUE, log2transform = TRUE)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -26,9 +25,9 @@ prepare_somascan(object, filter_sample_type = "Sample",
 
 \item{rm_single_value_svars}{logical(1)  : whether to rm single value svars}
 
-\item{infer_design}{logical(1)  : whether to infer design from sampleids}
-
 \item{log2transform}{logical(1)  : whether to log2 transform}
+
+\item{infer_design}{logical(1)  : whether to infer design from sampleids}
 }
 \value{
 Summarizedexperiment

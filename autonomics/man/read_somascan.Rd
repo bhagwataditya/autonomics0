@@ -16,22 +16,6 @@ load_soma(file, keepOnlyPasses = TRUE, keepOnlySamples = TRUE,
 \item{fid_var}{character(1): feature id variable}
 
 \item{sid_var}{character(1): sample id variable}
-
-\item{filter_sample_type}{character(.): sample  types to be filtered for.     Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').}
-
-\item{filter_feature_type}{character(.): feature types to be filtered for.     Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').}
-
-\item{filter_sample_quality}{character(.): sample  qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')}
-
-\item{filter_feature_quality}{character(.): feature qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')}
-
-\item{rm_na_svars}{logical(1)  : whether to rm NA svars}
-
-\item{rm_single_value_svars}{logical(1)  : whether to rm single value svars}
-
-\item{infer_design}{logical(1)  : whether to infer design from sampleids}
-
-\item{log2transform}{logical(1)  : whether to log2 transform}
 }
 \value{
 Summarizedexperiment
@@ -43,7 +27,7 @@ Read somascan
 require(magrittr)
 if (require(autonomics.data)){
    file <- system.file('extdata/stemcomp/soma/stemcomp.adat', package = 'autonomics.data')
-   file \%>\% read_somascan_asis()
+   file \%>\% read_somascan()
 }
 }
 \seealso{

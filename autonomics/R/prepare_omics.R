@@ -258,7 +258,6 @@ prepare_somascan <- function(
    subgroup_var            = 'SampleGroup',
    rm_na_svars             = TRUE,
    rm_single_value_svars   = TRUE,
-   infer_design            = FALSE,
    log2transform           = TRUE
 ){
    # Comply
