@@ -3,23 +3,17 @@
 \name{fname_var}
 \alias{fname_var}
 \alias{fname_values}
-\alias{get_gene_symbol_var}
-\alias{get_gene_symbol_values}
 \title{Get fname var/values}
 \usage{
 fname_var(object)
 
 fname_values(object)
-
-get_gene_symbol_var(object)
-
-get_gene_symbol_values(object)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 }
 \value{
-fvar with gene symbols
+fvar with feature_name values
 }
 \description{
 Get fname var/values

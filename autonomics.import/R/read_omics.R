@@ -344,7 +344,7 @@ read_rnaseq <- function(file, fid_var, fname_var = character(0)){
    if (length(fname_var)>0){
       assertive.sets::assert_is_subset(fname_var, fvars(object))
       autonomics.import::fdata(object) %<>% (function(x){x$feature_name <- x[[fname_var]];
-                                                         x %>% autonomics.support::pull_columns(c('feature_id', fname_var))})
+                                                         x %>% autonomics.support::pull_columns(c('feature_id', 'feature_name'))})
    }
 
    object
@@ -369,16 +369,16 @@ read_rnaseq <- function(file, fid_var, fname_var = character(0)){
 read_exiqon <- function(file){
    assertive.files::assert_all_are_existing_files(file)
    dt <- extract_rectangle(file, sheet=1)
-   file %>% read_omics(sheet = 1,
-                            fid_rows   = 1,                       fid_cols   = 2:(ncol(dt)-2),
-                            sid_rows   = 2:(nrow(dt)-3),          sid_cols   = 1,
-                            expr_rows  = 2:(nrow(dt)-3),          expr_cols  = 2:(ncol(dt)-2),
-                            fvar_rows  = (nrow(dt)-2):nrow(dt),   fvar_cols  = 1,
-                            svar_rows  = 1,                       svar_cols  = (ncol(dt)-1):ncol(dt),
-                            fdata_rows = (nrow(dt)-2):nrow(dt),   fdata_cols = 2:(ncol(dt)-2),
-                            sdata_rows = 2:(nrow(dt)-3),          sdata_cols = (ncol(dt)-1):ncol(dt),
-                            transpose  = TRUE,
-                            verbose    = TRUE)
+   file %>% read_omics(sheet      = 1,
+                       fid_rows   = 1,                       fid_cols   = 2:(ncol(dt)-2),
+                       sid_rows   = 2:(nrow(dt)-3),          sid_cols   = 1,
+                       expr_rows  = 2:(nrow(dt)-3),          expr_cols  = 2:(ncol(dt)-2),
+                       fvar_rows  = (nrow(dt)-2):nrow(dt),   fvar_cols  = 1,
+                       svar_rows  = 1,                       svar_cols  = (ncol(dt)-1):ncol(dt),
+                       fdata_rows = (nrow(dt)-2):nrow(dt),   fdata_cols = 2:(ncol(dt)-2),
+                       sdata_rows = 2:(nrow(dt)-3),          sdata_cols = (ncol(dt)-1):ncol(dt),
+                       transpose  = TRUE,
+                       verbose    = TRUE)
 }
 
 
@@ -391,9 +391,10 @@ read_exiqon <- function(file){
 #' Read data from somascan adat file
 #'
 #' @param file         string: path to *.adat file
-#' @param fid_var      string: feature_id variable
-#' @param sid_var      string: sample_id variable
-#' @param subgroup_var string: subgroup variable
+#' @param fid_var      string: feature_id   variable
+#' @param sid_var      string: sample_id    variable
+#' @param subgroup_var string: subgroup     variable
+#' @param fname_var    string: feature_name variable
 #' @param ...          provide backward compatibility to deprecated function load_soma
 #' @return Summarizedexperiment
 #' @seealso prepare_somascan
@@ -409,7 +410,8 @@ read_somascan <- function(
    file,
    fid_var      = 'SeqId',
    sid_var      = 'SampleId',
-   subgroup_var = 'SampleGroup'
+   subgroup_var = 'SampleGroup',
+   fname_var    = 'EntrezGeneSymbol'
 ){
    # Assert
    assertive.files::assert_all_are_existing_files(file)
@@ -461,9 +463,14 @@ read_somascan <- function(
                                  transpose  = TRUE,
                                  verbose    = TRUE)
 
-   # Add subgroup
-   autonomics.import::sdata(object) %<>% (function(x){ x$subgroup <- x[[subgroup_var]];
-                                                       x %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
+   # sdata
+   sdata(object) %<>% (function(y){ y$subgroup <- y[[subgroup_var]]
+                                    y %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
+
+   # fdata
+   assertive.sets::assert_is_subset(fname_var, fvars(object))
+   fdata(object) %<>% (function(y){ y$feature_name <- y[[fname_var]]
+                                    y %>% autonomics.support::pull_columns(c('feature_id', 'feature_name'))})
 
    # Return
    object
@@ -485,9 +492,10 @@ load_soma <- function(file, ...){
 #' Read metabolon
 #' @param file          string: path to metabolon xlsx file
 #' @param sheet         number/string: xls sheet number or name
-#' @param fid_var       string: feature_id variable
+#' @param fid_var       string: feature_id variable (ideally transcends dataset)
 #' @param sid_var       string: sample_id variable
-#' @param subgroup_var  string: subgroup variable
+#' @param subgroup_var  string: subgroup variable (human comprehensible)
+#' @param fname_var     string: feature_name variable
 #' @param ...           enable backward compatibility to deprecated load_metabolon
 #' @examples
 #' if (require(autonomics.data)){
@@ -500,10 +508,11 @@ load_soma <- function(file, ...){
 #' @export
 read_metabolon <- function(
    file,
-   sheet = 2,
-   fid_var = 'COMP_ID',
-   sid_var = 'CLIENT_IDENTIFIER',
-   subgroup_var = 'Group'
+   sheet        = 2,
+   fid_var      = 'COMP_ID',
+   sid_var      = 'CLIENT_IDENTIFIER',
+   subgroup_var = 'Group',
+   fname_var    = 'BIOCHEMICAL'
 ){
 
    assertive.files::assert_all_are_existing_files(file)
@@ -531,9 +540,16 @@ read_metabolon <- function(
                                  transpose  = FALSE,
                                  verbose    = TRUE)
 
-   subgroup_var <- autonomics.import::svars(object) %>% magrittr::extract(stringi::stri_detect_fixed(., subgroup_var))
-   autonomics.import::sdata(object) %<>% (function(x){ x$subgroup <- x[[subgroup_var]]
-                                                       x %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
+   # sdata
+   subgroup_var <- svars(object) %>% magrittr::extract(stringi::stri_detect_fixed(., subgroup_var))
+   sdata(object) %<>% (function(y){ y$subgroup <- y[[subgroup_var]]
+                                    y %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
+   # fdata
+   assertive.sets::assert_is_subset(fname_var, fvars(object))
+   fdata(object) %<>% (function(y){ y$feature_name <- y[[fname_var]]
+                                    y %>% autonomics.support::pull_columns(c('feature_id', 'feature_name'))})
+
+   # return
    object
 }
 
@@ -896,24 +912,25 @@ read_proteingroups <- function(
 
    # Read sumexp
    object <- file %>% read_omics(fid_rows   = fid_rows,     fid_cols   = fid_cols,
-                                      sid_rows   = sid_rows,     sid_cols   = sid_cols,
-                                      expr_rows  = expr_rows,    expr_cols  = expr_cols,
-                                      fvar_rows  = fvar_rows,    fvar_cols  = fvar_cols,
-                                      fdata_rows = fdata_rows,   fdata_cols = fdata_cols,
-                                      transpose  = FALSE,
-                                      verbose    = verbose)
-
-   contaminant_var <- c('Contaminant', 'Potential contaminant') %>% intersect(autonomics.import::fvars(object))
-   autonomics.import::fdata(object)[[contaminant_var]] %<>% (function(x){x[is.na(x)] <- ''; x})
-   autonomics.import::fdata(object)[['Reverse'      ]] %<>% (function(x){x[is.na(x)] <- ''; x})
-
-   # Simplify snames
+                                 sid_rows   = sid_rows,     sid_cols   = sid_cols,
+                                 expr_rows  = expr_rows,    expr_cols  = expr_cols,
+                                 fvar_rows  = fvar_rows,    fvar_cols  = fvar_cols,
+                                 fdata_rows = fdata_rows,   fdata_cols = fdata_cols,
+                                 transpose  = FALSE,
+                                 verbose    = verbose)
+   # Clean sdata
    if (standardize_snames) object %<>% standardize_maxquant_snames(verbose = verbose)
    if (demultiplex_snames) object %<>% demultiplex_snames(verbose = verbose)
-
-   # Guess subgroup (to allow tweaking before prepro)
-   object$subgroup <- object$sample_id %>% autonomics.import::guess_subgroup_values(verbose = verbose)
+   object$subgroup <- object$sample_id %>% guess_subgroup_values(verbose = verbose)
    #object$block    <- object$sample_id %>% autonomics.import::guess_subject_values( verbose = TRUE)
+
+   # Clean fdata
+   contaminant_var <- c('Contaminant', 'Potential contaminant') %>% intersect(autonomics.import::fvars(object))
+   fdata(object)[[contaminant_var]] %<>% (function(x){x[is.na(x)] <- ''; x})
+   fdata(object)[['Reverse'      ]] %<>% (function(x){x[is.na(x)] <- ''; x})
+   fdata(object)$feature_name    <- fdata(object)$`Gene names`
+   fdata(object)$feature_uniprot <- fdata(object)$`Majority protein IDs`
+   fdata(object) %<>% autonomics.support::pull_columns(c('feature_id', 'feature_name', 'feature_uniprot'))
 
    # Return
    object

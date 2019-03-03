@@ -20,31 +20,23 @@ fid_values <- function(object) object %>% autonomics.import::fvalues('feature_id
 #================================================================
 
 #' Get fname var/values
-#' @param object   eset
-#' @return fvar with gene symbols
+#' @param object   SummarizedExperiment
+#' @return fvar with feature_name values
 #' @examples
 #' library(magrittr)
-#' if (require(atkin.2014)){
-#'    atkin.2014::soma %>% autonomics.import::fname_var()
-#'    atkin.2014::soma %>% autonomics.import::fname_values()
+#' if (require(autonomics.data)){
+#'    object <- 'extdata/stemcomp/soma/stemcomp.adat' %>%
+#'               system.file(package = 'autonomics.data') %>%
+#'               autonomics.import::read_somascan()
+#'    object %>% autonomics.import::fname_var()
+#'    object %>% autonomics.import::fname_values()
 #' }
 #' @importFrom magrittr            %<>%
 #' @export
 fname_var <- function(object){
-
-   # Keep default for esets without prepro
-   fvar_name <- character(0)
-
-   # Dispatch on eset type
-   if (is_rnaseq_eset(object))    fvar_name <- 'gene_name'           # rnaseq
-   if (is_exiqon_eset(object))    fvar_name <- 'feature_id'          # exiqon
-   if (is_maxquant_eset(object))  fvar_name <- 'Gene names'          # max quant
-   if (is_soma_eset(object))      fvar_name <- 'EntrezGeneSymbol'    # somascan
-   if (is_metabolon_eset(object)) fvar_name <- 'BIOCHEMICAL'         # metabolon
-
-   # Return
-   return(fvar_name)
+   if ('feature_name' %in% fvars(object)) 'feature_name' else 'feature_id'
 }
+
 
 #' @rdname fname_var
 #' @importFrom magrittr %>%
@@ -54,64 +46,6 @@ fname_values <- function(object){
    object %>% autonomics.import::fvalues(autonomics.import::fname_var(.))
 }
 
-#' @rdname fname_var
-#' @export
-get_gene_symbol_var <- function(object){
-   .Deprecated('fname_var')
-   fname_var(object)
-}
-
-
-#' @rdname fname_var
-#' @export
-get_gene_symbol_values <- function(object){
-   .Deprecated('fname_values')
-   fname_values(object)
-}
-
-#================================================
-# ENSG
-#================================================
-
-#' Get ensg var/values
-#' @param object  eset
-#' @examples
-#' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts
-#'    object %>% autonomics.import::ensg_var()
-#'    object %>% autonomics.import::ensg_values()
-#' }
-#' @export
-ensg_var <- function(object){
-   if      (is_rnaseq_eset(object))      'gene_id'
-   else if (is_soma_eset(object))        stop('no ensg in soma esets')
-   else if (is_maxquant_eset(object))    stop('no ensg in maxquant esets')
-   else                                  stop('eset of unknown type')
-}
-
-
-#' @rdname ensg_var
-#' @importFrom magrittr %>%
-#' @export
-ensg_values <- function(object){
-   . <- NULL
-   object %>% autonomics.import::fvalues(autonomics.import::ensg_var(.))
-}
-
-#' @rdname ensg_var
-#' @export
-get_ensg_var <- function(object){
-   .Deprecated('ensg_var')
-   ensg_var(object)
-}
-
-#' @rdname ensg_var
-#' @export
-get_ensg_values <- function(object){
-   .Deprecated('ensg_values')
-   ensg_values(object)
-}
 
 #===================================================
 # UNIPROT
@@ -123,25 +57,19 @@ get_ensg_values <- function(object){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
+#'    object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
+#'               system.file(package = 'autonomics.data')     %>%
+#'               read_proteingroups()
+#'    autonomics.import::fvars(object)
+#'
+#'
 #'    object <- autonomics.data::stemcomp.proteinratios
 #'    object %>% autonomics.import::uniprot_var()
 #' }
 #' @importFrom magrittr            %<>%
 #' @export
-uniprot_var <- function(object){
+uniprot_var <- function(object) fvars(object) %>% magrittr::extract(stringi::stri_detect_regex(., '[uU]ni[pP]rot'))
 
-   # Keep default for esets without prepro
-   fvar_name <- 'uniprot_accessions'
-
-   if (is_maxquant_eset(object))    fvar_name <- 'Uniprot accessions'   # max quant
-   if (is_soma_eset(object))        fvar_name <- 'UniProt'              # somascan
-
-   assertive.sets::is_subset(fvar_name, autonomics.import::fvars(object))
-   fvalues <- autonomics.import::fdata(object)[[fvar_name]]
-   if (is.factor(fvalues))   fvalues %<>% as.character()
-   assertive.strings::assert_any_are_non_empty_character(fvalues)
-   return(fvar_name)
-}
 
 #' Get uniprot values
 #' @param object  eset
@@ -203,7 +131,7 @@ uniprot_values <- function(object, first_only = FALSE){
 oraid_var <- function(object){
 
    # Assert
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
 
    if (is_rnaseq_eset(object))           return(ensg_var(object))
    if (is_soma_eset(object))             return(uniprot_var(object))

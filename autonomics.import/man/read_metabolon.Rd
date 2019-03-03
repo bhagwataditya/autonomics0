@@ -6,7 +6,8 @@
 \title{Read metabolon}
 \usage{
 read_metabolon(file, sheet = 2, fid_var = "COMP_ID",
-  sid_var = "CLIENT_IDENTIFIER", subgroup_var = "Group")
+  sid_var = "CLIENT_IDENTIFIER", subgroup_var = "Group",
+  fname_var = "BIOCHEMICAL")
 
 load_metabolon(file, sheet = 2, ...)
 }
@@ -15,11 +16,13 @@ load_metabolon(file, sheet = 2, ...)
 
 \item{sheet}{number/string: xls sheet number or name}
 
-\item{fid_var}{string: feature_id variable}
+\item{fid_var}{string: feature_id variable (ideally transcends dataset)}
 
 \item{sid_var}{string: sample_id variable}
 
-\item{subgroup_var}{string: subgroup variable}
+\item{subgroup_var}{string: subgroup variable (human comprehensible)}
+
+\item{fname_var}{string: feature_name variable}
 
 \item{...}{enable backward compatibility to deprecated load_metabolon}
 }

@@ -18,6 +18,12 @@ Get uniprot var
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
+   object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
+              system.file(package = 'autonomics.data')     \%>\%
+              read_proteingroups()
+   autonomics.import::fvars(object)
+
+
    object <- autonomics.data::stemcomp.proteinratios
    object \%>\% autonomics.import::uniprot_var()
 }

@@ -6,18 +6,20 @@
 \title{Read somascan}
 \usage{
 read_somascan(file, fid_var = "SeqId", sid_var = "SampleId",
-  subgroup_var = "SampleGroup")
+  subgroup_var = "SampleGroup", fname_var = "EntrezGeneSymbol")
 
 load_soma(file, ...)
 }
 \arguments{
 \item{file}{string: path to *.adat file}
 
-\item{fid_var}{string: feature_id variable}
+\item{fid_var}{string: feature_id   variable}
 
-\item{sid_var}{string: sample_id variable}
+\item{sid_var}{string: sample_id    variable}
 
-\item{subgroup_var}{string: subgroup variable}
+\item{subgroup_var}{string: subgroup     variable}
+
+\item{fname_var}{string: feature_name variable}
 
 \item{...}{provide backward compatibility to deprecated function load_soma}
 }
