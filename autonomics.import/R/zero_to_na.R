@@ -10,17 +10,17 @@
 #'    if (require(graumann.lfq)){
 #'       object <- 'extdata/proteinGroups.txt'            %>%
 #'                  system.file(package = 'graumann.lfq') %>%
-#'                  autonomics::read_proteingroups()
-#'       object %>% autonomics::zero_to_na(verbose = TRUE)
+#'                  read_proteingroups()
+#'       object %>% zero_to_na(verbose = TRUE)
 #'    }
-#'    
+#'
 #' # NaN -> NA (proteinGroups ratios)
 #' #---------------------------------
 #'    if (require(autonomics.data)){
-#'       object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>% 
-#'                  system.file(package='autonomics.data')       %>% 
-#'                  autonomics::read_proteingroups()
-#'       object %>% autonomics::nan_to_na(verbose = TRUE)
+#'       object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
+#'                  system.file(package='autonomics.data')       %>%
+#'                  read_proteingroups()
+#'       object %>% nan_to_na(verbose = TRUE)
 #'    }
 #'
 #' # -Inf -> NA (log2 transformed proteinGroups LFQ intensity)
@@ -28,18 +28,18 @@
 #'    if (require(graumann.lfq)){
 #'       object <- 'extdata/proteinGroups.txt'            %>%
 #'                  system.file(package = 'graumann.lfq') %>%
-#'                  autonomics::read_proteingroups()
-#'       object %<>% autonomics::log2transform(verbose = TRUE)
-#'       object %>% autonomics::minusinf_to_na(verbose = TRUE)
+#'                  read_proteingroups()
+#'       object %<>% log2transform(verbose = TRUE)
+#'       object %>% minusinf_to_na(verbose = TRUE)
 #'    }
-#'    
+#'
 #' # NA -> 0
 #' #--------
 #'    if (require(autonomics.data)){
 #'       object <- 'extdata/glutaminase/glutaminase.xlsx' %>%
 #'                  system.file(package = 'autonomics.data') %>%
-#'                  autonomics::read_metabolon_asis()
-#'       object %>% autonomics::na_to_zero(verbose = TRUE)
+#'                  read_metabolon()
+#'       object %>% na_to_zero(verbose = TRUE)
 #'    }
 #'
 #'
@@ -91,7 +91,7 @@ na_to_zero <- function(object, verbose = FALSE){
 
 
 #' @rdname zero_to_na
-#' @importFrom magrittr %>% 
+#' @importFrom magrittr %>%
 #' @export
 minusinf_to_na <- function(object, verbose = FALSE){
    selector <- autonomics.import::exprs(object)==-Inf

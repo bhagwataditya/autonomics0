@@ -51,23 +51,23 @@ impute_common_nas <- function(
 #'
 #' @param object     SummarizedExperiment
 #' @param imputefun  imputation function
-#' @param svar character(1)
-#' @param verbose    logical(1)
+#' @param svar       string
+#' @param verbose    logical
 #' @examples
 #' require(magrittr)
 #' if (require(graumann.lfq)){
 #'
 #'    # Read object
 #'    object <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') %>%
-#'              autonomics::read_proteingroups(impute_consistent_nas = FALSE, plot = FALSE)
+#'              read_proteingroups()
 #'
 #'    # Common NA values - missing in all samples
 #'    object %>% autonomics.import::split_by_svar() %>%
 #'               magrittr::extract2(2) %>%
-#'               autonomics::impute_common_nas(verbose = TRUE)
+#'               impute_common_nas(verbose = TRUE)
 #'
 #'    # Consistent NA values - missing in all subgroup samples
-#'    object %>% autonomics::impute_consistent_nas(verbose = TRUE, plot = TRUE)
+#'    object %>% impute_consistent_nas(verbose = TRUE)
 #' }
 #' @return SummarizedExperiment with updated exprs
 #' @importFrom magrittr %>%
@@ -76,8 +76,7 @@ impute_consistent_nas <- function(
    object,
    imputefun    = function(x) imputeLCMD::impute.QRILC(x)[[1]],
    svar         = 'subgroup',
-   verbose      = FALSE,
-   plot         = FALSE
+   verbose      = FALSE
 ){
 
    # Check
@@ -92,15 +91,12 @@ impute_consistent_nas <- function(
 
    # Impute
    imputed_object <- object %>% autonomics.import::split_by_svar(svar) %>%
-                                lapply(autonomics::impute_common_nas, imputefun=imputefun) %>% do.call(SummarizedExperiment::cbind, .)
+                                lapply(impute_common_nas, imputefun=imputefun) %>% do.call(SummarizedExperiment::cbind, .)
 
    # Message
-   if (verbose) autonomics.support::cmessage('\t\tImpute consistent NA values among %d/%d features', 
-                                              autonomics.import::is_imputed(imputed_object) %>% matrixStats::rowAnys() %>% sum(), 
+   if (verbose) autonomics.support::cmessage('\t\tImpute consistent NA values among %d/%d features',
+                                              autonomics.import::is_imputed(imputed_object) %>% matrixStats::rowAnys() %>% sum(),
                                               nrow(object))
-   # Plot
-   if (plot) imputed_object %>% autonomics::plot_detects_per_subgroup(svar = svar) %>% print()
-
    # Return
    return(imputed_object)
 }
