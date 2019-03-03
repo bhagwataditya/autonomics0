@@ -20,12 +20,6 @@ prepare_phosphosites(object, min_localization_prob = 0.75,
 \item{quantity}{NULL or value in names(maxquant_patterns)}
 
 \item{fvars}{character(n)}
-
-\item{min_localization_prob}{numeric(1)}
-
-\item{proteingroups_file}{character(1)}
-
-\item{verbose}{logical(1)}
 }
 \description{
 Prepare phosphosites
@@ -36,13 +30,6 @@ if (require(autonomics.data)){
    file <- 'extdata/stemdiff/maxquant/phospho (STY)Sites.txt' \%>\%
             system.file(package = 'autonomics.data')
    file \%>\% read_phosphosites()
-   file \%>\% read_phosphosites() \%>\% prep_phosphosites()
-}
-require(magrittr)
-if (require(autonomics.data)){
-   file <- 'extdata/stemdiff/maxquant/phospho (STY)Sites.txt' \%>\%
-            system.file(package = 'autonomics.data')
-   file \%>\% read_phosphosites()
-   file \%>\% read_phosphosites() \%>\% prep_phosphosites()
+   file \%>\% read_phosphosites() \%>\% prepare_phosphosites()
 }
 }

@@ -26,8 +26,8 @@ SummarizedExperiment
 Prepare metabolon sumexp for analysis
 }
 \examples{
-require(magrittr)
 if (require(autonomics.data)){
+   require(magrittr)
    object <- 'extdata/glutaminase/glutaminase.xlsx' \%>\%
               system.file(package = 'autonomics.data') \%>\% 
               read_metabolon()

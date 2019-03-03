@@ -744,18 +744,7 @@ prepare_proteingroups <- function(
 #'    file <- 'extdata/stemdiff/maxquant/phospho (STY)Sites.txt' %>%
 #'             system.file(package = 'autonomics.data')
 #'    file %>% read_phosphosites()
-#'    file %>% read_phosphosites() %>% prep_phosphosites()
-#' }
-#' @param min_localization_prob  numeric(1)
-#' @param proteingroups_file     character(1)
-#' @param verbose                logical(1)
-#' @examples
-#' require(magrittr)
-#' if (require(autonomics.data)){
-#'    file <- 'extdata/stemdiff/maxquant/phospho (STY)Sites.txt' %>%
-#'             system.file(package = 'autonomics.data')
-#'    file %>% read_phosphosites()
-#'    file %>% read_phosphosites() %>% prep_phosphosites()
+#'    file %>% read_phosphosites() %>% prepare_phosphosites()
 #' }
 prepare_phosphosites <- function(
    object,
