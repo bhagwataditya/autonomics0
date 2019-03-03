@@ -4,12 +4,14 @@
 \alias{read_rnaseq}
 \title{Read rnaseq counts}
 \usage{
-read_rnaseq(file, fid_var = "gene_id")
+read_rnaseq(file, fid_var, fname_var = character(0))
 }
 \arguments{
 \item{file}{string: path to rnaseq counts file}
 
-\item{fid_var}{string: feature id variable}
+\item{fid_col}{string or number: feature id column}
+
+\item{fname_col}{string or number: feature name column}
 }
 \description{
 Read rnaseq counts
@@ -19,7 +21,7 @@ if (require(autonomics.data)){
    require(magrittr)
    file <- 'extdata/stemdiff/rnaseq/gene_counts.txt' \%>\%
             system.file(package = 'autonomics.data')
-   file \%>\% read_rnaseq()
+   file \%>\% read_rnaseq(fid_var = 'gene_id', fname_var = 'gene_name')
 }
 }
 \seealso{

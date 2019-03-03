@@ -308,26 +308,28 @@ read_omics <- function(
 #=========================================================
 
 #' Read rnaseq counts
-#' @param file     string: path to rnaseq counts file
-#' @param fid_var  string: feature id variable
+#' @param file      string: path to rnaseq counts file
+#' @param fid_col   string or number: feature id column
+#' @param fname_col string or number: feature name column
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    file <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>%
 #'             system.file(package = 'autonomics.data')
-#'    file %>% read_rnaseq()
+#'    file %>% read_rnaseq(fid_var = 'gene_id', fname_var = 'gene_name')
 #' }
 #' @seealso merge_sdata, merge_fdata
 #' @importFrom magrittr %>%
 #' @export
-read_rnaseq <- function(file, fid_var = 'gene_id'){
+read_rnaseq <- function(file, fid_var, fname_var = character(0)){
 
    assertive.files::assert_all_are_existing_files(file)
-
    dt <- data.table::fread(file, integer64='numeric')
+
+   assertive.sets::assert_is_subset(fid_var, names(dt))
+   fid_col <- which(names(dt)==fid_var)
    expr_cols   <- dt %>% vapply(is.integer, logical(1)) %>% unname() %>% which()
-   fdata_cols  <- dt %>% vapply(is.integer, logical(1)) %>% magrittr::not() %>% unname() %>% which()
-   fid_col     <- which(names(dt)==fid_var)
+   fdata_cols  <- dt[, -fid_col, with = FALSE] %>% vapply(is.integer, logical(1)) %>% magrittr::not() %>% unname() %>% which() %>% magrittr::add(1) %>% c(fid_col, .)
 
    object <- file %>% read_omics(fid_rows   = 2:nrow(dt),   fid_cols   = fid_col,
                                  sid_rows   = 1,            sid_cols   = expr_cols,
@@ -338,6 +340,13 @@ read_rnaseq <- function(file, fid_var = 'gene_id'){
                                  verbose    = TRUE)
 
    autonomics.import::sdata(object)$subgroup <- object %>% autonomics.import::guess_subgroup_values(verbose = TRUE)
+
+   if (length(fname_var)>0){
+      assertive.sets::assert_is_subset(fname_var, fvars(object))
+      autonomics.import::fdata(object) %<>% (function(x){x$feature_name <- x[[fname_var]];
+                                                         x %>% autonomics.support::pull_columns(c('feature_id', fname_var))})
+   }
+
    object
 
 }

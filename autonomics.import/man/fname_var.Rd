@@ -26,8 +26,11 @@ Get fname var/values
 }
 \examples{
 library(magrittr)
-if (require(atkin.2014)){
-   atkin.2014::soma \%>\% autonomics.import::fname_var()
-   atkin.2014::soma \%>\% autonomics.import::fname_values()
+if (require(autonomics.data)){
+   object <- 'extdata/stemcomp/soma/stemcomp.adat' \%>\%
+              system.file(package = 'autonomics.data') \%>\%
+              autonomics.import::read_somascan()
+   object \%>\% autonomics.import::fname_var()
+   object \%>\% autonomics.import::fname_values()
 }
 }
