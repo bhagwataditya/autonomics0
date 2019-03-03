@@ -47,9 +47,9 @@ plot_detects_per_subgroup <- function(
                      magrittr::subtract(nondetects)
    fulldetects    <- nrow(object) - partialdetects - imputes - nondetects
    plot_dt <- data.table::data.table(subgroup       = names(split_objects) %>% factor(autonomics.import::slevels(object, svar)))
-   if (any(fulldetects   !=0))  plot_dt %<>% magrittr::extract(,  fulldetects    := fulldetects)
-   if (any(partialdetects!=0))  plot_dt %<>% magrittr::extract(,  partialdetects := partialdetects)
-   if (any(nondetects    !=0))  plot_dt %<>% magrittr::extract(,  nondetects     := nondetects + imputes)
+   if (any(fulldetects   !=0))                plot_dt %<>% magrittr::extract(,  fulldetects    := fulldetects)
+   if (any(partialdetects!=0))                plot_dt %<>% magrittr::extract(,  partialdetects := partialdetects)
+   if (any(nondetects!=0) | any(imputes!=0))  plot_dt %<>% magrittr::extract(,  nondetects     := nondetects + imputes)
    plot_dt %<>% data.table::melt(id.vars = 'subgroup')
    
    # Set order of variable levels
