@@ -14,7 +14,9 @@
 #'    object <-  'extdata/stemcomp/maxquant/proteinGroups.txt' %>% 
 #'                system.file(package = 'autonomics.data') %>% 
 #'                autonomics::read_proteingroups() %>% 
-#'                autonomics::prepare_proteingroups(impute_consistent_nas = FALSE, plot = FALSE)
+#'                autonomics::prepare_proteingroups(
+#'                   invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'),
+#'                   impute_consistent_nas = FALSE, plot = FALSE)
 #'    object %>% autonomics::plot_detects_per_subgroup()
 #'    
 #'    # After imputation

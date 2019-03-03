@@ -22,12 +22,8 @@
 #' if (require(autonomics.data)){
 #'    x <- system.file('extdata/stemcomp/maxquant/proteinGroups.txt',
 #'                      package = 'autonomics.data') %>%
-#'         autonomics::read_proteingroups()
-#'
-#'    x %>% autonomics.import::sdata()
-#'
-#'    x %>% autonomics::invert(subgroups = c('E_EM', 'E_BM', 'EM_BM')) %>%
-#'          autonomics.import::sdata()
+#'         read_proteingroups()
+#'    x %>% invert(subgroups = c('E_EM', 'E_BM', 'EM_BM'))
 #' }
 #' @importFrom magrittr %>%
 #' @export

@@ -25,7 +25,7 @@ plot_preprocessing_alternatives <- function(
 
    # Invert subgroups (labeled proteomics)
    if (!is.null(invert_subgroups)){
-      esets %<>% c(list(autonomics.preprocess::invert_ratios(object, invert_subgroups)))
+      esets %<>% c(list(autonomics.import::invert(object, invert_subgroups)))
       names(esets)[length(esets)] <- sprintf('%s.flipratios', names(esets)[length(esets)-1])
    }
    cur_name <- names(esets)[length(esets)]

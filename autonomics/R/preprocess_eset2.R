@@ -116,7 +116,7 @@ preprocess_eset <- function(
 
    # Invert subgroups
    if (!is.null(invert_subgroups)){
-      object %<>% autonomics.preprocess::invert_ratios(
+      object %<>% autonomics.import::invert(
                        invert_subgroups, channel_frac = channel_frac, subgroup_frac = subgroup_frac)
       if (plot || retain_plot_objects){
          plotargs <- commonargs %>% c(list(object = object, descr = 'invert.subgroups'))

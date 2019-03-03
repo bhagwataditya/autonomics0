@@ -714,7 +714,7 @@ prepare_proteingroups <- function(
    
    # Transform exprs
    if (verbose) autonomics.support::cmessage('\tTransform exprs')
-   object %<>% invert.SummarizedExperiment(subgroups = invert_subgroups)
+   object %<>% autonomics.import::invert(subgroups = invert_subgroups)
    object %<>% autonomics::zero_to_na(verbose = verbose)
    object %<>% autonomics::nan_to_na(verbose = verbose)
    if (log2transform)         object %<>% autonomics::log2transform(verbose = verbose)
