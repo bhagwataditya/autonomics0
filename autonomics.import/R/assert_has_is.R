@@ -101,7 +101,7 @@ has_complete_block_values <- function(object){
 #'    billing.differentiation.data::rna.voomcounts %>% contains_prepro()
 #' }
 contains_prepro <- function(object){
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    length(autonomics.import::prepro(object))!=0
 }
 
@@ -129,7 +129,7 @@ contains_prepro <- function(object){
 #' }
 #' @export
 contains_ratios <- function(object){
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    if (autonomics.import::contains_prepro(object)){
       autonomics.import::prepro(object)$quantity %in% c('Ratio', 'Ratio normalized', 'occupancy')
    } else {
@@ -145,7 +145,7 @@ contains_ratios <- function(object){
 #' @param .xname see assertive.base::get_name_in_parent
 #' @return logical
 #' @export
-is_valid_eset <- function(x, .xname = assertive.base::get_name_in_parent(x)){
+is_valid_object <- function(x, .xname = assertive.base::get_name_in_parent(x)){
    if (!(ok <- is_eSet(x, .xname = .xname)  |  is_elist(x, .xname = .xname)  |  is_summarized_experiment(x, .xname = .xname))){   return(ok)}
    if (!(ok <- has_valid_featureNames(x, .xname = .xname)))                  {   return(ok)}
    if (!(ok <- has_valid_sampleNames(x,  .xname = .xname)))                  {   return(ok)}
@@ -156,8 +156,8 @@ is_valid_eset <- function(x, .xname = assertive.base::get_name_in_parent(x)){
 #' @param x eset
 #' @return error if not true
 #' @export
-assert_is_valid_eset <- function(x){
-  assertive.base::assert_engine(is_valid_eset, x, .xname = assertive.base::get_name_in_parent(x))
+assert_is_valid_object <- function(x){
+  assertive.base::assert_engine(is_valid_object, x, .xname = assertive.base::get_name_in_parent(x))
 }
 
 #' Assert that features are valid

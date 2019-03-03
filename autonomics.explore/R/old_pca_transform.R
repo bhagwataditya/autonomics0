@@ -1,7 +1,7 @@
 # pca_transform <- function(object, dim = c(1,2), verbose = TRUE, na.impute = FALSE){
 # 
 #    # Assert
-#    autonomics.import::assert_is_valid_eset(object)
+#    autonomics.import::assert_is_valid_object(object)
 #    assertive.properties::assert_is_non_empty(autonomics.import::exprs(object))
 # 
 #    # Replace -Inf, arising from log2(0)

@@ -38,7 +38,7 @@
 get_entrezg_from_uniprot <- function(object, load_org.xx.xx.db){
 
   # Assert
-  autonomics.import::assert_is_valid_eset(object)
+  autonomics.import::assert_is_valid_object(object)
 
   # Prepare uniprot accessions:
   #    - uncollapse
@@ -99,7 +99,7 @@ get_entrezg_from_uniprot <- function(object, load_org.xx.xx.db){
 #' @export
 get_entrezg_from_gsymbols <- function(object, load_org.xx.xx.db){
   # Assert
-  autonomics.import::assert_is_valid_eset(object)
+  autonomics.import::assert_is_valid_object(object)
 
   # Uncollapse gsymbols if required
   gsymbols <- autonomics.import::fdata(object) %>%
@@ -192,7 +192,7 @@ run_ora_on_sumexp <- function(
 ){
   
   # Assert
-  autonomics.import::assert_is_valid_eset(object)
+  autonomics.import::assert_is_valid_object(object)
   assertive.sets::assert_is_subset(oraset_var, autonomics.import::fvars(object))
   
   # Return if no limma info in sumexp
@@ -201,7 +201,7 @@ run_ora_on_sumexp <- function(
   }
   
   # Assert
-  autonomics.import::assert_is_valid_eset(object)
+  autonomics.import::assert_is_valid_object(object)
   
   # Infer contrast names
   contrast_names <- object %>% autonomics.find::infer_contrast_names()
@@ -260,7 +260,7 @@ run_ora_on_eset <- function(
    }
 
    # Assert valid inputs
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    #assertive.files::assert_all_are_writable_files(result_dir, warn_about_windows = FALSE)
    assertive.sets::assert_is_subset(gene_set_collections, GENE_SET_COLLECTIONS)
    assertive.sets::assert_is_subset(universe, c('detectome', 'genome'))

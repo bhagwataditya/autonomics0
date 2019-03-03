@@ -85,7 +85,7 @@ plot_projected_samples <- function(
    obj_list %<>% magrittr::extract(!sapply(obj_list, is.null))
    
    ## Assert all
-   obj_list %>%  lapply(autonomics.import::assert_is_valid_eset) %>%
+   obj_list %>%  lapply(autonomics.import::assert_is_valid_object) %>%
                  lapply(function(x) x %>% autonomics.import::exprs() %>% assertive.properties::assert_is_non_empty())
    obj_list %<>% lapply(function(x) x %>% autonomics.plot::validify_shape_values(shape_var))
    

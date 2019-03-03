@@ -9,7 +9,7 @@
 #' }
 #' @export
 is_maxquant_eset <- function(object){
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    if (!autonomics.import::contains_prepro(object))     return(FALSE)
    autonomics.import::prepro(object)$software == 'maxquant'
 }
@@ -24,7 +24,7 @@ is_maxquant_eset <- function(object){
 #' }
 #' @export
 is_rnaseq_eset <- function(object){
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    if (!autonomics.import::contains_prepro(object))     return(FALSE)
    autonomics.import::prepro(object)$assay == 'rnaseq'
 }
@@ -34,7 +34,7 @@ is_rnaseq_eset <- function(object){
 #' @return logical
 #' @export
 is_soma_eset <- function(object){
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    if (!autonomics.import::contains_prepro(object))     return(FALSE)
    autonomics.import::prepro(object)$assay == 'somascan'
 }
@@ -50,7 +50,7 @@ is_soma_eset <- function(object){
 #' }
 #' @export
 is_metabolon_eset <- function(object){
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    if (!autonomics.import::contains_prepro(object))     return(FALSE)
    autonomics.import::prepro(object)$software == 'metabolon'
 }
@@ -66,7 +66,7 @@ is_metabolon_eset <- function(object){
 #' }
 #' @export
 is_exiqon_eset <- function(object){
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    if (!autonomics.import::contains_prepro(object))     return(FALSE)
    autonomics.import::prepro(object)$assay == 'exiqon'
 }

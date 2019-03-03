@@ -30,8 +30,8 @@ write_correlations <- function(cor.dt, eset1, eset2, file, fvars1 = character(0)
 
    # Assert
    assertive.types::assert_is_character(file)
-   autonomics.import::assert_is_valid_eset(eset1)
-   autonomics.import::assert_is_valid_eset(eset2)
+   autonomics.import::assert_is_valid_object(eset1)
+   autonomics.import::assert_is_valid_object(eset2)
    assertive.sets::assert_is_subset('feature_id', autonomics.import::fvars(eset1))
    assertive.sets::assert_is_subset('feature_id', autonomics.import::fvars(eset2))
    assertive.sets::assert_is_subset(cor.dt[, get(name1)], autonomics.import::fdata(eset1)$feature_id)

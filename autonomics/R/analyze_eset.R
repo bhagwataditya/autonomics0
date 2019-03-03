@@ -116,7 +116,7 @@ analyze_eset <- function(
   ...
 ){
    # Assert valid args
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    assertive.types::assert_is_character(result_dir)
    assertive.types::assert_is_logical(zip_results)
 

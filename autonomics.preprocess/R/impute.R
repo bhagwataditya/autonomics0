@@ -26,7 +26,7 @@ impute <- function(
   ...)
 {
 # Check prerequisites -----------------------------------------------------
-  autonomics.import::assert_is_valid_eset(object)
+  autonomics.import::assert_is_valid_object(object)
   method %<>%
     match.arg(
       choices = c('none', 'missForest', 'impute.MinDet', 'impute.MinProb', 'impute.QRILC'),
@@ -42,7 +42,7 @@ impute <- function(
   {
     return(object)
   }
-  
+
   # Retrieve the function to be used
   # https://stackoverflow.com/a/10022480/2103880
   pkg <- method %>%
@@ -50,14 +50,14 @@ impute <- function(
       missForest = 'missForest',
       'imputeLCMD')
   fn <- get(method, asNamespace(pkg))
-  
+
   largs <- list(autonomics.import::exprs(object)) %>%
     magrittr::set_names(
       method %>%
         switch(
           missForest = 'xmis',
           'dataSet.mvs'))
-  
+
   # Execute dependent on 'random_seed'
   ## Capture output is currently needed, as imputeLCMD::impute.MinProb contains a spurious print statement (v.2.0)
   if(is.null(random_seed))
@@ -70,7 +70,7 @@ impute <- function(
         { do.call(fn, autonomics.import::exprs(object), ...) },
         seed = random_seed))
   }
-  
+
   # Extract dependent on method
   # missForest --> list[['ximp']]
   # MinDet --> matrix
@@ -86,7 +86,7 @@ impute <- function(
     impute_result %<>%
       magrittr::extract2(index)
   }
-  
+
   # Reassemble & Return
   autonomics.import::exprs(object) <- impute_result
   return(object)

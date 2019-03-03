@@ -45,7 +45,7 @@ save_annotated_ALL <- function(){
 
    # Check and save
    ALL <- e$ALL
-   autonomics.import::assert_is_valid_eset(ALL)
+   autonomics.import::assert_is_valid_object(ALL)
    save(ALL, file = 'data/ALL.RData', compress = TRUE)
  }
  

@@ -505,7 +505,7 @@ plot_features <- function(
       }
 
       # Assert
-      autonomics.import::assert_is_valid_eset(object)
+      autonomics.import::assert_is_valid_object(object)
       assertive.sets::assert_is_subset(geom, autonomics.plot::FEATURE_PLOTS)
       assertive.sets::assert_is_subset(x,         autonomics.import::svars(object))
       assertive.sets::assert_is_subset(color_var, autonomics.import::svars(object))

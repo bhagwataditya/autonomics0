@@ -156,7 +156,7 @@ plot_projected_samples1 <- function(
 ){
    
    # Assert
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    assertive.properties::assert_is_non_empty(autonomics.import::exprs(object))
    object %<>% autonomics.plot::validify_shape_values(shape_var)
 

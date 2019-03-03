@@ -243,8 +243,8 @@ plot_correlations_to_file <- function(
 
    # Assert
    assertive.types::assert_is_data.table(cor_dt)
-   autonomics.import::assert_is_valid_eset(eset1)
-   autonomics.import::assert_is_valid_eset(eset2)
+   autonomics.import::assert_is_valid_object(eset1)
+   autonomics.import::assert_is_valid_object(eset2)
    assertive.sets::assert_is_subset(fvars1, autonomics.import::fvars(eset1))
    assertive.sets::assert_is_subset(fvars2, autonomics.import::fvars(eset2))
    assertive.sets::assert_are_disjoint_sets(fvars1, fvars2)

@@ -28,7 +28,7 @@ are_contrast_features <- function(
    contrast_name,
    topdef  = autonomics.find::default_topdef(object)
 ){
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    assertive.types::assert_is_a_string(contrast_name)
    
    limma_df <- object %>% 

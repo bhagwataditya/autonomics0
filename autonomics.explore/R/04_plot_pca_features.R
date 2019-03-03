@@ -105,7 +105,7 @@ plot_projection_features <- function(
    ...
 ){
    # Check input args
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    if (ncol(object) < 3){
       autonomics.support::cmessage('\tExit %s: only %d samples', method, ncol(object))
       return(invisible(NULL))

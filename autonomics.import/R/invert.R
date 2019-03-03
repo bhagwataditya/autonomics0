@@ -59,7 +59,7 @@ invert.SummarizedExperiment <- function(
    if (length(subgroups)==0) return(x)
 
   # Assert
-  autonomics.import::assert_is_valid_eset(x)
+  autonomics.import::assert_is_valid_object(x)
   assertive.sets::assert_is_subset('subgroup', autonomics.import::svars(x))
   assertive.sets::assert_is_subset(subgroups, autonomics.import::subgroup_levels(x))
 

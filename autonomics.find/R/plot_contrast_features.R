@@ -51,7 +51,7 @@ create_feature_plot_title <- function(object, contrast, topdef, direction){
 collapse_fvars <- function(object, fvars){
 
    # Assert
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    assertive.sets::assert_is_subset(fvars, autonomics.import::fvars(object))
 
    # Extract

@@ -144,7 +144,7 @@ default_color_values <- function(
 ){
 
    # Assert
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    assertive.sets::assert_is_subset(color_var, autonomics.import::svars(object))
 
    # sep
@@ -364,7 +364,7 @@ default_shape_var <- function(object){
 #' @export
 default_x <- function(object, feature_plots = default_feature_plots(object)){
 
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    assertive.sets::assert_is_subset(feature_plots, FEATURE_PLOTS)
 
    sample_id_in_sdata <- 'sample_id' %in% autonomics.import::svars(object)

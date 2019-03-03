@@ -43,7 +43,7 @@ autonomics.import::exprs() %>%
 get_median_exprs <- function(object, method = 'arithmetic'){
 
    # Assert
-autonomics.import::assert_is_valid_eset(object)
+autonomics.import::assert_is_valid_object(object)
    assertive.sets::assert_is_subset(method, c('arithmetic', 'geometric'))
 
    # Compute

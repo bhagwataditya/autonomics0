@@ -42,8 +42,8 @@ correlate_features <- function(eset1, eset2){
   name2 <- assertive.base::get_name_in_parent(eset2)
 
   # Assert
-  autonomics.import::assert_is_valid_eset(eset1)
-  autonomics.import::assert_is_valid_eset(eset2)
+  autonomics.import::assert_is_valid_object(eset1)
+  autonomics.import::assert_is_valid_object(eset2)
   sample_id_values1 <- eset1 %>% autonomics.import::get_sample_id_values()
   sample_id_values2 <- eset2 %>% autonomics.import::get_sample_id_values()
   assertive.sets::assert_are_intersecting_sets(sample_id_values1, sample_id_values2)
@@ -116,8 +116,8 @@ annotate_correlations <- function(cor_dt, eset1, eset2, fvars1 = character(0), f
   assertive.base::is_not_true(name1 == name2)  # Two names should differ, as they are used
 
   # Assert
-  autonomics.import::assert_is_valid_eset(eset1)
-  autonomics.import::assert_is_valid_eset(eset2)
+  autonomics.import::assert_is_valid_object(eset1)
+  autonomics.import::assert_is_valid_object(eset2)
   assertive.types::assert_is_character(fvars1)
   assertive.types::assert_is_character(fvars2)
   assertive.sets::assert_is_subset(fvars1, autonomics.import::fvars(eset1))

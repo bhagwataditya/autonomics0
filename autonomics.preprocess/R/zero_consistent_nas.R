@@ -30,7 +30,7 @@ zero_to_na_if_not_all_zero <- function(
    ...
 ){
 # Check prerequisites -----------------------------------------------------
-  autonomics.import::assert_is_valid_eset(object)
+  autonomics.import::assert_is_valid_object(object)
   if (!autonomics.import::has_complete_subgroup_values(object)){
      autonomics.support::cmessage('Return unmodified - object lacks complete subgroup values')
      return(object)
@@ -111,8 +111,8 @@ zero_to_na_if_not_all_zero <- function(
 
   # Reassemble
   autonomics.import::exprs(object) <- do.call(cbind, subset_data_by_subroup) %>%
-    magrittr::extract(,colnames(autonomics.import::exprs(object)))
-  autonomics.import::assert_is_valid_eset(object)
+                                      magrittr::extract(,colnames(autonomics.import::exprs(object)))
+  autonomics.import::assert_is_valid_objectset(object)
 
   # Return
   if (verbose)  autonomics.support::cmessage('\t\tConvert inconsistent zeroes into NAs')

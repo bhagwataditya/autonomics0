@@ -93,7 +93,7 @@ add_and_write_projection <- function(
    na.impute     = FALSE
 ){
    # Check input args
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    if (ncol(object) < 3){
       autonomics.support::cmessage('\tNo PCA (only %d samples)', ncol(object))
       return(object)

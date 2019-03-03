@@ -18,7 +18,7 @@
 mean_and_sd <- function(object, MARGIN = c(1, 2), by_subgroup = TRUE)
 {
    object %>%
-      autonomics.import::assert_is_valid_eset()
+      autonomics.import::assert_is_valid_object()
    MARGIN %<>%
       as.character() %>%
       match.arg(

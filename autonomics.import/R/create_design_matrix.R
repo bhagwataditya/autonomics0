@@ -26,9 +26,7 @@ create_design_matrix <- function(
 ){
 
    # Assert
-   if (assertive.types::is_inherited_from(object, 'eSet')){ # Can also be EList
-      autonomics.import::assert_is_valid_eset(object)
-   }
+   autonomics.import::assert_is_valid_object(object)
    assertive.sets::assert_is_subset('subgroup', autonomics.import::svars(object))
 
    # Ensure that subgroup vector is a factor to preserve order of levels

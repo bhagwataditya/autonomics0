@@ -92,7 +92,7 @@ plot_projected_samples_and_features <- function(
    n            = 9
 ){
    # Check input args
-   autonomics.import::assert_is_valid_eset(object)
+   autonomics.import::assert_is_valid_object(object)
    if (ncol(object) < 3){
       autonomics.support::cmessage('\tExit PCA: only %d samples', ncol(object))
       return(invisible(NULL))
