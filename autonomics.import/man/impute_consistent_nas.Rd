@@ -32,7 +32,7 @@ if (require(graumann.lfq)){
 
    # Read object
    object <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') \%>\%
-             read_proteingroups(impute_consistent_nas = FALSE)
+             read_proteingroups()
 
    # Common NA values - missing in all samples
    object \%>\% autonomics.import::split_by_svar() \%>\%

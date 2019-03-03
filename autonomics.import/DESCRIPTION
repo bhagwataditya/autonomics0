@@ -27,6 +27,7 @@ Imports:
     Biobase,
     data.table,
     dplyr,
+    imputeLCMD,
     lazyeval,
     limma,
     magrittr,
