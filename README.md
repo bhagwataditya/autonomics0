@@ -1,22 +1,25 @@
-# Install autonomics
+# Install autonomics stable
 
-1. Make sure you have R 3.5.0. Install if required.
+    remotes::install_github('bhagwataditya/autonomics/autonomics.data'      )
+    remotes::install_github('bhagwataditya/autonomics/autonomics.support'   )
+    remotes::install_github('bhagwataditya/autonomics/autonomics.import'    )
+    remotes::install_github('bhagwataditya/autonomics/autonomics.annotate'  )
+    remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.plot'      )
+    remotes::install_github('bhagwataditya/autonomics/autonomics.explore'   )
+    remotes::install_github('bhagwataditya/autonomics/autonomics.find'      )
+    remotes::install_github('bhagwataditya/autonomics/autonomics.ora'       )
+    remotes::install_github('bhagwataditya/autonomics/autonomics'           )
 
-2. Close all active R sessions. Open a fresh R session
+# Install autonomics dev
 
-3. Install the latest version of BioConductor
-     ```
-     remove.packages('BiocInstaller')               # We want the latest version of BiocInstaller
-     source("https://bioconductor.org/biocLite.R")  # Install latest version of BiocInstaller
-     biocLite(suppressUpdates = TRUE)               # Install latest version of Bioconductor
-     ```
-    
-4. Upgrade packages
-     ```
-     biocLite("BiocUpgrade")
-     ```
-
-5. Install autonomics:
-    ```
-     source("https://raw.github.com/bhagwataditya/autonomics/master/scripts/install_autonomics.R")
-    ```
+    remotes::install_github('bhagwataditya/autonomics/autonomics.data',       ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.support',    ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.import',     ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.annotate',   ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess', ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.plot',       ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.explore',    ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.find',       ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.ora',        ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics',            ref = 'dev')
