@@ -25,18 +25,15 @@ require(magrittr)
 if (require(autonomics.data)){
 
    # Before imputation
-   object <-  'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\% 
-               system.file(package = 'autonomics.data') \%>\% 
-               autonomics::read_proteingroups() \%>\% 
-               autonomics::prepare_proteingroups(
-                  invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'),
-                  impute_consistent_nas = FALSE, plot = FALSE)
-   object \%>\% autonomics::plot_detects_per_subgroup()
-   
+   object <-  'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
+               system.file(package = 'autonomics.data') \%>\%
+               autonomics.import::read_proteingroups()
+   object \%>\% plot_detects_per_subgroup()
+
    # After imputation
-   object <-  'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\% 
-               system.file(package = 'autonomics.data') \%>\% 
-               autonomics::read_proteingroups() \%>\% 
+   object <-  'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
+               system.file(package = 'autonomics.data') \%>\%
+               autonomics.import::read_proteingroups() \%>\%
                autonomics::prepare_proteingroups(impute_consistent_nas = TRUE, plot = FALSE)
    object \%>\% autonomics::plot_detects_per_subgroup()
 }

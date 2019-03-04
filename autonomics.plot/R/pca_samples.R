@@ -1,3 +1,71 @@
+#' Make datatable to plot PCA, LDA, or PLS sample scores
+#' @param projection   output from pca, lda, or pls
+#' @param object    SummarizedExperiment, eSet, or eList
+#' @param dims      PCA/LDA dimensions
+#' @param color_var svar mapped to color
+#' @param shape_var svar mapped to shape
+#' @param size_var  svar mapped to size
+#' @param txt_var   svar mapped to txt
+#' @param split_var svar on which object is splitted prior to lda analysis
+#' @param facet_var svar on which plot is faceted
+#' @param group_var svar mapped to group_var
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemdiff.proteinratios
+#'
+#'    autonomics.explore::pca(object) %>%
+#'    autonomics.explore::make_projected_samples_df(
+#'       object, dims = c(1,2), color_var = 'subgroup',
+#'       shape_var = NULL, size_var = NULL, txt_var = NULL,
+#'       split_var = NULL, facet_var = NULL, group_var = NULL) %>%
+#'    print()
+#'
+#'    autonomics.explore::pca(object, ndim=4) %>%
+#'    autonomics.explore::make_projected_samples_df(
+#'       object, dims = 3:4, color_var = 'subgroup',
+#'       shape_var = NULL, size_var = NULL, txt_var = NULL,
+#'       split_var = NULL, facet_var = NULL, group_var = NULL) %>%
+#'    print()
+#' }
+#' @importFrom data.table  data.table  :=
+#' @importFrom magrittr    %<>%
+#' @export
+make_projected_samples_df <- function(
+   projection,
+   object,
+   dims,
+   color_var,
+   shape_var,
+   size_var,
+   txt_var,
+   split_var,
+   facet_var,
+   group_var
+){
+   # Satisfy CHECK
+   color <- shape <- size <- label <- group <- facet <- NULL
+
+   # Add MPA coordinates
+   DT <- data.table::data.table(
+            sample_id = autonomics.import::snames(object),
+            x         = projection$samples[, dims[1]],
+            y         = projection$samples[, dims[2]])
+
+   # Add other aesthetics
+   DT %<>% magrittr::extract(, color := if(is.null(color_var)) 'default'  else  autonomics.import::sdata(object)[[color_var]] )
+   DT %<>% magrittr::extract(, shape := if(is.null(shape_var)) 'default'  else  autonomics.import::sdata(object)[[shape_var]] )
+   DT %<>% magrittr::extract(, size  := if(is.null(size_var))  'default'  else  autonomics.import::sdata(object)[[size_var ]] )
+   if (!is.null(txt_var))   DT %<>% magrittr::extract(, label := autonomics.import::sdata(object)[[txt_var]])
+   if (!is.null(group_var)) DT %<>% magrittr::extract(, group := autonomics.import::sdata(object)[[group_var]])
+   if (!is.null(facet_var)) DT %<>% magrittr::extract(, facet := autonomics.import::sdata(object)[[facet_var]])
+   if (!is.null(split_var)) DT %<>% magrittr::extract(, facet := sprintf('%s %d%% %d%%', facet, round(projection$var[1]), round(projection$var[2])))
+   DT
+}
+
+
+
+
 #' Plot PCA/LDA/PLS sample scores
 #' @param object            SummarizedExperiment, eSet, or Elist
 #' @param ...               Further SummarizedExperiment(s), eSet(s), or Elist(s)
@@ -21,33 +89,33 @@
 #' @param title             title
 #' @param na.impute         TRUE or FALSE
 #' @param legend.position   character
-#' @examples 
-#' require(magrittr)
-#' 
-#' # STEM CELL COMPARISON
+#' @examples
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::stemcomp.proteinratios
-#'    object %>% autonomics.explore::plot_pca_samples()
-#'    object %>% autonomics.explore::plot_pca_samples(dims = c(3,4))
-#'    
-#'    object %>% autonomics.explore::plot_projected_samples(
-#'        method = c('pca', 'lda', 'sma', 'pls'),
-#'        facet_var = c('OK PCA', 'Not so nice LDA', 'Nice SMA', 'Very nice PLS'),
-#'        nrow = 2)
+#'    require(magrittr)
+#'
+#'    # STEM CELL COMPARISON
+#'       object <- autonomics.data::stemcomp.proteinratios
+#'       object %>% autonomics.plot::plot_pca_samples()
+#'       object %>% autonomics.plot::plot_pca_samples(dims = c(3,4))
+#'
+#'       object %>% autonomics.plot::plot_projected_samples(
+#'                     method = c('pca', 'lda', 'sma', 'pls'),
+#'                     facet_var = c('OK PCA', 'Not so nice LDA', 'Nice SMA', 'Very nice PLS'),
+#'                     nrow = 2)
+#'
+#'    # STEM CELL DIFFERENTIATION
+#'       object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
+#'                  system.file(package = 'autonomics.data')     %>%
+#'                  autonomics.import::read_proteingroups()
+#'       object %>% autonomics.plot::plot_pca_samples()
+#'
+#'    # GLUTAMINASE
+#'       object <- 'extdata/glutaminase/glutaminase.xlsx' %>%
+#'                  system.file(package = 'autonomics.data') %>%
+#'                  autonomics.import::read_metabolon()
+#'       object %>% autonomics.plot::plot_pca_samples()
 #' }
-#' 
-#' # STEM CELL DIFFERENTIATION
-#' if (require(autonomics.data)){
-#'    object <- autonomics.data::stemdiff.proteinratios
-#'    object %>% autonomics.explore::plot_pca_samples()
-#' }
-#' 
-#' # GLUTAMINASE
-#' if (require(autonomics.data)){
-#'    object <- autonomics.data::glutaminase
-#'    object %>% autonomics.explore::plot_pca_samples()
-#' }
-#' 
+#'
 #' @author Aditya Bhagwat, Johannes Graumann
 #' @importFrom data.table   data.table   :=
 #' @importFrom magrittr %>% %<>%
@@ -58,12 +126,12 @@ plot_projected_samples <- function(
    listed_objects    = NULL,
    method            = c('pca', 'lda', 'sma', 'pls')[1],
    implementation    = c('mixOmics::plsda', 'mixOmics::splsda', 'ropls::opls')[1],
-   dims              = 1:2, 
+   dims              = 1:2,
    color_var         = 'subgroup', # autonomics.plot::default_color_var(object) gives 'block' when present!
    color_values      = autonomics.plot::default_color_values(object, color_var),
    shape_var         = autonomics.plot::default_shape_var(object),
-   size_var          = NULL, 
-   txt_var           = autonomics.plot::default_txt_var(object), 
+   size_var          = NULL,
+   txt_var           = autonomics.plot::default_txt_var(object),
    txt_outliers      = FALSE,
    group_var         = NULL,
    split_var         = NULL,
@@ -72,68 +140,68 @@ plot_projected_samples <- function(
    labs              = list(color = stringi::stri_trans_totitle(color_var), shape = stringi::stri_trans_totitle(shape_var)),
    nrow              = NULL,
    mention_method    = ifelse(is.null(facet_var), TRUE, FALSE),
-   title             = NULL, 
-   na.impute         = FALSE, 
+   title             = NULL,
+   na.impute         = FALSE,
    legend.position   = 'right'
 ){
 
 # Check prerequisites -----------------------------------------------------
    # Objects
    ## Combine all handed in objects
-   if(!is.null(listed_objects)) listed_objects %>% assertive.types::assert_is_list() 
+   if(!is.null(listed_objects)) listed_objects %>% assertive.types::assert_is_list()
    obj_list <- list(object) %>% c(list(...), listed_objects)
    obj_list %<>% magrittr::extract(!sapply(obj_list, is.null))
-   
+
    ## Assert all
    obj_list %>%  lapply(autonomics.import::assert_is_valid_object) %>%
                  lapply(function(x) x %>% autonomics.import::exprs() %>% assertive.properties::assert_is_non_empty())
    obj_list %<>% lapply(function(x) x %>% autonomics.plot::validify_shape_values(shape_var))
-   
+
    implementation %<>% match.arg(choices = c('mixOmics::plsda', 'mixOmics::splsda', 'ropls::opls'), several.ok = FALSE)
-   
+
    dims %>% assertive.types::assert_is_numeric()              %>%
             assertive.properties::assert_is_of_length(2)      %>%
             assertive.numbers::assert_all_are_whole_numbers() %>%
             assertive.numbers::assert_all_are_greater_than(0)
-   
+
    for(var in c(color_var, group_var, shape_var, size_var, split_var, txt_var)){
       obj_list %>% sapply(function(x) x %>% autonomics.import::svars() %>% assertive.sets::assert_is_superset(var))
    }
 
    if(length(facet_var) == 1){
       obj_list %>% sapply(function(x) x %>% autonomics.import::svars() %>% assertive.sets::assert_is_superset(facet_var))
-      
+
    } else if(length(facet_var) > 1){
       if(length(obj_list) == 1){ obj_list <- obj_list[[1]] %>% list() %>% rep(times = length(facet_var))
       } else {                   facet_var %>% assertive.properties::assert_are_same_length(obj_list)
       }
    }
-   
+
    # Must be left AFTER 'facet_var' - as obj_list may change depending on that
    method %<>% match.arg(choices = c('pca', 'lda', 'sma', 'pls'), several.ok = TRUE)
    if(length(method) > 1) method %>% assertive.properties::assert_are_same_length(obj_list)
-   
+
    # color_values # how to check this?
-   
+
    scales %<>% match.arg(choices = c('fixed', 'free_x', 'free_y', 'free'), several.ok = FALSE)
-   
+
    if(!is.null(labs)){
       labs %>% assertive.types::assert_is_list() %>%
                assertive.properties::assert_has_names() # Leaky: 'all_have_names' does not exist
    }
-   
+
    if(!is.null(nrow)){
       nrow %>% assertive.types::assert_is_a_number() %>%
                assertive.numbers::assert_all_are_whole_numbers() %>%
                assertive.numbers::assert_all_are_greater_than(0)
    }
-   
+
    mention_method %>% assertive.types::assert_is_a_bool()
-   
+
    if(!is.null(title)) title %>% assertive.types::assert_is_a_string()
-   
+
    na.impute %>% assertive.types::assert_is_a_bool()
-   
+
    if(length(legend.position) == 1){
      legend.position %<>% match.arg(choices    = c("none", "left", "right", "bottom", "top"), several.ok = FALSE)
    } else if(length(legend.position) == 2){
@@ -142,15 +210,14 @@ plot_projected_samples <- function(
    } else {
       stop('\'legend.position\' must be of length [1,2].')
    }
-   
+
    # Transform
    project_list <- seq_along(obj_list) %>%
                    lapply(function(x){ obj_list[[x]] %>%
-                                       autonomics.explore::project(
-                                          method         = ifelse(length(method) == 1, method, method[x]),
-                                          implementation = implementation,
-                                          ndim           = max(dims),
-                                          na.impute      = na.impute)})
+                                       project(method         = ifelse(length(method) == 1, method, method[x]),
+                                               implementation = implementation,
+                                               ndim           = max(dims),
+                                               na.impute      = na.impute)})
 
 # Processing --------------------------------------------------------------
    # Are we dealing with an on-the-fly generated facetting variable or do we use one from the data?
@@ -168,34 +235,32 @@ plot_projected_samples <- function(
                                           mention_variance      = TRUE,
                                           separator             = '\n')})
    }
-   
+
    # Generate data.tables/frames
    plotDF <- seq_along(obj_list) %>%
              lapply(function(x){
                       if(length(facet_var) <= 1){
-                         autonomics.explore::make_projected_samples_df(
-                            object     = obj_list[[x]],
-                            projection = project_list[[x]],
-                            dims       = dims,
-                            color_var  = color_var,
-                            shape_var  = shape_var,
-                            size_var   = size_var,
-                            txt_var    = txt_var,
-                            facet_var  = facet_var,
-                            split_var  = split_var,
-                            group_var  = group_var)
+                         make_projected_samples_df(object     = obj_list[[x]],
+                                                   projection = project_list[[x]],
+                                                   dims       = dims,
+                                                   color_var  = color_var,
+                                                   shape_var  = shape_var,
+                                                   size_var   = size_var,
+                                                   txt_var    = txt_var,
+                                                   facet_var  = facet_var,
+                                                   split_var  = split_var,
+                                                   group_var  = group_var)
                       } else {
-                         tmp_df <- autonomics.explore::make_projected_samples_df(
-                                      object = obj_list[[x]],
-                                      projection = project_list[[x]],
-                                      dims       = dims,
-                                      color_var  = color_var,
-                                      shape_var  = shape_var,
-                                      size_var   = size_var,
-                                      txt_var    = txt_var,
-                                      facet_var  = NULL,
-                                      split_var  = split_var,
-                                      group_var  = group_var)
+                         tmp_df <- make_projected_samples_df(object = obj_list[[x]],
+                                                             projection = project_list[[x]],
+                                                             dims       = dims,
+                                                             color_var  = color_var,
+                                                             shape_var  = shape_var,
+                                                             size_var   = size_var,
+                                                             txt_var    = txt_var,
+                                                             facet_var  = NULL,
+                                                             split_var  = split_var,
+                                                             group_var  = group_var)
                          tmp_df[['facet']] <- facet_var[x]
                          tmp_df  %<>% dplyr::mutate_(facet = ~facet %>% factor(levels = facet_var))
                          tmp_df
@@ -204,7 +269,7 @@ plot_projected_samples <- function(
 
    # Initialize plot
    p <- ggplot2::ggplot(plotDF)
-      
+
    # Points
    p <- p + ggplot2::geom_point(
             ggplot2::aes_string(
@@ -213,40 +278,40 @@ plot_projected_samples <- function(
                color = 'color',
                shape = 'shape',
                size  = 'size'))
-   if (is.null(shape_var))  p <- p + ggplot2::scale_shape_manual(values = c(default = 15), guide = FALSE) 
+   if (is.null(shape_var))  p <- p + ggplot2::scale_shape_manual(values = c(default = 15), guide = FALSE)
    if (is.null(size_var))   p <- p + ggplot2::scale_size_manual( values = c(default = 3),  guide = FALSE)
    plot_guide <- if (is.null(color_var)) FALSE  else TRUE
    p <- p + ggplot2::scale_color_manual(values = color_values, guide = plot_guide)
    if (!is.null(color_var)) p <- p + ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = 15, size = 2)))
-   
+
    # Line
    if (!is.null(group_var)){
       p <- p + ggplot2::geom_path(ggplot2::aes_string(x = 'x', 'y', color = 'color', group = 'group'))
    }
-   
+
    # txt
    if (!is.null(txt_var)){
       p <- p + ggrepel::geom_text_repel(ggplot2::aes_string(x='x',y='y', label='label', color = 'color'), show.legend = FALSE)
    }
    if (txt_outliers){
       is_an_outlier <- autonomics.support::is_outlier(plotDF$x) | autonomics.support::is_outlier(plotDF$y)
-      p <- p + ggrepel::geom_text_repel(data    = plotDF[is_an_outlier, ], 
+      p <- p + ggrepel::geom_text_repel(data    = plotDF[is_an_outlier, ],
                                         mapping = ggplot2::aes_string(x='x', y='y', color = 'color', label = 'sample_id'))
    }
-   
+
    # Facet
-   if (!is.null(facet_var)){ 
+   if (!is.null(facet_var)){
       p <- p + ggplot2::facet_wrap(
                stats::as.formula('~ facet'),
                scales = scales,
                nrow   = nrow)
-      p <- p + ggplot2::theme(strip.text = ggplot2::element_text(hjust = 0.05)) 
+      p <- p + ggplot2::theme(strip.text = ggplot2::element_text(hjust = 0.05))
    }
-   
+
    # Axes
    p <- p + ggplot2::geom_vline(xintercept = 0, linetype = 'dashed') +
-            ggplot2::geom_hline(yintercept = 0, linetype = 'dashed')    
-   
+            ggplot2::geom_hline(yintercept = 0, linetype = 'dashed')
+
    # Axis labels
    xlab <- paste0('X', dims[1])
    ylab <- paste0('X', dims[2])
@@ -272,12 +337,12 @@ plot_projected_samples <- function(
       p <- p + ggplot2::ggtitle(title)
    }
    p <- p + ggplot2::theme(legend.position = legend.position)
-   
+
    # Legends/labs
    if(!is.null(labs)){
       p <- p + do.call(what = ggplot2::labs, args = labs)
    }
-   
+
    # Left align
    if(length(facet_var) > 1){
       gp <- ggplot2::ggplotGrob(p)
@@ -298,8 +363,8 @@ plot_projected_samples <- function(
 }
 
 make_sample_scores_title2 <- function(
-   object, 
-   project_result, 
+   object,
+   project_result,
    method,
    dims,
    manual_label          = NULL,
@@ -344,11 +409,11 @@ make_sample_scores_title2 <- function(
 
 #' @rdname plot_projected_samples
 #' @export
-plot_pca_samples <- function(object, ...)  plot_projected_samples(object = object, method = 'pca', ...) 
+plot_pca_samples <- function(object, ...)  plot_projected_samples(object = object, method = 'pca', ...)
 
 #' @rdname plot_projected_samples
 #' @export
-plot_sma_samples <- function(object, ...)  plot_projected_samples(object = object, method = 'sma', ...) 
+plot_sma_samples <- function(object, ...)  plot_projected_samples(object = object, method = 'sma', ...)
 
 #' @rdname plot_projected_samples
 #' @export
