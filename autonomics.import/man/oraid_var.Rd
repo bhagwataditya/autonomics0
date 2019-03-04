@@ -20,7 +20,7 @@ require(magrittr)
 if (require(autonomics.data)){
    object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' \%>\%
               system.file(package='autonomics.data')   \%>\%
-              read_rnaseq()
+              read_rnaseq(fid_var = 'gene_id')
    object \%>\% autonomics.import::oraid_var()
    object \%>\% autonomics.import::oraid_values() \%>\% head(3)
 }
