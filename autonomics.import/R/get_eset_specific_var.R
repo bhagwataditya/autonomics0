@@ -123,7 +123,8 @@ uniprot_values <- function(object, first_only = FALSE){
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>%
-#'               system.file(package='autonomics.data')
+#'               system.file(package='autonomics.data')   %>%
+#'               read_rnaseq()
 #'    object %>% autonomics.import::oraid_var()
 #'    object %>% autonomics.import::oraid_values() %>% head(3)
 #' }
