@@ -26,8 +26,8 @@ require(magrittr)
 if (require(autonomics.data)){
    object <- 'extdata/stemdiff/rnaseq/gene_counts.txt'  \%>\%
               system.file(package = 'autonomics.data')  \%>\%
-              read_rnaseq()
-   autonomics.import::counts(object) <- autonomics.import::exprs(object)
+              autonomics::read_rnaseq()
+   counts(object) <- exprs(object)
    object \%>\% compute_precision_weights() \%>\% extract(1:3, 1:3)
 }
 }

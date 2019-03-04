@@ -30,11 +30,11 @@ if (require(autonomics.data)){
       object <- 'extdata/stemcomp/maxquant/proteinGroups.txt'            \%>\%
                  system.file(package='autonomics.data')                  \%>\%
                  read_proteingroups()
-      autonomics.import::fdata(object) \%>\% head()
+      fdata(object) \%>\% head()
 
       object \%<>\% magrittr::extract(1:100, )                             \%>\%
                   deconvolute_proteingroups(fastafile = fastafile)
-      autonomics.import::fdata(object) \%>\% head()
+      fdata(object) \%>\% head()
    }
 }
 }

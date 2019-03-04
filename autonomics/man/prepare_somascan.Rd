@@ -13,21 +13,21 @@ prepare_somascan(object, filter_sample_type = "Sample",
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{filter_sample_type}{character(.): sample  types to be filtered for.     Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').}
+\item{filter_sample_type}{string vector: sample  types to be filtered for.     Probably a subset of c('Sample', 'QC', 'Buffer', 'Calibrator').}
 
-\item{filter_feature_type}{character(.): feature types to be filtered for.     Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').}
+\item{filter_feature_type}{string vector: feature types to be filtered for.     Probably a subset of c('Protein', 'Hybridization Control Elution', 'Rat Protein').}
 
-\item{filter_sample_quality}{character(.): sample  qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')}
+\item{filter_sample_quality}{string vector: sample  qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')}
 
-\item{filter_feature_quality}{character(.): feature qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')}
+\item{filter_feature_quality}{string vector: feature qualities to be filtered for. Probably a subset of c('PASS', 'FLAG', 'FAIL')}
 
-\item{rm_na_svars}{logical(1)  : whether to rm NA svars}
+\item{rm_na_svars}{logical  : whether to rm NA svars}
 
-\item{rm_single_value_svars}{logical(1)  : whether to rm single value svars}
+\item{rm_single_value_svars}{logical  : whether to rm single value svars}
 
-\item{log2transform}{logical(1)  : whether to log2 transform}
+\item{log2transform}{logical  : whether to log2 transform}
 
-\item{infer_design}{logical(1)  : whether to infer design from sampleids}
+\item{infer_design}{logical  : whether to infer design from sampleids}
 }
 \value{
 Summarizedexperiment

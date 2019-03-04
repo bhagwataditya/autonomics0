@@ -22,7 +22,7 @@ if (require(autonomics.data)){
    require(magrittr)
    object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' \%>\% 
               system.file(package = 'autonomics.data') \%>\% 
-              autonomics::read_rnaseq()
-   object \%>\% autonomics::prepare_rnaseq()
+              read_rnaseq()
+   object \%>\% prepare_rnaseq()
 }
 }

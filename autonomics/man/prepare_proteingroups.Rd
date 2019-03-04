@@ -11,21 +11,21 @@ prepare_proteingroups(object, filter_reverse = TRUE,
   verbose = TRUE, plot = TRUE)
 }
 \arguments{
-\item{filter_reverse}{logical(1):   filter out "reverse peptide" groups (used for peptide identification FDR computation)?}
+\item{filter_reverse}{logical:   filter out "reverse peptide" groups (used for peptide identification FDR computation)?}
 
-\item{filter_contaminants}{logical(1):   filter out contaminant groups?}
+\item{filter_contaminants}{logical:   filter out contaminant groups?}
 
-\item{filter_complete_nondetects}{logical(1):   filter out proteingroups with no quantification for any sample?}
+\item{filter_complete_nondetects}{logical:   filter out proteingroups with no quantification for any sample?}
 
-\item{invert_subgroups}{character(.): names of subgroups that require inversion (e.g. WT_KD -> KD_WT)}
+\item{invert_subgroups}{string vector: names of subgroups that require inversion (e.g. WT_KD -> KD_WT)}
 
-\item{log2transform}{logical(1):   log2 transform?}
+\item{log2transform}{logical:   log2 transform?}
 
-\item{impute_consistent_nas}{logical(1):   impute consistent NA values (i.e. those replicated in all samples of the same subgroup)?}
+\item{impute_consistent_nas}{logical:   impute consistent NA values (i.e. those replicated in all samples of the same subgroup)?}
 
-\item{deconvolution_fastafile}{NULL or character(1): deconvolute proteingroups using this fastafile (optional)}
+\item{deconvolution_fastafile}{NULL or string: deconvolute proteingroups using this fastafile (optional)}
 
-\item{verbose}{logical(1):   message progress?}
+\item{verbose}{logical:   message progress?}
 }
 \description{
 Prepare proteingroups
@@ -37,8 +37,8 @@ require(magrittr)
    if (require(autonomics.data)){
       object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
                  system.file(package = 'autonomics.data') \%>\%  
-                 autonomics::read_proteingroups()
-      object \%>\% autonomics::prepare_proteingroups(invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'))
+                 read_proteingroups()
+      object \%>\% prepare_proteingroups(invert_subgroups = c('E_EM', 'E_BM', 'EM_BM'))
    }
    
 # Stem cell differentiation: internal standard design
@@ -46,11 +46,11 @@ require(magrittr)
       # Read
       object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
                  system.file(package = 'autonomics.data') \%>\%  
-                 autonomics::read_proteingroups()
+                 read_proteingroups()
               
       # Check and remedy subgroup definitions
       object$subgroup \%>\% unique()
-      object \%<>\% autonomics.import::filter_samples(
+      object \%<>\% filter_samples(
                      stringi::stri_detect_fixed(subgroup, 'STD') &
                      stringi::stri_detect_fixed(subgroup, 'BLANK', negate = TRUE), 
                      verbose = TRUE)
@@ -58,8 +58,7 @@ require(magrittr)
       object$subgroup \%<>\% factor(c('EM00', 'EM01', 'EM02', 'EM05', 'EM15', 'EM30', 'BM00'))
    
       # Prepare
-      object \%<>\% autonomics::prepare_proteingroups()
-      object \%>\% autonomics::plot_detects_per_subgroup()
+      object \%<>\% prepare_proteingroups()
    }
 
 # LFQ design

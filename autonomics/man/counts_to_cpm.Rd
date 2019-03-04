@@ -32,7 +32,7 @@ require(magrittr)
 if (require(autonomics.data)){
    counts <- system.file('extdata/stemdiff/rnaseq/gene_counts.txt', 
                           package = 'autonomics.data') \%>\% 
-             read_rnaseq() \%>\%
+             autonomics::read_rnaseq() \%>\%
              autonomics::exprs()
    lib.size <- counts \%>\% libsizes()
    cpm      <- counts \%>\% counts_to_cpm(lib.size)

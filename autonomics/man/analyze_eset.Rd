@@ -113,19 +113,6 @@ if (require(billing.differentiation.data)){
       universe   = NULL)
 }
 
-# Commonalities across subgroup levels
-#-------------------------------------
-if (require(atkin.2014)){
-   require(magrittr)
-   result_dir <- tempdir() \%>\% paste0('/analysis.results') \%T>\% message()
-   dir.create(result_dir, showWarnings = FALSE)
-   object <- atkin.2014::soma
-   contrasts <- atkin.2014::contrasts[1]
-   object$subgroup \%>\% unique()
-   object \%>\% autonomics::analyze_eset(
-                   contrasts = contrasts, result_dir = result_dir, universe = NULL)
-}
-
 # Metabolon data
 #---------------
 if (require(subramanian.2016)){
