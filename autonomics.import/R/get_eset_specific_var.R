@@ -46,6 +46,28 @@ fname_values <- function(object){
    object %>% autonomics.import::fvalues(autonomics.import::fname_var(.))
 }
 
+#==================================================
+# ENSG
+#==================================================
+
+#' Get ensg var
+#' @param object SummarizedExperiment
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>%
+#'               system.file(package = 'autonomics.data') %>%
+#'               read_rnaseq(fid_var = 'gene_id')
+#'    fvars(object)
+#' }
+ensg_var <- function(object){
+   fdata(object)[1:10, ] %>%
+   lapply(stringi::stri_detect_fixed, 'ENSG') %>%
+   vapply(any, logical(1)) %>%
+   magrittr::extract(names(.), .) %>%
+   magrittr::extract(1)
+}
+
 
 #===================================================
 # UNIPROT
@@ -100,47 +122,13 @@ uniprot_values <- function(object, first_only = FALSE){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::billing2016
-#'    object %>% autonomics.import::oraid_var()
-#'    object %>% autonomics.import::oraid_values() %>% head(3)
-#' }
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts
-#'    object %>% autonomics.import::oraid_var()
-#'    object %>% autonomics.import::oraid_values() %>% head(3)
-#'
-#'    object <- billing.differentiation.data::protein.ratios
-#'    object %>% autonomics.import::oraid_var()
-#'    object %>% autonomics.import::oraid_values()
-#' }
-#' if (require(atkin.2014)){
-#'    object <- atkin.2014::soma
-#'    object %>% autonomics.import::oraid_var()
-#'    object %>% autonomics.import::oraid_values() %>% head(3)
-#' }
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    object %>% autonomics.import::oraid_var()
-#'    object %>% autonomics.import::oraid_values() %>% head(3)
-#'
-#'    object <- subramanian.2016::exiqon
+#'    object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>%
+#'               system.file(package='autonomics.data')
 #'    object %>% autonomics.import::oraid_var()
 #'    object %>% autonomics.import::oraid_values() %>% head(3)
 #' }
 #' @export
-oraid_var <- function(object){
-
-   # Assert
-   autonomics.import::assert_is_valid_object(object)
-
-   if (is_rnaseq_eset(object))           return(ensg_var(object))
-   if (is_soma_eset(object))             return(uniprot_var(object))
-   if (is_maxquant_eset(object))         return(uniprot_var(object))
-   if (is_metabolon_eset(object))        return('BIOCHEMICAL')
-   if (is_exiqon_eset(object))           return('feature_id')
-   autonomics.support::cmessage('Abort - object must be a SummarizedExperiment with a format as created by one of the autonomics importers')
-   return(NULL)
-}
+oraid_var <- function(object) 'feature_id'
 
 #' @rdname oraid_var
 #' @importFrom magrittr %>%

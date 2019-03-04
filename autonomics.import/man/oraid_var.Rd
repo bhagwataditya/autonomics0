@@ -18,30 +18,8 @@ Get ora id var/values
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016
-   object \%>\% autonomics.import::oraid_var()
-   object \%>\% autonomics.import::oraid_values() \%>\% head(3)
-}
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   object \%>\% autonomics.import::oraid_var()
-   object \%>\% autonomics.import::oraid_values() \%>\% head(3)
-
-   object <- billing.differentiation.data::protein.ratios
-   object \%>\% autonomics.import::oraid_var()
-   object \%>\% autonomics.import::oraid_values()
-}
-if (require(atkin.2014)){
-   object <- atkin.2014::soma
-   object \%>\% autonomics.import::oraid_var()
-   object \%>\% autonomics.import::oraid_values() \%>\% head(3)
-}
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
-   object \%>\% autonomics.import::oraid_var()
-   object \%>\% autonomics.import::oraid_values() \%>\% head(3)
-
-   object <- subramanian.2016::exiqon
+   object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' \%>\%
+              system.file(package='autonomics.data')
    object \%>\% autonomics.import::oraid_var()
    object \%>\% autonomics.import::oraid_values() \%>\% head(3)
 }

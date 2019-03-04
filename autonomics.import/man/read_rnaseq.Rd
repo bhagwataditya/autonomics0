@@ -9,9 +9,9 @@ read_rnaseq(file, fid_var, fname_var = character(0))
 \arguments{
 \item{file}{string: path to rnaseq counts file}
 
-\item{fid_col}{string or number: feature id column}
+\item{fid_var}{string or number: feature id variable}
 
-\item{fname_col}{string or number: feature name column}
+\item{fname_var}{string or number: feature name variable}
 }
 \description{
 Read rnaseq counts

@@ -309,8 +309,8 @@ read_omics <- function(
 
 #' Read rnaseq counts
 #' @param file      string: path to rnaseq counts file
-#' @param fid_col   string or number: feature id column
-#' @param fname_col string or number: feature name column
+#' @param fid_var   string or number: feature id variable
+#' @param fname_var string or number: feature name variable
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
