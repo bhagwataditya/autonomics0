@@ -703,10 +703,10 @@ prepare_proteingroups <- function(
    # Transform exprs
    if (verbose) autonomics.support::cmessage('\tTransform exprs')
    object %<>% autonomics.import::invert(subgroups = invert_subgroups)
-   object %<>% autonomics::zero_to_na(verbose = verbose)
-   object %<>% autonomics::nan_to_na(verbose = verbose)
+   object %<>% autonomics.import::zero_to_na(verbose = verbose)
+   object %<>% autonomics.import::nan_to_na(verbose = verbose)
    if (log2transform)         object %<>% autonomics.import::log2transform(verbose = verbose)
-   if (impute_consistent_nas) object %<>% autonomics.import::impute_consistent_nas(verbose = verbose, plot = FALSE)
+   if (impute_consistent_nas) object %<>% autonomics.import::impute_consistent_nas(verbose = verbose)
    if (plot)                  object %>%  autonomics.plot::plot_detects_per_subgroup() %>% print()
 
    # Process fdata
