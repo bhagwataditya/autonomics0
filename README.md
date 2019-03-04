@@ -1,4 +1,6 @@
-# Install autonomics stable
+# Install 
+
+## stable
 
     remotes::install_github('bhagwataditya/autonomics/autonomics.data'      )
     remotes::install_github('bhagwataditya/autonomics/autonomics.support'   )
@@ -11,7 +13,7 @@
     remotes::install_github('bhagwataditya/autonomics/autonomics.ora'       )
     remotes::install_github('bhagwataditya/autonomics/autonomics'           )
 
-# Install autonomics dev
+## dev
 
     remotes::install_github('bhagwataditya/autonomics/autonomics.data',       ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.support',    ref = 'dev')
