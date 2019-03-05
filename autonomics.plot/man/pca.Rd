@@ -35,19 +35,8 @@ NIPALS:    X = T*P'   (no further decomposition of scores, so SMA not possible)
 }
 \examples{
 if (require(autonomics.data)){
-
-   # STEM CELL DIFFERENTIATION
-      require(magrittr)
-      object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
-                 system.file(package='autonomics.data')       \%>\%
-                 autonomics.import::read_proteingroups()
-      object \%>\% pca() \%>\% str()
-
-   # GLUTAMINASE
-      object <- 'extdata/glutaminase/glutaminase.xlsx'    \%>\%
-                 system.file(package = 'autonomics.data') \%>\%
-                 autonomics.import::read_metabolon()
-      object \%>\% pca() \%>\% str()
+   object <- autonomics.data::glutaminase
+   object \%>\% pca() \%>\% str()
 }
 }
 \seealso{

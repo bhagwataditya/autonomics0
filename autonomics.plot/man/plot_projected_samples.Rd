@@ -82,6 +82,16 @@ Plot PCA/LDA/PLS sample scores
 if (require(autonomics.data)){
    require(magrittr)
 
+   # GLUTAMINASE
+      object <- autonomics.data::glutaminase
+      object \%>\% autonomics.plot::plot_pca_samples()
+      object \%>\% autonomics.plot::plot_lda_samples()
+      object \%>\% autonomics.plot::plot_pls_samples()
+      object \%>\% autonomics.plot::plot_projected_samples(
+                    method = c('pca', 'lda', 'sma', 'pls'),
+                    facet_var = c('PCA', 'LDA', 'SMA', 'PLS'),
+                    nrow = 2)
+
    # STEM CELL COMPARISON
       object <- autonomics.data::stemcomp.proteinratios
       object \%>\% autonomics.plot::plot_pca_samples()
@@ -92,17 +102,6 @@ if (require(autonomics.data)){
                     facet_var = c('OK PCA', 'Not so nice LDA', 'Nice SMA', 'Very nice PLS'),
                     nrow = 2)
 
-   # STEM CELL DIFFERENTIATION
-      object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
-                 system.file(package = 'autonomics.data')     \%>\%
-                 autonomics.import::read_proteingroups()
-      object \%>\% autonomics.plot::plot_pca_samples()
-
-   # GLUTAMINASE
-      object <- 'extdata/glutaminase/glutaminase.xlsx' \%>\%
-                 system.file(package = 'autonomics.data') \%>\%
-                 autonomics.import::read_metabolon()
-      object \%>\% autonomics.plot::plot_pca_samples()
 }
 
 }

@@ -36,19 +36,8 @@ PCA Loadings:         V
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-
-   # STEM CELL DIFFERENTIATION
-      require(magrittr)
-      object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
-                 system.file(package='autonomics.data')       \%>\%
-                 autonomics.import::read_proteingroups()
-      object \%>\% sma() \%>\% str()
-
-   # GLUTAMINASE
-      object <- 'extdata/glutaminase/glutaminase.xlsx'    \%>\%
-                 system.file(package = 'autonomics.data') \%>\%
-                 autonomics.import::read_metabolon()
-      object \%>\% sma() \%>\% str()
+   object <- autonomics.data::glutaminase
+   object \%>\% sma() \%>\% str()
 }
 }
 \references{

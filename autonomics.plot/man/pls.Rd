@@ -30,17 +30,7 @@ Returns \code{PLS} sample scores, feature loadings, and latent variable variance
 \examples{
 if (require(autonomics.data)){
    require(magrittr)
-
-   # STEM CELL DIFFERENTIATION
-   object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
-              system.file(package = 'autonomics.data') \%>\%
-              autonomics.import::read_proteingroups()
-   object \%>\% autonomics.plot::pls() \%>\% str()
-
-  # GLUTAMINASE
-   object <- 'extdata/glutaminase/glutaminase.xlsx' \%>\%
-              system.file(package='autonomics.data') \%>\%
-              autonomics.import::read_metabolon()
+   object <- autonomics.data::glutaminase
    object \%>\% autonomics.plot::pls() \%>\% str()
    \dontrun{ # slow
       object \%>\% autonomics.plot::pls(implementation = 'ropls::opls') \%>\% str()

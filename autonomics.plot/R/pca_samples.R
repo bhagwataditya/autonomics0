@@ -10,9 +10,9 @@
 #' @param facet_var svar on which plot is faceted
 #' @param group_var svar mapped to group_var
 #' @examples
-#' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::stemdiff.proteinratios
+#'    require(magrittr)
+#'    object <- autonomics.data::glutaminase
 #'
 #'    autonomics.explore::pca(object) %>%
 #'    autonomics.explore::make_projected_samples_df(
@@ -93,6 +93,16 @@ make_projected_samples_df <- function(
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'
+#'    # GLUTAMINASE
+#'       object <- autonomics.data::glutaminase
+#'       object %>% autonomics.plot::plot_pca_samples()
+#'       object %>% autonomics.plot::plot_lda_samples()
+#'       object %>% autonomics.plot::plot_pls_samples()
+#'       object %>% autonomics.plot::plot_projected_samples(
+#'                     method = c('pca', 'lda', 'sma', 'pls'),
+#'                     facet_var = c('PCA', 'LDA', 'SMA', 'PLS'),
+#'                     nrow = 2)
+#'
 #'    # STEM CELL COMPARISON
 #'       object <- autonomics.data::stemcomp.proteinratios
 #'       object %>% autonomics.plot::plot_pca_samples()
@@ -103,17 +113,6 @@ make_projected_samples_df <- function(
 #'                     facet_var = c('OK PCA', 'Not so nice LDA', 'Nice SMA', 'Very nice PLS'),
 #'                     nrow = 2)
 #'
-#'    # STEM CELL DIFFERENTIATION
-#'       object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
-#'                  system.file(package = 'autonomics.data')     %>%
-#'                  autonomics.import::read_proteingroups()
-#'       object %>% autonomics.plot::plot_pca_samples()
-#'
-#'    # GLUTAMINASE
-#'       object <- 'extdata/glutaminase/glutaminase.xlsx' %>%
-#'                  system.file(package = 'autonomics.data') %>%
-#'                  autonomics.import::read_metabolon()
-#'       object %>% autonomics.plot::plot_pca_samples()
 #' }
 #'
 #' @author Aditya Bhagwat, Johannes Graumann
@@ -268,7 +267,7 @@ plot_projected_samples <- function(
              data.table::rbindlist()
 
    # Initialize plot
-   p <- ggplot2::ggplot(plotDF)
+   p <- ggplot2::ggplot(plotDF) + ggplot2::theme_bw()
 
    # Points
    p <- p + ggplot2::geom_point(
@@ -348,18 +347,19 @@ plot_projected_samples <- function(
       gp <- ggplot2::ggplotGrob(p)
 
       # Edit the grob
-      gp <- grid::editGrob(grid::grid.force(gp),
-                           grid::gPath("GRID.stripGrob", "GRID.text"),
-                           grep = TRUE,
-                           global = TRUE,
-                           just = "left",
-                           x = grid::unit(0, "npc"))
+      # Is throwing a warning - fix later - outcomment now
+      # gp <- grid::editGrob(grid::grid.force(gp),
+      #                      grid::gPath("GRID.stripGrob", "GRID.text"),
+      #                      grep = TRUE,
+      #                      global = TRUE,
+      #                      just = "left",
+      #                      x = grid::unit(0, "npc"))
       grid::grid.draw(gp)
       invisible(gp)
    } else {
       p
    }
-   #suppressWarnings(print(p))
+
 }
 
 make_sample_scores_title2 <- function(

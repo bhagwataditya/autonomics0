@@ -8,7 +8,7 @@ get_pca_var <- function(method, dim){
 #' @param dim       dimension
 #' @param na.impute whether to impute (if applicable)
 #' @return re-ordered sumexp
-#' @importFrom magrittr %>% 
+#' @importFrom magrittr %>%
 #' @export
 order_on_feature_loadings <- function(object, method, dim, na.impute){
    pca_var <- get_pca_var(method, dim)
@@ -54,41 +54,20 @@ extract_top_and_bottom <- function(object, n = 16){
 #' @param ...              passed to autonomics.plot::plot_features
 #' @examples
 #' require(magrittr)
+#'
 #' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios
-#'    object %>% autonomics.explore::plot_pca_features(n=9)
-#'    object %>% autonomics.explore::plot_pca_features(geom = 'bar')
+#'    object %>% autonomics.plot::plot_pca_features(n=9)
+#'    object %>% autonomics.plot::plot_pca_features(geom = 'bar')
 #' }
-#' 
-#' # STEM CELL DIFFERENTIATION
-#' if (require(autonomics.data)){
-#'    object <- autonomics.data::stemdiff.proteinratios
-#'    object %>% autonomics.explore::plot_pca_features(n=9)
-#'    object %>% autonomics.explore::plot_pca_features(dim=2, n=9)
-#'    object %>% autonomics.explore::plot_pca_features()
-#' }
-#' 
+#'
 #' # GLUTAMINASE
 #' if (require(autonomics.data)){
-#'    autonomics.data::glutaminase %>% autonomics.explore::plot_pca_features(
-#'       color_var    = 'GROUP_DESCRIPTION', 
-#'       color_values = c(Control = 'orange', Vehicle = 'red', `Concentration 1` = 'green', 
-#'                       `Concentration 2` = 'blue'))
+#'    object <- autonomics.data::glutaminase
+#'    object %>% autonomics.plot::plot_pca_features()
 #' }
-#' 
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    object %>% autonomics.explore::plot_pca_features(geom = 'boxplot', n=4)
-#'    object %>% autonomics.explore::plot_pls_features(geom = 'boxplot', n=4)
-#'    object %>% autonomics.explore::plot_lda_features(geom = 'boxplot', n=4)
-#' }
-#' 
-#' if (require(atkin.2014)){
-#'    object <- atkin.2014::soma
-#'    object %>% autonomics.explore::plot_pca_features()
-#' }
-#' 
+#'
 #' @importFrom magrittr  %>%
 #' @export
 plot_projection_features <- function(
@@ -101,7 +80,7 @@ plot_projection_features <- function(
    n               = 9,
    na.impute       = FALSE,
    title           = sprintf('X%d', dim),
-   file            = NULL, 
+   file            = NULL,
    ...
 ){
    # Check input args
@@ -121,7 +100,7 @@ plot_projection_features <- function(
       # Add projection
       object %<>% autonomics.explore::add_projection_to_eset(method, na.impute = na.impute, ndim = dim)
    }
-   
+
    # Order on projection and write to file
    object %<>% autonomics.explore::order_on_feature_loadings(method = method, dim = dim, na.impute = na.impute) %>%
                autonomics.explore::extract_top_and_bottom(n=n)

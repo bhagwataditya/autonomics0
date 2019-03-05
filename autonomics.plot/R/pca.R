@@ -24,19 +24,8 @@
 #' ```
 #' @examples
 #' if (require(autonomics.data)){
-#'
-#'    # STEM CELL DIFFERENTIATION
-#'       require(magrittr)
-#'       object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
-#'                  system.file(package='autonomics.data')       %>%
-#'                  autonomics.import::read_proteingroups()
-#'       object %>% pca() %>% str()
-#'
-#'    # GLUTAMINASE
-#'       object <- 'extdata/glutaminase/glutaminase.xlsx'    %>%
-#'                  system.file(package = 'autonomics.data') %>%
-#'                  autonomics.import::read_metabolon()
-#'       object %>% pca() %>% str()
+#'    object <- autonomics.data::glutaminase
+#'    object %>% pca() %>% str()
 #' }
 #' @seealso \code{\link[autonomics.plot]{sma}},
 #'          \code{\link[autonomics.plot]{lda}},
@@ -103,19 +92,8 @@ pca <- function(object, ndim = 2, ...){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'
-#'    # STEM CELL DIFFERENTIATION
-#'       require(magrittr)
-#'       object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
-#'                  system.file(package='autonomics.data')       %>%
-#'                  autonomics.import::read_proteingroups()
-#'       object %>% sma() %>% str()
-#'
-#'    # GLUTAMINASE
-#'       object <- 'extdata/glutaminase/glutaminase.xlsx'    %>%
-#'                  system.file(package = 'autonomics.data') %>%
-#'                  autonomics.import::read_metabolon()
-#'       object %>% sma() %>% str()
+#'    object <- autonomics.data::glutaminase
+#'    object %>% sma() %>% str()
 #' }
 #' @references
 #' Wouters et al (2003) Graphical exploration of gene expression data: a comparative study of
@@ -130,7 +108,7 @@ pca <- function(object, ndim = 2, ...){
 sma <- function(object, na.impute = FALSE, ndim = 2, ...){
 
    # Preprocess
-   object %<>% autonomics.preprocess::minusinf_to_na()
+   object %<>% autonomics.import::minusinf_to_na()
    object %<>% autonomics.preprocess::flip_sign_if_all_exprs_are_negative() # else SVD singular
    if (na.impute) object %<>% autonomics.preprocess::impute()
    object %<>% autonomics.preprocess::filter_features_available_in_all_samples()
@@ -183,26 +161,15 @@ sma <- function(object, na.impute = FALSE, ndim = 2, ...){
 #'    require(magrittr)
 #'
 #'    # STEM CELL COMPARISON
-#'       object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
-#'                  system.file(package = 'autonomics.data')     %>%
-#'                  autonomics.import::read_proteingroups()
+#'       object <- autonomics.data::stemcomp.proteinratios
 #'       object %>% autonomics.plot::lda() %>% str()
 #'       \dontrun{ # Fails, as max dim length(subgroup) - 1
 #'          object %>% autonomics.plot::lda(ndim = 3) %>% str()
 #'        }
 #'
-#'    # STEM CELL DIFFERENTIATION
-#'       require(magrittr)
-#'       object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
-#'                  system.file(package='autonomics.data')       %>%
-#'                  autonomics.import::read_proteingroups()
-#'       object %>% lda() %>% str()
-#'
 #'    # GLUTAMINASE
-#'       object <- 'extdata/glutaminase/glutaminase.xlsx'    %>%
-#'                  system.file(package = 'autonomics.data') %>%
-#'                  autonomics.import::read_metabolon()
-#'       object %>% lda() %>% str()
+#'       object <- autonomics.data::glutaminase
+#'       object %>% autonomics.plot::lda() %>% str()
 #' }
 #' @seealso \code{\link[autonomics.plot]{pca}},
 #'          \code{\link[autonomics.plot]{sma}},
@@ -222,7 +189,7 @@ lda <- function(object, na.impute = FALSE, ndim = 2,  ...){
    }
 
    # Preprocess
-   object %<>% autonomics.preprocess::minusinf_to_na()
+   object %<>% autonomics.import::minusinf_to_na()
    object %<>% autonomics.preprocess::flip_sign_if_all_exprs_are_negative() # else SVD singular
    if (na.impute) object %<>% autonomics.preprocess::impute()
    object %<>% autonomics.preprocess::filter_features_available_in_all_samples()
@@ -267,17 +234,7 @@ lda <- function(object, na.impute = FALSE, ndim = 2,  ...){
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
-#'
-#'    # STEM CELL DIFFERENTIATION
-#'    object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
-#'               system.file(package = 'autonomics.data') %>%
-#'               autonomics.import::read_proteingroups()
-#'    object %>% autonomics.plot::pls() %>% str()
-#'
-#'   # GLUTAMINASE
-#'    object <- 'extdata/glutaminase/glutaminase.xlsx' %>%
-#'               system.file(package='autonomics.data') %>%
-#'               autonomics.import::read_metabolon()
+#'    object <- autonomics.data::glutaminase
 #'    object %>% autonomics.plot::pls() %>% str()
 #'    \dontrun{ # slow
 #'       object %>% autonomics.plot::pls(implementation = 'ropls::opls') %>% str()
@@ -355,17 +312,7 @@ pls <- function(object, implementation = NULL, ndim = 2, ...){
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
-#'
-#'    # STEM CELL DIFFERENTIATION
-#'    object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
-#'               system.file(package = 'autonomics.data')     %>%
-#'               autonomics.import::read_proteingroups()
-#'    object %>% autonomics.plot::project() %>% str()
-#'
-#'    # GLUTAMINASE
-#'    object <- 'extdata/glutaminase/glutaminase.xlsx'    %>%
-#'               system.file(package = 'autonomics.data') %>%
-#'               autonomics.import::read_metabolon()
+#'    object <- autonomics.data::glutaminase
 #'    object %>% autonomics.plot::project() %>% str()
 #' @seealso \code{\link[autonomics.plot]{pca}},
 #'          \code{\link[autonomics.plot]{sma}},

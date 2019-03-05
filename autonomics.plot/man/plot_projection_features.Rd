@@ -51,39 +51,18 @@ When not, add_pca_to_eset is run prior to plotting
 }
 \examples{
 require(magrittr)
+
 # STEM CELL COMPARISON
 if (require(autonomics.data)){
    object <- autonomics.data::stemcomp.proteinratios
-   object \%>\% autonomics.explore::plot_pca_features(n=9)
-   object \%>\% autonomics.explore::plot_pca_features(geom = 'bar')
-}
-
-# STEM CELL DIFFERENTIATION
-if (require(autonomics.data)){
-   object <- autonomics.data::stemdiff.proteinratios
-   object \%>\% autonomics.explore::plot_pca_features(n=9)
-   object \%>\% autonomics.explore::plot_pca_features(dim=2, n=9)
-   object \%>\% autonomics.explore::plot_pca_features()
+   object \%>\% autonomics.plot::plot_pca_features(n=9)
+   object \%>\% autonomics.plot::plot_pca_features(geom = 'bar')
 }
 
 # GLUTAMINASE
 if (require(autonomics.data)){
-   autonomics.data::glutaminase \%>\% autonomics.explore::plot_pca_features(
-      color_var    = 'GROUP_DESCRIPTION', 
-      color_values = c(Control = 'orange', Vehicle = 'red', `Concentration 1` = 'green', 
-                      `Concentration 2` = 'blue'))
-}
-
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
-   object \%>\% autonomics.explore::plot_pca_features(geom = 'boxplot', n=4)
-   object \%>\% autonomics.explore::plot_pls_features(geom = 'boxplot', n=4)
-   object \%>\% autonomics.explore::plot_lda_features(geom = 'boxplot', n=4)
-}
-
-if (require(atkin.2014)){
-   object <- atkin.2014::soma
-   object \%>\% autonomics.explore::plot_pca_features()
+   object <- autonomics.data::glutaminase
+   object \%>\% autonomics.plot::plot_pca_features()
 }
 
 }

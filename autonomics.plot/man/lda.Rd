@@ -32,26 +32,15 @@ if (require(autonomics.data)){
    require(magrittr)
 
    # STEM CELL COMPARISON
-      object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
-                 system.file(package = 'autonomics.data')     \%>\%
-                 autonomics.import::read_proteingroups()
+      object <- autonomics.data::stemcomp.proteinratios
       object \%>\% autonomics.plot::lda() \%>\% str()
       \dontrun{ # Fails, as max dim length(subgroup) - 1
          object \%>\% autonomics.plot::lda(ndim = 3) \%>\% str()
        }
 
-   # STEM CELL DIFFERENTIATION
-      require(magrittr)
-      object <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
-                 system.file(package='autonomics.data')       \%>\%
-                 autonomics.import::read_proteingroups()
-      object \%>\% lda() \%>\% str()
-
    # GLUTAMINASE
-      object <- 'extdata/glutaminase/glutaminase.xlsx'    \%>\%
-                 system.file(package = 'autonomics.data') \%>\%
-                 autonomics.import::read_metabolon()
-      object \%>\% lda() \%>\% str()
+      object <- autonomics.data::glutaminase
+      object \%>\% autonomics.plot::lda() \%>\% str()
 }
 }
 \seealso{

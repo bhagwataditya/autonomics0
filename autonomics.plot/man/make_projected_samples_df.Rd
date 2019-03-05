@@ -32,9 +32,9 @@ make_projected_samples_df(projection, object, dims, color_var, shape_var,
 Make datatable to plot PCA, LDA, or PLS sample scores
 }
 \examples{
-require(magrittr)
 if (require(autonomics.data)){
-   object <- autonomics.data::stemdiff.proteinratios
+   require(magrittr)
+   object <- autonomics.data::glutaminase
 
    autonomics.explore::pca(object) \%>\%
    autonomics.explore::make_projected_samples_df(
