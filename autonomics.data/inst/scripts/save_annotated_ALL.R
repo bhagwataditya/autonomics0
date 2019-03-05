@@ -16,7 +16,9 @@ save_annotated_ALL <- function(){
    
    e <- new.env()
    utils::data(list = 'ALL', package = 'ALL', envir = e)
-   e$ALL %<>% SummarizedExperiment::SummarizedExperiment()
+   e$ALL %<>% SummarizedExperiment::makeSummarizedExperimentFromExpressionSet()
+   class(e$ALL) <- 'SummarizedExperiment'
+   
    autonomics.import::fdata(e$ALL) <- data.frame(
       gene_symbols       = getFirstFeatureFromALL(hgu95av2.db::hgu95av2SYMBOL),
       gene_names         = getFirstFeatureFromALL(hgu95av2.db::hgu95av2GENENAME),
