@@ -11,7 +11,7 @@ stemcomp.proteinratios <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
                                                              deconvolution_fastafile = '../data/uniprot_hsa_20140515.fasta') %>% 
                            autonomics.import::set_contrastdefs(c( EM_E =  'EM_E', BM_E =  'BM_E', BM_EM = 'BM_EM')) %>% 
                            autonomics.find::add_limma()
-save(stemcomp.proteinratios, file = 'data/stemcomp.proteinratios.RData', compress = 'xz')
+usethis::use_data(stemcomp.proteinratios, compress = 'xz', overwrite = TRUE)
 
 # SOMA
 stemcomp.soma <- 'extdata/stemcomp/soma/stemcomp.adat'      %>% 
@@ -19,8 +19,7 @@ stemcomp.soma <- 'extdata/stemcomp/soma/stemcomp.adat'      %>%
                   autonomics.import::read_somascan()        %>%
                   autonomics::prepare_somascan()     %>% 
                   autonomics.find::add_limma(c(EM_E  = 'EM-E', BM_E  = 'BM-E', BM_EM = 'BM-EM'))
-save(stemcomp.soma, file = 'data/stemcomp.soma.RData', compress = 'xz')
-
+usethis::use_data(stemcomp.soma, compress = 'xz', overwrite = TRUE)
 
 # Stem cell differentiation
 #==========================
@@ -45,7 +44,6 @@ stemdiff.proteinratios <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
                            autonomics.import::set_contrastdefs(autonomics.find::make_ref_contrasts(.)) %>% 
                            autonomics.find::add_limma()
 
-save(stemdiff.proteinratios, file = 'data/stemdiff.proteinratios.RData', compress = 'xz')
 stemdiff.proteinratios %>% autonomics.plot::plot_pca_samples()
 stemdiff.proteinratios %>% autonomics.plot::plot_sample_distributions()
 stemdiff.proteinratios %>% autonomics.plot::default_color_values(color_var = 'subgroup')
