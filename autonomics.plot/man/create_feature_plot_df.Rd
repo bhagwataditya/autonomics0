@@ -20,24 +20,18 @@ dataframe
 Create dataframe for feature plots
 }
 \examples{
-require(magrittr)
+if (require(autonmomics.data)){
+  require(magrittr)
 
-# STEM CELL COMPARISON (Max Quant)
-if (require(autonomics.data)){
-   autonomics.data::stemcomp.proteinratios \%>\%
-   autonomics.plot::create_feature_plot_df(c('feature_id', 'Gene names')) \%>\% head()
-}
+  # STEM CELL COMPARISON (Max Quant)
+  autonomics.data::stemcomp.proteinratios \%>\%
+  autonomics.plot::create_feature_plot_df(c('feature_id', 'Gene names')) \%>\% head()
 
-# STEM CELL DIFFERENTIATION (Max Quant)
-if (require(autonomics.data)){
-   autonomics.data::stemdiff.proteinratios \%>\%
-   autonomics.plot::create_feature_plot_df('Gene names') \%>\% head()
-}
-if (require(billing.differentiation.data)){
-   billing.differentiation.data::rna.voomcounts \%>\%
-      autonomics.plot::create_feature_plot_df('gene_name') \%>\% head()
-   billing.differentiation.data::protein.ratios \%>\%
-      autonomics.plot::create_feature_plot_df('Gene names') \%>\% head()
+  # GLUTAMINASE
+  autonomics.data::glutaminase \%>\%
+  autonomics.plot::create_feature_plot_df(c('feature_id', 'BIOCHEMICAL')) \%>\% head()
+
+
 }
 }
 \author{

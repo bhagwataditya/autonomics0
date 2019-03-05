@@ -7,7 +7,7 @@
 default_group_var(object)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 }
 \value{
 default value of group_var
@@ -16,22 +16,14 @@ default value of group_var
 Default group var
 }
 \examples{
-require(magrittr)
-
-# STEM CELL COMPARISON
 if (require(autonomics.data)){
+   require(magrittr)
+
+   # STEM CELL COMPARISON
    autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_group_var()
-   autonomics.data::billing2016 \%>\% autonomics.plot::default_group_var()
-}
+   autonomics.data::billing2016            \%>\% autonomics.plot::default_group_var()
 
-# ATKIN 2014
-if (require(atkin.2014)){
-  atkin.2014::soma \%>\% autonomics.plot::default_group_var()
-}
-
-# STEM CELL DIFFERENTIATION
-if (require(billing.differentiation.data)){
-  billing.differentiation.data::rna.voomcounts \%>\%
-     default_group_var()
+   # GLUTAMINASE
+   autonomics.data::glutaminase            \%>\% autonomics.plot::default_group_var()
 }
 }

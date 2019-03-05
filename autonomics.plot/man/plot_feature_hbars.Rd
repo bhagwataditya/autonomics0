@@ -46,18 +46,8 @@ Create bar plot of exprs(object). Annotate it with fvars. Color per 'color_var'.
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   small_eset <- autonomics.data::ALL[1:10, 1:10]
+   small_eset <- autonomics.data::stemcomp.proteinratios[1:10, ]
    plot_feature_hbars(small_eset)
-   plot_feature_hbars(small_eset, fvars = 'gene_names')
-   plot_feature_hbars(small_eset, color_var = 'sex')
-   plot_feature_hbars(small_eset, facet_def = '~age+sex')
-   small_eset$alpha <- small_eset$sex == 'M'
-   plot_feature_hbars(small_eset, alpha_var = 'alpha')
-}
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts \%>\%
-               extract(1:10, )
-   object \%>\% autonomics.plot::plot_feature_hbars(
-      color_var = 'cell', color_values = c(EM = 'red', BM = 'green'))
+   plot_feature_hbars(small_eset, fvars = 'Gene names')
 }
 }

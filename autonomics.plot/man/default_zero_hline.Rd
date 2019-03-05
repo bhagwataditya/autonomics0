@@ -7,7 +7,7 @@
 default_zero_hline(object)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 }
 \value{
 logical
@@ -16,17 +16,15 @@ logical
 Default zero hline
 }
 \examples{
-require(magrittr)
-
-# STEM CELL COMPARISON
 if (require(autonomics.data)){
+   require(magrittr)
+
+   # STEM CELL COMPARISON
    autonomics.data::stemcomp.proteinratios \%>\%
    autonomics.plot::default_zero_hline()
-}
 
-# STEM CELL DIFFERENTIATION
-if (require(billing.differentiation.data)){
-   billing.differentiation.data::rna.voomcounts \%>\%
-      autonomics.plot::default_zero_hline()
+   # GLUTAMINASE
+   autonomics.data::glutaminase \%>\%
+   autonomics.plot::default_zero_hline()
 }
 }

@@ -24,6 +24,13 @@ list(samples, features, var)
 \description{
 Return sample scores, feature loadings, and component variances.
 }
+\examples{
+if (require(autonomics.data)){
+   require(magrittr)
+   object <- autonomics.data::glutaminase
+   object \%>\% autonomics.plot::project() \%>\% str()
+}
+}
 \seealso{
 \code{\link[autonomics.plot]{pca}},
          \code{\link[autonomics.plot]{sma}},

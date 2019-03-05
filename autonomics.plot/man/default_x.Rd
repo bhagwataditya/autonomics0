@@ -7,7 +7,7 @@
 default_x(object, feature_plots = default_feature_plots(object))
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 
 \item{feature_plots}{feature plots}
 }
@@ -18,15 +18,13 @@ default value of x
 Default x
 }
 \examples{
-require(magrittr)
-
-# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_x()
-}
+   require(magrittr)
 
-# STEM CELL DIFFERENTIATION
-if (require(billing.differentiation.data)){
-  billing.differentiation.data::rna.voomcounts \%>\% default_x()
+   # STEM CELL COMPARISON
+   autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_x()
+
+   # GLUTAMINASE
+   autonomics.data::glutaminase            \%>\% autonomics.plot::default_x()
 }
 }

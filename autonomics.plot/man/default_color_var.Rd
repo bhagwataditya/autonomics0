@@ -7,7 +7,7 @@
 default_color_var(object)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 }
 \value{
 default value of color_var
@@ -16,22 +16,16 @@ default value of color_var
 default color_var
 }
 \examples{
-require(magrittr)
-
-# STEM CELL COMPARISON
 if (require(autonomics.data)){
+   require(magrittr)
+
+   # STEM CELL COMPARISON
    autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_color_var()
    autonomics.data::stemcomp.soma          \%>\% autonomics.plot::default_color_var()
-}
 
-# STEM CELL DIFFERENTIATION
-if (require(billing.differentiation.data)){
-  billing.differentiation.data::rna.voomcounts \%>\%
-     default_color_var()
-}
-# ATKIN 2014
-if (require(atkin.2014)){
-  atkin.2014::soma \%>\% autonomics.plot::default_color_var()
+   # GLUTAMINASE
+   autonomics.data::glutaminase            \%>\% autonomics.plot::default_color_var()
+
 }
 
 }

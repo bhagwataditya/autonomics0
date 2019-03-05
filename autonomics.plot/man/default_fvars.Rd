@@ -7,7 +7,7 @@
 default_fvars(object)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 }
 \value{
 character vector
@@ -16,14 +16,8 @@ character vector
 default fvars
 }
 \examples{
-require(magrittr)
 if (require(autonomics.data)){
-   autonomics.data::billing2016 \%>\% autonomics.plot::default_fvars()
-}
-if (require(atkin.2014)){
-   atkin.2014::soma \%>\% autonomics.plot::default_fvars()
-}
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.counts
+   require(magrittr)
+   autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_fvars()
 }
 }

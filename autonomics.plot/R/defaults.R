@@ -157,57 +157,37 @@ default_color_values <- function(
 }
 
 #' default fvars
-#' @param  object eset
+#' @param  object SummarizedExperiment
 #' @return character vector
 #' @examples
-#' require(magrittr)
 #' if (require(autonomics.data)){
-#'    autonomics.data::billing2016 %>% autonomics.plot::default_fvars()
-#' }
-#' if (require(atkin.2014)){
-#'    atkin.2014::soma %>% autonomics.plot::default_fvars()
-#' }
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.counts
+#'    require(magrittr)
+#'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_fvars()
 #' }
 #' @importFrom magrittr               %>%
 #' @export
 default_fvars <- function(object){
-
-   if (autonomics.import::is_metabolon_eset(object)){
-      return(c('BIOCHEMICAL', 'SUB_PATHWAY'))
-   } else {
-      fnamevar <- object %>% autonomics.import::fname_var()
-      tmp <- c(fnamevar, 'feature_id')
-      if (assertive.properties::is_empty(tmp)) NULL else tmp
-   }
+   c('feature_id', 'feature_name') %>% intersect(autonomics.import::fvars(object))
 }
 
 #' default feature_plots
-#' @param object eset
+#' @param object SummarizedExperiment
 #' @return default value of feature_plots
 #' @examples
-#' require(magrittr)
-#'
-#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcomp.proteinratios %>%
-#'    autonomics.plot::default_feature_plots()
+#'    require(magrittr)
 #'
-#'    autonomics.data::stemcomp.soma %>%
-#'    autonomics.plot::default_feature_plots()
-#' }
+#'    # STEM CELL COMPARISON
+#'       autonomics.data::stemcomp.proteinratios %>%
+#'       autonomics.plot::default_feature_plots()
 #'
-#' # STEM CELL DIFFERENTIATION
-#' if (require(autonomics.data)){
-#'    autonomics.data::stemdiff.proteinratios %>%
-#'    autonomics.plot::default_feature_plots()
-#' }
-#' if (require(billing.differentiation.data)){
-#'    billing.differentiation.data::rna.voomcounts %>%
-#'       default_feature_plots()
-#' }
+#'       autonomics.data::stemcomp.soma %>%
+#'       autonomics.plot::default_feature_plots()
 #'
+#'    # GLUTAMINASE
+#'       autonomics.data::glutaminase %>%
+#'       autonomics.plot::default_feature_plots()
+#' }
 #' @importFrom magrittr %>%
 #' @export
 default_feature_plots <- function(object){
@@ -230,25 +210,19 @@ default_feature_plots <- function(object){
 }
 
 #' default color_var
-#' @param object eset
+#' @param object SummarizedExperiment
 #' @return default value of color_var
 #' @examples
-#' require(magrittr)
-#'
-#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
+#'    require(magrittr)
+#'
+#'    # STEM CELL COMPARISON
 #'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_color_var()
 #'    autonomics.data::stemcomp.soma          %>% autonomics.plot::default_color_var()
-#'}
 #'
-#'# STEM CELL DIFFERENTIATION
-#'if (require(billing.differentiation.data)){
-#'   billing.differentiation.data::rna.voomcounts %>%
-#'      default_color_var()
-#'}
-#' # ATKIN 2014
-#'if (require(atkin.2014)){
-#'   atkin.2014::soma %>% autonomics.plot::default_color_var()
+#'    # GLUTAMINASE
+#'    autonomics.data::glutaminase            %>% autonomics.plot::default_color_var()
+#'
 #'}
 #'
 #' @export
@@ -259,26 +233,18 @@ default_color_var <- function(object){
 }
 
 #' Default group var
-#' @param object   eset
+#' @param object   SummarizedExperiment
 #' @return default value of group_var
 #' @examples
-#' require(magrittr)
-#'
-#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
+#'    require(magrittr)
+#'
+#'    # STEM CELL COMPARISON
 #'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_group_var()
-#'    autonomics.data::billing2016 %>% autonomics.plot::default_group_var()
-#'}
+#'    autonomics.data::billing2016            %>% autonomics.plot::default_group_var()
 #'
-#' # ATKIN 2014
-#'if (require(atkin.2014)){
-#'   atkin.2014::soma %>% autonomics.plot::default_group_var()
-#'}
-#'
-#'# STEM CELL DIFFERENTIATION
-#'if (require(billing.differentiation.data)){
-#'   billing.differentiation.data::rna.voomcounts %>%
-#'      default_group_var()
+#'    # GLUTAMINASE
+#'    autonomics.data::glutaminase            %>% autonomics.plot::default_group_var()
 #'}
 #' @export
 default_group_var <- function(object){
@@ -293,25 +259,17 @@ default_facet_var <- function(){
 }
 
 #' Default line value
-#' @param object   eset
+#' @param object   SummarizedExperiment
 #' @return default line value
 #' @examples
-#' require(magrittr)
-#'
-#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
+#'    require(magrittr)
+#'
+#'    # STEM CELL COMPARISON
 #'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_line()
-#'}
 #'
-#'# ATKIN.2014
-#'if (require(atkin.2014)){
-#'   atkin.2014::soma %>% autonomics.plot::default_line()
-#'}
-#'
-#'# STEM CELL DIFFERENTIATION
-#'if (require(billing.differentiation.data)){
-#'   billing.differentiation.data::rna.voomcounts %>%
-#'      default_line()
+#'    # GLUTAMINASE
+#'    autonomics.data::glutaminase            %>% autonomics.plot::default_line()
 #'}
 #' @export
 default_line <- function(object){
@@ -319,20 +277,20 @@ default_line <- function(object){
    else                                                FALSE
 }
 
+
 #' default color_var
-#' @param object eset
+#' @param object SummarizedExperiment
 #' @return default value of color_var
 #' @examples
-#' require(magrittr)
-#'
-#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_shape_var()
-#'}
+#'    require(magrittr)
 #'
-#'# STEM CELL DIFFERENTIATION
-#'if (require(billing.differentiation.data)){
-#'   billing.differentiation.data::rna.voomcounts %>% default_shape_var()
+#'    # STEM CELL COMPARISON
+#'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_shape_var()
+#'
+#'    # GLUTAMINASE
+#'    autonomics.data::glutaminase %>% autonomics.plot::default_shape_var()
+#'
 #'}
 #' @export
 default_shape_var <- function(object){
@@ -346,20 +304,18 @@ default_shape_var <- function(object){
 }
 
 #' Default x
-#' @param object      eset
+#' @param object         SummarizedExperiment
 #' @param feature_plots  feature plots
 #' @return default value of x
 #' @examples
-#' require(magrittr)
-#'
-#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_x()
-#'}
+#'    require(magrittr)
 #'
-#'# STEM CELL DIFFERENTIATION
-#'if (require(billing.differentiation.data)){
-#'   billing.differentiation.data::rna.voomcounts %>% default_x()
+#'    # STEM CELL COMPARISON
+#'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_x()
+#'
+#'    # GLUTAMINASE
+#'    autonomics.data::glutaminase            %>% autonomics.plot::default_x()
 #'}
 #' @export
 default_x <- function(object, feature_plots = default_feature_plots(object)){
@@ -392,7 +348,7 @@ default_x <- function(object, feature_plots = default_feature_plots(object)){
 }
 
 #' Default txt var
-#' @param object eset
+#' @param object SummarizedExperiment
 #' @return default value of txt_var
 #' @export
 default_txt_var <- function(object){
@@ -400,21 +356,19 @@ default_txt_var <- function(object){
 }
 
 #' Default zero hline
-#' @param   object   eset
+#' @param   object   SummarizedExperiment
 #' @return  logical
 #' @examples
-#' require(magrittr)
-#'
-#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
+#'    require(magrittr)
+#'
+#'    # STEM CELL COMPARISON
 #'    autonomics.data::stemcomp.proteinratios %>%
 #'    autonomics.plot::default_zero_hline()
-#' }
 #'
-#' # STEM CELL DIFFERENTIATION
-#' if (require(billing.differentiation.data)){
-#'    billing.differentiation.data::rna.voomcounts %>%
-#'       autonomics.plot::default_zero_hline()
+#'    # GLUTAMINASE
+#'    autonomics.data::glutaminase %>%
+#'    autonomics.plot::default_zero_hline()
 #' }
 #' @export
 default_zero_hline <- function(object){

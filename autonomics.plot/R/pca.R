@@ -24,6 +24,7 @@
 #' ```
 #' @examples
 #' if (require(autonomics.data)){
+#'    require(magrittr)
 #'    object <- autonomics.data::glutaminase
 #'    object %>% pca() %>% str()
 #' }
@@ -314,6 +315,7 @@ pls <- function(object, implementation = NULL, ndim = 2, ...){
 #'    require(magrittr)
 #'    object <- autonomics.data::glutaminase
 #'    object %>% autonomics.plot::project() %>% str()
+#' }
 #' @seealso \code{\link[autonomics.plot]{pca}},
 #'          \code{\link[autonomics.plot]{sma}},
 #'          \code{\link[autonomics.plot]{lda}},

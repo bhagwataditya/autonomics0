@@ -16,14 +16,15 @@
 #' @return \code{ggplot2} object
 #' @export
 #' @examples
-#' require(magrittr)
+#' \dontrun{
+#' # Works, but is rather slow
 #' if(require(autonomics.data)){
+#'    require(magrittr)
 #'   # Simple plot
 #'   autonomics.plot::plot_features_mean_sd(autonomics.data::ALL)
 #'   # Compare with the loged version of the data
 #'   logALL <- autonomics.data::ALL
-#'   autonomics.import::exprs(logALL) %<>%
-#'     log2()
+#'   autonomics.import::exprs(logALL) %<>% log2()
 #'   plot_features_mean_sd(logALL)
 #'   # Combined plot
 #'   plot_features_mean_sd(autonomics.data::ALL, logALL)
@@ -32,6 +33,7 @@
 #'     autonomics.data::ALL,
 #'     logALL,
 #'     facet_labels = c("'Raw Data'", "'Logarithmized Data'~(log[2])"))
+#' }
 #' }
 plot_features_mean_sd <- function(
    object,

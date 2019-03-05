@@ -7,7 +7,7 @@
 default_txt_var(object)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 }
 \value{
 default value of txt_var

@@ -7,7 +7,7 @@
 default_feature_plots(object)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 }
 \value{
 default value of feature_plots
@@ -16,25 +16,18 @@ default value of feature_plots
 default feature_plots
 }
 \examples{
-require(magrittr)
-
-# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   autonomics.data::stemcomp.proteinratios \%>\%
-   autonomics.plot::default_feature_plots()
+   require(magrittr)
 
-   autonomics.data::stemcomp.soma \%>\%
-   autonomics.plot::default_feature_plots()
-}
+   # STEM CELL COMPARISON
+      autonomics.data::stemcomp.proteinratios \%>\%
+      autonomics.plot::default_feature_plots()
 
-# STEM CELL DIFFERENTIATION
-if (require(autonomics.data)){
-   autonomics.data::stemdiff.proteinratios \%>\%
-   autonomics.plot::default_feature_plots()
-}
-if (require(billing.differentiation.data)){
-   billing.differentiation.data::rna.voomcounts \%>\%
-      default_feature_plots()
-}
+      autonomics.data::stemcomp.soma \%>\%
+      autonomics.plot::default_feature_plots()
 
+   # GLUTAMINASE
+      autonomics.data::glutaminase \%>\%
+      autonomics.plot::default_feature_plots()
+}
 }

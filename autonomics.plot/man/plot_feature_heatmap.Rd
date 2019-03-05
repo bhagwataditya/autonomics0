@@ -4,12 +4,14 @@
 \alias{plot_feature_heatmap}
 \title{Plot feature heatmap}
 \usage{
-plot_feature_heatmap(object, filename = NULL, lowColor = "yellow",
-  highColor = "blue1", midColor = "gray", width = 2, height = 4,
-  fontsize = 0, ...)
+plot_feature_heatmap(object, fvar = "feature_id", filename = NULL,
+  lowColor = "yellow", highColor = "blue1", midColor = "gray",
+  width = 2, height = 4, fontsize = 0, ...)
 }
 \arguments{
-\item{object}{SummarizedExperiment or EList}
+\item{object}{SummarizedExperiment}
+
+\item{fvar}{string}
 
 \item{filename}{character vector}
 
@@ -31,14 +33,11 @@ plot_feature_heatmap(object, filename = NULL, lowColor = "yellow",
 Plot feature heatmap
 }
 \examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   rnaseq_dir <- system.file('extdata/rnaseq', package = 'subramanian.2016')
-   object <- autonomics.import::load_rnaseq_counts(rnaseq_dir) \%>\%
-             autonomics.import::logcpm() \%>\%
-             magrittr::extract(1:10, )
-   object \%>\% autonomics.plot::plot_feature_heatmap()
-   filename <- paste0(tempfile(), '.pdf') \%T>\% message()
+if (require(autonomics.data)){
+   require(magrittr)
+   object <- autonomics.data::glutaminase[1:10, ]
+   object \%>\% autonomics.plot::plot_feature_heatmap(fvar='BIOCHEMICAL')
+   filename <- tempfile() \%T>\% message()
    object \%>\% autonomics.plot::plot_feature_heatmap(filename = filename)
 }
 }

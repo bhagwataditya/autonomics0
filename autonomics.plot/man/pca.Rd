@@ -35,6 +35,7 @@ NIPALS:    X = T*P'   (no further decomposition of scores, so SMA not possible)
 }
 \examples{
 if (require(autonomics.data)){
+   require(magrittr)
    object <- autonomics.data::glutaminase
    object \%>\% pca() \%>\% str()
 }

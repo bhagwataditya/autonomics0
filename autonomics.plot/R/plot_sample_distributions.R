@@ -32,7 +32,7 @@ check_args_of_plot_sample_distributions <- function(object, x, facet_var, color_
 #' A separate violin is created for each value of 'x' (rows) and 'facet_var (column).
 #' The box is colored per value of color_var
 #'
-#' @param object  eSet
+#' @param object    SummarizedExperiment
 #' @param x         sample variable mapped to x axis
 #' @param color_var sample variable mapped to color
 #' @param color_values comolor values vector (names = subgroups, values = colors)

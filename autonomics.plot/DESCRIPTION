@@ -37,11 +37,8 @@ Imports:
     tidyr, 
     VennDiagram
 Suggests:
-    atkin.2014,
     autonomics.data,
-    billing.differentiation.data,
     Biobase,
-    subramanian.2016,
     SummarizedExperiment
 License: GPL-3
 Encoding: UTF-8

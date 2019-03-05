@@ -1,5 +1,6 @@
 #' Plot feature heatmap
-#' @param object SummarizedExperiment or EList
+#' @param object SummarizedExperiment
+#' @param fvar string
 #' @param filename character vector
 #' @param width  width  in inches
 #' @param height height in inches
@@ -10,22 +11,18 @@
 #' @param cluster_cols clustering on cols
 #' @param ... passed to pheatmap::pheatmap
 #' @examples
-#' require(magrittr)
-#' \dontrun{
-#' if (require(subramanian.2016)){
-#'    rnaseq_dir <- system.file('extdata/rnaseq', package = 'subramanian.2016')
-#'    object <- autonomics.import::load_rnaseq_counts(rnaseq_dir) %>%
-#'              autonomics.import::logcpm() %>%
-#'              magrittr::extract(1:10, )
-#'    object %>% autonomics.plot::plot_feature_heatmap_with_pheatmap()
+#' if (require(autonomics.data)){
+#'    require(magrittr)
+#'    object <- autonomics.data::glutaminase[1:50, ]
+#'    object %>% autonomics.plot::plot_feature_heatmap_with_pheatmap(fvar='BIOCHEMICAL')
 #'    filename <- tempfile() %T>% message()
 #'    object %>% autonomics.plot::plot_feature_heatmap_with_pheatmap(filename = filename)
-#' }
 #' }
 #' @importFrom magrittr %>%
 #' @export
 plot_feature_heatmap_with_pheatmap <- function(
    object,
+   fvar       = 'feature_id',
    filename   = NULL,
    width      = 7,
    height     = 7,
@@ -37,7 +34,9 @@ plot_feature_heatmap_with_pheatmap <- function(
    ...
 ){
    #.Deprecated("plot_feature_heatmap")
-   autonomics.import::fnames(object) <- object %>% autonomics.import::fvalues('gene_name') %>% autonomics.support::uniquify()
+   autonomics.support::cmessage('\t\tImpute NA(N) values')
+   object %<>% autonomics.preprocess::impute(method = 'impute.QRILC')
+   autonomics.import::fnames(object) <- object %>% autonomics.import::fvalues(fvar) %>% autonomics.support::uniquify()
    x <- autonomics.import::exprs(object)
    bwcolor = grDevices::colorRampPalette(c("yellow","grey", "blue"))
    if (!is.null(filename))   grDevices::pdf(filename, width = width, height = height, onefile = FALSE)
@@ -60,7 +59,8 @@ plot_feature_heatmap_with_pheatmap <- function(
 
 
 #' Plot feature heatmap
-#' @param object SummarizedExperiment or EList
+#' @param object SummarizedExperiment
+#' @param fvar string
 #' @param filename character vector
 #' @param width  width  in inches (Default width 2 inches)
 #' @param height height in inches (Default height 4 inches)
@@ -70,32 +70,32 @@ plot_feature_heatmap_with_pheatmap <- function(
 #' @param highColor color for upregulation (Default color royal blue)
 #' @param ...       further parameters handed through to \code{\link[ggplot2]{theme}}
 #' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    rnaseq_dir <- system.file('extdata/rnaseq', package = 'subramanian.2016')
-#'    object <- autonomics.import::load_rnaseq_counts(rnaseq_dir) %>%
-#'              autonomics.import::logcpm() %>%
-#'              magrittr::extract(1:10, )
-#'    object %>% autonomics.plot::plot_feature_heatmap()
-#'    filename <- paste0(tempfile(), '.pdf') %T>% message()
+#' if (require(autonomics.data)){
+#'    require(magrittr)
+#'    object <- autonomics.data::glutaminase[1:10, ]
+#'    object %>% autonomics.plot::plot_feature_heatmap(fvar='BIOCHEMICAL')
+#'    filename <- tempfile() %T>% message()
 #'    object %>% autonomics.plot::plot_feature_heatmap(filename = filename)
 #' }
 #' @importFrom magrittr %>%
 #' @export
 plot_feature_heatmap <- function(
    object,
-   filename       = NULL,
-   lowColor   = "yellow",
-   highColor  = "blue1",
-   midColor   = "gray",
-   width      = 2,
-   height     = 4,
+   fvar      = 'feature_id',
+   filename  = NULL,
+   lowColor  = "yellow",
+   highColor = "blue1",
+   midColor  = "gray",
+   width     = 2,
+   height    = 4,
    fontsize  = 0,
    ...
 ){
    autonomics.import::fnames(object) <- object %>%
-         autonomics.import::fvalues('gene_name') %>%
-         autonomics.support::uniquify()
+                                        autonomics.import::fvalues(fvar) %>%
+                                        autonomics.support::uniquify()
+   autonomics.support::cmessage('\t\tImpute NA(N) values')
+   object %<>% autonomics.preprocess::impute(method = 'impute.QRILC')
    x <- autonomics.import::exprs(object)
    hres <- stats::hclust(stats::as.dist(1 - stats::cor(t(x), method="pearson"))) #compute correlation for matrix
    h.row.order <- hres$order # clustering on row
@@ -124,6 +124,7 @@ plot_feature_heatmap <- function(
 
    if (!is.null(filename)) myPlot %>% autonomics.support::print2pdf(file = filename, width = width, height = height, onefile = FALSE)
    if (!is.null(filename)) autonomics.support::cmessage(filename)
+   myPlot
 }
 
 

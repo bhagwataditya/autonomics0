@@ -7,7 +7,7 @@
 default_line(object)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 }
 \value{
 default line value
@@ -16,21 +16,13 @@ default line value
 Default line value
 }
 \examples{
-require(magrittr)
-
-# STEM CELL COMPARISON
 if (require(autonomics.data)){
+   require(magrittr)
+
+   # STEM CELL COMPARISON
    autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_line()
-}
 
-# ATKIN.2014
-if (require(atkin.2014)){
-  atkin.2014::soma \%>\% autonomics.plot::default_line()
-}
-
-# STEM CELL DIFFERENTIATION
-if (require(billing.differentiation.data)){
-  billing.differentiation.data::rna.voomcounts \%>\%
-     default_line()
+   # GLUTAMINASE
+   autonomics.data::glutaminase            \%>\% autonomics.plot::default_line()
 }
 }
