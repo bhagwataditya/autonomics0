@@ -20,29 +20,30 @@
 #' @author Aditya Bhagwat, Johannes Graumann
 #' @importFrom  magrittr  %>%
 #' @examples
-#' require(magrittr)
 #' if (require(autonomics.data)){
+#'    require(magrittr)
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'
 #'    # Simple plot
-#'      autonomics.plot::plot_sample_distributions2(autonomics.data::stemcomp.proteinratios)
+#'      object %>% autonomics.plot::plot_sample_distributions2()
+#'
 #'    # Same thing vertical
-#'      plot_sample_distributions2(autonomics.data::stemcomp.proteinratios, horizontal = FALSE)
+#'      object %>% plot_sample_distributions2(horizontal = FALSE)
+#'
 #'    # More complex using facetting
-#'      plot_sample_distributions2(
-#'         object = autonomics.data::stemcomp.proteinratios,
+#'      object %>% plot_sample_distributions2(
 #'         2^autonomics.import::exprs(autonomics.data::stemcomp.proteinratios),
 #'         facet2_var = c('Logarithmized', 'Raw'))
+#'
 #'    # Yet more crazy explicitly marking the feature with the maximum value
-#'      object <- autonomics.data::stemcomp.proteinratios
-#'      plot_sample_distributions2(
-#'         object,
-#'         2^autonomics.import::exprs(object),
-#'         facet2_var = c('Logarithmized', 'Raw'),
-#'         displayed_features =
-#'            autonomics.import::exprs(object) %>%
-#'            magrittr::equals(autonomics.import::exprs(object) %>%
-#'                             max(na.rm = TRUE)) %>%
-#'            which(arr.ind = TRUE) %>%
-#'            magrittr::extract(,'row'))
+#'      object %>%
+#'      plot_sample_distributions2(2^autonomics.import::exprs(object),
+#'                                 facet2_var         = c('Logarithmized', 'Raw'),
+#'                                 displayed_features = autonomics.import::exprs(object)        %>%
+#'                                                      equals(autonomics.import::exprs(object) %>%
+#'                                                      max(na.rm = TRUE))                      %>%
+#'                                                      which(arr.ind = TRUE)                   %>%
+#'                                                      magrittr::extract(,'row'))
 #' }
 #' @export
 plot_sample_distributions2 <- function(
@@ -59,31 +60,26 @@ plot_sample_distributions2 <- function(
    title              =  sprintf('Per sample distribution of all %d features', nrow(object))
 ){
 
-   jitter_features %>%
-      assertive.types::assert_is_a_bool()
+   assertive.types::assert_is_a_bool(jitter_features)
 
-   p <- core_ggplot_from_data(
-      object     = object,
-      ...,
-      MARGIN     = 'samples',
-      fill_var   = NULL,
-      marked_ids = displayed_features,
-      horizontal = horizontal,
-      xlab       = xlab,
-      ylab       = ylab,
-      title      = title)
+   p <- core_ggplot_from_data(object     = object,
+                              ...,
+                              MARGIN     = 'samples',
+                              fill_var   = NULL,
+                              marked_ids = displayed_features,
+                              horizontal = horizontal,
+                              xlab       = xlab,
+                              ylab       = ylab,
+                              title      = title)
 
    point_size <- 1
 
-   if(horizontal)
-   {
-      p <- p +
-         ggstance::geom_violinh(fill = 'gray', na.rm = TRUE) +
-         ggstance::geom_boxploth(fill = 'white', width = 0.1, outlier.size = point_size, na.rm = TRUE)
+   if(horizontal){
+      p <- p + ggstance::geom_violinh(fill = 'gray', na.rm = TRUE) +
+               ggstance::geom_boxploth(fill = 'white', width = 0.1, outlier.size = point_size, na.rm = TRUE)
    } else {
-      p <- p +
-         ggplot2::geom_violin(fill = 'gray', na.rm = TRUE) +
-         ggplot2::geom_boxplot(fill = 'white', width = 0.1, outlier.size = point_size, na.rm = TRUE)
+      p <- p + ggplot2::geom_violin(fill = 'gray', na.rm = TRUE) +
+               ggplot2::geom_boxplot(fill = 'white', width = 0.1, outlier.size = point_size, na.rm = TRUE)
    }
 
    # Add custom color info
@@ -92,25 +88,18 @@ plot_sample_distributions2 <- function(
    }
 
    # Add individually plotted features
-   if(!is.null(displayed_features))
-   {
-      if(jitter_features)
-      {
-         p <- p +
-            ggplot2::geom_jitter(
-               ggplot2::aes_string(alpha = 'marked_plotvar'),
-               color = 'black',
-               size  = point_size)
+   if(!is.null(displayed_features)){
+      if(jitter_features){
+         p <- p + ggplot2::geom_jitter(ggplot2::aes_string(alpha = 'marked_plotvar'),
+                                       color = 'black',
+                                       size  = point_size)
 
       } else {
-         p <- p +
-            ggplot2::geom_point(
-               ggplot2::aes_string(alpha = 'marked_plotvar'),
-               color = 'black',
-               size  = point_size)
+         p <- p + ggplot2::geom_point(ggplot2::aes_string(alpha = 'marked_plotvar'),
+                                      color = 'black',
+                                      size  = point_size)
       }
-      p <- p +
-         ggplot2::scale_alpha_discrete(range = c(0,1), guide = FALSE)
+      p <- p + ggplot2::scale_alpha_discrete(range = c(0,1), guide = FALSE)
    }
 
    # Return the object
