@@ -29,7 +29,7 @@ annotation(object) <- value
 \S4method{annotation}{EList,character}(object) <- value
 }
 \arguments{
-\item{object}{eSet}
+\item{object}{SummarizedExperiment, eSet, or EList}
 
 \item{value}{list}
 }

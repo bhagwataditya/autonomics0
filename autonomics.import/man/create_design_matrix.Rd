@@ -5,13 +5,13 @@
 \title{Create design matrix for statistical analysis}
 \usage{
 create_design_matrix(object,
-  intercept = length(unique(autonomics.import::sdata(object)$subgroup))
-  == 1, confounders = character(0))
+  intercept = length(unique(sdata(object)$subgroup)) == 1,
+  confounders = character(0))
 }
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{intercept}{logical(1): whether to include an intercept in the design}
+\item{intercept}{TRUE or FALSE: include an intercept in the design?}
 
 \item{confounders}{confounder svars (character)}
 }
@@ -22,17 +22,15 @@ design matrix
 Create design matrix for statistical analysis
 }
 \examples{
-require(magrittr)
-
-# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   object <- autonomics.data::stemdiff.proteinratios
-   object \%>\% autonomics.import::create_design_matrix()
-   object \%>\% autonomics.import::create_design_matrix(intercept = TRUE)
-}
-if (require(billing.differentiation.data)){
-   billing.differentiation.data::rna.voomcounts \%>\%
-   autonomics.import::create_design_matrix()      \%>\%
-   magrittr::extract(1:3,)
+   require(magrittr)
+
+   # STEM CELL COMPARISON
+   object <- autonomics.data::stemcomp.proteinratios
+   object \%>\% create_design_matrix()
+
+   # GLUTAMINASE
+   object <- autonomics.data::glutaminase
+   object \%>\% create_design_matrix() \%>\% extract(1:10, 1:10)
 }
 }

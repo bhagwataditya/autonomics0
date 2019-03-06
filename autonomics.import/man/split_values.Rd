@@ -11,11 +11,11 @@
 \usage{
 split_values(x, ...)
 
-\method{split_values}{character}(x, sep = autonomics.import::guess_sep(x,
-  verbose = FALSE), keep = FALSE, ...)
+\method{split_values}{character}(x, sep = guess_sep(x, verbose = FALSE),
+  keep = FALSE, ...)
 
-\method{split_values}{factor}(x, sep = autonomics.import::guess_sep(x,
-  verbose = FALSE), keep = FALSE, ...)
+\method{split_values}{factor}(x, sep = guess_sep(x, verbose = FALSE),
+  keep = FALSE, ...)
 
 \method{split_values}{SummarizedExperiment}(x, svar = "subgroup",
   keep = FALSE, ...)
@@ -42,31 +42,11 @@ data.table(x, x1, x2, ...) or data.table(x1, x2, ...)
 Get data.table in which composite (s)values have been split into components
 }
 \examples{
-require(magrittr)
 if (require(autonomics.data)){
-   # STEM CELL DIFFERENTIATION
-      x <- autonomics.data::stemdiff.proteinratios
-      x \%>\% autonomics.import::subgroup_values() \%>\% autonomics.import::split_values()
-      x \%>\%                                          autonomics.import::split_values()
-      x \%>\%                                          autonomics.import::split_values(keep = TRUE)
    # GLUTAMINASE
+      require(magrittr)
       x <- autonomics.data::glutaminase
-      x \%>\% autonomics.import::subgroup_values() \%>\% autonomics.import::split_values()
-      x \%>\%                                          autonomics.import::split_values()
-}
-if (require(subramanian.2016)){
-   x <- subramanian.2016::metabolon
-   x \%>\% autonomics.import::subgroup_values()    \%>\% autonomics.import::split_values()
-   x                                             \%>\% autonomics.import::split_values()
-}
-if (require(graumann.lfq)){
-   x <- graumann.lfq::lfq.intensities
-   x \%>\% autonomics.import::subgroup_values()    \%>\% autonomics.import::split_values()
-   x                                             \%>\% autonomics.import::split_values()
-}
-if (require(atkin.2014)){
-   x <- atkin.2014::soma.2018
-   x \%>\% autonomics.import::subgroup_values()    \%>\% autonomics.import::split_values()
-   x                                             \%>\% autonomics.import::split_values()
+      x \%>\% subgroup_values() \%>\% split_values()
+      x \%>\%                       split_values()
 }
 }

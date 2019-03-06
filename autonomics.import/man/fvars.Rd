@@ -41,9 +41,9 @@ Get/Set feature variables
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   autonomics.import::fvars(object)[1] \%<>\% paste0('1')
+if (require(autonomics.data)){
+   object <- autonomics.data::stemcomp.proteinratios
+   fvars(object)[1] \%<>\% paste0('1')
    object
 }
 }

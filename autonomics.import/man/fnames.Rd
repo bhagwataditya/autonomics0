@@ -29,7 +29,7 @@ fnames(object) <- value
 \S4method{fnames}{EList,character}(object) <- value
 }
 \arguments{
-\item{object}{SummarizedExperiment}
+\item{object}{SummarizedExperiment, eSet, or EList}
 
 \item{value}{character vector with feature names}
 }
@@ -40,10 +40,10 @@ feature name vector (get) or updated object (set)
 Get/Set feature names
 }
 \examples{
-require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   autonomics.import::fnames(object) \%<>\% paste0('XXX')
+if (require(autonomics.data)){
+   require(magrittr)
+   object <- autonomics.data::stemcomp.proteinratios
+   fnames(object) \%<>\% paste0('PG', .)
    object
 }
 }

@@ -35,7 +35,7 @@ exprs(object) <- value
 \S4method{exprs}{EList,numeric}(object) <- value
 }
 \arguments{
-\item{object}{SummarizedExperiment}
+\item{object}{SummarizedExperiment, ExpressionSet, EList}
 
 \item{value}{ratio matrix (features x samples)}
 }
@@ -46,9 +46,9 @@ exprs matrix (get) or updated object (set)
 Get / Set exprs matrix
 }
 \examples{
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   autonomics.import::exprs(object) <- 0
+if (require(autonomics.data)){
+   object <- autonomics.data::stemcomp.proteinratios
+   exprs(object) <- 0
    object
 }
 }

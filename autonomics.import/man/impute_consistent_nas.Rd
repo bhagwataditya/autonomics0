@@ -35,7 +35,7 @@ if (require(graumann.lfq)){
              read_proteingroups()
 
    # Common NA values - missing in all samples
-   object \%>\% autonomics.import::split_by_svar() \%>\%
+   object \%>\% split_by_svar() \%>\%
               magrittr::extract2(2) \%>\%
               impute_common_nas(verbose = TRUE)
 

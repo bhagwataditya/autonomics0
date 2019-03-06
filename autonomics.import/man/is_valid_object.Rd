@@ -2,12 +2,12 @@
 % Please edit documentation in R/assert_has_is.R
 \name{is_valid_object}
 \alias{is_valid_object}
-\title{Is valid eset?}
+\title{Is valid SummarizedExperiment}
 \usage{
 is_valid_object(x, .xname = assertive.base::get_name_in_parent(x))
 }
 \arguments{
-\item{x}{eset}
+\item{x}{SummarizedExperiment}
 
 \item{.xname}{see assertive.base::get_name_in_parent}
 }
@@ -15,5 +15,5 @@ is_valid_object(x, .xname = assertive.base::get_name_in_parent(x))
 logical
 }
 \description{
-Is valid eset?
+Is valid SummarizedExperiment
 }

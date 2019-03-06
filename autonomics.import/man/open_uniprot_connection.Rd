@@ -20,7 +20,7 @@ Open uniprot connection
    require(magrittr)
    if (require(autonomics.data)){
       object <- autonomics.data::stemcomp.proteinratios
-      object \%>\% autonomics.import::open_uniprot_connection()
+      object \%>\% open_uniprot_connection()
    }
 }
 }

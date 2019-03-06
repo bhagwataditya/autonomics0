@@ -21,6 +21,6 @@ Write sumexp to file
 require(magrittr)
 if (require(autonomics.data)){
    object <- autonomics.data::stemcomp.proteinratios
-   object \%>\% autonomics.import::flatten() \%>\% head()
+   object \%>\% flatten() \%>\% head()
 }
 }

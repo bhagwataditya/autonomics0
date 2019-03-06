@@ -4,16 +4,16 @@
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    object <- autonomics.data::stemdiff.proteinratios
-#'    (object %<>% autonomics.import::extract_features(c(5,4)))
-#'    object %>% autonomics.import::limma()
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    (object %<>% extract_features(c(5,4)))
+#'    object %>% limma()
 #' }
 #' @importFrom magrittr %<>%
 #' @export
 extract_features <- function(object, extractor){
    object %<>% magrittr::extract(extractor, )
-   if (!is.null(autonomics.import::limma(object))){
-      autonomics.import::limma(object) %<>% magrittr::extract(autonomics.import::fnames(object), , , drop = FALSE)
+   if (!is.null(limma(object))){
+      limma(object) %<>% magrittr::extract(fnames(object), , , drop = FALSE)
    }
    object
 }
@@ -27,7 +27,7 @@ extract_features <- function(object, extractor){
 #' @examples
 #' require(magrittr)
 #' x <- c('a;b;c', '1;2;3', 'alpha;beta;gamma')
-#' x %>% autonomics.import::extract_first_from_collapsed(sep = ';')
+#' x %>% extract_first_from_collapsed(sep = ';')
 #' @export
 extract_first_from_collapsed <- function (x, ...) {
    UseMethod("extract_first_from_collapsed", x)
@@ -36,7 +36,7 @@ extract_first_from_collapsed <- function (x, ...) {
 #' @rdname extract_first_from_collapsed
 #' @importFrom magrittr %>%
 #' @export
-extract_first_from_collapsed.character <- function(x, sep = autonomics.import::guess_sep(x), ...){
+extract_first_from_collapsed.character <- function(x, sep = guess_sep(x), ...){
    if (is.null(sep)) return(x)
 
    x %>%

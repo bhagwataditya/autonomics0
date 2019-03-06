@@ -25,21 +25,21 @@ set_contrastdefs(object, value)
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{value}{named contrast vector}
+\item{value}{named string vector (see examples)}
 }
 \value{
-updated object
+updated SummarizedExperiment
 }
 \description{
 Get/Set contrast definitions
 }
 \examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
-   contrastdefs <- subramanian.2016::contrasts.metabolon
-   autonomics.import::contrastdefs(object)                      # getter
-   autonomics.import::contrastdefs(object) <- contrastdefs    # setter (conventional)
-   autonomics.import::set_contrastdefs(object, contrastdefs)  # setter (piping)
+if (require(autonomics.data)){
+   require(magrittr)
+   object <- autonomics.data::stemcomp.proteinratios
+   contrastdefs1 <- c(EM_E = 'EM_E', BM_E = 'BM_E', BM_EM = 'BM_EM')
+   contrastdefs(object) <-     contrastdefs1   # conventional setter
+   object \%>\% set_contrastdefs(contrastdefs1)  # piping       setter
+   contrastdefs(object)                        # getter
 }
 }

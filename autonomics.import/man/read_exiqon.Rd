@@ -12,10 +12,3 @@ read_exiqon(file)
 \description{
 Read exiqon
 }
-\examples{
-if (require(subramanian.2016)){
-   require(magrittr)
-   file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx', package = 'subramanian.2016')
-   file \%>\% read_exiqon()
-}
-}

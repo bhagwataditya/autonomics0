@@ -12,8 +12,8 @@ sumexp_to_wide_dt <- function(
    fid = 'feature_id',
    fvars = character(0)
 ){
-  fdata1 <- autonomics.import::fdata(object) %>% magrittr::extract(, unique(c(fid, fvars)), drop = FALSE) %>% data.table::data.table()
-  exprs1 <- autonomics.import::exprs(object) %>% data.table::data.table()
+  fdata1 <- fdata(object) %>% magrittr::extract(, unique(c(fid, fvars)), drop = FALSE) %>% data.table::data.table()
+  exprs1 <- exprs(object) %>% data.table::data.table()
   wide1  <- cbind(fdata1, exprs1)
   wide1
 }
@@ -34,10 +34,10 @@ eset_to_wide_table <- function(...){
 #' @return long data.table
 #' @examples
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::protein.ratios
-#'    object %>% autonomics.import::sumexp_to_long_dt()
-#'    object %>% autonomics.import::sumexp_to_long_dt(svars = 'subgroup')
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% sumexp_to_long_dt()
+#'    object %>% sumexp_to_long_dt(svars = 'subgroup')
 #' }
 #' @importFrom data.table   data.table
 #' @importFrom magrittr     %>%
@@ -49,9 +49,9 @@ sumexp_to_long_dt <- function(
    sid = 'sample_id',
    svars = character(0)
 ){
-  sdata1 <- autonomics.import::sdata(object) %>% magrittr::extract(, c('sample_id', svars), drop = FALSE)
+  sdata1 <- sdata(object) %>% magrittr::extract(, c('sample_id', svars), drop = FALSE)
   # Note: unique is to avoid duplication of same fields in fid and fvars
-  object %>% autonomics.import::sumexp_to_wide_dt(fid, fvars) %>%
+  object %>% sumexp_to_wide_dt(fid, fvars) %>%
              data.table::melt.data.table(id.vars = unique(c(fid, fvars)), variable.name = sid, value.name = 'value') %>%
              merge(sdata1, by = sid) %>%
              magrittr::extract(, unique(c(fid, fvars, sid, svars, 'value')), with = FALSE)

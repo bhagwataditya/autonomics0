@@ -10,32 +10,12 @@
 #' @param ...  used for proper S3 method dispatch
 #' @return data.table(x, x1, x2, ...) or data.table(x1, x2, ...)
 #' @examples
-#' require(magrittr)
 #' if (require(autonomics.data)){
-#'    # STEM CELL DIFFERENTIATION
-#'       x <- autonomics.data::stemdiff.proteinratios
-#'       x %>% autonomics.import::subgroup_values() %>% autonomics.import::split_values()
-#'       x %>%                                          autonomics.import::split_values()
-#'       x %>%                                          autonomics.import::split_values(keep = TRUE)
 #'    # GLUTAMINASE
+#'       require(magrittr)
 #'       x <- autonomics.data::glutaminase
-#'       x %>% autonomics.import::subgroup_values() %>% autonomics.import::split_values()
-#'       x %>%                                          autonomics.import::split_values()
-#' }
-#' if (require(subramanian.2016)){
-#'    x <- subramanian.2016::metabolon
-#'    x %>% autonomics.import::subgroup_values()    %>% autonomics.import::split_values()
-#'    x                                             %>% autonomics.import::split_values()
-#' }
-#' if (require(graumann.lfq)){
-#'    x <- graumann.lfq::lfq.intensities
-#'    x %>% autonomics.import::subgroup_values()    %>% autonomics.import::split_values()
-#'    x                                             %>% autonomics.import::split_values()
-#' }
-#' if (require(atkin.2014)){
-#'    x <- atkin.2014::soma.2018
-#'    x %>% autonomics.import::subgroup_values()    %>% autonomics.import::split_values()
-#'    x                                             %>% autonomics.import::split_values()
+#'       x %>% subgroup_values() %>% split_values()
+#'       x %>%                       split_values()
 #' }
 #' @export
 split_values <- function (x, ...) {
@@ -47,7 +27,7 @@ split_values <- function (x, ...) {
 #' @export
 split_values.character <- function(
    x,
-   sep    = autonomics.import::guess_sep(x, verbose = FALSE),
+   sep    = guess_sep(x, verbose = FALSE),
    keep   = FALSE,
    ...
 ){
@@ -75,7 +55,7 @@ split_values.character <- function(
 #' @export
 split_values.factor <- function(
    x,
-   sep = autonomics.import::guess_sep(x, verbose = FALSE),
+   sep = guess_sep(x, verbose = FALSE),
    keep = FALSE,
    ...
 ){
@@ -92,8 +72,8 @@ split_values.SummarizedExperiment <- function(
    ...
 ){
    dt <- x %>%
-         autonomics.import::svalues(svar) %>%
-         autonomics.import::split_values(keep = keep)
+         svalues(svar) %>%
+         split_values(keep = keep)
    dt
 }
 
@@ -125,28 +105,21 @@ subgroup_components <- function(...){
 #' @param fun.aggregate   'unique' (for layout purposes) or length (for tabulate purposes)
 #' @param sep             component separator
 #' @examples
-#' require(magrittr)
-#'
 #' if (require(autonomics.data)){
-#'
-#'    # STEM CELL DIFFERENTIATION
-#'       x <- autonomics.data::stemdiff.proteinratios %>% autonomics.import::subgroup_values()
-#'       x %>% autonomics.import::reshape_values(fill = '', fun.aggregate = unique)
-#'       x %>% autonomics.import::reshape_values(fill = 0,  fun.aggregate = length)
-#'
 #'    # GLUTAMINASE
-#'       x <- autonomics.data::glutaminase %>% autonomics.import::subgroup_values()
-#'       x %>% autonomics.import::reshape_values(fill = '', fun.aggregate = unique)
-#'       x %>% autonomics.import::reshape_values(fill = 0,  fun.aggregate = length)
+#'       require(magrittr)
+#'       x <- autonomics.data::glutaminase %>% subgroup_values()
+#'       x %>% reshape_values(fill = '', fun.aggregate = unique)
+#'       x %>% reshape_values(fill = 0,  fun.aggregate = length)
 #' }
 #'
 #' @importFrom magrittr %>%
 #' @export
-reshape_values <- function(x, fill, fun.aggregate, sep = autonomics.import::guess_sep(x)){
-   n <- autonomics.import::split_values(x, sep = sep) %>% ncol()
+reshape_values <- function(x, fill, fun.aggregate, sep = guess_sep(x)){
+   n <- split_values(x, sep = sep) %>% ncol()
    formula <- if (n==1) '1' else sprintf('x%d', 1:(n-1)) %>% paste0(collapse=' + ')
    formula %<>% paste0(' ~ x', n)
-   x %>% autonomics.import::split_values(keep = TRUE) %>%
+   x %>% split_values(keep = TRUE) %>%
          data.table::dcast(formula = formula,
                            value.var = names(.)[1],
                            fill = fill,
@@ -168,20 +141,13 @@ reshape_values <- function(x, fill, fun.aggregate, sep = autonomics.import::gues
 #' @param svar   character(1)
 #' @param ...    used for S3 method dispatch
 #' @examples
-#' require(magrittr)
-#'
-#' # STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
-#'    x <- autonomics.data::stemdiff.proteinratios
-#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::count_values()
-#'    x %>%                                          autonomics.import::count_values()
-#' }
 #'
-#' # ATKIN
-#' if (require(atkin.2014)){
-#'    x <- atkin.2014::soma.2018
-#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::count_values()
-#'    x %>%                                          autonomics.import::count_values()
+#'    # GLUTAMINASE
+#'    require(magrittr)
+#'    x <- autonomics.data::glutaminase
+#'    x %>% subgroup_values() %>% count_values()
+#'    x %>%                       count_values()
 #' }
 #' @return integer
 #' @export
@@ -194,7 +160,7 @@ count_values <- function(x, ...){
 #' @export
 count_values.character <- function(x, ...){
    x %>%
-   autonomics.import::reshape_values(fill = 0, fun.aggregate = length)
+   reshape_values(fill = 0, fun.aggregate = length)
 }
 
 #' @rdname count_values
@@ -210,8 +176,8 @@ count_values.factor <- function(x, ...){
 #' @export
 count_values.SummarizedExperiment <- function(x, svar = 'subgroup', ...){
    x %>%
-   autonomics.import::svalues(svar) %>%
-   autonomics.import::count_values()
+   svalues(svar) %>%
+   count_values()
 }
 
 
@@ -229,21 +195,14 @@ count_values.SummarizedExperiment <- function(x, svar = 'subgroup', ...){
 #' @param svar   character(1)
 #' @param ...    used for proper S3 dispatching
 #' @examples
-#' require(magrittr)
-#'
-#' # STEM CELL DIFFERENTIATION
 #' if (require(autonomics.data)){
-#'    x <- autonomics.data::stemdiff.proteinratios
-#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::layout_values()
-#'    x                                          %>% autonomics.import::layout_values()
+#'    # GLUTAMINASE
+#'    require(magrittr)
+#'    x <- autonomics.data::glutaminase
+#'    x %>% subgroup_values() %>% layout_values()
+#'    x                       %>% layout_values()
 #' }
 #'
-#' # ATKIN
-#' if (require(atkin.2014)){
-#'    x <- atkin.2014::soma.2018
-#'    x %>% autonomics.import::subgroup_values() %>% autonomics.import::layout_values()
-#'    x %>%                                          autonomics.import::layout_values()
-#' }
 #' @return integer
 #' @export
 layout_values <- function (x, ...) {
@@ -254,27 +213,27 @@ layout_values <- function (x, ...) {
 #' @rdname layout_values
 #' @importFrom magrittr %>%
 #' @export
-layout_values.character <- function(x, sep = autonomics.import::guess_sep(x), ...){
+layout_values.character <- function(x, sep = guess_sep(x), ...){
    x  %>%
    unique() %>%
-   autonomics.import::reshape_values(fill = '', fun.aggregate = unique, sep = sep)
+   reshape_values(fill = '', fun.aggregate = unique, sep = sep)
 }
 
 #' @rdname layout_values
 #' @importFrom magrittr %>%
 #' @export
-layout_values.factor <- function(x, sep = autonomics.import::guess_sep(x), ...){
+layout_values.factor <- function(x, sep = guess_sep(x), ...){
    x %>%
    levels() %>%
-   autonomics.import::reshape_values(fill = '', fun.aggregate = unique, sep = sep)
+   reshape_values(fill = '', fun.aggregate = unique, sep = sep)
 }
 
 #' @rdname layout_values
 #' @export
-layout_values.SummarizedExperiment <- function(x, svar = 'subgroup', sep = autonomics.import::guess_sep(x), ...){
+layout_values.SummarizedExperiment <- function(x, svar = 'subgroup', sep = guess_sep(x), ...){
    x %>%
-   autonomics.import::svalues(svar) %>%
-   autonomics.import::layout_values(sep = sep)
+   svalues(svar) %>%
+   layout_values(sep = sep)
 }
 
 
@@ -304,10 +263,10 @@ layout_values.SummarizedExperiment <- function(x, svar = 'subgroup', sep = auton
 # count_components.SummarizedExperiment <- function(
 #    x,
 #    svar = 'subgroup',
-#    sep  = x %>% autonomics.import::guess_sep()
+#    sep  = x %>% guess_sep()
 # ){
 #    n <- x %>%r
-#       autonomics.import::slevels(svar) %>%
+#       slevels(svar) %>%
 #       (function(x) if (is.null(sep)) x else x %>% stringi::stri_split_fixed(sep)) %>%
 #       vapply(length,integer(1)) %>%
 #       unique()
@@ -319,7 +278,7 @@ layout_values.SummarizedExperiment <- function(x, svar = 'subgroup', sep = auton
 # # @importFrom magrittr %>%
 # # @export
 # count_components.character <- function (x,
-#                                         sep = x %>% unique() %>% autonomics.import::guess_sep(.)
+#                                         sep = x %>% unique() %>% guess_sep(.)
 # ){
 #    subgroup_levels <- x %>% as.character() %>% unique()
 #    n <- subgroup_levels %>% (function(x) if (is.null(sep)) x else x %>% stringi::stri_split_fixed(sep)) %>% vapply(length, integer(1)) %>% unique()

@@ -28,20 +28,20 @@ is_summarized_experiment <- function(x, .xname = assertive.base::get_name_in_par
 
 has_valid_featureNames <- function(x, .xname = assertive.base::get_name_in_parent(x)){
    # SummarizedExperiments do not allow row naming of fdata
-   # if (!all(autonomics.import::fnames(x) == rownames(autonomics.import::fdata(x)))){
+   # if (!all(fnames(x) == rownames(fdata(x)))){
    #   return(assertive.base::false('fnames(%s) differ from rownames(fdata(%s))', .xname, .xname))
    # }
-   if (!all(autonomics.import::fnames(x) == rownames(autonomics.import::exprs(x)))){
+   if (!all(fnames(x) == rownames(exprs(x)))){
       return(assertive.base::false('fnames(%s) differ from rownames(exprs(%s))', .xname, .xname))
    }
    TRUE
 }
 
 has_valid_sampleNames <- function(x, .xname = assertive.base::get_name_in_parent(x)){
-   if (!all(autonomics.import::snames(x) == rownames(autonomics.import::sdata(x)))){
+   if (!all(snames(x) == rownames(sdata(x)))){
       return(assertive.base::false('snames(%s) differ from rownames(sdata(%s))', .xname, .xname))
    }
-   if (!all(autonomics.import::snames(x) == colnames(autonomics.import::exprs(x)))){
+   if (!all(snames(x) == colnames(exprs(x)))){
       return(assertive.base::false('snames(%s) differ from colnames(exprs(%s))', .xname, .xname))
    }
    TRUE
@@ -55,19 +55,19 @@ has_valid_sampleNames <- function(x, .xname = assertive.base::get_name_in_parent
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::glutaminase
-#'    object %>% autonomics.import::has_complete_subgroup_values()
-#'    object %>% autonomics.import::has_complete_block_values()
+#'    object %>% has_complete_subgroup_values()
+#'    object %>% has_complete_block_values()
 #' }
 #' @importFrom magrittr %>%
 #' @export
 has_complete_svalues <- function(object, svar){
 
    # svar missing
-   var_present <- svar %in% autonomics.import::svars(object)
+   var_present <- svar %in% svars(object)
    if (!var_present) return(FALSE)
 
    # svalues missing
-   values_present <- object %>% autonomics.import::svalues(svar) %>%
+   values_present <- object %>% svalues(svar) %>%
                                 assertive.strings::is_empty_character() %>%
                                 any()
    if (values_present) return(FALSE)
@@ -80,14 +80,14 @@ has_complete_svalues <- function(object, svar){
 #' @importFrom magrittr %>%
 #' @export
 has_complete_subgroup_values <- function(object){
-   object %>% autonomics.import::has_complete_svalues('subgroup')
+   object %>% has_complete_svalues('subgroup')
 }
 
 #' @rdname has_complete_svalues
 #' @importFrom magrittr %>%
 #' @export
 has_complete_block_values <- function(object){
-   object %>% autonomics.import::has_complete_svalues('block')
+   object %>% has_complete_svalues('block')
 }
 
 #' @title Does object contain prepro?
@@ -97,51 +97,42 @@ has_complete_block_values <- function(object){
 #' @export
 #' @examples
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    billing.differentiation.data::rna.voomcounts %>% contains_prepro()
+#' if (require(autonomics.data)){
+#'    autonomics.data::stemcomp.proteinratios %>% contains_prepro()
 #' }
 contains_prepro <- function(object){
-   autonomics.import::assert_is_valid_object(object)
-   length(autonomics.import::prepro(object))!=0
+   assert_is_valid_object(object)
+   length(prepro(object))!=0
 }
 
 #' Does object contain ratio values?
 #' @param object SummarizedExperiment
 #' @return logical
 #' @examples
-#' require(magrittr)
 #'
-#' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcomp.proteinratios %>%
-#'    autonomics.import::contains_ratios()
 #'
-#'    autonomics.data::stemcomp.soma %>%
-#'    autonomics.import::contains_ratios()
+#'    # STEM CELL COMPARISON
+#'    require(magrittr)
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% contains_ratios()
+#'
+#'    # GLUTAMINASE
+#'    object <- autonomics.data::glutaminase
+#'    object %>% contains_ratios()
 #' }
 #'
-#' # STEM CELL DIFFERENTIATION
-#' if (require(billing.differentiation.data)){
-#'    billing.differentiation.data::protein.ratios %>%
-#'       autonomics.import::contains_ratios()
-#'    billing.differentiation.data::rna.voomcounts %>%
-#'       autonomics.import::contains_ratios()
-#' }
 #' @export
 contains_ratios <- function(object){
-   autonomics.import::assert_is_valid_object(object)
-   if (autonomics.import::contains_prepro(object)){
-      autonomics.import::prepro(object)$quantity %in% c('Ratio', 'Ratio normalized', 'occupancy')
-   } else {
-      FALSE
-   }
+   assert_is_valid_object(object)
+   is_maxquant_eset(object) & all(grepl('_', subgroup_values(object)))
 }
 
 #=========================================================================================
 # Assert
 
-#' Is valid eset?
-#' @param x eset
+#' Is valid SummarizedExperiment
+#' @param x SummarizedExperiment
 #' @param .xname see assertive.base::get_name_in_parent
 #' @return logical
 #' @export
@@ -152,8 +143,8 @@ is_valid_object <- function(x, .xname = assertive.base::get_name_in_parent(x)){
    TRUE
 }
 
-#' Assert that x is a valid eSet
-#' @param x eset
+#' Assert that x is a valid SummarizedExperiment
+#' @param x SummarizedExperiment
 #' @return error if not true
 #' @export
 assert_is_valid_object <- function(x){
@@ -171,7 +162,7 @@ assert_all_are_valid_features <- function(features, object){
       features %>%
       assertive.sets::assert_is_subset(
          object %>%
-         autonomics.import::fdata() %>%
+         fdata() %>%
          magrittr::extract2("feature_id"))
    } else if (is.numeric(features)) {
       features %>%

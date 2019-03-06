@@ -12,15 +12,15 @@ split_by_svar(object, svar = "subgroup")
 \item{svar}{'subgroup'}
 }
 \value{
-list
+list of SummarizedExperiments
 }
 \description{
 Split SummarizedExperiment by svar
 }
 \examples{
-require(magrittr)
 if (require(autonomics.data)){
-   autonomics.data::stemdiff.proteinratios \%>\%
-   autonomics.import::split_by_svar()
+   require(magrittr)
+   object <- autonomics.data::stemcomp.proteinratios
+   object \%>\% split_by_svar()
 }
 }

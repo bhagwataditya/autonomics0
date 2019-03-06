@@ -18,18 +18,3 @@ matrixify_summarized_evidences(summarized_evidences, sample_file,
 Convert summarized evidences from long data.table into
 feature x sample matrix
 }
-\examples{
-require(magrittr)
-\dontrun{
-if (require(billing.differentiation.data)){
-   evidence_file <- system.file(
-      'extdata/maxquant/evidence.txt',
-      package = 'billing.differentiation.data')
-   sample_file <- system.file(
-      'extdata/maxquant/sample_design.txt',
-      package = 'billing.differentiation.data')
-   summarized_evidences <- evidences_to_proteingroups(evidence_file)
-   summarized_evidences \%>\% matrixify_summarized_evidences(sample_file)
-}
-}
-}

@@ -21,6 +21,6 @@ require(magrittr)
 if (require(autonomics.data)){
    object  <- autonomics.data::stemcomp.proteinratios
    file <- tempdir() \%>\% paste0('/features.txt') \%T>\% message()
-   object \%>\% autonomics.import::write_features(file)
+   object \%>\% write_features(file)
 }
 }

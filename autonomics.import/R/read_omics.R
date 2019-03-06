@@ -295,8 +295,8 @@ read_omics <- function(
 
    # Wrap into Sumexp
    object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs = exprs1))
-   autonomics.import::fdata(object) <- fdata1
-   autonomics.import::sdata(object) <- sdata1
+   fdata(object) <- fdata1
+   sdata(object) <- sdata1
 
    # Return
    object
@@ -339,11 +339,11 @@ read_rnaseq <- function(file, fid_var, fname_var = character(0)){
                                  transpose  = FALSE,
                                  verbose    = TRUE)
 
-   autonomics.import::sdata(object)$subgroup <- object %>% autonomics.import::guess_subgroup_values(verbose = TRUE)
+   sdata(object)$subgroup <- object %>% guess_subgroup_values(verbose = TRUE)
 
    if (length(fname_var)>0){
       assertive.sets::assert_is_subset(fname_var, fvars(object))
-      autonomics.import::fdata(object) %<>% (function(x){x$feature_name <- x[[fname_var]];
+      fdata(object) %<>% (function(x){x$feature_name <- x[[fname_var]];
                                                          x %>% autonomics.support::pull_columns(c('feature_id', 'feature_name'))})
    }
 
@@ -360,12 +360,6 @@ read_rnaseq <- function(file, fid_var, fname_var = character(0)){
 #' @param file string: path to exiqon genex file
 #' @importFrom magrittr %>%
 #' @export
-#' @examples
-#' if (require(subramanian.2016)){
-#'    require(magrittr)
-#'    file <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx', package = 'subramanian.2016')
-#'    file %>% read_exiqon()
-#' }
 read_exiqon <- function(file){
    assertive.files::assert_all_are_existing_files(file)
    dt <- extract_rectangle(file, sheet=1)
@@ -649,7 +643,7 @@ guess_maxquant_quantity.data.frame <- function(x, ...){     # x = maxquant dataf
 #' @rdname guess_maxquant_quantity
 #' @export
 guess_maxquant_quantity.SummarizedExperiment <- function(x, ...){     # x = SummarizedExperiment
-   x <- autonomics.import::snames(x)
+   x <- snames(x)
    for (quantity in names(maxquant_patterns)){
       pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
       if (any(stringi::stri_detect_regex(x, pattern)))   return(quantity)
@@ -729,8 +723,8 @@ standardize_maxquant_snames.SummarizedExperiment <- function(
    verbose  = FALSE,
    ...
 ){
-   newsnames <- autonomics.import::snames(x) %>% standardize_maxquant_snames(quantity = quantity, verbose=verbose)
-   autonomics.import::snames(x) <- autonomics.import::sdata(x)$sample_id <- newsnames
+   newsnames <- snames(x) %>% standardize_maxquant_snames(quantity = quantity, verbose=verbose)
+   snames(x) <- sdata(x)$sample_id <- newsnames
    x
 }
 
@@ -853,8 +847,8 @@ demultiplex_snames.character <- function(x, verbose = FALSE, ...){
 #' @importFrom magrittr %>%
 #' @export
 demultiplex_snames.SummarizedExperiment <- function(x,verbose  = FALSE, ...){
-   newsnames <- autonomics.import::snames(x) %>% demultiplex_snames(verbose = verbose)
-   autonomics.import::snames(x) <- autonomics.import::sdata(x)$sample_id <- newsnames
+   newsnames <- snames(x) %>% demultiplex_snames(verbose = verbose)
+   snames(x) <- sdata(x)$sample_id <- newsnames
    x
 }
 
@@ -922,10 +916,10 @@ read_proteingroups <- function(
    if (standardize_snames) object %<>% standardize_maxquant_snames(verbose = verbose)
    if (demultiplex_snames) object %<>% demultiplex_snames(verbose = verbose)
    object$subgroup <- object$sample_id %>% guess_subgroup_values(verbose = verbose)
-   #object$block    <- object$sample_id %>% autonomics.import::guess_subject_values( verbose = TRUE)
+   #object$block    <- object$sample_id %>% guess_subject_values( verbose = TRUE)
 
    # Clean fdata
-   contaminant_var <- c('Contaminant', 'Potential contaminant') %>% intersect(autonomics.import::fvars(object))
+   contaminant_var <- c('Contaminant', 'Potential contaminant') %>% intersect(fvars(object))
    fdata(object)[[contaminant_var]] %<>% (function(x){x[is.na(x)] <- ''; x})
    fdata(object)[['Reverse'      ]] %<>% (function(x){x[is.na(x)] <- ''; x})
    fdata(object)$feature_name    <- fdata(object)$`Gene names`
@@ -1008,9 +1002,9 @@ read_phosphosites <- function(
    # Calculate occupancies (allows to disentangle phosphorylation and protein expression)
    autonomics.support::cmessage('\t\toccupancies(phosphosites) = exprs(phosphosites) - exprs(proteingroups)')
    proteingroups <- read_proteingroups(proteingroups_file, quantity = quantity, verbose = FALSE) %>%
-                    magrittr::extract(phosphosites %>% autonomics.import::fvalues("Protein group IDs"), ) %>%
-                    magrittr::extract(, phosphosites %>% autonomics.import::snames())
-   autonomics.import::occupancies(phosphosites) <- autonomics.import::exprs(phosphosites) - autonomics.import::exprs(proteingroups)
+                    magrittr::extract(phosphosites %>% fvalues("Protein group IDs"), ) %>%
+                    magrittr::extract(, phosphosites %>% snames())
+   occupancies(phosphosites) <- exprs(phosphosites) - exprs(proteingroups)
 
    # Simplify snames
    if (standardize_snames) phosphosites %<>% standardize_maxquant_snames(verbose = verbose)

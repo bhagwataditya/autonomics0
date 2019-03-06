@@ -27,7 +27,7 @@ Does object have complete svalues
 require(magrittr)
 if (require(autonomics.data)){
    object <- autonomics.data::glutaminase
-   object \%>\% autonomics.import::has_complete_subgroup_values()
-   object \%>\% autonomics.import::has_complete_block_values()
+   object \%>\% has_complete_subgroup_values()
+   object \%>\% has_complete_block_values()
 }
 }

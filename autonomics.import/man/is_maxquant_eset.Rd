@@ -16,9 +16,9 @@ logical
 Is max quant eSet?
 }
 \examples{
-library(magrittr)
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016
+   library(magrittr)
+   object <- autonomics.data::stemcomp.proteinratios
    object \%>\% is_maxquant_eset()
 }
 }

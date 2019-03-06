@@ -2,7 +2,7 @@
 #' @importFrom magrittr   %>%    %<>%
 #' @export
 arrange_features_ <- function(x, fvars){
-   idx <- do.call(order, autonomics.import::fdata(x)[, fvars, drop = FALSE])
+   idx <- do.call(order, fdata(x)[, fvars, drop = FALSE])
    x %<>% magrittr::extract(idx, )
    return(x)
 }
@@ -16,9 +16,9 @@ arrange_features_ <- function(x, fvars){
 #' @return arranged eset
 #' @examples
 #' if(require(autonomics.data)){
-#'    head(autonomics.import::fdata(ALL)[, -2])
-#'    head(autonomics.import::fdata(arrange_features(ALL, gene_symbols))[, -2])
-#'    head(autonomics.import::fdata(arrange_features_(ALL, "gene_symbols"))[, -2])
+#'    head(fdata(ALL)[, -2])
+#'    head(fdata(arrange_features(ALL, gene_symbols))[, -2])
+#'    head(fdata(arrange_features_(ALL, "gene_symbols"))[, -2])
 #' }
 #' @importFrom magrittr   %>%
 #' @export
@@ -32,7 +32,7 @@ arrange_features <- function(x, ...){
 #' @importFrom magrittr   %<>%
 #' @export
 arrange_samples_ <- function(x, svars){
-   idx <- do.call(order, autonomics.import::sdata(x)[, svars, drop = FALSE])
+   idx <- do.call(order, sdata(x)[, svars, drop = FALSE])
    x %<>% magrittr::extract(, idx)
    return(x)
 }
@@ -46,9 +46,9 @@ arrange_samples_ <- function(x, svars){
 #' @return arranged eset
 #' @examples
 #' if(require(autonomics.data)){
-#'    head(autonomics.import::sdata(ALL)[, -2])
-#'    head(autonomics.import::sdata(arrange_samples(ALL, age)))
-#'    head(autonomics.import::sdata(arrange_samples_(ALL, "age")))
+#'    head(sdata(ALL)[, -2])
+#'    head(sdata(arrange_samples(ALL, age)))
+#'    head(sdata(arrange_samples_(ALL, "age")))
 #' }
 #' @importFrom magrittr   %>%
 #' @export
@@ -64,7 +64,7 @@ arrange_samples <- function(x, ...){
 #' @importFrom magrittr extract %>%
 #' @export
 arrange_on_magnitude <- function(object, contrast_name){
-   idx <- autonomics.import::fdata(object) %>%
+   idx <- fdata(object) %>%
       magrittr::extract2(sprintf('value.%s', contrast_name)) %>%
       abs(.) %>% order(decreasing = TRUE)
    object %>% magrittr::extract(idx, )

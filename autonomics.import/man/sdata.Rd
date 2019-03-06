@@ -41,9 +41,9 @@ Get/Set sample data
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   autonomics.import::sdata(object) \%<>\% cbind(z=1)
+if (require(autonomics.data)){
+   object <- autonomics.data::stemcomp.proteinratios
+   sdata(object) \%<>\% cbind(z=1)
    object
 }
 }

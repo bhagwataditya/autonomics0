@@ -5,7 +5,7 @@
 \title{Filter features with replicated expression in some subgroup}
 \usage{
 filter_exprs_replicated_in_some_subgroup(object, comparator = if
-  (autonomics.import::contains_ratios(object)) "!=" else ">", lod = 0)
+  (contains_ratios(object)) "!=" else ">", lod = 0)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -24,8 +24,8 @@ Filter features with replicated expression in some subgroup
 require(magrittr)
 if (require(autonomics.data)){
    object <- autonomics.data::stemcomp.proteinratios
-   object \%>\% autonomics.import::filter_exprs_replicated_in_some_subgroup()
+   object \%>\% filter_exprs_replicated_in_some_subgroup()
    object <- autonomics.data::glutaminase
-   object \%>\% autonomics.import::filter_exprs_replicated_in_some_subgroup()
+   object \%>\% filter_exprs_replicated_in_some_subgroup()
 }
 }

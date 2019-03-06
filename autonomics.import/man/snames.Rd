@@ -29,7 +29,7 @@ snames(object) <- value
 \S4method{snames}{EList,character}(object) <- value
 }
 \arguments{
-\item{object}{SummarizedExperiment}
+\item{object}{SummarizedExperiment, eSet, or EList}
 
 \item{value}{string vector with sample names}
 }
@@ -41,9 +41,9 @@ Get/Set sample names
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   autonomics.import::snames(object) \%<>\% paste0('XXX')
+if (require(autonomics.data)){
+   object <- autonomics.data::stemcomp.proteinratios
+   snames(object) \%<>\% paste0('SAMPLE', .)
    object
 }
 }

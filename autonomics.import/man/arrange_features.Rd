@@ -24,8 +24,8 @@ Arrange eset on specified fvars
 }
 \examples{
 if(require(autonomics.data)){
-   head(autonomics.import::fdata(ALL)[, -2])
-   head(autonomics.import::fdata(arrange_features(ALL, gene_symbols))[, -2])
-   head(autonomics.import::fdata(arrange_features_(ALL, "gene_symbols"))[, -2])
+   head(fdata(ALL)[, -2])
+   head(fdata(arrange_features(ALL, gene_symbols))[, -2])
+   head(fdata(arrange_features_(ALL, "gene_symbols"))[, -2])
 }
 }

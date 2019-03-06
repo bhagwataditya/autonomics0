@@ -22,7 +22,7 @@ Identify reference features
 if (require(autonomics.data)){
    require(magrittr)
    fvalues <- c("A0MZ66", "A0JLT2", "Q8NG66", "Q9NPI5")
-   object <- autonomics.data::stemdiff.proteinratios
+   object <- autonomics.data::stemcomp.proteinratios
    object \%>\% is_fvalue_feature(fvar = 'Uniprot accessions',
                                 split = ';', fvalues = fvalues) \%>\%
               sum()

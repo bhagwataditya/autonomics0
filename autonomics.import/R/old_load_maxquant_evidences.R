@@ -45,7 +45,7 @@ filter_evidences <- function(evidence){
    if ('Phospho (STY)' %in% names(evidence)){
       n <- nrow(evidence)
       evidence[, SeqNeverPhosphorylated := all(`Phospho (STY)`   == 0), by = list(Sequence)]#, Experiment, Labels)]
-      # by=Sequence gave better results than by=list(Sequence, Experiment, Labels) for Billing differentiation
+      # by=Sequence gave better results than by=list(Sequence, Experiment, Labels) for stemdiff
       evidence <- evidence[SeqNeverPhosphorylated==TRUE]
       autonomics.support::cmessage('\t%d from sequences that are not phosphorylated in the same sample', nrow(evidence), n)
    }
@@ -58,14 +58,6 @@ filter_evidences <- function(evidence){
 #'
 #' Read (relevant variables of) evidence file into a data table
 #' @param evidence_file path to evidence file
-#' @examples
-#' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    system.file('extdata/maxquant/evidence.txt',
-#'                 package = 'billing.differentiation.data') %>%
-#'    read_evidences()
-#'
-#' }
 #' @importFrom magrittr   %<>%
 #' @export
 read_evidences <- function(evidence_file){
@@ -276,15 +268,6 @@ assign_razor_evidences <- function(evidence){
 #' }
 #'
 #' @param evidence_file path to evidence file
-#' @examples
-#' require(magrittr)
-#' \dontrun{
-#' if (require(billing.differentiation.data)){
-#'    evidence_file <- system.file('extdata/maxquant/evidence.txt',
-#'                                  package = 'billing.differentiation.data')
-#'    evidences_to_proteingroups(evidence_file)
-#' }
-#' }
 #' @importFrom data.table   data.table
 #' @importFrom magrittr     %<>%   %>%
 #' @export
@@ -354,20 +337,6 @@ prettify_sample_names <- function(value_matrix, sample_file){
 #' @param summarized_evidences data.table with summarized evidences
 #' @param sample_file          file with sample annotation
 #' @param var                  variable to extract and matrixify
-#' @examples
-#' require(magrittr)
-#' \dontrun{
-#' if (require(billing.differentiation.data)){
-#'    evidence_file <- system.file(
-#'       'extdata/maxquant/evidence.txt',
-#'       package = 'billing.differentiation.data')
-#'    sample_file <- system.file(
-#'       'extdata/maxquant/sample_design.txt',
-#'       package = 'billing.differentiation.data')
-#'    summarized_evidences <- evidences_to_proteingroups(evidence_file)
-#'    summarized_evidences %>% matrixify_summarized_evidences(sample_file)
-#' }
-#' }
 #' @importFrom data.table   data.table
 #' @importFrom magrittr     %>%
 #' @export

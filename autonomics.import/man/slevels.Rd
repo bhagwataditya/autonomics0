@@ -21,9 +21,9 @@ svar values (character)
 Get svar levels
 }
 \examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   subramanian.2016::metabolon \%>\% slevels('subgroup')
-   subramanian.2016::metabolon \%>\% subgroup_levels()
+if (require(autonomics.data)){
+   require(magrittr)
+   autonomics.data::stemcomp.proteinratios \%>\% slevels('subgroup')
+   autonomics.data::stemcomp.proteinratios \%>\% subgroup_levels()
 }
 }

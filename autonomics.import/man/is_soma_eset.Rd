@@ -15,3 +15,10 @@ logical
 \description{
 Is object a soma eset?
 }
+\examples{
+if (require(autonomics.data)){
+require(magrittr)
+   object <- autonomics.data::stemcomp.soma
+   object \%>\% is_soma_eset()
+}
+}

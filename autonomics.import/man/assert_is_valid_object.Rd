@@ -2,16 +2,16 @@
 % Please edit documentation in R/assert_has_is.R
 \name{assert_is_valid_object}
 \alias{assert_is_valid_object}
-\title{Assert that x is a valid eSet}
+\title{Assert that x is a valid SummarizedExperiment}
 \usage{
 assert_is_valid_object(x)
 }
 \arguments{
-\item{x}{eset}
+\item{x}{SummarizedExperiment}
 }
 \value{
 error if not true
 }
 \description{
-Assert that x is a valid eSet
+Assert that x is a valid SummarizedExperiment
 }

@@ -8,11 +8,10 @@
 \usage{
 invert(x, ...)
 
-\method{invert}{character}(x, sep = autonomics.import::guess_sep(x), ...)
+\method{invert}{character}(x, sep = guess_sep(x), ...)
 
 \method{invert}{SummarizedExperiment}(x, subgroups = x \%>\%
-  autonomics.import::slevels("subgroup"), sep = x \%>\%
-  autonomics.import::guess_sep("subgroup"), ...)
+  slevels("subgroup"), sep = x \%>\% guess_sep("subgroup"), ...)
 }
 \arguments{
 \item{x}{character(.) or SummarizedExperiment}

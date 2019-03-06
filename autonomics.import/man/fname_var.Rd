@@ -23,8 +23,8 @@ library(magrittr)
 if (require(autonomics.data)){
    object <- 'extdata/stemcomp/soma/stemcomp.adat' \%>\%
               system.file(package = 'autonomics.data') \%>\%
-              autonomics.import::read_somascan()
-   object \%>\% autonomics.import::fname_var()
-   object \%>\% autonomics.import::fname_values()
+              read_somascan()
+   object \%>\% fname_var()
+   object \%>\% fname_values()
 }
 }

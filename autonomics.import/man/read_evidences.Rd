@@ -12,12 +12,3 @@ read_evidences(evidence_file)
 \description{
 Read (relevant variables of) evidence file into a data table
 }
-\examples{
-require(magrittr)
-if (require(billing.differentiation.data)){
-   system.file('extdata/maxquant/evidence.txt',
-                package = 'billing.differentiation.data') \%>\%
-   read_evidences()
-
-}
-}

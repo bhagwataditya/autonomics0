@@ -21,7 +21,7 @@ Get uniprot values
 require(magrittr)
 if (require(autonomics.data)){
    object <- autonomics.data::stemcomp.proteinratios
-   object \%>\% autonomics.import::uniprot_values() \%>\% head()
-   object \%>\% autonomics.import::uniprot_values(first_only = TRUE) \%>\% head()
+   object \%>\% uniprot_values() \%>\% head()
+   object \%>\% uniprot_values(first_only = TRUE) \%>\% head()
 }
 }

@@ -7,6 +7,6 @@
 #' @export
 log2transform <- function(object, verbose = FALSE){
    if (verbose) message('\t\tLog2 transform')
-   autonomics.import::exprs(object) %<>% log2()
+   exprs(object) %<>% log2()
    return(object)
 }

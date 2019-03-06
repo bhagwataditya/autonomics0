@@ -48,9 +48,10 @@ weight matrix (get) or updated object (set)
 Get/Set weight matrix
 }
 \examples{
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   autonomics.import::weights(object) <- 1
-   object
+if (require(autonomics.data)){
+   require(magrittr)
+   object <- autonomics.data::stemcomp.proteinratios
+   weights(object)
+   weights(object) <- 1; weights(object) \%>\% str()
 }
 }

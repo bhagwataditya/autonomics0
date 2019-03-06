@@ -29,7 +29,7 @@ setReplaceMethod("analysis", signature("SummarizedExperiment", "list"), function
 
 #====================================================================================
 #' Get /set annotation
-#' @param object eSet
+#' @param object SummarizedExperiment, eSet, or EList
 #' @param value  list
 #' @return annotation details (get) or updated eset (set)
 #' @rdname annotation
@@ -72,16 +72,16 @@ setReplaceMethod("annotation", signature("EList",                "character"), f
 #=================================================================================================
 #' Get/Set contrast definitions
 #' @param object SummarizedExperiment
-#' @param value named contrast vector
-#' @return updated object
+#' @param value named string vector (see examples)
+#' @return updated SummarizedExperiment
 #' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    contrastdefs <- subramanian.2016::contrasts.metabolon
-#'    autonomics.import::contrastdefs(object)                      # getter
-#'    autonomics.import::contrastdefs(object) <- contrastdefs    # setter (conventional)
-#'    autonomics.import::set_contrastdefs(object, contrastdefs)  # setter (piping)
+#' if (require(autonomics.data)){
+#'    require(magrittr)
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    contrastdefs1 <- c(EM_E = 'EM_E', BM_E = 'BM_E', BM_EM = 'BM_EM')
+#'    contrastdefs(object) <-     contrastdefs1   # conventional setter
+#'    object %>% set_contrastdefs(contrastdefs1)  # piping       setter
+#'    contrastdefs(object)                        # getter
 #' }
 #' @rdname contrastdefs
 
@@ -109,7 +109,7 @@ setReplaceMethod("contrastdefs", signature("SummarizedExperiment", "NULL"),     
 #' @rdname contrastdefs
 #' @export
 set_contrastdefs <- function(object, value){
-   autonomics.import::contrastdefs(object) <- value
+   contrastdefs(object) <- value
    object
 }
 
@@ -151,13 +151,13 @@ setReplaceMethod("counts",    signature("SummarizedExperiment", "numeric"), func
 #=========================================================================
 #' @title Get/Set exprs
 #' @description Get / Set exprs matrix
-#' @param object SummarizedExperiment
+#' @param object SummarizedExperiment, ExpressionSet, EList
 #' @param value ratio matrix (features x samples)
 #' @return exprs matrix (get) or updated object (set)
 #' @examples
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts
-#'    autonomics.import::exprs(object) <- 0
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    exprs(object) <- 0
 #'    object
 #' }
 #' @rdname exprs
@@ -214,12 +214,10 @@ setReplaceMethod("exprs",    signature("EList", "numeric"),                funct
 #' @return feature dataframe (get) or updated object (set)
 #' @examples
 #' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>% autonomics.import::fdata() %>% head()
-#' }
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts
-#'    autonomics.import::fdata(object) %<>% cbind(z=1)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% fdata() %>% head()
+#'    fdata(object) %<>% cbind(z=1)
 #'    object
 #' }
 #' @rdname fdata
@@ -269,13 +267,13 @@ setReplaceMethod( 'fdata', signature('EList',                'data.frame'),   fu
 
 #==================================================================================
 #' Get fvar levels
-#' @param  object  SummarizedExperiment, eSet, or EList
+#' @param  object  SummarizedExperiment
 #' @param  fvar    feature variable
 #' @return fvar values
 #' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>% flevels('BIOCHEMICAL')
+#' if (require(autonomics.data)){
+#'    require(magrittr)
+#'    autonomics.data::stemcomp.proteinratios %>% flevels('Gene names') %>% head()
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -283,22 +281,22 @@ setReplaceMethod( 'fdata', signature('EList',                'data.frame'),   fu
 #' @export
 flevels <- function(object, fvar){
    object %>%
-      autonomics.import::fvalues(fvar) %>%
-      (function(x)if (is.factor(x)) levels(x) else unique(x))
+   fvalues(fvar) %>%
+  (function(x)if (is.factor(x)) levels(x) else unique(x))
 }
 
 
 #====================================================================================
 #' @title Get/Set fnames
 #' @description Get/Set feature names
-#' @param object SummarizedExperiment
+#' @param object SummarizedExperiment, eSet, or EList
 #' @param value character vector with feature names
 #' @return feature name vector (get) or updated object (set)
 #' @examples
-#' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts
-#'    autonomics.import::fnames(object) %<>% paste0('XXX')
+#' if (require(autonomics.data)){
+#'    require(magrittr)
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    fnames(object) %<>% paste0('PG', .)
 #'    object
 #' }
 #' @rdname fnames
@@ -345,9 +343,10 @@ object})
 #' @return fvar values
 #' @examples
 #' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>% autonomics.import::fvalues('BIOCHEMICAL')
-#'    subramanian.2016::metabolon %>% autonomics.import::fvalues(NULL)
+#' if (require(autonomics.data)){
+#'    object <-autonomics.data::stemcomp.proteinratios
+#'    object %>% fvalues('Gene names') %>% head()
+#'    object %>% fvalues(NULL)
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -357,11 +356,11 @@ fvalues <- function(object, fvar){
    if (is.null(fvar)) return(NULL)
 
    # Assert that fvar is present
-   assertive.sets::assert_is_subset(fvar, autonomics.import::fvars(object))
+   assertive.sets::assert_is_subset(fvar, fvars(object))
 
    # Extract and return
    object %>%
-      autonomics.import::fdata() %>%
+      fdata() %>%
       magrittr::extract2(fvar)
 }
 
@@ -374,9 +373,9 @@ fvalues <- function(object, fvar){
 #' @return feature variables vector (get) or updated object (set)
 #' @examples
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts
-#'    autonomics.import::fvars(object)[1] %<>% paste0('1')
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    fvars(object)[1] %<>% paste0('1')
 #'    object
 #' }
 #' @rdname fvars
@@ -419,6 +418,12 @@ object})
 #'@param object SummarizedExperiment
 #'@param value matrix
 #'@return matrix (get) or updated object (set)
+#'@examples
+#'if (require(autonomics.data)){
+#'   require(magrittr)
+#'   object <- autonomics.data::stemcomp.proteinratios
+#'   object %>% is_imputed() %>% sum()
+#'}
 #'@rdname is_imputed
 
 # Get
@@ -536,7 +541,7 @@ setReplaceMethod("occupancies",    signature("SummarizedExperiment", "numeric"),
 #=================================================================================================
 #' @title Get/Set prepro
 #' @description Get/Set preprocessing details
-#' @param object SummarizedExperiment
+#' @param object SummarizedExperiment, eSet, or EList
 #' @param value  list
 #' @return preprocessing details (get) or updated eset
 #' @rdname prepro
@@ -583,9 +588,9 @@ setMethod("prepro", signature("EList"),                 function(object){object$
 #' @return sample dataframe (get) or updated object (set)
 #' @examples
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts
-#'    autonomics.import::sdata(object) %<>% cbind(z=1)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    sdata(object) %<>% cbind(z=1)
 #'    object
 #' }
 #' @rdname sdata
@@ -642,21 +647,21 @@ setReplaceMethod('sdata',  signature('EList',                'data.frame'),   fu
 #' @rdname sign-SummarizedExperiment
 #' @export
 setMethod("sign", signature("SummarizedExperiment"), function(x){
-   sign(log(autonomics.import::exprs(x)))
+   sign(log(exprs(x)))
 })
 
 
 #=====================================================================
 #' @title Get/Set snames
 #' @description Get/Set sample names
-#' @param object SummarizedExperiment
+#' @param object SummarizedExperiment, eSet, or EList
 #' @param value string vector with sample names
 #' @return sample names vector (get) or updated eSet (set)
 #' @examples
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts
-#'    autonomics.import::snames(object) %<>% paste0('XXX')
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    snames(object) %<>% paste0('SAMPLE', .)
 #'    object
 #' }
 #' @rdname snames
@@ -702,10 +707,10 @@ setReplaceMethod("snames", signature("EList", "character"),                 func
 #' @param svar sample var (character)
 #' @return svar values (character)
 #' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>% slevels('subgroup')
-#'    subramanian.2016::metabolon %>% subgroup_levels()
+#' if (require(autonomics.data)){
+#'    require(magrittr)
+#'    autonomics.data::stemcomp.proteinratios %>% slevels('subgroup')
+#'    autonomics.data::stemcomp.proteinratios %>% subgroup_levels()
 #' }
 #' @rdname slevels
 
@@ -717,7 +722,7 @@ setReplaceMethod("snames", signature("EList", "character"),                 func
 #' @export
 slevels <- function(object, svar){
    object %>%
-      autonomics.import::svalues(svar) %>%
+      svalues(svar) %>%
       (function(x) if (is.factor(x)) levels(x) else unique(x))
 }
 
@@ -725,7 +730,7 @@ slevels <- function(object, svar){
 #' @importFrom magrittr %>%
 #' @export
 subgroup_levels <- function(object){
-   object %>% autonomics.import::slevels('subgroup')
+   object %>% slevels('subgroup')
 }
 
 
@@ -736,10 +741,11 @@ subgroup_levels <- function(object){
 #' @param svar   sample var (character)
 #' @param value  value vector
 #' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>% svalues('subgroup')
-#'    subramanian.2016::metabolon %>% subgroup_values()
+#' if (require(autonomics.data)){
+#'    require(magrittr)
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% svalues('subgroup')
+#'    object %>% subgroup_values()
 #' }
 #' @rdname svalues
 
@@ -749,21 +755,21 @@ subgroup_levels <- function(object){
 #' @importFrom magrittr %>%
 #' @export
 svalues <- function(object, svar){
-   autonomics.import::sdata(object) %>% magrittr::extract2(svar)
+   sdata(object) %>% magrittr::extract2(svar)
 }
 
 #' @rdname svalues
 #' @importFrom magrittr %>%
 #' @export
 subgroup_values <- function(object){
-   object %>% autonomics.import::svalues('subgroup')
+   object %>% svalues('subgroup')
 }
 
 #' @rdname svalues
 #' @importFrom magrittr %>%
 #' @export
 sampleid_values <- function(object){
-   object %>% autonomics.import::svalues('sample_id')
+   object %>% svalues('sample_id')
 }
 
 # Set
@@ -787,9 +793,9 @@ setReplaceMethod('svalues',  signature('SummarizedExperiment', 'character', "ANY
 #' @return sample variable names (get) or updated eSet (set)
 #' @examples
 #' require(magrittr)
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts
-#'    autonomics.import::svars(object)[1] %<>% paste0('1')
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    svars(object)[1] %<>% paste0('1')
 #'    object
 #' }
 #' @rdname svars
@@ -862,10 +868,11 @@ setReplaceMethod("tmpplot", signature("SummarizedExperiment", "list"), function(
 #' @param ... addtional params
 #' @return weight matrix (get) or updated object (set)
 #' @examples
-#' if (require(billing.differentiation.data)){
-#'    object <- billing.differentiation.data::rna.voomcounts
-#'    autonomics.import::weights(object) <- 1
-#'    object
+#' if (require(autonomics.data)){
+#'    require(magrittr)
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    weights(object)
+#'    weights(object) <- 1; weights(object) %>% str()
 #' }
 #' @rdname weights
 
@@ -897,6 +904,9 @@ setReplaceMethod("weights",    signature("SummarizedExperiment", "matrix"),  fun
 
 #' @rdname weights
 setReplaceMethod("weights",    signature("SummarizedExperiment", "numeric"), function(object, value){
+                                                                                if (!'weights' %in% names(SummarizedExperiment::assays(object))){
+                                                                                   SummarizedExperiment::assays(object)$weights <- matrix(1, nrow=nrow(object), ncol=ncol(object), dimnames = dimnames(object))
+                                                                                }
                                                                                 SummarizedExperiment::assays(object)$weights[] <- value
                                                                                 object })
 

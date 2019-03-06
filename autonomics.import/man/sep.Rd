@@ -2,12 +2,9 @@
 % Please edit documentation in R/get_eset_specific_var.R
 \name{sep}
 \alias{sep}
-\alias{get_sep}
 \title{Get separator of collapsed fields}
 \usage{
 sep(object)
-
-get_sep(object)
 }
 \arguments{
 \item{object}{eset}
@@ -19,9 +16,9 @@ string with separator
 Get separator of collapsed fields
 }
 \examples{
-if (require(billing.differentiation.data)){
+if (require(autonomics.data)){
    require(magrittr)
-   object <- rna.voomcounts
-   object \%>\% autonomics.import::sep()
+   object <- autonomics.data::stemcomp.proteinratios
+   object \%>\% sep()
 }
 }

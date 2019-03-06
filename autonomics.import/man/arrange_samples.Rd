@@ -24,8 +24,8 @@ Arrange eset on specified svars
 }
 \examples{
 if(require(autonomics.data)){
-   head(autonomics.import::sdata(ALL)[, -2])
-   head(autonomics.import::sdata(arrange_samples(ALL, age)))
-   head(autonomics.import::sdata(arrange_samples_(ALL, "age")))
+   head(sdata(ALL)[, -2])
+   head(sdata(arrange_samples(ALL, age)))
+   head(sdata(arrange_samples_(ALL, "age")))
 }
 }

@@ -32,19 +32,12 @@ Reshapes a vector with composite values into a 2d matrix:
    + values = frequency counts of composite levels
 }
 \examples{
-require(magrittr)
-
-# STEM CELL DIFFERENTIATION
 if (require(autonomics.data)){
-   x <- autonomics.data::stemdiff.proteinratios
-   x \%>\% autonomics.import::subgroup_values() \%>\% autonomics.import::count_values()
-   x \%>\%                                          autonomics.import::count_values()
-}
 
-# ATKIN
-if (require(atkin.2014)){
-   x <- atkin.2014::soma.2018
-   x \%>\% autonomics.import::subgroup_values() \%>\% autonomics.import::count_values()
-   x \%>\%                                          autonomics.import::count_values()
+   # GLUTAMINASE
+   require(magrittr)
+   x <- autonomics.data::glutaminase
+   x \%>\% subgroup_values() \%>\% count_values()
+   x \%>\%                       count_values()
 }
 }

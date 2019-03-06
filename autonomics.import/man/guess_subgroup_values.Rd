@@ -8,11 +8,11 @@
 \usage{
 guess_subgroup_values(x, ...)
 
-\method{guess_subgroup_values}{character}(x, sep = x \%>\%
-  autonomics.import::guess_sep(), verbose = FALSE, ...)
+\method{guess_subgroup_values}{character}(x, sep = x \%>\% guess_sep(),
+  verbose = FALSE, ...)
 
 \method{guess_subgroup_values}{SummarizedExperiment}(x, sep = x \%>\%
-  autonomics.import::guess_sep(), verbose = FALSE, ...)
+  guess_sep(), verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{charactervector, SummarizedExperiment}

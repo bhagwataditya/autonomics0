@@ -24,7 +24,7 @@ Filter samples on condition
 }
 \examples{
 if (require(autonomics.data)){
-   autonomics.import::filter_samples( autonomics.data::ALL,  sex == 'M')
-   autonomics.import::filter_samples_(autonomics.data::ALL, "sex == 'M'")
+   filter_samples( autonomics.data::ALL,  sex == 'M')
+   filter_samples_(autonomics.data::ALL, "sex == 'M'")
 }
 }

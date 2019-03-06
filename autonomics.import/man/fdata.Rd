@@ -41,12 +41,10 @@ Get/Set feature data
 }
 \examples{
 require(magrittr)
-if (require(subramanian.2016)){
-   subramanian.2016::metabolon \%>\% autonomics.import::fdata() \%>\% head()
-}
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   autonomics.import::fdata(object) \%<>\% cbind(z=1)
+if (require(autonomics.data)){
+   object <- autonomics.data::stemcomp.proteinratios
+   object \%>\% fdata() \%>\% head()
+   fdata(object) \%<>\% cbind(z=1)
    object
 }
 }

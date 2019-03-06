@@ -8,8 +8,8 @@
 \usage{
 extract_first_from_collapsed(x, ...)
 
-\method{extract_first_from_collapsed}{character}(x,
-  sep = autonomics.import::guess_sep(x), ...)
+\method{extract_first_from_collapsed}{character}(x, sep = guess_sep(x),
+  ...)
 
 \method{extract_first_from_collapsed}{factor}(x, sep = guess_sep(x), ...)
 }
@@ -29,5 +29,5 @@ Extract first from collapsed values
 \examples{
 require(magrittr)
 x <- c('a;b;c', '1;2;3', 'alpha;beta;gamma')
-x \%>\% autonomics.import::extract_first_from_collapsed(sep = ';')
+x \%>\% extract_first_from_collapsed(sep = ';')
 }

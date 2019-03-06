@@ -30,9 +30,10 @@ svalues(object, svar) <- value
 Get/Set svar values
 }
 \examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   subramanian.2016::metabolon \%>\% svalues('subgroup')
-   subramanian.2016::metabolon \%>\% subgroup_values()
+if (require(autonomics.data)){
+   require(magrittr)
+   object <- autonomics.data::stemcomp.proteinratios
+   object \%>\% svalues('subgroup')
+   object \%>\% subgroup_values()
 }
 }

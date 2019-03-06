@@ -31,9 +31,9 @@ Convert sumexp into long datatable
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::protein.ratios
-   object \%>\% autonomics.import::sumexp_to_long_dt()
-   object \%>\% autonomics.import::sumexp_to_long_dt(svars = 'subgroup')
+if (require(autonomics.data)){
+   object <- autonomics.data::stemcomp.proteinratios
+   object \%>\% sumexp_to_long_dt()
+   object \%>\% sumexp_to_long_dt(svars = 'subgroup')
 }
 }

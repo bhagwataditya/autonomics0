@@ -5,8 +5,8 @@
 \title{Annotate proteingroups through uniprot.ws}
 \usage{
 annotate_proteingroups(object, connection = object \%>\%
-  autonomics.import::open_uniprot_connection(),
-  columns = c("SUBCELLULAR-LOCATIONS", "INTERPRO", "GO-ID"))
+  open_uniprot_connection(), columns = c("SUBCELLULAR-LOCATIONS",
+  "INTERPRO", "GO-ID"))
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -26,7 +26,7 @@ require(magrittr)
 \dontrun{
    if (require(autonomics.data)){
       object <- autonomics.data::stemcomp.proteinratios
-      connection <- autonomics.import::open_uniprot_connection(object)
+      connection <- open_uniprot_connection(object)
       object[1:10, ] \%>\% annotate_proteingroups(connection, c('SUBCELLULAR-LOCATIONS', 'GO-ID'))
    }
 }

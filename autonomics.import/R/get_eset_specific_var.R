@@ -12,7 +12,7 @@ fid_var <- function(object) 'feature_id'
 #' @rdname fid_var
 #' @importFrom magrittr %>%
 #' @export
-fid_values <- function(object) object %>% autonomics.import::fvalues('feature_id')
+fid_values <- function(object) object %>% fvalues('feature_id')
 
 
 #================================================================
@@ -27,9 +27,9 @@ fid_values <- function(object) object %>% autonomics.import::fvalues('feature_id
 #' if (require(autonomics.data)){
 #'    object <- 'extdata/stemcomp/soma/stemcomp.adat' %>%
 #'               system.file(package = 'autonomics.data') %>%
-#'               autonomics.import::read_somascan()
-#'    object %>% autonomics.import::fname_var()
-#'    object %>% autonomics.import::fname_values()
+#'               read_somascan()
+#'    object %>% fname_var()
+#'    object %>% fname_values()
 #' }
 #' @importFrom magrittr            %<>%
 #' @export
@@ -43,7 +43,7 @@ fname_var <- function(object){
 #' @export
 fname_values <- function(object){
    . <- NULL
-   object %>% autonomics.import::fvalues(autonomics.import::fname_var(.))
+   object %>% fvalues(fname_var(.))
 }
 
 #==================================================
@@ -82,11 +82,11 @@ ensg_var <- function(object){
 #'    object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
 #'               system.file(package = 'autonomics.data')     %>%
 #'               read_proteingroups()
-#'    autonomics.import::fvars(object)
+#'    fvars(object)
 #'
 #'
 #'    object <- autonomics.data::stemcomp.proteinratios
-#'    object %>% autonomics.import::uniprot_var()
+#'    object %>% uniprot_var()
 #' }
 #' @importFrom magrittr            %<>%
 #' @export
@@ -101,14 +101,15 @@ uniprot_var <- function(object) fvars(object) %>% magrittr::extract(stringi::str
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios
-#'    object %>% autonomics.import::uniprot_values() %>% head()
-#'    object %>% autonomics.import::uniprot_values(first_only = TRUE) %>% head()
+#'    object %>% uniprot_values() %>% head()
+#'    object %>% uniprot_values(first_only = TRUE) %>% head()
 #' }
 #' @importFrom magrittr            %<>%
 #' @export
 uniprot_values <- function(object, first_only = FALSE){
+   uniprot_var1 <- object %>% uniprot_var() %>% magrittr::extract(max(1, length(.)))
    object %>%
-   autonomics.import::fvalues(autonomics.import::uniprot_var(.)) %>%
+   fvalues(uniprot_var1) %>%
   (function (x) if (first_only) x %>% stringi::stri_split_fixed(';') %>% vapply(extract, character(1), 1) else x)
 }
 
@@ -125,8 +126,8 @@ uniprot_values <- function(object, first_only = FALSE){
 #'    object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>%
 #'               system.file(package='autonomics.data')   %>%
 #'               read_rnaseq(fid_var = 'gene_id')
-#'    object %>% autonomics.import::oraid_var()
-#'    object %>% autonomics.import::oraid_values() %>% head(3)
+#'    object %>% oraid_var()
+#'    object %>% oraid_values() %>% head(3)
 #' }
 #' @export
 oraid_var <- function(object) 'feature_id'
@@ -135,7 +136,7 @@ oraid_var <- function(object) 'feature_id'
 #' @importFrom magrittr %>%
 #' @export
 oraid_values <- function(object){
-   object %>% autonomics.import::fvalues(autonomics.import::oraid_var(.))
+   object %>% fvalues(oraid_var(.))
 }
 
 
@@ -148,10 +149,10 @@ oraid_values <- function(object){
 #' @param object eset
 #' @return string with separator
 #' @examples
-#' if (require(billing.differentiation.data)){
+#' if (require(autonomics.data)){
 #'    require(magrittr)
-#'    object <- rna.voomcounts
-#'    object %>% autonomics.import::sep()
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% sep()
 #' }
 #' @export
 sep <- function(object){
@@ -159,13 +160,6 @@ sep <- function(object){
    else if (is_soma_eset(object))        ' '
    else if (is_rnaseq_eset(object))      NULL
    else                                  NULL
-}
-
-#' @rdname sep
-#' @export
-get_sep <- function(object){
-   .Deprecated('sep')
-   sep(object)
 }
 
 
@@ -183,6 +177,6 @@ get_sample_id_var <- function(object) 'sample_id'
 #' @rdname get_sample_id_var
 #' @importFrom magrittr %>%
 #' @export
-get_sample_id_values <- function(object) object %>% autonomics.import::svalues('sample_id')
+get_sample_id_values <- function(object) object %>% svalues('sample_id')
 
 

@@ -16,9 +16,9 @@ logical
 Is object a metabolon eset?
 }
 \examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
-   object \%>\% autonomics.import::is_metabolon_eset()
+if (require(autonomics.data)){
+   require(magrittr)
+   object <- autonomics.data::glutaminase
+   object \%>\% is_metabolon_eset()
 }
 }

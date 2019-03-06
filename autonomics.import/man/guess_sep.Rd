@@ -45,21 +45,21 @@ require(magrittr)
 
 # charactervector
    x <- c('PERM_NON.R1[H/L]', 'PERM_NON.R2[H/L]', 'PERM_NON.R3[H/L]', 'PERM_NON.R4[H/L]')
-   x \%>\% autonomics.import::guess_sep()
+   x \%>\% guess_sep()
 
    x <- c('WT untreated 1', 'WT untreated 2', 'WT treated 1')
-   x \%>\% autonomics.import::guess_sep()
+   x \%>\% guess_sep()
 
    x <- c('group1', 'group2', 'group3.R1')
-   x \%>\% autonomics.import::guess_sep()
+   x \%>\% guess_sep()
 
 # SummarizedExperiment
    if (require(autonomics.data))   autonomics.data::glutaminase \%>\%
-                                   autonomics.import::guess_sep()
+                                   guess_sep()
 
    if (require(autonomics.data))   autonomics.data::stemcomp.proteinratios \%>\%
-                                   autonomics.import::guess_sep()
+                                   guess_sep()
 
    if (require(graumann.lfq))      graumann.lfq::lfq.intensities \%>\%
-                                   autonomics.import::guess_sep()
+                                   guess_sep()
 }

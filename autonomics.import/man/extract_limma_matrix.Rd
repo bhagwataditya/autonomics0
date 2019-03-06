@@ -27,9 +27,9 @@ matrix (nfeature x ncontrast)
 Extract limma matrix from object
 }
 \examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
+if (require(autonomics.data)){
+   require(magrittr)
+   object <- autonomics.data::stemcomp.proteinratios
    object \%>\% extract_limma_matrix(quantity = 'effect') \%>\% extract(1:3, 1:3)
    object \%>\% effect() \%>\% extract(1:3, 1:3)
    object \%>\% p()      \%>\% extract(1:3, 1:3)

@@ -46,13 +46,13 @@
 #' @importFrom magrittr %>%
 #' @export
 zero_to_na <- function(object, verbose = FALSE){
-   selector <- autonomics.import::exprs(object) == 0
+   selector <- exprs(object) == 0
    if (any(c(selector), na.rm = TRUE)){
       if (verbose) autonomics.support::cmessage('\t\tReplace 0 -> NA for %d/%d values (in %d/%d features and %d/%d samples)',
                                                 sum(selector, na.rm=TRUE), nrow(selector)*ncol(selector),
                                                 selector %>% matrixStats::rowAnys() %>% sum(), nrow(object),
                                                 selector %>% matrixStats::colAnys() %>% sum(), ncol(object))
-      autonomics.import::exprs(object)[selector] <- NA_real_
+      exprs(object)[selector] <- NA_real_
    }
    object
 }
@@ -62,13 +62,13 @@ zero_to_na <- function(object, verbose = FALSE){
 #' @importFrom magrittr %>%
 #' @export
 nan_to_na <- function(object, verbose = FALSE){
-   selector <- is.nan(autonomics.import::exprs(object))
+   selector <- is.nan(exprs(object))
    if (any(c(selector), na.rm = TRUE)){
       if (verbose) autonomics.support::cmessage('\t\tReplace NaN -> NA for %d/%d values (in %d/%d features and %d/%d samples)',
                                                 sum(selector, na.rm=TRUE), nrow(selector)*ncol(selector),
                                                 selector %>% matrixStats::rowAnys() %>% sum(), nrow(object),
                                                 selector %>% matrixStats::colAnys() %>% sum(), ncol(object))
-      autonomics.import::exprs(object)[selector] <- NA_real_
+      exprs(object)[selector] <- NA_real_
    }
    object
 }
@@ -77,13 +77,13 @@ nan_to_na <- function(object, verbose = FALSE){
 #' @importFrom magrittr %>%
 #' @export
 na_to_zero <- function(object, verbose = FALSE){
-   selector <- autonomics.import::exprs(object) %>% is.na()
+   selector <- exprs(object) %>% is.na()
    if (any(selector)){
       if (verbose) autonomics.support::cmessage('\t\tReplace NA -> 0 for %d/%d values (in %d/%d features and %d/%d samples)',
                                                 sum(selector), nrow(selector)*ncol(selector),
                                                 selector %>% matrixStats::rowAnys() %>% sum(), nrow(object),
                                                 selector %>% matrixStats::colAnys() %>% sum(), ncol(object))
-      autonomics.import::exprs(object)[selector] <- 0
+      exprs(object)[selector] <- 0
    }
    object
 }
@@ -94,13 +94,13 @@ na_to_zero <- function(object, verbose = FALSE){
 #' @importFrom magrittr %>%
 #' @export
 minusinf_to_na <- function(object, verbose = FALSE){
-   selector <- autonomics.import::exprs(object)==-Inf
+   selector <- exprs(object)==-Inf
    if (any(c(selector), na.rm = TRUE)){
       if (verbose) autonomics.support::cmessage('\t\tReplace -Inf -> NA for %d/%d values (in %d/%d features and %d/%d samples)',
                                                 sum(selector, na.rm=TRUE), nrow(selector)*ncol(selector),
                                                 selector %>% matrixStats::rowAnys() %>% sum(), nrow(object),
                                                 selector %>% matrixStats::colAnys() %>% sum(), ncol(object))
-      autonomics.import::exprs(object)[selector] <- NA_real_
+      exprs(object)[selector] <- NA_real_
    }
    object
 }

@@ -12,10 +12,3 @@ is_rnaseq_eset(object)
 \description{
 Is RNA seq eset
 }
-\examples{
-if (require(billing.differentiation.data)){
-   require(magrittr)
-   object <- rna.voomcounts
-   object \%>\% is_rnaseq_eset()
-}
-}

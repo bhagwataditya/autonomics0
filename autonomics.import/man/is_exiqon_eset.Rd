@@ -15,10 +15,3 @@ logical
 \description{
 Is object an exiqon eset?
 }
-\examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   object <- subramanian.2016::exiqon
-   object \%>\% autonomics.import::is_exiqon_eset()
-}
-}

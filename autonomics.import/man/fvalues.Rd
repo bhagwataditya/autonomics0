@@ -19,8 +19,9 @@ Get fvar values
 }
 \examples{
 require(magrittr)
-if (require(subramanian.2016)){
-   subramanian.2016::metabolon \%>\% autonomics.import::fvalues('BIOCHEMICAL')
-   subramanian.2016::metabolon \%>\% autonomics.import::fvalues(NULL)
+if (require(autonomics.data)){
+   object <-autonomics.data::stemcomp.proteinratios
+   object \%>\% fvalues('Gene names') \%>\% head()
+   object \%>\% fvalues(NULL)
 }
 }

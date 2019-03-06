@@ -4,8 +4,7 @@
 \alias{reshape_values}
 \title{Reshape composite values}
 \usage{
-reshape_values(x, fill, fun.aggregate,
-  sep = autonomics.import::guess_sep(x))
+reshape_values(x, fill, fun.aggregate, sep = guess_sep(x))
 }
 \arguments{
 \item{x}{character(n) with composite values}
@@ -24,19 +23,12 @@ Reshapes a vector with composite values into a (2d) matrix:
                 or frequency counts of composite levels (fill = 0,  fun.aggregate = length)
 }
 \examples{
-require(magrittr)
-
 if (require(autonomics.data)){
-
-   # STEM CELL DIFFERENTIATION
-      x <- autonomics.data::stemdiff.proteinratios \%>\% autonomics.import::subgroup_values()
-      x \%>\% autonomics.import::reshape_values(fill = '', fun.aggregate = unique)
-      x \%>\% autonomics.import::reshape_values(fill = 0,  fun.aggregate = length)
-
    # GLUTAMINASE
-      x <- autonomics.data::glutaminase \%>\% autonomics.import::subgroup_values()
-      x \%>\% autonomics.import::reshape_values(fill = '', fun.aggregate = unique)
-      x \%>\% autonomics.import::reshape_values(fill = 0,  fun.aggregate = length)
+      require(magrittr)
+      x <- autonomics.data::glutaminase \%>\% subgroup_values()
+      x \%>\% reshape_values(fill = '', fun.aggregate = unique)
+      x \%>\% reshape_values(fill = 0,  fun.aggregate = length)
 }
 
 }

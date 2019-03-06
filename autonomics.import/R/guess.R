@@ -11,23 +11,23 @@
 #'
 #' # charactervector
 #'    x <- c('PERM_NON.R1[H/L]', 'PERM_NON.R2[H/L]', 'PERM_NON.R3[H/L]', 'PERM_NON.R4[H/L]')
-#'    x %>% autonomics.import::guess_sep()
+#'    x %>% guess_sep()
 #'
 #'    x <- c('WT untreated 1', 'WT untreated 2', 'WT treated 1')
-#'    x %>% autonomics.import::guess_sep()
+#'    x %>% guess_sep()
 #'
 #'    x <- c('group1', 'group2', 'group3.R1')
-#'    x %>% autonomics.import::guess_sep()
+#'    x %>% guess_sep()
 #'
 #' # SummarizedExperiment
 #'    if (require(autonomics.data))   autonomics.data::glutaminase %>%
-#'                                    autonomics.import::guess_sep()
+#'                                    guess_sep()
 #'
 #'    if (require(autonomics.data))   autonomics.data::stemcomp.proteinratios %>%
-#'                                    autonomics.import::guess_sep()
+#'                                    guess_sep()
 #'
 #'    if (require(graumann.lfq))      graumann.lfq::lfq.intensities %>%
-#'                                    autonomics.import::guess_sep()
+#'                                    guess_sep()
 #' @export
 guess_sep <- function (x, ...) {
    UseMethod("guess_sep", x)
@@ -84,12 +84,12 @@ guess_sep.factor <- function(x, ...) x %>% levels %>% guess_sep.character()
 guess_sep.SummarizedExperiment <- function(
    x,
    var = 'sample_id',
-   possible_separators = c('.', '_', ' '),# if (autonomics.import::contains_ratios(x)) c('.', ' ') else c('.', '_', ' '),
+   possible_separators = c('.', '_', ' '),# if (contains_ratios(x)) c('.', ' ') else c('.', '_', ' '),
    verbose = FALSE,
    ...
 ){
-   assertive.sets::assert_is_subset(var, c(autonomics.import::svars(x), autonomics.import::fvars(x)))
-  (if (var %in% autonomics.import::svars(x)) autonomics.import::slevels(x, var) else autonomics.import::flevels(x, var)) %>%
+   assertive.sets::assert_is_subset(var, c(svars(x), fvars(x)))
+  (if (var %in% svars(x)) slevels(x, var) else flevels(x, var)) %>%
    guess_sep(possible_separators = possible_separators,
              verbose             = verbose)
 }
@@ -149,7 +149,7 @@ guess_subgroup_values <- function (x, ...) {
 #' @export
 guess_subgroup_values.character <- function(
    x,
-   sep     = x %>% autonomics.import::guess_sep(),
+   sep     = x %>% guess_sep(),
    verbose = FALSE,
    ...
 ){
@@ -172,20 +172,20 @@ guess_subgroup_values.character <- function(
 #' @export
 guess_subgroup_values.SummarizedExperiment <- function(
    x,
-   sep          = x %>% autonomics.import::guess_sep(),
+   sep          = x %>% guess_sep(),
    verbose      = FALSE,
    ...
 ){
 
    # already in x
-   if ('subgroup' %in% autonomics.import::svars(x)){
+   if ('subgroup' %in% svars(x)){
       if (verbose) autonomics.support::cmessage("\t\tUse 'subgroup' values in x ")
-      return(autonomics.import::sdata(x)$subgroup)
+      return(sdata(x)$subgroup)
    }
 
    # guess from sampleid values
-   x %>% autonomics.import::sampleid_values() %>%
-         autonomics.import::guess_subgroup_values(verbose = verbose)
+   x %>% sampleid_values() %>%
+         guess_subgroup_values(verbose = verbose)
 }
 
 
@@ -197,7 +197,7 @@ guess_subgroup_values.SummarizedExperiment <- function(
 #
 # guess_subject_values.character(
 #    x,
-#    sep     = autonomics.import::guess_sep(x),
+#    sep     = guess_sep(x),
 #    verbose = FALSE
 # ){
 #    NULL

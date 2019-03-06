@@ -7,7 +7,7 @@
 flevels(object, fvar)
 }
 \arguments{
-\item{object}{SummarizedExperiment, eSet, or EList}
+\item{object}{SummarizedExperiment}
 
 \item{fvar}{feature variable}
 }
@@ -18,8 +18,8 @@ fvar values
 Get fvar levels
 }
 \examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   subramanian.2016::metabolon \%>\% flevels('BIOCHEMICAL')
+if (require(autonomics.data)){
+   require(magrittr)
+   autonomics.data::stemcomp.proteinratios \%>\% flevels('Gene names') \%>\% head()
 }
 }

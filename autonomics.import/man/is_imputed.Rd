@@ -30,3 +30,10 @@ matrix (get) or updated object (set)
 \description{
 Get/Set is_imputed
 }
+\examples{
+if (require(autonomics.data)){
+  require(magrittr)
+  object <- autonomics.data::stemcomp.proteinratios
+  object \%>\% is_imputed() \%>\% sum()
+}
+}

@@ -30,13 +30,3 @@ Summarizes eviences per protein group:
    \item remaining obs: geomedian of all obs
 }
 }
-\examples{
-require(magrittr)
-\dontrun{
-if (require(billing.differentiation.data)){
-   evidence_file <- system.file('extdata/maxquant/evidence.txt',
-                                 package = 'billing.differentiation.data')
-   evidences_to_proteingroups(evidence_file)
-}
-}
-}

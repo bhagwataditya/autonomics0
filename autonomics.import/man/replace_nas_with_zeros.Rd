@@ -7,7 +7,7 @@
 replace_nas_with_zeros(object, verbose = TRUE)
 }
 \arguments{
-\item{object}{eSet}
+\item{object}{SummarizedExperiment}
 
 \item{verbose}{TRUE or FALSE}
 }
@@ -18,13 +18,9 @@ eset
 Replace NAs with zeros
 }
 \examples{
-require(magrittr)
 if (require(autonomics.data)){
-   object <- autonomics.data::billing2016
+   require(magrittr)
+   object <- autonomics.data::stemcomp.proteinratios
    replace_nas_with_zeros(object)
-}
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts
-   object \%>\% autonomics.import::replace_nas_with_zeros()
 }
 }

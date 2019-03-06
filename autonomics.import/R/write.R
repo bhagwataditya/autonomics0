@@ -23,14 +23,14 @@ write_fvar_to_file <- function(object, fvar, file = ""){
    if (length(fvar)==0){
       return()
    }
-   if (!fvar %in% autonomics.import::fvars(object)){
-      warning(sprintf("'%s' not in autonomics.import::fvars(object) - abort", fvar))
+   if (!fvar %in% fvars(object)){
+      warning(sprintf("'%s' not in fvars(object) - abort", fvar))
       return()
    }
 
   # Replace separator with space
-  fvaldf  <- autonomics.import::fdata(object) %>%  magrittr::extract(fvar)
-  sep <- autonomics.import::sep(object)
+  fvaldf  <- fdata(object) %>%  magrittr::extract(fvar)
+  sep <- sep(object)
   if (!is.null(sep)){
     fvaldf[[fvar]] %<>% stringi::stri_replace_all_fixed(sep, '\t')
   }
@@ -48,7 +48,7 @@ write_fvar_to_file <- function(object, fvar, file = ""){
 #' require(magrittr)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios
-#'    object %>% autonomics.import::flatten() %>% head()
+#'    object %>% flatten() %>% head()
 #' }
 #' @importFrom magrittr  %<>%  %>%
 #' @export
@@ -60,15 +60,15 @@ flatten <- function(
    fasta_hdrs <- F.p <- NULL
 
    # fdata
-   dt   <- autonomics.import::fdata(object) %>% data.table::data.table()
+   dt   <- fdata(object) %>% data.table::data.table()
    if ('fasta_hdrs' %in% names(dt)){
       dt[, fasta_hdrs := NULL]
    }
 
    # limma
-   limma_array <- autonomics.import::limma(object)
+   limma_array <- limma(object)
    if (!is.null(limma_array)){
-      limma_array %<>% magrittr::extract(autonomics.import::fnames(object), , limma_quantities, drop = FALSE)
+      limma_array %<>% magrittr::extract(fnames(object), , limma_quantities, drop = FALSE)
       limma_dt    <- limma_array %>%
                      matrix(nrow     = NROW(.),
                             ncol     = prod(NCOL(.), dim(.)[3]),
@@ -80,7 +80,7 @@ flatten <- function(
    }
 
    # exprs
-   exprs_dt <- autonomics.import::exprs(object) %>% data.table::data.table()
+   exprs_dt <- exprs(object) %>% data.table::data.table()
    dt %<>% cbind(exprs_dt)
 
    # Order on F.p
@@ -101,7 +101,7 @@ flatten <- function(
 #' if (require(autonomics.data)){
 #'    object  <- autonomics.data::stemcomp.proteinratios
 #'    file <- tempdir() %>% paste0('/features.txt') %T>% message()
-#'    object %>% autonomics.import::write_features(file)
+#'    object %>% write_features(file)
 #' }
 #' @importFrom magrittr  %>%
 #' @export
@@ -109,7 +109,7 @@ write_features <- function(
    object,
    file
 ){
-   object %>% autonomics.import::flatten() %>% autonomics.support::print2txt(file)
+   object %>% flatten() %>% autonomics.support::print2txt(file)
    autonomics.support::cmessage("\t\tall   %s", basename(file))
 }
 

@@ -13,14 +13,12 @@ Reshapes a vector with composite values into a 2d matrix:
 \usage{
 layout_values(x, ...)
 
-\method{layout_values}{character}(x,
-  sep = autonomics.import::guess_sep(x), ...)
+\method{layout_values}{character}(x, sep = guess_sep(x), ...)
 
-\method{layout_values}{factor}(x, sep = autonomics.import::guess_sep(x),
-  ...)
+\method{layout_values}{factor}(x, sep = guess_sep(x), ...)
 
 \method{layout_values}{SummarizedExperiment}(x, svar = "subgroup",
-  sep = autonomics.import::guess_sep(x), ...)
+  sep = guess_sep(x), ...)
 }
 \arguments{
 \item{x}{character(n), factor(n), or SummarizedExperiment with composite (s)values}
@@ -42,19 +40,12 @@ Reshapes a vector with composite values into a 2d matrix:
    + values = composite levels
 }
 \examples{
-require(magrittr)
-
-# STEM CELL DIFFERENTIATION
 if (require(autonomics.data)){
-   x <- autonomics.data::stemdiff.proteinratios
-   x \%>\% autonomics.import::subgroup_values() \%>\% autonomics.import::layout_values()
-   x                                          \%>\% autonomics.import::layout_values()
+   # GLUTAMINASE
+   require(magrittr)
+   x <- autonomics.data::glutaminase
+   x \%>\% subgroup_values() \%>\% layout_values()
+   x                       \%>\% layout_values()
 }
 
-# ATKIN
-if (require(atkin.2014)){
-   x <- atkin.2014::soma.2018
-   x \%>\% autonomics.import::subgroup_values() \%>\% autonomics.import::layout_values()
-   x \%>\%                                          autonomics.import::layout_values()
-}
 }

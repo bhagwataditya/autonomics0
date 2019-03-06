@@ -27,7 +27,7 @@ require(magrittr)
 \dontrun{
 if (require(autonomics.data)){
    autonomics.data::ALL \%>\%
-   autonomics.import::filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1') )
+   filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1') )
 
    autonomics.data::ALL \%>\%
    filter_features(gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1'), verbose = TRUE)

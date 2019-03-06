@@ -17,7 +17,7 @@ Does object contain preprocessing info?
 }
 \examples{
 require(magrittr)
-if (require(billing.differentiation.data)){
-   billing.differentiation.data::rna.voomcounts \%>\% contains_prepro()
+if (require(autonomics.data)){
+   autonomics.data::stemcomp.proteinratios \%>\% contains_prepro()
 }
 }
