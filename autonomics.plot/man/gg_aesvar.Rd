@@ -18,8 +18,8 @@ character vector
 Get name of variable mapped to a aesthetic
 }
 \examples{
-require(magrittr)
 if (require(autonomics.data)){
+   require(magrittr)
    object <- autonomics.data::stemcomp.proteinratios \%>\% magrittr::extract(1:9, )
    b <- object \%>\% autonomics.plot::plot_features('point') \%>\%
                    ggplot2::ggplot_build()
@@ -31,24 +31,5 @@ if (require(autonomics.data)){
    b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'color')
    b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'x')
    b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'shape')
-}
-if (require(atkin.2014)){
-   object <- atkin.2014::soma \%>\% magrittr::extract(1:10, )
-   b <- object \%>\% autonomics.plot::plot_features('point',
-                        x = 'time', color_var = 'condition', facet_var = 'subject_id',
-                        line = TRUE, fvars = 'TargetFullName') \%>\%
-                        ggplot2::ggplot_build()
-   b \%>\% gg_aesvar(aesthetic = 'colour')
-}
-if (require(subramanian.2016)){
-   b <- subramanian.2016::metabolon \%>\%
-        magrittr::extract(1:10, ) \%>\%
-        plot_features('boxplot',
-                       color_var = 'condition',
-                       group_var = 'condition',
-                       line      = TRUE) \%>\%
-        ggplot2::ggplot_build()
-   aesthetic <- 'colour'
-   gg_aesvar(b, aesthetic)
 }
 }

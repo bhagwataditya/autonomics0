@@ -22,6 +22,14 @@ ggplot object
 Plot volcano
 }
 \examples{
+if (require(autonomics.data)){
+   require(magrittr)
+   object <- autonomics.data::stemcomp.proteinratios
+   object \%>\% autonomics.import::fvars()
+   object \%>\% autonomics.plot::plot_volcano()
+}
+
+
 require(magrittr)
 if (require(subramanian.2016)){
    object <- subramanian.2016::metabolon

@@ -18,8 +18,9 @@ plot_overlayed_sample_distributions(object,
 Plot overlayed sample distributions
 }
 \examples{
-if (require(subramanian.2016)){
-   object <- subramanian.2016::exiqon
+if (require(autonomics.data)){
+   object <- autonomics.data::stemcomp.proteinratios
    facet_var <- 'subgroup'
+   object \%>\% autonomics.plot::plot_overlayed_sample_distributions()
 }
 }

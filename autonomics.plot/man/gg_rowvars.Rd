@@ -25,8 +25,8 @@ vector with column variables
 Get column variables from faceted ggplot object
 }
 \examples{
-require(magrittr)
 if (require(autonomics.data)){
+   require(magrittr)
    object <- autonomics.data::stemcomp.proteinratios \%>\% magrittr::extract(1:9, )
    b <- object \%>\% autonomics.plot::plot_features('point') \%>\% ggplot2::ggplot_build()
    b \%>\% autonomics.plot::gg_rowvars()

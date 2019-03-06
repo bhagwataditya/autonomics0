@@ -92,12 +92,12 @@ file path
 Plot features
 }
 \examples{
-require(magrittr)
-result_dir <- tempdir() \%T>\% message()
-
-# STEM CELL COMPARISON
 if (require(autonomics.data)){
-   object <- autonomics.data::stemcomp.proteinratios \%>\% extract(1:10, )
+   require(magrittr)
+   result_dir <- tempdir() \%T>\% message()
+
+   # STEM CELL COMPARISON
+   object <- autonomics.data::stemcomp.proteinratios \%>\% extract(1:4, )
    object \%>\% autonomics.plot::plot_features(geom = 'violin')
    object \%>\% autonomics.plot::plot_features(geom = 'point')
    object \%>\% autonomics.plot::plot_features(geom = 'boxplot')
@@ -105,54 +105,9 @@ if (require(autonomics.data)){
                  geom = 'boxplot',
                  file = paste0(result_dir, '/stemcomp_boxes.pdf'))
 
-}
-
-# STEM CELL DIFFERENTIATION
-if (require(autonomics.data)){
-   object <- autonomics.data::stemdiff.proteinratios \%>\% extract(1:10, )
-   object \%>\% autonomics.plot::plot_features('boxplot')
-}
-
-if (require(billing.differentiation.data)){
-   object <- billing.differentiation.data::rna.voomcounts \%>\% extract(1:10, )
-   object \%>\% autonomics.plot::plot_features('point',   fvars = 'gene_name')
-   object \%>\% autonomics.plot::plot_features('violin',  fvars = 'gene_name')
-   object \%>\% autonomics.plot::plot_features('boxplot', fvars = 'gene_name')
-}
-
-# GLUTAMINASE
-if (require(autonomics.data)){
-   object <- autonomics.data::glutaminase[1:9, ]
-   color_values <- c(Control = 'blue', Vehicle = 'green', `Concentration 1` = 'orange',
-                    `Concentration 2` = 'red')
-   object$alpha <- object$TREATMENT \%in\% c(0,1)
-   object \%>\% autonomics.plot::plot_features(
-                'boxplot',
-                 x = 'TIME_POINT', color_var = 'GROUP_DESCRIPTION', color_values = color_values,
-                 alpha_var = 'alpha')
-}
-
-# SUBRAMANIAN.2016
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon[1:10, ]
-   object \%>\% plot_features('boxplot', color_var = 'condition',
-                             group_var = 'condition', line = TRUE)
-
-   object <- subramanian.2016::rnaseq[1:10, ]
-   object \%>\% plot_features('boxplot', color_var = 'condition', group_var = 'condition',
-                             line = TRUE)
-
-}
-
-# ATKIN.2014
-if (require(atkin.2014)){
-   object <- atkin.2014::soma \%>\% magrittr::extract(1:10, )
-   object \%>\% plot_features('point', x = 'time', color_var = 'condition',
-                             facet_var = 'subject_id', group_var = 'subject_id', line = TRUE)
-   object \%>\% plot_features('point', x = 'time', color_var = 'condition', facet_var = 'subject_id',
-                             group_var = 'subject_id', line = TRUE, fvar = 'TargetFullName')
-   object \%>\% plot_features('point', x = 'time', color_var = 'condition', facet_var = 'subject_id',
-                             group_var = 'subject_id', line = TRUE, fvar = 'TargetFullName')
+   # GLUTAMINASE
+   object <- autonomics.data::glutaminase[1:4, ]
+   object \%>\% autonomics.plot::plot_features(geom = 'boxplot', x = 'TIME_POINT')
 }
 
 }

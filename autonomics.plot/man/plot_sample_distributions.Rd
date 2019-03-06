@@ -13,7 +13,7 @@ plot_sample_distributions(object, x = NULL,
   nrow(object)), file = NULL)
 }
 \arguments{
-\item{object}{eSet}
+\item{object}{SummarizedExperiment}
 
 \item{x}{sample variable mapped to x axis}
 
