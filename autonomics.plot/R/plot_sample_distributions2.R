@@ -4,28 +4,27 @@
 #' A separate violin is created for each value of 'x' (rows) and 'facet_var (column).
 #' The box is colored per value of color_var
 #'
-#' @param object             eSet
-#' @param ...                additonal eSets, ELists, SummarizedExperiments or matrices AND further parameters for \code{\link{core_ggplot_from_data}}
-#' @param x                  sample variable mapped to x axis
-#' @param color_var          sample variable mapped to color
-#' @param color_values       color values vector (names = subgroups, values = colors)
-#' @param displayed_features features to be displayed in the sample distributions (vector of numeric indexes or character \code{feature_id}s)
-#' @param jitter_features    whether to use geom_jitter or not for the displayed features
-#' @param horizontal         whether to lay the plot out horizontally (measurements on the x, sample names on the y axis)
-#' @param xlab               label of y axis (character)
-#' @param ylab               label of y axis (character)
-#' @param title              title (character)
+#' @param object             SummarizedExperiment
+#' @param ...                additonal SummarizedExperiments or matrices AND further parameters for \code{\link{core_ggplot_from_data}}
+#' @param x                  string: sample variable mapped to x axis
+#' @param color_var          string: sample variable mapped to color
+#' @param color_values       string vector: color values vector (names = subgroups, values = colors)
+#' @param displayed_features number/string vector: features to be displayed in the sample distributions (vector of numeric indexes or character \code{feature_id}s)
+#' @param jitter_features    TRUE/FALSE: whether to use geom_jitter or not for the displayed features
+#' @param horizontal         TRUE/FALSE: whether to lay the plot out horizontally (measurements on the x, sample names on the y axis)
+#' @param xlab               string: label of y axis
+#' @param ylab               string: label of y axis
+#' @param title              string: title
 #' @return ggplot2 object
 #' @seealso \code{\link{core_ggplot_from_data}}
 #' @author Aditya Bhagwat, Johannes Graumann
-#' @importFrom  magrittr  %>%
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::stemcomp.proteinratios
 #'
 #'    # Simple plot
-#'      object %>% autonomics.plot::plot_sample_distributions2()
+#'      object %>% plot_sample_distributions2()
 #'
 #'    # Same thing vertical
 #'      object %>% plot_sample_distributions2(horizontal = FALSE)
@@ -45,13 +44,14 @@
 #'                                                      which(arr.ind = TRUE)                   %>%
 #'                                                      magrittr::extract(,'row'))
 #' }
+#' @importFrom  magrittr  %>%
 #' @export
 plot_sample_distributions2 <- function(
    object,
    ...,
    x                  =  NULL,
-   color_var          =  autonomics.plot::default_color_var(object),
-   color_values       =  autonomics.plot::default_color_values(object, color_var),
+   color_var          =  default_color_var(object),
+   color_values       =  default_color_values(object, color_var),
    displayed_features =  NULL,
    jitter_features    =  FALSE,
    horizontal         =  TRUE,

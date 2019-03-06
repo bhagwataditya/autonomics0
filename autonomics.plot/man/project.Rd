@@ -28,7 +28,7 @@ Return sample scores, feature loadings, and component variances.
 if (require(autonomics.data)){
    require(magrittr)
    object <- autonomics.data::glutaminase
-   object \%>\% autonomics.plot::project() \%>\% str()
+   object \%>\% project() \%>\% str()
 }
 }
 \seealso{

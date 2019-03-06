@@ -6,20 +6,20 @@
 \usage{
 core_ggplot_from_data(object, ..., listed_objects = list(),
   MARGIN = c("samples", "features"), x = NULL, alpha_var = NULL,
-  color_var = autonomics.plot::default_color_var(object),
-  fill_var = NULL, group_var = NULL, linetype_var = NULL,
-  shape_var = NULL, size_var = NULL, stroke_var = NULL,
-  weigth_var = NULL, facet1_var = NULL, facet2_var = NULL,
-  marked_ids = NULL, horizontal = FALSE, scales = ifelse(horizontal,
-  "free_x", "free_y"), facet_grid_labeller = "label_parsed", xlab = "",
-  ylab = "", title = "")
+  color_var = default_color_var(object), fill_var = NULL,
+  group_var = NULL, linetype_var = NULL, shape_var = NULL,
+  size_var = NULL, stroke_var = NULL, weigth_var = NULL,
+  facet1_var = NULL, facet2_var = NULL, marked_ids = NULL,
+  horizontal = FALSE, scales = ifelse(horizontal, "free_x", "free_y"),
+  facet_grid_labeller = "label_parsed", xlab = "", ylab = "",
+  title = "")
 }
 \arguments{
-\item{object}{eSet, EList or SummarizedExperiment}
+\item{object}{SummarizedExperiment}
 
-\item{...}{additonal eSets, ELists, SummarizedExperiments or matrices}
+\item{...}{additonal SummarizedExperiments or matrices}
 
-\item{listed_objects}{additonal eSets, ELists, SummarizedExperiments or matrices (when wrapped in a \code{\link{list}})}
+\item{listed_objects}{additonal SummarizedExperiments or matrices (when wrapped in a \code{\link{list}})}
 
 \item{MARGIN}{Whether the reference axis is \code{samples} (default) or \code{features}}
 
@@ -88,39 +88,47 @@ requireNamespace('ggstance')
 if (require(autonomics.data)){
 
    # Just the basics ...
-   core_ggplot_from_data(autonomics.data::ALL[, 1:30])
+      core_ggplot_from_data(autonomics.data::ALL[, 1:30])
 
    # Add a 'geom' layer
-   core_ggplot_from_data(autonomics.data::ALL[, 1:30]) + ggplot2::geom_violin()
+      core_ggplot_from_data(autonomics.data::ALL[, 1:30]) +
+      ggplot2::geom_violin()
 
    # (Nearly) same thing, but horizontal and filled ...
-   core_ggplot_from_data(autonomics.data::ALL[, 1:15], fill_var = 'sex', horizontal = TRUE) +
-   ggstance::geom_violinh()
+      core_ggplot_from_data(autonomics.data::ALL[, 1:15],
+                            fill_var = 'sex',
+                            horizontal = TRUE) +
+      ggstance::geom_violinh()
 
    # Combine 2 'data sets', separating them by fill (augmenting the data on-the-fly)
-   core_ggplot_from_data(
-     autonomics.data::ALL[, 1:15], autonomics.data::ALL[, 16:30],
-     color_var = NULL,
-     fill_var = c('A', 'B')) +
-     ggplot2::geom_boxplot()
+      core_ggplot_from_data(autonomics.data::ALL[, 1:15],
+                            autonomics.data::ALL[, 16:30],
+                            color_var = NULL,
+                            fill_var = c('A', 'B')) +
+      ggplot2::geom_boxplot()
 
    # Combine 2 'data sets', separating them by facetting
-   core_ggplot_from_data(
-     autonomics.data::ALL[, 1:30], autonomics.data::ALL[, 31:60],
-     facet2_var = c('A', 'B'), horizontal = TRUE) +
-     ggstance::geom_boxploth()
+      core_ggplot_from_data(autonomics.data::ALL[, 1:30],
+                            autonomics.data::ALL[, 31:60],
+                            facet2_var = c('A', 'B'),
+                            horizontal = TRUE) +
+      ggstance::geom_boxploth()
 
    # Combine with further facetting ... using sdata ...
-   core_ggplot_from_data(
-     autonomics.data::ALL[, 1:15], autonomics.data::ALL[, 16:30],
-     facet1_var = 'sex', facet2_var = c('A', 'B'), horizontal = TRUE) +
-     ggstance::geom_boxploth()
+      core_ggplot_from_data(autonomics.data::ALL[, 1:15],
+                            autonomics.data::ALL[, 16:30],
+                            facet1_var = 'sex',
+                            facet2_var = c('A', 'B'),
+                            horizontal = TRUE) +
+      ggstance::geom_boxploth()
 
    # Combine with further facetting ... using on-the-fly augmentation (only) ...
-   core_ggplot_from_data(
-     autonomics.data::ALL[, 1:15], autonomics.data::ALL[, 16:30],
-     facet1_var = c('C', 'D'), facet2_var = c('A', 'B'), horizontal = TRUE) +
-     ggstance::geom_boxploth()
+      core_ggplot_from_data(autonomics.data::ALL[, 1:15],
+                            autonomics.data::ALL[, 16:30],
+                            facet1_var = c('C', 'D'),
+                            facet2_var = c('A', 'B'),
+                            horizontal = TRUE) +
+      ggstance::geom_boxploth()
 }
 }
 \author{

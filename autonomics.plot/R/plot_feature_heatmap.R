@@ -1,22 +1,22 @@
 #' Plot feature heatmap
-#' @param object SummarizedExperiment
-#' @param fvar string
-#' @param filename character vector
-#' @param width  width  in inches
-#' @param height height in inches
-#' @param cellheight heatmap cell height
-#' @param fontsize fontsize
-#' @param treeheight_row height of tree for rows
-#' @param treeheight_col height of tree for col
-#' @param cluster_cols clustering on cols
-#' @param ... passed to pheatmap::pheatmap
+#' @param object          SummarizedExperiment
+#' @param fvar            string
+#' @param filename        string
+#' @param width           number: width  in inches
+#' @param height          number: height in inches
+#' @param cellheight      number: heatmap cell height
+#' @param fontsize        number: fontsize
+#' @param treeheight_row  number: height of tree for rows
+#' @param treeheight_col  number: height of tree for col
+#' @param cluster_cols    TRUE or FALSE
+#' @param ...             passed to pheatmap::pheatmap
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::glutaminase[1:50, ]
-#'    object %>% autonomics.plot::plot_feature_heatmap_with_pheatmap(fvar='BIOCHEMICAL')
+#'    object %>% plot_feature_heatmap_with_pheatmap(fvar='BIOCHEMICAL')
 #'    filename <- tempfile() %T>% message()
-#'    object %>% autonomics.plot::plot_feature_heatmap_with_pheatmap(filename = filename)
+#'    object %>% plot_feature_heatmap_with_pheatmap(filename = filename)
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -59,23 +59,23 @@ plot_feature_heatmap_with_pheatmap <- function(
 
 
 #' Plot feature heatmap
-#' @param object SummarizedExperiment
-#' @param fvar string
-#' @param filename character vector
-#' @param width  width  in inches (Default width 2 inches)
-#' @param height height in inches (Default height 4 inches)
-#' @param fontsize font size for feature name (Default size 0 for not showing feature names)
-#' @param lowColor color for downregulation (Default color yellow)
-#' @param midColor color for midpoint (Default color gray)
+#' @param object    SummarizedExperiment
+#' @param fvar      string
+#' @param filename  string
+#' @param lowColor  color for downregulation (Default color yellow)
 #' @param highColor color for upregulation (Default color royal blue)
-#' @param ...       further parameters handed through to \code{\link[ggplot2]{theme}}
+#' @param midColor  color for midpoint (Default color gray)
+#' @param width     number: width  in inches (Default width 2 inches)
+#' @param height    number: height in inches (Default height 4 inches)
+#' @param fontsize  number: font size for feature name (Default size 0 for not showing feature names)
+#' @param ...       additional parameters handed through to \code{\link[ggplot2]{theme}}
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::glutaminase[1:10, ]
-#'    object %>% autonomics.plot::plot_feature_heatmap(fvar='BIOCHEMICAL')
+#'    object %>% plot_feature_heatmap(fvar='BIOCHEMICAL')
 #'    filename <- tempfile() %T>% message()
-#'    object %>% autonomics.plot::plot_feature_heatmap(filename = filename)
+#'    object %>% plot_feature_heatmap(filename = filename)
 #' }
 #' @importFrom magrittr %>%
 #' @export

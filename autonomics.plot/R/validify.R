@@ -1,11 +1,11 @@
 #' Validify shape_var values
-#' @param object SummarizedExperiment
-#' @param shape_var svar mapped to shape
+#' @param object     SummarizedExperiment
+#' @param shape_var  svar mapped to shape
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcomp.proteinratios %>%
-#'    autonomics.plot::validify_shape_values('replicate')
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% validify_shape_values('replicate')
 #' }
 #' @importFrom magrittr %<>%
 #' @export

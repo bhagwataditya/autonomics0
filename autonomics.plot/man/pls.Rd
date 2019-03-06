@@ -11,7 +11,7 @@ pls(object, implementation = NULL, ndim = 2, ...)
 
 \item{implementation}{'mixOmics::plsda', 'mixOmics::splsda', or 'ropls::opls'}
 
-\item{ndim}{Number of latent variables to include in results}
+\item{ndim}{number: how many latent variables to include in results}
 
 \item{...}{only inlcuded to keep \code{\link[autonomics.plot]{project}} generic}
 }
@@ -31,9 +31,9 @@ Returns \code{PLS} sample scores, feature loadings, and latent variable variance
 if (require(autonomics.data)){
    require(magrittr)
    object <- autonomics.data::glutaminase
-   object \%>\% autonomics.plot::pls() \%>\% str()
+   object \%>\% pls() \%>\% str()
    \dontrun{ # slow
-      object \%>\% autonomics.plot::pls(implementation = 'ropls::opls') \%>\% str()
+      object \%>\% pls(implementation = 'ropls::opls') \%>\% str()
    }
 }
 }

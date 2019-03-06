@@ -1,11 +1,14 @@
 Package: autonomics.plot
-Title: Functions to plot esets
+Title: Functions to plot SummarizedExperiments
 Version: 0.8.1
-Authors@R: c(person("Aditya",   "Bhagwat",  email = "adb2018@qatar-med.cornell.edu",   role = c("aut", "cre")),
-             person("Shahina",  "Hayat",    email = "shh2026@qatar-med.cornell.edu",   role = "aut"),
+Authors@R: c(person("Aditya",   "Bhagwat",  email = "bhagwataditya@gmail.com",         role = c("aut", "cre")),
              person("Johannes", "Graumann", email = "Johannes.Graumann@mpi-bn.mpg.de", role = "aut"),
-             person("John",     "Colby",    email = "johncolby@ucla.edu",              role = "ctb"))
-Description: This package contains functions to plot esets.
+             person("Shahina",  "Hayat",    email = "shh2026@qatar-med.cornell.edu",   role = "aut"),
+             person("Laure",    "Cougnaud", email = "laure.cougnaud@gmail.com",        role = "ctb"),
+             person("Richard",  "Cotton",   email = "richierocks@gmail.com",           role = "ctb"),
+             person("John",     "Colby",    email = "johncolby@ucla.edu",              role = "ctb"), 
+             person("Winston",  "Chang",    email = "winston@stdout.org",              role = "ctb" ))
+Description: This package contains functions to plot SummarizedExperiments.
 Depends:
     R (>= 3.4.0)
 Imports:
@@ -18,9 +21,11 @@ Imports:
     autonomics.import,
     autonomics.preprocess,
     autonomics.support,
+    colorspace,
     data.table,
     dplyr,
     eulerr,
+    forcats,
     futile.logger,
     ggplot2,
     ggrepel,
@@ -29,10 +34,15 @@ Imports:
     graphics,
     gridExtra,
     magrittr,
-    mgcv,
+    MASS,
+    matrixStats,
+    mixOmics,
+    mpm,
+    pcaMethods,
     pheatmap,
     reshape2,
     rlang,
+    ropls,
     stringi,
     tidyr, 
     VennDiagram

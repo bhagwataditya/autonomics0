@@ -9,9 +9,9 @@ plot_volcano(object, ntop = 3, nrow = NULL, legend_position = NULL)
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{ntop}{n top features to be annotated}
+\item{ntop}{number: n top features to be annotated}
 
-\item{nrow}{number of rows in faceted plot}
+\item{nrow}{number: n rows in faceted plot}
 
 \item{legend_position}{handed to \code{\link[ggplot2]{theme}} as 'legend.position'}
 }
@@ -25,28 +25,6 @@ Plot volcano
 if (require(autonomics.data)){
    require(magrittr)
    object <- autonomics.data::stemcomp.proteinratios
-   object \%>\% autonomics.import::fvars()
-   object \%>\% autonomics.plot::plot_volcano()
-}
-
-
-require(magrittr)
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
-   autonomics.import::fdata(object) \%<>\% magrittr::extract(, 1:47)
-   object \%>\% autonomics.plot::plot_volcano()
-
-   object <- subramanian.2016::exiqon
-   autonomics.import::fdata(object) \%<>\% magrittr::extract(, 1:38)
-   object \%>\% autonomics.plot::plot_volcano()
-
-   \dontrun{
-      object = subramanian.2016::rnaseq
-      autonomics.import::fdata(object) \%<>\% magrittr::extract(, 1:22)
-      #file <- tempfile() \%>\% paste0('.png') \%T>\% message()
-      #png(file, width = 3*480, height = 2*480)
-      object \%>\% autonomics.plot::plot_volcano()
-      #dev.off()
-   }
+   object \%>\% plot_volcano()
 }
 }

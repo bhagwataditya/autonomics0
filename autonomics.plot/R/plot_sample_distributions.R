@@ -32,59 +32,44 @@ check_args_of_plot_sample_distributions <- function(object, x, facet_var, color_
 #' A separate violin is created for each value of 'x' (rows) and 'facet_var (column).
 #' The box is colored per value of color_var
 #'
-#' @param object    SummarizedExperiment
-#' @param x         sample variable mapped to x axis
-#' @param color_var sample variable mapped to color
-#' @param color_values comolor values vector (names = subgroups, values = colors)
-#' @param facet_var sample variable for faceting
-#' @param displayed_features features to be displayed in the sample distributions (vector of numeric indexes or character \code{feature_id}s)
-#' @param xlab      label of y axis (character)
-#' @param ylab      label of y axis (character)
-#' @param title     title (character)
-#' @param file      file to which to print plot
+#' @param object              SummarizedExperiment
+#' @param x                   string: sample variable mapped to x axis
+#' @param color_var           string: sample variable mapped to color
+#' @param color_values        string vector: names = subgroups, values = colors
+#' @param facet_var           string: sample variable for faceting
+#' @param displayed_features  features to be displayed in the sample distributions (vector of numeric indexes or character \code{feature_id}s)
+#' @param xlab                label of y axis (character)
+#' @param ylab                label of y axis (character)
+#' @param title               title (character)
+#' @param file                file to which to print plot
 #' @return ggplot2 object
 #' @author Aditya Bhagwat
-#' @importFrom  magrittr  %>%
 #' @examples
-#' require(magrittr)
 #' if (require(autonomics.data)){
-#'    ALL <- autonomics.data::ALL[, 1:30]
-#'    plot_sample_distributions(object = ALL, x = 'cod', color_var = 'BT')
 #'
-#'    # faceting works, but is not useful here, as there is no block variable
-#'    plot_sample_distributions(object = ALL, x = 'cod',
-#'                              facet_var = 'sex', color_var = 'BT')
-#' }
+#'    # ALL
+#'       require(magrittr)
+#'       object <- autonomics.data::ALL[, 1:30]
+#'       object %>% plot_sample_distributions(x = 'cod', color_var = 'BT')
 #'
-#' # STEM CELL DIFFERENTIATION
-#' if (require(autonomics.data)){
-#'    autonomics.data::stemdiff.proteinratios %>%
-#'    autonomics.plot::plot_sample_distributions()
-#' }
-#' if (require(billing.differentiation.data)){
-#'    billing.differentiation.data::rna.voomcounts %>%
-#'       plot_sample_distributions()
-#' }
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
-#'    object %>% plot_sample_distributions()
-#' }
+#'       # faceting works, but is not useful here, as there is no block variable
+#'       object %>% plot_sample_distributions(x = 'cod', facet_var = 'sex', color_var = 'BT')
 #'
-#' # GLUTMINASE
-#' if (require(autonomics.data)){
-#'    autonomics.data::glutaminase %>%
-#'    autonomics.plot::plot_sample_distributions(
-#'       color_var    = 'GROUP_DESCRIPTION',
-#'       color_values = c(Control = 'gray94', Vehicle = 'darkgrey',
-#'                       `Concentration 1` = 'green', `Concentration 2` = 'forestgreen')
-#'    )
+#'    # STEM CELL COMPARISON
+#'       object <- autonomics.data::stemcomp.proteinratios
+#'       object %>% plot_sample_distributions()
+#'
+#'    # GLUTMINASE
+#'       object <- autonomics.data::glutaminase
+#'       object %>% plot_sample_distributions2()
 #' }
+#' @importFrom  magrittr  %>%
 #' @export
 plot_sample_distributions <- function(
    object,
    x                  =  NULL,
-   color_var          =  autonomics.plot::default_color_var(object),
-   color_values       =  autonomics.plot::default_color_values(object, color_var),
+   color_var          =  default_color_var(object),
+   color_values       =  default_color_values(object, color_var),
    facet_var          =  NULL,
    displayed_features =  NULL,
    ylab               =  '',
@@ -181,8 +166,7 @@ plot_sample_distributions <- function(
    return(p)
 }
 
-shape_for_plotting <- function(object, x)
-{
+shape_for_plotting <- function(object, x){
    xVec <- autonomics.support::factorify(autonomics.import::snames(object))
    if (!is.null(x)) {
       xVec <- object[[x]]

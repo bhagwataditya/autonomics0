@@ -41,8 +41,8 @@ then plot 1 will go in the upper left, 2 will go in the upper right, and
    df <- data.frame(x = 1:100, y = 1:100)
    p <- ggplot2::ggplot(df) + ggplot2::geom_point(ggplot2::aes(x=x,y=y))
    file <- paste0(tempfile(), '.pdf')
-   autonomics.plot::combine_plots(p, p)
-   autonomics.plot::combine_plots(p, p, file = file)
+   combine_plots(p, p)
+   combine_plots(p, p, file = file)
 }
 \author{
 Johannes Graumann

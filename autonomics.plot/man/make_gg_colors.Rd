@@ -7,12 +7,12 @@
 make_gg_colors(factor_levels, show)
 }
 \arguments{
-\item{factor_levels}{character vector}
+\item{factor_levels}{string vector}
 
 \item{show}{logical}
 }
 \value{
-color vector (character)
+string vector: elements = colors, names = factor levels
 }
 \description{
 Create default ggplot colors for factor levels

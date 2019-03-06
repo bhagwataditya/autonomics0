@@ -9,9 +9,9 @@ sma(object, na.impute = FALSE, ndim = 2, ...)
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{na.impute}{whether to \code{\link[autonomics.preprocess]{impute}} prior to \code{SMA}}
+\item{na.impute}{logical: \code{\link[autonomics.preprocess]{impute}} prior to \code{SMA}?}
 
-\item{ndim}{Number of SMA components to include in results}
+\item{ndim}{number: how many SMA components to include in results}
 
 \item{...}{used to keep \code{\link{project}} generic}
 }

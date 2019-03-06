@@ -22,8 +22,8 @@ Get no of facet rows/columns
 if (require(autonomics.data)){
    require(magrittr)
    object <- autonomics.data::stemcomp.proteinratios \%>\% magrittr::extract(1:9, )
-   b <- object \%>\% autonomics.plot::plot_features('point') \%>\% ggplot2::ggplot_build()
-   b \%>\% autonomics.plot::gg_nrow()
-   b \%>\% autonomics.plot::gg_ncol()
+   b <- object \%>\% plot_features('point') \%>\% ggplot2::ggplot_build()
+   b \%>\% gg_nrow()
+   b \%>\% gg_ncol()
 }
 }

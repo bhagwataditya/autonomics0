@@ -4,37 +4,42 @@
 #' @param object              eSet, EList or SummarizedExperiment
 #' @param ...                 additonal eSets, ELists, SummarizedExperiments
 #' @param exponent            exponent with which the standard deviation is plotted;
-#' \code{2}: $sigma^2 = 'Varianve'$; \code{1}: $sigma^1 = 'Standard Deviation'$;
-#' \code{0.5}: $sigma^0.5 = sqrt(sigma)$ (default; as used by Law et al (2014));
+#'                            \code{2}: $sigma^2 = 'Varianve'$; \code{1}: $sigma^1 = 'Standard Deviation'$;
+#'                            \code{0.5}: $sigma^0.5 = sqrt(sigma)$ (default; as used by Law et al (2014));
 #' @param complete_data       \code{\link{logical}} indicating whether to plot only complete data without
-#' \code{\link{NA}} in any replicate;
+#'                            \code{\link{NA}} in any replicate;
 #' @param facet_labels        Labels used for \code{object} and \code{...} by \code{\link[ggplot2]{facet_grid}}
 #' @param facet_grid_labeller Labeller (see \code{\link[ggplot2]{labellers}}) for facetting labels
-#' @param alpha        handed on to \code{\link[ggplot2]{geom_point}}
+#' @param alpha               handed on to \code{\link[ggplot2]{geom_point}}
 #' @references Law, C.W., Chen, Y., Shi, W., and Smyth, G.K. (2014). voom: precision
 #' weights unlock linear model analysis tools for RNA-seq read counts. Genome Biology 15, R29.
 #' @return \code{ggplot2} object
-#' @export
 #' @examples
 #' \dontrun{
 #' # Works, but is rather slow
 #' if(require(autonomics.data)){
 #'    require(magrittr)
+#'
 #'   # Simple plot
-#'   autonomics.plot::plot_features_mean_sd(autonomics.data::ALL)
+#'      plot_features_mean_sd(autonomics.data::ALL)
+#'
 #'   # Compare with the loged version of the data
-#'   logALL <- autonomics.data::ALL
-#'   autonomics.import::exprs(logALL) %<>% log2()
-#'   plot_features_mean_sd(logALL)
+#'      logALL <- autonomics.data::ALL
+#'      autonomics.import::exprs(logALL) %<>% log2()
+#'      plot_features_mean_sd(logALL)
+#'
 #'   # Combined plot
-#'   plot_features_mean_sd(autonomics.data::ALL, logALL)
+#'      plot_features_mean_sd(autonomics.data::ALL, logALL)
+#'
 #'   # Same thing, but with descriptive facet labels
-#'   plot_features_mean_sd(
-#'     autonomics.data::ALL,
-#'     logALL,
-#'     facet_labels = c("'Raw Data'", "'Logarithmized Data'~(log[2])"))
+#'      plot_features_mean_sd(
+#'         autonomics.data::ALL,
+#'         logALL,
+#'         facet_labels = c("'Raw Data'", "'Logarithmized Data'~(log[2])"))
 #' }
 #' }
+#' @importFrom magrittr %>%
+#' @export
 plot_features_mean_sd <- function(
    object,
    ...,

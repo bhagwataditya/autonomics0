@@ -10,9 +10,11 @@ make_colors(x, sep = autonomics.import::guess_sep(x, verbose = FALSE),
 \arguments{
 \item{x}{colorvar levels vector}
 
-\item{show}{logical(1)}
+\item{sep}{string}
 
-\item{verbose}{logical(1)}
+\item{show}{TRUE or FALSE}
+
+\item{verbose}{TRUE or FALSE}
 }
 \value{
 color vectors (values = colors, names = colorvar levels)

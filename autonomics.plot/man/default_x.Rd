@@ -22,9 +22,9 @@ if (require(autonomics.data)){
    require(magrittr)
 
    # STEM CELL COMPARISON
-   autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_x()
+   autonomics.data::stemcomp.proteinratios \%>\% default_x()
 
    # GLUTAMINASE
-   autonomics.data::glutaminase            \%>\% autonomics.plot::default_x()
+   autonomics.data::glutaminase            \%>\% default_x()
 }
 }

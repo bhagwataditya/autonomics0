@@ -2,7 +2,7 @@
 % Please edit documentation in R/defaults.R
 \name{default_shape_var}
 \alias{default_shape_var}
-\title{default color_var}
+\title{default shape_var}
 \usage{
 default_shape_var(object)
 }
@@ -10,20 +10,20 @@ default_shape_var(object)
 \item{object}{SummarizedExperiment}
 }
 \value{
-default value of color_var
+default value of shape_var
 }
 \description{
-default color_var
+default shape_var
 }
 \examples{
 if (require(autonomics.data)){
    require(magrittr)
 
    # STEM CELL COMPARISON
-   autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_shape_var()
+   autonomics.data::stemcomp.proteinratios \%>\% default_shape_var()
 
    # GLUTAMINASE
-   autonomics.data::glutaminase \%>\% autonomics.plot::default_shape_var()
+   autonomics.data::glutaminase \%>\% default_shape_var()
 
 }
 }

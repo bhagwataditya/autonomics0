@@ -1,18 +1,20 @@
 #' Plot overlayed sample distributions
-#' @param object    SummarizedExperiment
-#' @param facet_var svar to facet on
+#' @param object        SummarizedExperiment
+#' @param color_var     string: svar mapped to color
+#' @param color_values  string vector: values = colors, names = color_var levels
+#' @return ggplot2 object
 #' @examples
 #' if (require(autonomics.data)){
+#'    require(magrittr)
 #'    object <- autonomics.data::stemcomp.proteinratios
-#'    facet_var <- 'subgroup'
-#'    object %>% autonomics.plot::plot_overlayed_sample_distributions()
+#'    object %>% plot_overlayed_sample_distributions()
 #' }
 #' @importFrom magrittr %>%
 #' @export
 plot_overlayed_sample_distributions <- function(
    object,
-   color_var    = autonomics.plot::default_color_var(object),
-   color_values = autonomics.plot::default_color_values(object, color_var)
+   color_var    = default_color_var(object),
+   color_values = default_color_values(object, color_var)
 ){
 
    plotdt <- object %>% autonomics.import::sumexp_to_long_dt(svars = color_var)
@@ -25,8 +27,8 @@ plot_overlayed_sample_distributions <- function(
 
 plot_overlayed_feature_distributions <- function(
    object,
-   color_var    = autonomics.plot::default_color_var(object),
-   color_values = autonomics.plot::default_color_values(object, color_var)
+   color_var    = default_color_var(object),
+   color_values = default_color_values(object, color_var)
 ){
 
    plotdt <- object[1:10, ] %>% autonomics.import::sumexp_to_long_dt()
