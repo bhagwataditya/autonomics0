@@ -1,32 +1,42 @@
-#' Make datatable to plot PCA, LDA, or PLS sample scores
-#' @param projection   output from pca, lda, or pls
-#' @param object    SummarizedExperiment, eSet, or eList
-#' @param dims      PCA/LDA dimensions
-#' @param color_var svar mapped to color
-#' @param shape_var svar mapped to shape
-#' @param size_var  svar mapped to size
-#' @param txt_var   svar mapped to txt
-#' @param split_var svar on which object is splitted prior to lda analysis
-#' @param facet_var svar on which plot is faceted
-#' @param group_var svar mapped to group_var
+#' Make datatable to plot PCA/PLS/LDA/SMA scores
+#' @param projection  output from PCA/PLS/LDA/SMA
+#' @param object      SummarizedExperiment
+#' @param dims        PCA/LDA dimensions
+#' @param color_var   svar mapped to color
+#' @param shape_var   svar mapped to shape
+#' @param size_var    svar mapped to size
+#' @param txt_var     svar mapped to txt
+#' @param split_var   svar on which object is splitted prior to lda analysis
+#' @param facet_var   svar on which plot is faceted
+#' @param group_var   svar mapped to group_var
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::glutaminase
 #'
-#'    autonomics.explore::pca(object) %>%
-#'    autonomics.explore::make_projected_samples_df(
-#'       object, dims = c(1,2), color_var = 'subgroup',
-#'       shape_var = NULL, size_var = NULL, txt_var = NULL,
-#'       split_var = NULL, facet_var = NULL, group_var = NULL) %>%
-#'    print()
+#'    object %>% pca() %>%
+#'               make_projected_samples_df(object,
+#'                                         dims = c(1,2),
+#'                                         color_var = 'subgroup',
+#'                                         shape_var = NULL,
+#'                                         size_var  = NULL,
+#'                                         txt_var   = NULL,
+#'                                         split_var = NULL,
+#'                                         facet_var = NULL,
+#'                                         group_var = NULL) %>%
+#'               print()
 #'
-#'    autonomics.explore::pca(object, ndim=4) %>%
-#'    autonomics.explore::make_projected_samples_df(
-#'       object, dims = 3:4, color_var = 'subgroup',
-#'       shape_var = NULL, size_var = NULL, txt_var = NULL,
-#'       split_var = NULL, facet_var = NULL, group_var = NULL) %>%
-#'    print()
+#'    object %>% pca(ndim=4) %>%
+#'               make_projected_samples_df(object,
+#'                                         dims      = 3:4,
+#'                                         color_var = 'subgroup',
+#'                                         shape_var = NULL,
+#'                                         size_var  = NULL,
+#'                                         txt_var   = NULL,
+#'                                         split_var = NULL,
+#'                                         facet_var = NULL,
+#'                                         group_var = NULL) %>%
+#'               print()
 #' }
 #' @importFrom data.table  data.table  :=
 #' @importFrom magrittr    %<>%
@@ -66,10 +76,10 @@ make_projected_samples_df <- function(
 
 
 
-#' Plot PCA/LDA/PLS sample scores
-#' @param object            SummarizedExperiment, eSet, or Elist
-#' @param ...               Further SummarizedExperiment(s), eSet(s), or Elist(s)
-#' @param listed_objects    Further SummarizedExperiment(s), eSet(s), or Elist(s), wrapped in a \code{link{list}}
+#' Plot PCA/LDA/PLS/SMA sample scores
+#' @param object            SummarizedExperiment
+#' @param ...               Additional SummarizedExperiment(s)
+#' @param listed_objects    Additional SummarizedExperiment(s), wrapped in a \code{link{list}}
 #' @param method            'pca', 'lda', 'pls', 'sma'
 #' @param implementation    which implementation of pls to use (see \code{\link{project}})
 #' @param dims              dimensions
@@ -95,20 +105,20 @@ make_projected_samples_df <- function(
 #'
 #'    # GLUTAMINASE
 #'       object <- autonomics.data::glutaminase
-#'       object %>% autonomics.plot::plot_pca_samples()
-#'       object %>% autonomics.plot::plot_lda_samples()
-#'       object %>% autonomics.plot::plot_pls_samples()
-#'       object %>% autonomics.plot::plot_projected_samples(
+#'       object %>% plot_pca_samples()
+#'       object %>% plot_lda_samples()
+#'       object %>% plot_pls_samples()
+#'       object %>% plot_projected_samples(
 #'                     method = c('pca', 'lda', 'sma', 'pls'),
 #'                     facet_var = c('PCA', 'LDA', 'SMA', 'PLS'),
 #'                     nrow = 2)
 #'
 #'    # STEM CELL COMPARISON
 #'       object <- autonomics.data::stemcomp.proteinratios
-#'       object %>% autonomics.plot::plot_pca_samples()
-#'       object %>% autonomics.plot::plot_pca_samples(dims = c(3,4))
+#'       object %>% plot_pca_samples()
+#'       object %>% plot_pca_samples(dims = c(3,4))
 #'
-#'       object %>% autonomics.plot::plot_projected_samples(
+#'       object %>% plot_projected_samples(
 #'                     method = c('pca', 'lda', 'sma', 'pls'),
 #'                     facet_var = c('OK PCA', 'Not so nice LDA', 'Nice SMA', 'Very nice PLS'),
 #'                     nrow = 2)
@@ -126,11 +136,11 @@ plot_projected_samples <- function(
    method            = c('pca', 'lda', 'sma', 'pls')[1],
    implementation    = c('mixOmics::plsda', 'mixOmics::splsda', 'ropls::opls')[1],
    dims              = 1:2,
-   color_var         = 'subgroup', # autonomics.plot::default_color_var(object) gives 'block' when present!
-   color_values      = autonomics.plot::default_color_values(object, color_var),
-   shape_var         = autonomics.plot::default_shape_var(object),
+   color_var         = 'subgroup', # default_color_var(object) gives 'block' when present!
+   color_values      = default_color_values(object, color_var),
+   shape_var         = default_shape_var(object),
    size_var          = NULL,
-   txt_var           = autonomics.plot::default_txt_var(object),
+   txt_var           = default_txt_var(object),
    txt_outliers      = FALSE,
    group_var         = NULL,
    split_var         = NULL,
@@ -154,10 +164,7 @@ plot_projected_samples <- function(
    ## Assert all
    obj_list %>%  lapply(autonomics.import::assert_is_valid_object) %>%
                  lapply(function(x) x %>% autonomics.import::exprs() %>% assertive.properties::assert_is_non_empty())
-   obj_list %<>% lapply(function(x) x %>% autonomics.plot::validify_shape_values(shape_var))
-
-   implementation %<>% match.arg(choices = c('mixOmics::plsda', 'mixOmics::splsda', 'ropls::opls'), several.ok = FALSE)
-
+   obj_list %<>% lapply(function(x) x %>% validify_shape_values(shape_var))
    dims %>% assertive.types::assert_is_numeric()              %>%
             assertive.properties::assert_is_of_length(2)      %>%
             assertive.numbers::assert_all_are_whole_numbers() %>%
@@ -362,6 +369,7 @@ plot_projected_samples <- function(
 
 }
 
+
 make_sample_scores_title2 <- function(
    object,
    project_result,
@@ -407,20 +415,200 @@ make_sample_scores_title2 <- function(
    paste0(all_strings, collapse = separator)
 }
 
-#' @rdname plot_projected_samples
-#' @export
-plot_pca_samples <- function(object, ...)  plot_projected_samples(object = object, method = 'pca', ...)
 
 #' @rdname plot_projected_samples
 #' @export
-plot_sma_samples <- function(object, ...)  plot_projected_samples(object = object, method = 'sma', ...)
+plot_pca_samples <- function(
+   object,
+   ...,
+   listed_objects    = NULL,
+   dims              = 1:2,
+   color_var         = 'subgroup', # default_color_var(object) gives 'block' when present!
+   color_values      = default_color_values(object, color_var),
+   shape_var         = default_shape_var(object),
+   size_var          = NULL,
+   txt_var           = default_txt_var(object),
+   txt_outliers      = FALSE,
+   group_var         = NULL,
+   split_var         = NULL,
+   facet_var         = NULL,
+   scales            = ifelse(is.null(facet_var), 'fixed' ,'free'),
+   labs              = list(color = stringi::stri_trans_totitle(color_var), shape = stringi::stri_trans_totitle(shape_var)),
+   nrow              = NULL,
+   mention_method    = ifelse(is.null(facet_var), TRUE, FALSE),
+   title             = NULL,
+   na.impute         = FALSE,
+   legend.position   = 'right'
+){
+   plot_projected_samples( object,
+                           ...,
+                           listed_objects    = listed_objects,
+                           method            = 'pca',
+                           implementation    = character(0),
+                           dims              = dims,
+                           color_var         = color_var,
+                           color_values      = color_values,
+                           shape_var         = shape_var,
+                           size_var          = size_var,
+                           txt_var           = txt_var,
+                           txt_outliers      = txt_outliers,
+                           group_var         = group_var,
+                           split_var         = split_var,
+                           facet_var         = facet_var,
+                           scales            = scales,
+                           labs              = labs,
+                           nrow              = nrow,
+                           mention_method    = mention_method,
+                           title             = title,
+                           na.impute         = na.impute,
+                           legend.position   = legend.position)
+}
+
 
 #' @rdname plot_projected_samples
 #' @export
-plot_lda_samples <- function(object, ...)  plot_projected_samples(object = object, method = 'lda', ...)
+plot_sma_samples <- function(
+   object,
+   ...,
+   listed_objects    = NULL,
+   dims              = 1:2,
+   color_var         = 'subgroup', # default_color_var(object) gives 'block' when present!
+   color_values      = default_color_values(object, color_var),
+   shape_var         = default_shape_var(object),
+   size_var          = NULL,
+   txt_var           = default_txt_var(object),
+   txt_outliers      = FALSE,
+   group_var         = NULL,
+   split_var         = NULL,
+   facet_var         = NULL,
+   scales            = ifelse(is.null(facet_var), 'fixed' ,'free'),
+   labs              = list(color = stringi::stri_trans_totitle(color_var), shape = stringi::stri_trans_totitle(shape_var)),
+   nrow              = NULL,
+   mention_method    = ifelse(is.null(facet_var), TRUE, FALSE),
+   title             = NULL,
+   na.impute         = FALSE,
+   legend.position   = 'right'
+){
+   plot_projected_samples( object,
+                           ...,
+                           listed_objects    = listed_objects,
+                           method            = 'sma',
+                           implementation    = character(0),
+                           dims              = dims,
+                           color_var         = color_var,
+                           color_values      = color_values,
+                           shape_var         = shape_var,
+                           size_var          = size_var,
+                           txt_var           = txt_var,
+                           txt_outliers      = txt_outliers,
+                           group_var         = group_var,
+                           split_var         = split_var,
+                           facet_var         = facet_var,
+                           scales            = scales,
+                           labs              = labs,
+                           nrow              = nrow,
+                           mention_method    = mention_method,
+                           title             = title,
+                           na.impute         = na.impute,
+                           legend.position   = legend.position)
+}
+
 
 #' @rdname plot_projected_samples
 #' @export
-plot_pls_samples <- function(object, ...)  plot_projected_samples(object = object, method = 'pls', ...)
+plot_lda_samples <- function(
+   object,
+   ...,
+   listed_objects    = NULL,
+   dims              = 1:2,
+   color_var         = 'subgroup', # default_color_var(object) gives 'block' when present!
+   color_values      = default_color_values(object, color_var),
+   shape_var         = default_shape_var(object),
+   size_var          = NULL,
+   txt_var           = default_txt_var(object),
+   txt_outliers      = FALSE,
+   group_var         = NULL,
+   split_var         = NULL,
+   facet_var         = NULL,
+   scales            = ifelse(is.null(facet_var), 'fixed' ,'free'),
+   labs              = list(color = stringi::stri_trans_totitle(color_var), shape = stringi::stri_trans_totitle(shape_var)),
+   nrow              = NULL,
+   mention_method    = ifelse(is.null(facet_var), TRUE, FALSE),
+   title             = NULL,
+   na.impute         = FALSE,
+   legend.position   = 'right'
+){
+   plot_projected_samples( object,
+                           ...,
+                           listed_objects    = listed_objects,
+                           method            = 'lda',
+                           implementation    = character(0),
+                           dims              = dims,
+                           color_var         = color_var,
+                           color_values      = color_values,
+                           shape_var         = shape_var,
+                           size_var          = size_var,
+                           txt_var           = txt_var,
+                           txt_outliers      = txt_outliers,
+                           group_var         = group_var,
+                           split_var         = split_var,
+                           facet_var         = facet_var,
+                           scales            = scales,
+                           labs              = labs,
+                           nrow              = nrow,
+                           mention_method    = mention_method,
+                           title             = title,
+                           na.impute         = na.impute,
+                           legend.position   = legend.position)
+}
 
+
+#' @rdname plot_projected_samples
+#' @export
+plot_pls_samples <- function(
+   object,
+   ...,
+   listed_objects    = NULL,
+   implementation    = c('mixOmics::plsda', 'mixOmics::splsda', 'ropls::opls')[1],
+   dims              = 1:2,
+   color_var         = 'subgroup', # default_color_var(object) gives 'block' when present!
+   color_values      = default_color_values(object, color_var),
+   shape_var         = default_shape_var(object),
+   size_var          = NULL,
+   txt_var           = default_txt_var(object),
+   txt_outliers      = FALSE,
+   group_var         = NULL,
+   split_var         = NULL,
+   facet_var         = NULL,
+   scales            = ifelse(is.null(facet_var), 'fixed' ,'free'),
+   labs              = list(color = stringi::stri_trans_totitle(color_var), shape = stringi::stri_trans_totitle(shape_var)),
+   nrow              = NULL,
+   mention_method    = ifelse(is.null(facet_var), TRUE, FALSE),
+   title             = NULL,
+   na.impute         = FALSE,
+   legend.position   = 'right'
+){
+   plot_projected_samples( object,
+                           ...,
+                           listed_objects    = listed_objects,
+                           method            = 'pls',
+                           implementation    = implementation,
+                           dims              = dims,
+                           color_var         = color_var,
+                           color_values      = color_values,
+                           shape_var         = shape_var,
+                           size_var          = size_var,
+                           txt_var           = txt_var,
+                           txt_outliers      = txt_outliers,
+                           group_var         = group_var,
+                           split_var         = split_var,
+                           facet_var         = facet_var,
+                           scales            = scales,
+                           labs              = labs,
+                           nrow              = nrow,
+                           mention_method    = mention_method,
+                           title             = title,
+                           na.impute         = na.impute,
+                           legend.position   = legend.position)
+}
 

@@ -6,25 +6,37 @@
 \alias{plot_sma_features}
 \alias{plot_lda_features}
 \alias{plot_pls_features}
-\title{Plot pca features}
+\title{Plot PCA/PLS/LDA/SMA features}
 \usage{
 plot_projection_features(object, method, implementation = NULL,
-  geom = autonomics.plot::default_feature_plots(object)[1],
-  fvars = autonomics.plot::default_fvars(object), dim = 1, n = 9,
-  na.impute = FALSE, title = sprintf("X\%d", dim), file = NULL, ...)
+  geom = default_feature_plots(object)[1],
+  fvars = default_fvars(object), dim = 1, n = 9, na.impute = FALSE,
+  title = sprintf("X\%d", dim), file = NULL, ...)
 
-plot_pca_features(object, ...)
+plot_pca_features(object, implementation = NULL,
+  geom = default_feature_plots(object)[1],
+  fvars = default_fvars(object), dim = 1, n = 9, na.impute = FALSE,
+  title = sprintf("X\%d", dim), file = NULL, ...)
 
-plot_sma_features(object, ...)
+plot_sma_features(object, implementation = NULL,
+  geom = default_feature_plots(object)[1],
+  fvars = default_fvars(object), dim = 1, n = 9, na.impute = FALSE,
+  title = sprintf("X\%d", dim), file = NULL, ...)
 
-plot_lda_features(object, ...)
+plot_lda_features(object, implementation = NULL,
+  geom = default_feature_plots(object)[1],
+  fvars = default_fvars(object), dim = 1, n = 9, na.impute = FALSE,
+  title = sprintf("X\%d", dim), file = NULL, ...)
 
-plot_pls_features(object, ...)
+plot_pls_features(object, implementation = NULL,
+  geom = default_feature_plots(object)[1],
+  fvars = default_fvars(object), dim = 1, n = 9, na.impute = FALSE,
+  title = sprintf("X\%d", dim), file = NULL, ...)
 }
 \arguments{
-\item{object}{SummarizedExperiment, eSet, or Elist}
+\item{object}{SummarizedExperiment}
 
-\item{method}{'pca' or 'lda'}
+\item{method}{'pca', 'lda', 'pls', 'sma'}
 
 \item{implementation}{'character' or NULL}
 
@@ -42,12 +54,11 @@ plot_pls_features(object, ...)
 
 \item{file}{file}
 
-\item{...}{passed to autonomics.plot::plot_features}
+\item{...}{passed to \code{\link[autonomics.plot]{plot_features}}}
 }
 \description{
-Plots top pca features.
-Uses pca factor loadings in fdata when available.
-When not, add_pca_to_eset is run prior to plotting
+Plots top PCA/PLS/LDA/SMA features.
+Uses factor loadings in object when available.
 }
 \examples{
 require(magrittr)
@@ -55,14 +66,14 @@ require(magrittr)
 # STEM CELL COMPARISON
 if (require(autonomics.data)){
    object <- autonomics.data::stemcomp.proteinratios
-   object \%>\% autonomics.plot::plot_pca_features(n=9)
-   object \%>\% autonomics.plot::plot_pca_features(geom = 'bar')
+   object \%>\% plot_pca_features(n=9)
+   object \%>\% plot_pca_features(geom = 'bar')
 }
 
 # GLUTAMINASE
 if (require(autonomics.data)){
    object <- autonomics.data::glutaminase
-   object \%>\% autonomics.plot::plot_pca_features()
+   object \%>\% plot_pca_features()
 }
 
 }

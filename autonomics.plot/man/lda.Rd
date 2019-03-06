@@ -9,9 +9,9 @@ lda(object, na.impute = FALSE, ndim = 2, ...)
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{na.impute}{currently ignored. May be used in future.}
+\item{na.impute}{logical: \code{\link[autonomics.preprocess]{impute}} prior to \code{LDA}?}
 
-\item{ndim}{Number of linear discriminants to include in results}
+\item{ndim}{number: how many linear discriminants to include in results}
 
 \item{...}{only included to keep \code{\link[autonomics.plot]{project}} generic}
 }
@@ -33,14 +33,14 @@ if (require(autonomics.data)){
 
    # STEM CELL COMPARISON
       object <- autonomics.data::stemcomp.proteinratios
-      object \%>\% autonomics.plot::lda() \%>\% str()
+      object \%>\% lda() \%>\% str()
       \dontrun{ # Fails, as max dim length(subgroup) - 1
-         object \%>\% autonomics.plot::lda(ndim = 3) \%>\% str()
+         object \%>\% lda(ndim = 3) \%>\% str()
        }
 
    # GLUTAMINASE
       object <- autonomics.data::glutaminase
-      object \%>\% autonomics.plot::lda() \%>\% str()
+      object \%>\% lda() \%>\% str()
 }
 }
 \seealso{

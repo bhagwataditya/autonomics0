@@ -1,7 +1,7 @@
 #' Create default ggplot colors for factor levels
-#' @param factor_levels character vector
+#' @param factor_levels string vector
 #' @param show logical
-#' @return color vector (character)
+#' @return string vector: elements = colors, names = factor levels
 #' @author John Colby
 #' @seealso \href{https://stackoverflow.com/questions/8197559/emulate-ggplot2-default-color-palette}{stackoverflow}
 #' @importFrom magrittr  %>%
@@ -16,26 +16,16 @@ make_gg_colors <- function(factor_levels, show) {
 }
 
 #' Make composite colors
-#' @param svalues character vector
-#' @param show    logical(1): whether to show colors in pie plot
-#' @return named character vector (elements = colors, names = color_var levels)
+#' @param svalues string vector
+#' @param sep     string
+#' @param show    TRUE/FALSE: show colors in pie plot?
+#' @return named string vector (elements = colors, names = color_var levels)
 #' @examples
-#' require(magrittr)
-#' svalues <- c('inflammation.all', 'inflammation.C2_C0', 'inflammation.D2_D0',
-#'              'oxidstress.all',   'oxidstress.C2_C0',   'oxidstress.D2_D0')
-#' svalues %>% autonomics.plot::make_composite_colors(show = TRUE)
-#'
-#' if (require(subramanian.2016)){
-#'    svalues <- subramanian.2016::metabolon %>%
-#'               autonomics.import::subgroup_levels()
-#'    svalues %>% autonomics.plot::make_composite_colors(show = TRUE)
-#' }
-#'
-#' # GLUTAMINASE
 #' if (require(autonomics.data)){
-#'    autonomics.data::glutaminase %>%
-#'    autonomics.import::subgroup_levels() %>%
-#'    autonomics.plot::make_composite_colors(show = TRUE)
+#'    require(magrittr)
+#'    svalues <- autonomics.data::glutaminase %>%
+#'               autonomics.import::subgroup_levels()
+#'    svalues %>% make_composite_colors(show = TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @importFrom data.table   data.table   :=
@@ -77,8 +67,9 @@ make_composite_colors <- function(
 
 #' Make fitting colors
 #' @param x        colorvar levels vector
-#' @param show     logical(1)
-#' @param verbose  logical(1)
+#' @param sep      string
+#' @param show     TRUE or FALSE
+#' @param verbose  TRUE or FALSE
 #' @return color vectors (values = colors, names = colorvar levels)
 #' @export
 make_colors <- function(
@@ -90,56 +81,46 @@ make_colors <- function(
 
    # 0D colors
    if (is.null(x)){
-      return(autonomics.plot::make_gg_colors('default'))
+      return(make_gg_colors('default'))
    }
 
    # 1D colors
    if (is.null(sep)){
       if (verbose) autonomics.support::cmessage('\t\tMake default ggplot colors')
-      return(autonomics.plot::make_gg_colors(x, show = show))
+      return(make_gg_colors(x, show = show))
 
    # 2D colors
    } else {
       if (verbose) autonomics.support::cmessage('\t\tMake composite colors')
-      return(autonomics.plot::make_composite_colors(x, sep = sep, show = show))
+      return(make_composite_colors(x, sep = sep, show = show))
    }
 
 
 }
 
 #' Default color values
-#' @param object SummarizedExperiment
-#' @param color_var color variable
-#' @param show logical
+#' @param object     SummarizedExperiment
+#' @param color_var  string: svar mapped to color
+#' @param show       logical
 #' @return default color values vector
 #' @examples
-#' require(magrittr)
 #' if (require(autonomics.data)){
-#'    autonomics.data::stemcomp.proteinratios %>%
-#'    autonomics.plot::default_color_values(show = TRUE)
-#' }
 #'
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::metabolon %>%
-#'    autonomics.plot::default_color_values(show=TRUE)
-#' }
+#'    # STEM CELL COMPARISON
+#'    require(magrittr)
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% default_color_values(show = TRUE)
 #'
-#' # GLUTAMINASE
-#' if (require(autonomics.data)){
-#'    autonomics.data::glutaminase %>%
-#'    autonomics.plot::default_color_values(show=TRUE)
-#' }
+#'    # GLUTAMINASE
+#'    object <- autonomics.data::glutaminase
+#'    object %>% default_color_values(show = TRUE)
 #'
-#' # STEM CELL DIFFERENTIATION
-#' if (require(autonomics.data)){
-#'    autonomics.data::stemdiff.proteinratios %>%
-#'    autonomics.plot::default_color_values(show=TRUE)
 #' }
 #' @importFrom magrittr %>%
 #' @export
 default_color_values <- function(
    object,
-   color_var = autonomics.plot::default_color_var(object),
+   color_var = default_color_var(object),
    show = FALSE
 ){
 
@@ -152,17 +133,18 @@ default_color_values <- function(
    color_var_levels <- object %>% autonomics.import::slevels(color_var)
 
    # Make colors
-   autonomics.plot::make_colors(color_var_levels, sep, show)
+   make_colors(color_var_levels, sep, show)
 
 }
 
 #' default fvars
 #' @param  object SummarizedExperiment
-#' @return character vector
+#' @return string vector
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
-#'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_fvars()
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% default_fvars()
 #' }
 #' @importFrom magrittr               %>%
 #' @export
@@ -179,14 +161,14 @@ default_fvars <- function(object){
 #'
 #'    # STEM CELL COMPARISON
 #'       autonomics.data::stemcomp.proteinratios %>%
-#'       autonomics.plot::default_feature_plots()
+#'       default_feature_plots()
 #'
 #'       autonomics.data::stemcomp.soma %>%
-#'       autonomics.plot::default_feature_plots()
+#'       default_feature_plots()
 #'
 #'    # GLUTAMINASE
 #'       autonomics.data::glutaminase %>%
-#'       autonomics.plot::default_feature_plots()
+#'       default_feature_plots()
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -217,11 +199,11 @@ default_feature_plots <- function(object){
 #'    require(magrittr)
 #'
 #'    # STEM CELL COMPARISON
-#'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_color_var()
-#'    autonomics.data::stemcomp.soma          %>% autonomics.plot::default_color_var()
+#'    autonomics.data::stemcomp.proteinratios %>% default_color_var()
+#'    autonomics.data::stemcomp.soma          %>% default_color_var()
 #'
 #'    # GLUTAMINASE
-#'    autonomics.data::glutaminase            %>% autonomics.plot::default_color_var()
+#'    autonomics.data::glutaminase            %>% default_color_var()
 #'
 #'}
 #'
@@ -240,11 +222,10 @@ default_color_var <- function(object){
 #'    require(magrittr)
 #'
 #'    # STEM CELL COMPARISON
-#'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_group_var()
-#'    autonomics.data::billing2016            %>% autonomics.plot::default_group_var()
+#'    autonomics.data::stemcomp.proteinratios %>% default_group_var()
 #'
 #'    # GLUTAMINASE
-#'    autonomics.data::glutaminase            %>% autonomics.plot::default_group_var()
+#'    autonomics.data::glutaminase            %>% default_group_var()
 #'}
 #' @export
 default_group_var <- function(object){
@@ -266,10 +247,10 @@ default_facet_var <- function(){
 #'    require(magrittr)
 #'
 #'    # STEM CELL COMPARISON
-#'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_line()
+#'    autonomics.data::stemcomp.proteinratios %>% default_line()
 #'
 #'    # GLUTAMINASE
-#'    autonomics.data::glutaminase            %>% autonomics.plot::default_line()
+#'    autonomics.data::glutaminase            %>% default_line()
 #'}
 #' @export
 default_line <- function(object){
@@ -278,18 +259,18 @@ default_line <- function(object){
 }
 
 
-#' default color_var
+#' default shape_var
 #' @param object SummarizedExperiment
-#' @return default value of color_var
+#' @return default value of shape_var
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'
 #'    # STEM CELL COMPARISON
-#'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_shape_var()
+#'    autonomics.data::stemcomp.proteinratios %>% default_shape_var()
 #'
 #'    # GLUTAMINASE
-#'    autonomics.data::glutaminase %>% autonomics.plot::default_shape_var()
+#'    autonomics.data::glutaminase %>% default_shape_var()
 #'
 #'}
 #' @export
@@ -312,10 +293,10 @@ default_shape_var <- function(object){
 #'    require(magrittr)
 #'
 #'    # STEM CELL COMPARISON
-#'    autonomics.data::stemcomp.proteinratios %>% autonomics.plot::default_x()
+#'    autonomics.data::stemcomp.proteinratios %>% default_x()
 #'
 #'    # GLUTAMINASE
-#'    autonomics.data::glutaminase            %>% autonomics.plot::default_x()
+#'    autonomics.data::glutaminase            %>% default_x()
 #'}
 #' @export
 default_x <- function(object, feature_plots = default_feature_plots(object)){
@@ -363,15 +344,15 @@ default_txt_var <- function(object){
 #'    require(magrittr)
 #'
 #'    # STEM CELL COMPARISON
-#'    autonomics.data::stemcomp.proteinratios %>%
-#'    autonomics.plot::default_zero_hline()
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% default_zero_hline()
 #'
 #'    # GLUTAMINASE
-#'    autonomics.data::glutaminase %>%
-#'    autonomics.plot::default_zero_hline()
+#'    object <- autonomics.data::glutaminase
+#'    object %>% default_zero_hline()
 #' }
 #' @export
 default_zero_hline <- function(object){
    if (autonomics.import::contains_ratios(object))  TRUE
-   else                                               FALSE
+   else                                             FALSE
 }

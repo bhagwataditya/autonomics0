@@ -8,32 +8,23 @@ make_composite_colors(svalues,
   sep = autonomics.import::guess_sep(svalues), show = FALSE)
 }
 \arguments{
-\item{svalues}{character vector}
+\item{svalues}{string vector}
 
-\item{show}{logical(1): whether to show colors in pie plot}
+\item{sep}{string}
+
+\item{show}{TRUE/FALSE: show colors in pie plot?}
 }
 \value{
-named character vector (elements = colors, names = color_var levels)
+named string vector (elements = colors, names = color_var levels)
 }
 \description{
 Make composite colors
 }
 \examples{
-require(magrittr)
-svalues <- c('inflammation.all', 'inflammation.C2_C0', 'inflammation.D2_D0',
-             'oxidstress.all',   'oxidstress.C2_C0',   'oxidstress.D2_D0')
-svalues \%>\% autonomics.plot::make_composite_colors(show = TRUE)
-
-if (require(subramanian.2016)){
-   svalues <- subramanian.2016::metabolon \%>\%
-              autonomics.import::subgroup_levels()
-   svalues \%>\% autonomics.plot::make_composite_colors(show = TRUE)
-}
-
-# GLUTAMINASE
 if (require(autonomics.data)){
-   autonomics.data::glutaminase \%>\%
-   autonomics.import::subgroup_levels() \%>\%
-   autonomics.plot::make_composite_colors(show = TRUE)
+   require(magrittr)
+   svalues <- autonomics.data::glutaminase \%>\%
+              autonomics.import::subgroup_levels()
+   svalues \%>\% make_composite_colors(show = TRUE)
 }
 }

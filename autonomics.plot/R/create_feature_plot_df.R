@@ -1,23 +1,23 @@
 #' Create dataframe for feature plots
-#' @param object SummarizedExperiment, eSet, or EList
+#' @param object   SummarizedExperiment
 #' @param fvars    fvars used to annotate each plot
 #' @param verbose  logical
+#' @return dataframe
+#' @author Aditya Bhagwat
 #' @examples
-#' if (require(autonmomics.data)){
+#' if (require(autonomics.data)){
 #'   require(magrittr)
 #'
 #'   # STEM CELL COMPARISON (Max Quant)
 #'   autonomics.data::stemcomp.proteinratios %>%
-#'   autonomics.plot::create_feature_plot_df(c('feature_id', 'Gene names')) %>% head()
+#'   create_feature_plot_df(c('feature_id', 'Gene names')) %>% head()
 #'
 #'   # GLUTAMINASE
 #'   autonomics.data::glutaminase %>%
-#'   autonomics.plot::create_feature_plot_df(c('feature_id', 'BIOCHEMICAL')) %>% head()
+#'   create_feature_plot_df(c('feature_id', 'BIOCHEMICAL')) %>% head()
 #'
 #'
 #' }
-#' @return dataframe
-#' @author Aditya Bhagwat
 #' @importFrom magrittr   %>%   %<>%
 #' @export
 create_feature_plot_df <- function(object, fvars, verbose = FALSE){

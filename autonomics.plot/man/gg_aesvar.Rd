@@ -21,15 +21,15 @@ Get name of variable mapped to a aesthetic
 if (require(autonomics.data)){
    require(magrittr)
    object <- autonomics.data::stemcomp.proteinratios \%>\% magrittr::extract(1:9, )
-   b <- object \%>\% autonomics.plot::plot_features('point') \%>\%
+   b <- object \%>\% plot_features('point') \%>\%
                    ggplot2::ggplot_build()
-   b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'color')
-   b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'x')
-   b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'shape')
-   b <- object \%>\% autonomics.plot::plot_features('violin') \%>\%
+   b \%>\% gg_aesvar(aesthetic = 'color')
+   b \%>\% gg_aesvar(aesthetic = 'x')
+   b \%>\% gg_aesvar(aesthetic = 'shape')
+   b <- object \%>\% plot_features('violin') \%>\%
                    ggplot2::ggplot_build()
-   b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'color')
-   b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'x')
-   b \%>\% autonomics.plot::gg_aesvar(aesthetic = 'shape')
+   b \%>\% gg_aesvar(aesthetic = 'color')
+   b \%>\% gg_aesvar(aesthetic = 'x')
+   b \%>\% gg_aesvar(aesthetic = 'shape')
 }
 }

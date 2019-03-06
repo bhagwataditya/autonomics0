@@ -6,36 +6,74 @@
 \alias{plot_sma_samples}
 \alias{plot_lda_samples}
 \alias{plot_pls_samples}
-\title{Plot PCA/LDA/PLS sample scores}
+\title{Plot PCA/LDA/PLS/SMA sample scores}
 \usage{
 plot_projected_samples(object, ..., listed_objects = NULL,
   method = c("pca", "lda", "sma", "pls")[1],
   implementation = c("mixOmics::plsda", "mixOmics::splsda",
   "ropls::opls")[1], dims = 1:2, color_var = "subgroup",
-  color_values = autonomics.plot::default_color_values(object,
-  color_var), shape_var = autonomics.plot::default_shape_var(object),
-  size_var = NULL, txt_var = autonomics.plot::default_txt_var(object),
-  txt_outliers = FALSE, group_var = NULL, split_var = NULL,
-  facet_var = NULL, scales = ifelse(is.null(facet_var), "fixed",
-  "free"), labs = list(color = stringi::stri_trans_totitle(color_var),
-  shape = stringi::stri_trans_totitle(shape_var)), nrow = NULL,
+  color_values = default_color_values(object, color_var),
+  shape_var = default_shape_var(object), size_var = NULL,
+  txt_var = default_txt_var(object), txt_outliers = FALSE,
+  group_var = NULL, split_var = NULL, facet_var = NULL,
+  scales = ifelse(is.null(facet_var), "fixed", "free"),
+  labs = list(color = stringi::stri_trans_totitle(color_var), shape =
+  stringi::stri_trans_totitle(shape_var)), nrow = NULL,
   mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
   title = NULL, na.impute = FALSE, legend.position = "right")
 
-plot_pca_samples(object, ...)
+plot_pca_samples(object, ..., listed_objects = NULL, dims = 1:2,
+  color_var = "subgroup", color_values = default_color_values(object,
+  color_var), shape_var = default_shape_var(object), size_var = NULL,
+  txt_var = default_txt_var(object), txt_outliers = FALSE,
+  group_var = NULL, split_var = NULL, facet_var = NULL,
+  scales = ifelse(is.null(facet_var), "fixed", "free"),
+  labs = list(color = stringi::stri_trans_totitle(color_var), shape =
+  stringi::stri_trans_totitle(shape_var)), nrow = NULL,
+  mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
+  title = NULL, na.impute = FALSE, legend.position = "right")
 
-plot_sma_samples(object, ...)
+plot_sma_samples(object, ..., listed_objects = NULL, dims = 1:2,
+  color_var = "subgroup", color_values = default_color_values(object,
+  color_var), shape_var = default_shape_var(object), size_var = NULL,
+  txt_var = default_txt_var(object), txt_outliers = FALSE,
+  group_var = NULL, split_var = NULL, facet_var = NULL,
+  scales = ifelse(is.null(facet_var), "fixed", "free"),
+  labs = list(color = stringi::stri_trans_totitle(color_var), shape =
+  stringi::stri_trans_totitle(shape_var)), nrow = NULL,
+  mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
+  title = NULL, na.impute = FALSE, legend.position = "right")
 
-plot_lda_samples(object, ...)
+plot_lda_samples(object, ..., listed_objects = NULL, dims = 1:2,
+  color_var = "subgroup", color_values = default_color_values(object,
+  color_var), shape_var = default_shape_var(object), size_var = NULL,
+  txt_var = default_txt_var(object), txt_outliers = FALSE,
+  group_var = NULL, split_var = NULL, facet_var = NULL,
+  scales = ifelse(is.null(facet_var), "fixed", "free"),
+  labs = list(color = stringi::stri_trans_totitle(color_var), shape =
+  stringi::stri_trans_totitle(shape_var)), nrow = NULL,
+  mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
+  title = NULL, na.impute = FALSE, legend.position = "right")
 
-plot_pls_samples(object, ...)
+plot_pls_samples(object, ..., listed_objects = NULL,
+  implementation = c("mixOmics::plsda", "mixOmics::splsda",
+  "ropls::opls")[1], dims = 1:2, color_var = "subgroup",
+  color_values = default_color_values(object, color_var),
+  shape_var = default_shape_var(object), size_var = NULL,
+  txt_var = default_txt_var(object), txt_outliers = FALSE,
+  group_var = NULL, split_var = NULL, facet_var = NULL,
+  scales = ifelse(is.null(facet_var), "fixed", "free"),
+  labs = list(color = stringi::stri_trans_totitle(color_var), shape =
+  stringi::stri_trans_totitle(shape_var)), nrow = NULL,
+  mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
+  title = NULL, na.impute = FALSE, legend.position = "right")
 }
 \arguments{
-\item{object}{SummarizedExperiment, eSet, or Elist}
+\item{object}{SummarizedExperiment}
 
-\item{...}{Further SummarizedExperiment(s), eSet(s), or Elist(s)}
+\item{...}{Additional SummarizedExperiment(s)}
 
-\item{listed_objects}{Further SummarizedExperiment(s), eSet(s), or Elist(s), wrapped in a \code{link{list}}}
+\item{listed_objects}{Additional SummarizedExperiment(s), wrapped in a \code{link{list}}}
 
 \item{method}{'pca', 'lda', 'pls', 'sma'}
 
@@ -76,7 +114,7 @@ plot_pls_samples(object, ...)
 \item{legend.position}{character}
 }
 \description{
-Plot PCA/LDA/PLS sample scores
+Plot PCA/LDA/PLS/SMA sample scores
 }
 \examples{
 if (require(autonomics.data)){
@@ -84,20 +122,20 @@ if (require(autonomics.data)){
 
    # GLUTAMINASE
       object <- autonomics.data::glutaminase
-      object \%>\% autonomics.plot::plot_pca_samples()
-      object \%>\% autonomics.plot::plot_lda_samples()
-      object \%>\% autonomics.plot::plot_pls_samples()
-      object \%>\% autonomics.plot::plot_projected_samples(
+      object \%>\% plot_pca_samples()
+      object \%>\% plot_lda_samples()
+      object \%>\% plot_pls_samples()
+      object \%>\% plot_projected_samples(
                     method = c('pca', 'lda', 'sma', 'pls'),
                     facet_var = c('PCA', 'LDA', 'SMA', 'PLS'),
                     nrow = 2)
 
    # STEM CELL COMPARISON
       object <- autonomics.data::stemcomp.proteinratios
-      object \%>\% autonomics.plot::plot_pca_samples()
-      object \%>\% autonomics.plot::plot_pca_samples(dims = c(3,4))
+      object \%>\% plot_pca_samples()
+      object \%>\% plot_pca_samples(dims = c(3,4))
 
-      object \%>\% autonomics.plot::plot_projected_samples(
+      object \%>\% plot_projected_samples(
                     method = c('pca', 'lda', 'sma', 'pls'),
                     facet_var = c('OK PCA', 'Not so nice LDA', 'Nice SMA', 'Very nice PLS'),
                     nrow = 2)

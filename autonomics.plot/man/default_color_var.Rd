@@ -20,11 +20,11 @@ if (require(autonomics.data)){
    require(magrittr)
 
    # STEM CELL COMPARISON
-   autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_color_var()
-   autonomics.data::stemcomp.soma          \%>\% autonomics.plot::default_color_var()
+   autonomics.data::stemcomp.proteinratios \%>\% default_color_var()
+   autonomics.data::stemcomp.soma          \%>\% default_color_var()
 
    # GLUTAMINASE
-   autonomics.data::glutaminase            \%>\% autonomics.plot::default_color_var()
+   autonomics.data::glutaminase            \%>\% default_color_var()
 
 }
 

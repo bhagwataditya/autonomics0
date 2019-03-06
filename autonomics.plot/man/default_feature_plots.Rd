@@ -21,13 +21,13 @@ if (require(autonomics.data)){
 
    # STEM CELL COMPARISON
       autonomics.data::stemcomp.proteinratios \%>\%
-      autonomics.plot::default_feature_plots()
+      default_feature_plots()
 
       autonomics.data::stemcomp.soma \%>\%
-      autonomics.plot::default_feature_plots()
+      default_feature_plots()
 
    # GLUTAMINASE
       autonomics.data::glutaminase \%>\%
-      autonomics.plot::default_feature_plots()
+      default_feature_plots()
 }
 }

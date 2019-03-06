@@ -19,20 +19,19 @@
 #'    df <- data.frame(x = 1:100, y = 1:100)
 #'    p <- ggplot2::ggplot(df) + ggplot2::geom_point(ggplot2::aes(x=x,y=y))
 #'    file <- paste0(tempfile(), '.pdf')
-#'    autonomics.plot::combine_plots(p, p)
-#'    autonomics.plot::combine_plots(p, p, file = file)
+#'    combine_plots(p, p)
+#'    combine_plots(p, p, file = file)
 #' @author Johannes Graumann
 #' @export
 combine_plots <- function(
    ...,
-   plotlist=NULL,
-   cols=1,
-   layout=NULL,
-   file = NULL,
+   plotlist      = NULL,
+   cols          = 1,
+   layout        = NULL,
+   file          = NULL,
    return_object = FALSE,
-   width = 7,
-   height = 7
-) {
+   width         = 7,
+   height        = 7) {
 
   # Print to file if requested
    if (!is.null(file)){

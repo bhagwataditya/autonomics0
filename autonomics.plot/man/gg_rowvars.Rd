@@ -5,6 +5,7 @@
 \alias{gg_colvars}
 \alias{gg_nchar_rowvars}
 \alias{gg_panelvars}
+\alias{gg_panelvar_width}
 \title{Get column variables}
 \usage{
 gg_rowvars(b)
@@ -14,6 +15,8 @@ gg_colvars(b)
 gg_nchar_rowvars(b)
 
 gg_panelvars(b)
+
+gg_panelvar_width(b)
 }
 \arguments{
 \item{b}{built ggplot (result of ggplot_build)}
@@ -28,11 +31,11 @@ Get column variables from faceted ggplot object
 if (require(autonomics.data)){
    require(magrittr)
    object <- autonomics.data::stemcomp.proteinratios \%>\% magrittr::extract(1:9, )
-   b <- object \%>\% autonomics.plot::plot_features('point') \%>\% ggplot2::ggplot_build()
-   b \%>\% autonomics.plot::gg_rowvars()
-   b \%>\% autonomics.plot::gg_colvars()
-   b \%>\% autonomics.plot::gg_nchar_rowvars()
-   b \%>\% autonomics.plot::gg_panelvars()
-   b \%>\% autonomics.plot::gg_panelvar_width()
+   b <- object \%>\% plot_features('point') \%>\% ggplot2::ggplot_build()
+   b \%>\% gg_rowvars()
+   b \%>\% gg_colvars()
+   b \%>\% gg_nchar_rowvars()
+   b \%>\% gg_panelvars()
+   b \%>\% gg_panelvar_width()
 }
 }

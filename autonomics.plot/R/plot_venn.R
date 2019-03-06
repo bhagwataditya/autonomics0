@@ -1,29 +1,30 @@
 #' Plot Venn/Euler diagram
 #' @param x             named list of character vectors
-#' @param color_values  character vector
-#' @param euler         logical(1): whether to use eulerr::euler() rather than VennDiagram::venn.diagram()
-#' @param filename      character vector
-#' @param width         width  in inches
-#' @param height        height in inches
-#' @param title         figure title
-#' @param scaled        logical: whether or not to scale
-#' @param cat.dist      numeric(1): category location (as distance from circle edge)
-#' @param main.cex      numeric(1): scaling factor for title size
-#' @param main.pos      numeric(2): title location
+#' @param color_values  string vector: values = colors, names = x levels
+#' @param euler         TRUE/FALSE: whether to use eulerr::euler() rather than VennDiagram::venn.diagram()
+#' @param filename      string
+#' @param width         number: width  in inches
+#' @param height        number: height in inches
+#' @param title         string: figure title
+#' @param scaled        TRUE/FALSE: whether or not to scale
+#' @param cat.dist      number: category location (as distance from circle edge)
+#' @param margin        number
+#' @param main.cex      number: scaling factor for title size
+#' @param main.pos      number: title location
 #' @param ...           passed to either VennDiagram::venn.diagram(...) or eulerr::plot.euler(...)
 #' @examples
 #' x <- list(A = c('apple', 'pear'), B = c('pear', 'orange'))
 #' filename <- NULL
-#' autonomics.plot::plot_venn(x)
-#' autonomics.plot::plot_venn(x, euler = TRUE)
+#' plot_venn(x)
+#' plot_venn(x, euler = TRUE)
 #' filename <- tempfile()
-#' autonomics.plot::plot_venn(x, filename = filename)
-#'
+#' plot_venn(x, filename = filename)
+#' @importFrom magrittr %<>% %>%
 #' @export
 plot_venn <- function(
    x,
-   color_values = if (assertive.properties::has_names(x)){ autonomics.plot::make_colors(names(x))
-                  } else {                                 autonomics.plot::make_gg_colors(1:length(x))},
+   color_values = if (assertive.properties::has_names(x)){ make_colors(names(x))
+                  } else {                                 make_gg_colors(1:length(x))},
    euler        = FALSE,
    filename     = NULL,
    width        = 7,
@@ -82,12 +83,5 @@ plot_venn <- function(
    autonomics.support::cdraw(p)
    if (!is.null(filename))   grDevices::dev.off()
    if (!is.null(filename))   autonomics.support::cmessage(filename)
-}
-
-#' @rdname plot_venn
-#' @export
-plot_venns <- function(...){
-   .Deprecated('plot_venn')
-   plot_vennn(...)
 }
 

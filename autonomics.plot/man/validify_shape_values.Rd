@@ -17,7 +17,7 @@ Validify shape_var values
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   autonomics.data::stemcomp.proteinratios \%>\%
-   autonomics.plot::validify_shape_values('replicate')
+   object <- autonomics.data::stemcomp.proteinratios
+   object \%>\% validify_shape_values('replicate')
 }
 }

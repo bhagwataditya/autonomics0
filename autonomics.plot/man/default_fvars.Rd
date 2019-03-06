@@ -10,7 +10,7 @@ default_fvars(object)
 \item{object}{SummarizedExperiment}
 }
 \value{
-character vector
+string vector
 }
 \description{
 default fvars
@@ -18,6 +18,7 @@ default fvars
 \examples{
 if (require(autonomics.data)){
    require(magrittr)
-   autonomics.data::stemcomp.proteinratios \%>\% autonomics.plot::default_fvars()
+   object <- autonomics.data::stemcomp.proteinratios
+   object \%>\% default_fvars()
 }
 }

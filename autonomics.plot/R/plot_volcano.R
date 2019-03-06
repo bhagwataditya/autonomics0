@@ -38,7 +38,7 @@ top_right_in_volcano <- function(effect, fdr, mlp, ntop){
 
 #' Create volcano datatable
 #' @param object SummarizedExperiment
-#' @param ntop   number of top features (either FC wise or p wise) to be annotated
+#' @param ntop   number: how many top features (either FC wise or p wise) to be annotated
 #' @return data.table
 #' @examples
 #' if (require(autonomics.data)){
@@ -77,9 +77,9 @@ make_volcano_dt <- function(object, ntop = 3){
 }
 
 #' Plot volcano
-#' @param object SummarizedExperiment
-#' @param ntop n top features to be annotated
-#' @param nrow number of rows in faceted plot
+#' @param object          SummarizedExperiment
+#' @param ntop            number: n top features to be annotated
+#' @param nrow            number: n rows in faceted plot
 #' @param legend_position handed to \code{\link[ggplot2]{theme}} as 'legend.position'
 #' @return ggplot object
 #' @examples
@@ -101,26 +101,24 @@ plot_volcano <- function(object, ntop = 3, nrow = NULL, legend_position = NULL){
    color_values <- c(down_colors, up_colors)
 
    # Draw plot
-   point_dt <- object %>% autonomics.plot::make_volcano_dt(ntop = ntop)
+   point_dt <- object %>% make_volcano_dt(ntop = ntop)
    txt_dt <- data.table::copy(point_dt) %>%
              magrittr::extract(is.top.up==TRUE | is.top.down==TRUE)
    tmp_plot <- ggplot2::ggplot(point_dt) +
-      ggplot2::facet_wrap(~ contrast, nrow = nrow, scales = 'fixed') +
-      ggplot2::geom_point(ggplot2::aes(x=effect, y=mlp, color = color), na.rm = TRUE) +
-      ggrepel::geom_text_repel(data = txt_dt,
-                               ggplot2::aes(x=effect, y=mlp, label=fname, color = color),
-                               #hjust = 'outward',
-                               na.rm = TRUE,
-                               show.legend = FALSE#,
-                               #direction = 'x'
-      ) +
-      ggplot2::scale_color_manual(values = color_values, name = NULL) +
-      ggplot2::xlab(expression(log[2](FC))) +
-      ggplot2::ylab(expression(-log[10](p)))
-   if(!is.null(legend_position))
-   {
-      tmp_plot <- tmp_plot +
-         ggplot2::theme(legend.position = legend_position)
+               ggplot2::facet_wrap(~ contrast, nrow = nrow, scales = 'fixed') +
+               ggplot2::geom_point(ggplot2::aes(x=effect, y=mlp, color = color), na.rm = TRUE) +
+               ggrepel::geom_text_repel(data = txt_dt,
+                                        ggplot2::aes(x=effect, y=mlp, label=fname, color = color),
+                                        #hjust = 'outward',
+                                        na.rm = TRUE,
+                                        show.legend = FALSE#,
+                                        #direction = 'x'
+               ) +
+               ggplot2::scale_color_manual(values = color_values, name = NULL) +
+               ggplot2::xlab(expression(log[2](FC))) +
+               ggplot2::ylab(expression(-log[10](p)))
+   if(!is.null(legend_position)){
+      tmp_plot <- tmp_plot + ggplot2::theme(legend.position = legend_position)
    }
    return(tmp_plot)
 }

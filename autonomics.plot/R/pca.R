@@ -81,8 +81,8 @@ pca <- function(object, ndim = 2, ...){
 #'    SMA Loadings: D^(1/2)*V
 #' ```
 #' @param object     SummarizedExperiment
-#' @param na.impute  whether to \code{\link[autonomics.preprocess]{impute}} prior to \code{SMA}
-#' @param ndim       Number of SMA components to include in results
+#' @param na.impute  logical: \code{\link[autonomics.preprocess]{impute}} prior to \code{SMA}?
+#' @param ndim       number: how many SMA components to include in results
 #' @param ...        used to keep \code{\link{project}} generic
 #' @return
 #' ```
@@ -148,8 +148,8 @@ sma <- function(object, na.impute = FALSE, ndim = 2, ...){
 #' \code{LDA} relies on the (\code{NA}-unfriendly) \code{SVD}, so only \code{NA}-free features are included in the analysis.
 #'
 #' @param object     SummarizedExperiment
-#' @param na.impute  currently ignored. May be used in future.
-#' @param ndim       Number of linear discriminants to include in results
+#' @param na.impute  logical: \code{\link[autonomics.preprocess]{impute}} prior to \code{LDA}?
+#' @param ndim       number: how many linear discriminants to include in results
 #' @param ...        only included to keep \code{\link[autonomics.plot]{project}} generic
 #' @return
 #' ```
@@ -163,22 +163,21 @@ sma <- function(object, na.impute = FALSE, ndim = 2, ...){
 #'
 #'    # STEM CELL COMPARISON
 #'       object <- autonomics.data::stemcomp.proteinratios
-#'       object %>% autonomics.plot::lda() %>% str()
+#'       object %>% lda() %>% str()
 #'       \dontrun{ # Fails, as max dim length(subgroup) - 1
-#'          object %>% autonomics.plot::lda(ndim = 3) %>% str()
+#'          object %>% lda(ndim = 3) %>% str()
 #'        }
 #'
 #'    # GLUTAMINASE
 #'       object <- autonomics.data::glutaminase
-#'       object %>% autonomics.plot::lda() %>% str()
+#'       object %>% lda() %>% str()
 #' }
 #' @seealso \code{\link[autonomics.plot]{pca}},
 #'          \code{\link[autonomics.plot]{sma}},
 #'          \code{\link[autonomics.plot]{pls}}
 #' @author Aditya Bhagwat, Laure Cougnaud
 #' @md
-#' @importFrom magrittr %>%
-#' @importFrom magrittr %<>%
+#' @importFrom magrittr %>% %<>%
 #' @export
 lda <- function(object, na.impute = FALSE, ndim = 2,  ...){
 
@@ -222,10 +221,10 @@ lda <- function(object, na.impute = FALSE, ndim = 2,  ...){
 #'
 #' \code{PLS} is performed using the (\code{NA}-friendly) \code{NIPALS} algorithm.
 #'
-#' @param object SummarizedExperiment
-#' @param ndim   Number of latent variables to include in results
+#' @param object          SummarizedExperiment
+#' @param ndim            number: how many latent variables to include in results
 #' @param implementation 'mixOmics::plsda', 'mixOmics::splsda', or 'ropls::opls'
-#' @param ...    only inlcuded to keep \code{\link[autonomics.plot]{project}} generic
+#' @param ...             only inlcuded to keep \code{\link[autonomics.plot]{project}} generic
 #' @return
 #' ```
 #' list(samples  =   sample scores,       # matrix:  nsample x ndim
@@ -236,9 +235,9 @@ lda <- function(object, na.impute = FALSE, ndim = 2,  ...){
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::glutaminase
-#'    object %>% autonomics.plot::pls() %>% str()
+#'    object %>% pls() %>% str()
 #'    \dontrun{ # slow
-#'       object %>% autonomics.plot::pls(implementation = 'ropls::opls') %>% str()
+#'       object %>% pls(implementation = 'ropls::opls') %>% str()
 #'    }
 #' }
 #' @seealso \code{\link[autonomics.plot]{pca}},
@@ -314,7 +313,7 @@ pls <- function(object, implementation = NULL, ndim = 2, ...){
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::glutaminase
-#'    object %>% autonomics.plot::project() %>% str()
+#'    object %>% project() %>% str()
 #' }
 #' @seealso \code{\link[autonomics.plot]{pca}},
 #'          \code{\link[autonomics.plot]{sma}},

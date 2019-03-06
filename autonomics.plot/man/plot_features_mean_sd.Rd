@@ -37,19 +37,23 @@ Mean/variance plots are helpful for the evaluation of homoscedasticity.
 # Works, but is rather slow
 if(require(autonomics.data)){
    require(magrittr)
+
   # Simple plot
-  autonomics.plot::plot_features_mean_sd(autonomics.data::ALL)
+     plot_features_mean_sd(autonomics.data::ALL)
+
   # Compare with the loged version of the data
-  logALL <- autonomics.data::ALL
-  autonomics.import::exprs(logALL) \%<>\% log2()
-  plot_features_mean_sd(logALL)
+     logALL <- autonomics.data::ALL
+     autonomics.import::exprs(logALL) \%<>\% log2()
+     plot_features_mean_sd(logALL)
+
   # Combined plot
-  plot_features_mean_sd(autonomics.data::ALL, logALL)
+     plot_features_mean_sd(autonomics.data::ALL, logALL)
+
   # Same thing, but with descriptive facet labels
-  plot_features_mean_sd(
-    autonomics.data::ALL,
-    logALL,
-    facet_labels = c("'Raw Data'", "'Logarithmized Data'~(log[2])"))
+     plot_features_mean_sd(
+        autonomics.data::ALL,
+        logALL,
+        facet_labels = c("'Raw Data'", "'Logarithmized Data'~(log[2])"))
 }
 }
 }

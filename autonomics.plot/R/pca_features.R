@@ -35,37 +35,36 @@ extract_top_and_bottom <- function(object, n = 16){
    object %>% magrittr::extract(c(top, bottom), )
 }
 
-#' Plot pca features
+#' Plot PCA/PLS/LDA/SMA features
 #'
-#' Plots top pca features.
-#' Uses pca factor loadings in fdata when available.
-#' When not, add_pca_to_eset is run prior to plotting
+#' Plots top PCA/PLS/LDA/SMA features.
+#' Uses factor loadings in object when available.
 #'
-#' @param object           SummarizedExperiment, eSet, or Elist
-#' @param method           'pca' or 'lda'
+#' @param object           SummarizedExperiment
+#' @param method           'pca', 'lda', 'pls', 'sma'
 #' @param implementation   'character' or NULL
+#' @param geom             value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}
 #' @param fvars            fvars used for plot annotation
 #' @param dim              principal component dimension
 #' @param n                number of top features to plot
 #' @param na.impute        TRUE or FALSE
 #' @param title            title
 #' @param file             file
-#' @param geom     value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}
-#' @param ...              passed to autonomics.plot::plot_features
+#' @param ...              passed to \code{\link[autonomics.plot]{plot_features}}
 #' @examples
 #' require(magrittr)
 #'
 #' # STEM CELL COMPARISON
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios
-#'    object %>% autonomics.plot::plot_pca_features(n=9)
-#'    object %>% autonomics.plot::plot_pca_features(geom = 'bar')
+#'    object %>% plot_pca_features(n=9)
+#'    object %>% plot_pca_features(geom = 'bar')
 #' }
 #'
 #' # GLUTAMINASE
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::glutaminase
-#'    object %>% autonomics.plot::plot_pca_features()
+#'    object %>% plot_pca_features()
 #' }
 #'
 #' @importFrom magrittr  %>%
@@ -74,8 +73,8 @@ plot_projection_features <- function(
    object,
    method,
    implementation  = NULL,
-   geom            = autonomics.plot::default_feature_plots(object)[1],
-   fvars           = autonomics.plot::default_fvars(object),
+   geom            = default_feature_plots(object)[1],
+   fvars           = default_fvars(object),
    dim             = 1,
    n               = 9,
    na.impute       = FALSE,
@@ -89,7 +88,7 @@ plot_projection_features <- function(
       autonomics.support::cmessage('\tExit %s: only %d samples', method, ncol(object))
       return(invisible(NULL))
    }
-   assertive.sets::assert_is_subset(geom, autonomics.plot::FEATURE_PLOTS)
+   assertive.sets::assert_is_subset(geom, FEATURE_PLOTS)
 
    # Add projection to eset if required
    projection_dim_in_eset <- paste0(method, dim) %in% autonomics.import::fvars(object)
@@ -98,38 +97,120 @@ plot_projection_features <- function(
       idx <- which(autonomics.import::fvars(object) %>% stringi::stri_detect_regex(paste0('^', method)))
       if (length(idx)>0) autonomics.import::fdata(object) %<>% magrittr::extract(, -idx)
       # Add projection
-      object %<>% autonomics.explore::add_projection_to_eset(method, na.impute = na.impute, ndim = dim)
+      object %<>% add_projection(method, na.impute = na.impute, ndim = dim)
    }
 
    # Order on projection and write to file
-   object %<>% autonomics.explore::order_on_feature_loadings(method = method, dim = dim, na.impute = na.impute) %>%
-               autonomics.explore::extract_top_and_bottom(n=n)
+   object %<>% order_on_feature_loadings(method = method, dim = dim, na.impute = na.impute) %>%
+               extract_top_and_bottom(n=n)
 
    # plot
-   object %>% autonomics.plot::plot_features(geom = geom, fvars = fvars, title = title, ...)
+   object %>% plot_features(geom = geom, fvars = fvars, title = title, ...)
 
 }
 
 #' @rdname plot_projection_features
 #' @export
-plot_pca_features <- function(object, ...){
-   plot_projection_features(object, 'pca', ...)
+plot_pca_features <- function(
+   object,
+   implementation  = NULL,
+   geom            = default_feature_plots(object)[1],
+   fvars           = default_fvars(object),
+   dim             = 1,
+   n               = 9,
+   na.impute       = FALSE,
+   title           = sprintf('X%d', dim),
+   file            = NULL,
+   ...
+){
+   plot_projection_features(object,
+                            method         = 'pca',
+                            implementation = implementation,
+                            geom           = geom,
+                            fvars          = fvars,
+                            dim            = dim,
+                            n              = n,
+                            na.impute      = na.impute,
+                            title          = title,
+                            file           = file,
+                            ...)
 }
 
 #' @rdname plot_projection_features
 #' @export
-plot_sma_features <- function(object, ...){
-   plot_projection_features(object, 'sma', ...)
+plot_sma_features <- function(object,
+   implementation  = NULL,
+   geom            = default_feature_plots(object)[1],
+   fvars           = default_fvars(object),
+   dim             = 1,
+   n               = 9,
+   na.impute       = FALSE,
+   title           = sprintf('X%d', dim),
+   file            = NULL,
+   ...
+){
+   plot_projection_features(object,
+                            method         = 'sma',
+                            implementation = implementation,
+                            geom           = geom,
+                            fvars          = fvars,
+                            dim            = dim,
+                            n              = n,
+                            na.impute      = na.impute,
+                            title          = title,
+                            file           = file,
+                            ...)
 }
 
 #' @rdname plot_projection_features
 #' @export
-plot_lda_features <- function(object, ...){
-   plot_projection_features(object, 'lda', ...)
+plot_lda_features <- function(object,
+   implementation  = NULL,
+   geom            = default_feature_plots(object)[1],
+   fvars           = default_fvars(object),
+   dim             = 1,
+   n               = 9,
+   na.impute       = FALSE,
+   title           = sprintf('X%d', dim),
+   file            = NULL,
+   ...
+){
+   plot_projection_features(object,
+                            method         = 'lda',
+                            implementation = implementation,
+                            geom           = geom,
+                            fvars          = fvars,
+                            dim            = dim,
+                            n              = n,
+                            na.impute      = na.impute,
+                            title          = title,
+                            file           = file,
+                            ...)
 }
 
 #' @rdname plot_projection_features
 #' @export
-plot_pls_features <- function(object, ...){
-   plot_projection_features(object, 'pls', ...)
+plot_pls_features <- function(object,
+   implementation  = NULL,
+   geom            = default_feature_plots(object)[1],
+   fvars           = default_fvars(object),
+   dim             = 1,
+   n               = 9,
+   na.impute       = FALSE,
+   title           = sprintf('X%d', dim),
+   file            = NULL,
+   ...
+){
+   plot_projection_features(object,
+                            method         = 'pls',
+                            implementation = implementation,
+                            geom           = geom,
+                            fvars          = fvars,
+                            dim            = dim,
+                            n              = n,
+                            na.impute      = na.impute,
+                            title          = title,
+                            file           = file,
+                            ...)
+
 }

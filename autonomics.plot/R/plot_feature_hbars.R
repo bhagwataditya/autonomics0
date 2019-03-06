@@ -4,7 +4,7 @@ utils::globalVariables('.')
 #'
 #' Create bar plot of exprs(object). Annotate it with fvars. Color per 'color_var'. Print to 'file'
 #'
-#' @param object          \code{eSet} with \code{fvars} in fData.
+#' @param object            \code{SummarizedExperiment}
 #' @param fvars             fvars used to annotate in plot
 #' @param color_var         svar mapped to color
 #' @param color_values      color value vector (names = subgroups, contents = colours)
@@ -18,9 +18,6 @@ utils::globalVariables('.')
 #' @param legend.position   legend position
 #' @param x                 NULL. Generifies interface of plot_xxx functions.
 #' @param shape_var         NULL. Generifies interface of plot_xxx functions.
-#' @importFrom ggplot2      aes_string     coord_flip   facet_wrap    geom_bar   geom_hline   ggplot
-#' @importFrom ggplot2      theme_bw       theme        scale_alpha_discrete xlab
-#' @importFrom magrittr     %>%   %<>%
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
@@ -28,11 +25,12 @@ utils::globalVariables('.')
 #'    plot_feature_hbars(small_eset)
 #'    plot_feature_hbars(small_eset, fvars = 'Gene names')
 #' }
+#' @importFrom magrittr  %>%  %<>%
 #' @export
 plot_feature_hbars <- function(object,
   fvars           = default_fvars(object),
-  color_var       = autonomics.plot::default_color_var(object),
-  color_values    = autonomics.plot::default_color_values(object, color_var),
+  color_var       = default_color_var(object),
+  color_values    = default_color_values(object, color_var),
   facet_def       = '~ sample',
   alpha_var       = NULL,
   file            = NULL,
@@ -93,9 +91,9 @@ plot_feature_hbars <- function(object,
   # Take care of alpha transparancy
   if (!is.null(alpha_var)){
     if (all(plotDF[[alpha_var]] == TRUE)){
-       myPlot <- myPlot + scale_alpha_discrete(range = c(1,1), guide = FALSE)        # If all subgroups are selected, none should be faded out!
+       myPlot <- myPlot + ggplot2::scale_alpha_discrete(range = c(1,1), guide = FALSE)        # If all subgroups are selected, none should be faded out!
     } else {
-       myPlot <- myPlot + scale_alpha_discrete(range = c(0.4, 1), guide = FALSE)
+       myPlot <- myPlot + ggplot2::scale_alpha_discrete(range = c(0.4, 1), guide = FALSE)
     }
   }
 

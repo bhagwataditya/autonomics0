@@ -5,14 +5,14 @@
 \title{Plot feature bars}
 \usage{
 plot_feature_hbars(object, fvars = default_fvars(object),
-  color_var = autonomics.plot::default_color_var(object),
-  color_values = autonomics.plot::default_color_values(object,
-  color_var), facet_def = "~ sample", alpha_var = NULL, file = NULL,
+  color_var = default_color_var(object),
+  color_values = default_color_values(object, color_var),
+  facet_def = "~ sample", alpha_var = NULL, file = NULL,
   width = NULL, height = NULL, xlab = NULL, title = "",
   legend.position = "right", x = NULL, shape_var = NULL)
 }
 \arguments{
-\item{object}{\code{eSet} with \code{fvars} in fData.}
+\item{object}{\code{SummarizedExperiment}}
 
 \item{fvars}{fvars used to annotate in plot}
 

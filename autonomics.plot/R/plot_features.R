@@ -6,9 +6,9 @@
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_features('point') %>% ggplot2::ggplot_build()
-#'    b %>% autonomics.plot::gg_nrow()
-#'    b %>% autonomics.plot::gg_ncol()
+#'    b <- object %>% plot_features('point') %>% ggplot2::ggplot_build()
+#'    b %>% gg_nrow()
+#'    b %>% gg_ncol()
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -42,8 +42,8 @@ gg_ncol <- function(b){
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_features('point') %>% ggplot2::ggplot_build()
-#'    b %>% autonomics.plot::gg_xvalues()
+#'    b <- object %>% plot_features('point') %>% ggplot2::ggplot_build()
+#'    b %>% gg_xvalues()
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -65,8 +65,8 @@ gg_xvalues <- function(b){
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_features('point') %>% ggplot2::ggplot_build()
-#'    b %>% autonomics.plot::gg_xlabels()
+#'    b <- object %>% plot_features('point') %>% ggplot2::ggplot_build()
+#'    b %>% gg_xlabels()
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -84,12 +84,12 @@ gg_xlabels <- function(b){
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_features('point') %>% ggplot2::ggplot_build()
-#'    b %>% autonomics.plot::gg_rowvars()
-#'    b %>% autonomics.plot::gg_colvars()
-#'    b %>% autonomics.plot::gg_nchar_rowvars()
-#'    b %>% autonomics.plot::gg_panelvars()
-#'    b %>% autonomics.plot::gg_panelvar_width()
+#'    b <- object %>% plot_features('point') %>% ggplot2::ggplot_build()
+#'    b %>% gg_rowvars()
+#'    b %>% gg_colvars()
+#'    b %>% gg_nchar_rowvars()
+#'    b %>% gg_panelvars()
+#'    b %>% gg_panelvar_width()
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -136,6 +136,7 @@ gg_panelvars <- function(b){
          setdiff(gg_colvars(b))
 }
 
+#' @rdname gg_rowvars
 #' @importFrom magrittr %>%
 #' @export
 gg_panelvar_width <- function(b){
@@ -153,16 +154,16 @@ gg_panelvar_width <- function(b){
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_features('point') %>%
+#'    b <- object %>% plot_features('point') %>%
 #'                    ggplot2::ggplot_build()
-#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'color')
-#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'x')
-#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'shape')
-#'    b <- object %>% autonomics.plot::plot_features('violin') %>%
+#'    b %>% gg_aesvar(aesthetic = 'color')
+#'    b %>% gg_aesvar(aesthetic = 'x')
+#'    b %>% gg_aesvar(aesthetic = 'shape')
+#'    b <- object %>% plot_features('violin') %>%
 #'                    ggplot2::ggplot_build()
-#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'color')
-#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'x')
-#'    b %>% autonomics.plot::gg_aesvar(aesthetic = 'shape')
+#'    b %>% gg_aesvar(aesthetic = 'color')
+#'    b %>% gg_aesvar(aesthetic = 'x')
+#'    b %>% gg_aesvar(aesthetic = 'shape')
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -190,11 +191,11 @@ gg_aesvar <- function(b, aesthetic){
 #' require(Biobase)
 #' if (require(autonomics.data)){
 #'    object <- autonomics.data::stemcomp.proteinratios %>% magrittr::extract(1:9, )
-#'    b <- object %>% autonomics.plot::plot_features('point') %>%
+#'    b <- object %>% plot_features('point') %>%
 #'                    ggplot2::ggplot_build()
-#'    b %>% autonomics.plot::gg_aeslevels(aesthetic = 'color')
-#'    b %>% autonomics.plot::gg_aeslevels(aesthetic = 'shape')
-#'    b %>% autonomics.plot::gg_aeslevels(aesthetic = 'x')
+#'    b %>% gg_aeslevels(aesthetic = 'color')
+#'    b %>% gg_aeslevels(aesthetic = 'shape')
+#'    b %>% gg_aeslevels(aesthetic = 'x')
 #' }
 #' @importFrom magrittr %>%
 #' @export
@@ -202,7 +203,7 @@ gg_aeslevels <- function(b, aesthetic){
    assertive.sets::assert_are_set_equal(names(b), c('data', 'layout', 'plot'))
    assertive.types::assert_is_a_string(aesthetic)
    aesthetic %<>% stringi::stri_replace_first_fixed('color', 'colour')
-   aes_var <- autonomics.plot::gg_aesvar(b, aesthetic)
+   aes_var <- gg_aesvar(b, aesthetic)
    b$plot %>% magrittr::extract2('data') %>%
               magrittr::extract2(aes_var) %>%
               unique() %>%
@@ -219,13 +220,6 @@ gg_aeslevels <- function(b, aesthetic){
 #'    object %>% plot_features('point')   %>% compute_feature_plot_dims()
 #'    object %>% plot_features('violin')  %>% compute_feature_plot_dims()
 #'    object %>% plot_features('boxplot') %>% compute_feature_plot_dims()
-#' }
-#' if (require(atkin.2014)){
-#'    object <- atkin.2014::soma %>% magrittr::extract(1:10, )
-#'    p <- object %>% plot_features('point', x = 'time', color_var = 'condition',
-#'                         facet_var = 'subject_id', line = TRUE, fvars = 'TargetFullName')
-#'    p %>% compute_feature_plot_dims()
-#'
 #' }
 #' @export
 compute_feature_plot_dims <- function(p){
@@ -370,16 +364,16 @@ feature_plot_labeller <- function(plot_df){
 #'
 #'    # STEM CELL COMPARISON
 #'    object <- autonomics.data::stemcomp.proteinratios %>% extract(1:4, )
-#'    object %>% autonomics.plot::plot_features(geom = 'violin')
-#'    object %>% autonomics.plot::plot_features(geom = 'point')
-#'    object %>% autonomics.plot::plot_features(geom = 'boxplot')
-#'    object %>% autonomics.plot::plot_features(
+#'    object %>% plot_features(geom = 'violin')
+#'    object %>% plot_features(geom = 'point')
+#'    object %>% plot_features(geom = 'boxplot')
+#'    object %>% plot_features(
 #'                  geom = 'boxplot',
 #'                  file = paste0(result_dir, '/stemcomp_boxes.pdf'))
 #'
 #'    # GLUTAMINASE
 #'    object <- autonomics.data::glutaminase[1:4, ]
-#'    object %>% autonomics.plot::plot_features(geom = 'boxplot', x = 'TIME_POINT')
+#'    object %>% plot_features(geom = 'boxplot', x = 'TIME_POINT')
 #' }
 #'
 #' @return file path
@@ -387,21 +381,21 @@ feature_plot_labeller <- function(plot_df){
 #' @export
 plot_features <- function(
    object,
-   geom            = autonomics.plot::default_feature_plots(object)[1],
-   x               = autonomics.plot::default_x(object, geom[1]),
-   color_var       = autonomics.plot::default_color_var(object),
-   color_values    = autonomics.plot::default_color_values(object, color_var),
-   shape_var       = autonomics.plot::default_shape_var(object),
-   group_var       = autonomics.plot::default_group_var(object),
-   txt_var         = autonomics.plot::default_txt_var(object),
+   geom            = default_feature_plots(object)[1],
+   x               = default_x(object, geom[1]),
+   color_var       = default_color_var(object),
+   color_values    = default_color_values(object, color_var),
+   shape_var       = default_shape_var(object),
+   group_var       = default_group_var(object),
+   txt_var         = default_txt_var(object),
    facet_var       = NULL,
    alpha_var       = NULL,
-   fvars           = autonomics.plot::default_fvars(object),
+   fvars           = default_fvars(object),
    title           = '',
    scales          = 'free_y',
    x_text_angle    = 90, # is better readable than e.g. 60 with many xvalues
-   line            = autonomics.plot::default_line(object),
-   zero_hline      = autonomics.plot::default_zero_hline(object),
+   line            = default_line(object),
+   zero_hline      = default_zero_hline(object),
    xlab            = NULL,
    ylab            = NULL,
    dodge_width     = 0,
@@ -432,7 +426,7 @@ plot_features <- function(
 
       # Assert
       autonomics.import::assert_is_valid_object(object)
-      assertive.sets::assert_is_subset(geom, autonomics.plot::FEATURE_PLOTS)
+      assertive.sets::assert_is_subset(geom, FEATURE_PLOTS)
       assertive.sets::assert_is_subset(x,         autonomics.import::svars(object))
       assertive.sets::assert_is_subset(color_var, autonomics.import::svars(object))
       if (!is.null(shape_var)){
@@ -448,7 +442,7 @@ plot_features <- function(
       }
 
       # Prepare plot df
-      plot_df <- autonomics.plot::create_feature_plot_df(object, fvars, verbose = verbose)
+      plot_df <- create_feature_plot_df(object, fvars, verbose = verbose)
       p <- ggplot2::ggplot(plot_df)
 
       # Add annotation and facet wrap
@@ -474,10 +468,10 @@ plot_features <- function(
       # Take care of alpha transparancy
       if (!is.null(alpha_var)){
          if (all(plot_df[[alpha_var]] == TRUE)){
-            p <- p + scale_alpha_discrete(range = c(1,1), guide = FALSE)        # If all subgroups are selected, none should be faded out!
+            p <- p + ggplot2::scale_alpha_discrete(range = c(1,1), guide = FALSE)        # If all subgroups are selected, none should be faded out!
          } else {
             transparent <- if (geom=='boxplot') 0.2 else 0.5
-            p <- p + scale_alpha_discrete(range = c(transparent, 1), guide = FALSE)
+            p <- p + ggplot2::scale_alpha_discrete(range = c(transparent, 1), guide = FALSE)
          }
       }
 

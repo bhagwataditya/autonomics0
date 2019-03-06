@@ -9,7 +9,7 @@ make_volcano_dt(object, ntop = 3)
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{ntop}{number of top features (either FC wise or p wise) to be annotated}
+\item{ntop}{number: how many top features (either FC wise or p wise) to be annotated}
 }
 \value{
 data.table
@@ -18,12 +18,9 @@ data.table
 Create volcano datatable
 }
 \examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
-   object \%>\% make_volcano_dt() \%>\% print()
-
-   object <- subramanian.2016::exiqon
+if (require(autonomics.data)){
+   require(magrittr)
+   object <- autonomics.data::stemcomp.proteinratios
    object \%>\% make_volcano_dt() \%>\% print()
 }
 }

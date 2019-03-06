@@ -14,21 +14,21 @@ plot_feature_heatmap_with_pheatmap(object, fvar = "feature_id",
 
 \item{fvar}{string}
 
-\item{filename}{character vector}
+\item{filename}{string}
 
-\item{width}{width  in inches}
+\item{width}{number: width  in inches}
 
-\item{height}{height in inches}
+\item{height}{number: height in inches}
 
-\item{cellheight}{heatmap cell height}
+\item{cellheight}{number: heatmap cell height}
 
-\item{fontsize}{fontsize}
+\item{fontsize}{number: fontsize}
 
-\item{treeheight_row}{height of tree for rows}
+\item{treeheight_row}{number: height of tree for rows}
 
-\item{treeheight_col}{height of tree for col}
+\item{treeheight_col}{number: height of tree for col}
 
-\item{cluster_cols}{clustering on cols}
+\item{cluster_cols}{TRUE or FALSE}
 
 \item{...}{passed to pheatmap::pheatmap}
 }
@@ -39,8 +39,8 @@ Plot feature heatmap
 if (require(autonomics.data)){
    require(magrittr)
    object <- autonomics.data::glutaminase[1:50, ]
-   object \%>\% autonomics.plot::plot_feature_heatmap_with_pheatmap(fvar='BIOCHEMICAL')
+   object \%>\% plot_feature_heatmap_with_pheatmap(fvar='BIOCHEMICAL')
    filename <- tempfile() \%T>\% message()
-   object \%>\% autonomics.plot::plot_feature_heatmap_with_pheatmap(filename = filename)
+   object \%>\% plot_feature_heatmap_with_pheatmap(filename = filename)
 }
 }

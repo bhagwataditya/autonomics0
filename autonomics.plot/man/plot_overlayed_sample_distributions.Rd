@@ -5,22 +5,26 @@
 \title{Plot overlayed sample distributions}
 \usage{
 plot_overlayed_sample_distributions(object,
-  color_var = autonomics.plot::default_color_var(object),
-  color_values = autonomics.plot::default_color_values(object,
-  color_var))
+  color_var = default_color_var(object),
+  color_values = default_color_values(object, color_var))
 }
 \arguments{
 \item{object}{SummarizedExperiment}
 
-\item{facet_var}{svar to facet on}
+\item{color_var}{string: svar mapped to color}
+
+\item{color_values}{string vector: values = colors, names = color_var levels}
+}
+\value{
+ggplot2 object
 }
 \description{
 Plot overlayed sample distributions
 }
 \examples{
 if (require(autonomics.data)){
+   require(magrittr)
    object <- autonomics.data::stemcomp.proteinratios
-   facet_var <- 'subgroup'
-   object \%>\% autonomics.plot::plot_overlayed_sample_distributions()
+   object \%>\% plot_overlayed_sample_distributions()
 }
 }

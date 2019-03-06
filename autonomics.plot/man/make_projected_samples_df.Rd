@@ -2,15 +2,15 @@
 % Please edit documentation in R/pca_samples.R
 \name{make_projected_samples_df}
 \alias{make_projected_samples_df}
-\title{Make datatable to plot PCA, LDA, or PLS sample scores}
+\title{Make datatable to plot PCA/PLS/LDA/SMA scores}
 \usage{
 make_projected_samples_df(projection, object, dims, color_var, shape_var,
   size_var, txt_var, split_var, facet_var, group_var)
 }
 \arguments{
-\item{projection}{output from pca, lda, or pls}
+\item{projection}{output from PCA/PLS/LDA/SMA}
 
-\item{object}{SummarizedExperiment, eSet, or eList}
+\item{object}{SummarizedExperiment}
 
 \item{dims}{PCA/LDA dimensions}
 
@@ -29,25 +29,35 @@ make_projected_samples_df(projection, object, dims, color_var, shape_var,
 \item{group_var}{svar mapped to group_var}
 }
 \description{
-Make datatable to plot PCA, LDA, or PLS sample scores
+Make datatable to plot PCA/PLS/LDA/SMA scores
 }
 \examples{
 if (require(autonomics.data)){
    require(magrittr)
    object <- autonomics.data::glutaminase
 
-   autonomics.explore::pca(object) \%>\%
-   autonomics.explore::make_projected_samples_df(
-      object, dims = c(1,2), color_var = 'subgroup',
-      shape_var = NULL, size_var = NULL, txt_var = NULL,
-      split_var = NULL, facet_var = NULL, group_var = NULL) \%>\%
-   print()
+   object \%>\% pca() \%>\%
+              make_projected_samples_df(object,
+                                        dims = c(1,2),
+                                        color_var = 'subgroup',
+                                        shape_var = NULL,
+                                        size_var  = NULL,
+                                        txt_var   = NULL,
+                                        split_var = NULL,
+                                        facet_var = NULL,
+                                        group_var = NULL) \%>\%
+              print()
 
-   autonomics.explore::pca(object, ndim=4) \%>\%
-   autonomics.explore::make_projected_samples_df(
-      object, dims = 3:4, color_var = 'subgroup',
-      shape_var = NULL, size_var = NULL, txt_var = NULL,
-      split_var = NULL, facet_var = NULL, group_var = NULL) \%>\%
-   print()
+   object \%>\% pca(ndim=4) \%>\%
+              make_projected_samples_df(object,
+                                        dims      = 3:4,
+                                        color_var = 'subgroup',
+                                        shape_var = NULL,
+                                        size_var  = NULL,
+                                        txt_var   = NULL,
+                                        split_var = NULL,
+                                        facet_var = NULL,
+                                        group_var = NULL) \%>\%
+              print()
 }
 }

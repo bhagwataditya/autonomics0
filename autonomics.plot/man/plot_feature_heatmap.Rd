@@ -13,7 +13,7 @@ plot_feature_heatmap(object, fvar = "feature_id", filename = NULL,
 
 \item{fvar}{string}
 
-\item{filename}{character vector}
+\item{filename}{string}
 
 \item{lowColor}{color for downregulation (Default color yellow)}
 
@@ -21,13 +21,13 @@ plot_feature_heatmap(object, fvar = "feature_id", filename = NULL,
 
 \item{midColor}{color for midpoint (Default color gray)}
 
-\item{width}{width  in inches (Default width 2 inches)}
+\item{width}{number: width  in inches (Default width 2 inches)}
 
-\item{height}{height in inches (Default height 4 inches)}
+\item{height}{number: height in inches (Default height 4 inches)}
 
-\item{fontsize}{font size for feature name (Default size 0 for not showing feature names)}
+\item{fontsize}{number: font size for feature name (Default size 0 for not showing feature names)}
 
-\item{...}{further parameters handed through to \code{\link[ggplot2]{theme}}}
+\item{...}{additional parameters handed through to \code{\link[ggplot2]{theme}}}
 }
 \description{
 Plot feature heatmap
@@ -36,8 +36,8 @@ Plot feature heatmap
 if (require(autonomics.data)){
    require(magrittr)
    object <- autonomics.data::glutaminase[1:10, ]
-   object \%>\% autonomics.plot::plot_feature_heatmap(fvar='BIOCHEMICAL')
+   object \%>\% plot_feature_heatmap(fvar='BIOCHEMICAL')
    filename <- tempfile() \%T>\% message()
-   object \%>\% autonomics.plot::plot_feature_heatmap(filename = filename)
+   object \%>\% plot_feature_heatmap(filename = filename)
 }
 }

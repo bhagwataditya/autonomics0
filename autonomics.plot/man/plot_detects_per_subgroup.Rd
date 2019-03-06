@@ -5,7 +5,7 @@
 \title{Plot detects}
 \usage{
 plot_detects_per_subgroup(object, svar = "subgroup",
-  color_values = autonomics.plot::default_color_values(object, svar))
+  color_values = default_color_values(object, svar))
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -26,15 +26,12 @@ if (require(autonomics.data)){
 
    # Before imputation
    object <-  'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
-               system.file(package = 'autonomics.data') \%>\%
-               autonomics.import::read_proteingroups()
-   object \%>\% plot_detects_per_subgroup()
+               system.file(package = 'autonomics.data')     \%>\%
+               autonomics.import::read_proteingroups()      \%>\%
+               autonomics.import::invert(subgroups = c('E_EM', 'E_BM', 'EM_BM'))
 
-   # After imputation
-   object <-  'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
-               system.file(package = 'autonomics.data') \%>\%
-               autonomics.import::read_proteingroups() \%>\%
-               autonomics::prepare_proteingroups(impute_consistent_nas = TRUE, plot = FALSE)
-   object \%>\% autonomics::plot_detects_per_subgroup()
+   object \%>\% plot_detects_per_subgroup()
+   object \%>\% autonomics.import::impute_consistent_nas() \%>\%
+              plot_detects_per_subgroup()
 }
 }
