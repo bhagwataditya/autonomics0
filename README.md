@@ -14,7 +14,6 @@ The **development** version is up-to-date, but not yet stable:
     remotes::install_github('bhagwataditya/autonomics/autonomics.annotate',   ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess', ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.plot',       ref = 'dev')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.explore',    ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.find',       ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.ora',        ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics',            ref = 'dev')
@@ -78,4 +77,3 @@ The **stable** branch is error-free, but now outdated:
                         fdata_rows = 11:401,    fdata_cols = 1:14,
                         sdata_rows = 1:10,      sdata_cols = 15:86,
                         transpose  = FALSE)
-                        
