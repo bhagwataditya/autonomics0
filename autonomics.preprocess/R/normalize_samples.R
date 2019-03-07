@@ -108,14 +108,14 @@ normalize_samples_on_svar <- function(object, normvar, result_dir = NULL){
 
    #   plotlist <- vector(mode = 'list', length = 4)
    #   plotlist[[1]] <- object %>% autonomics.plot::plot_sample_distributions(title = 'Original')
-   #   plotlist[[2]] <- object %>% autonomics.explore::plot_pca_samples(title = 'Original')
+   #   plotlist[[2]] <- object %>% autonomics.plot::plot_pca_samples(title = 'Original')
 
    autonomics.import::exprs(object) %<>%  magrittr::subtract(object[[normvar]] %>%
                                                              replicate(nrow(object), .) %>%
                                                              t())
    #    title <-  paste0('Normalized on ', normvar)
    #    plotlist[[3]] <- object %>% autonomics.plot::plot_sample_distributions(title = title)
-   #    plotlist[[4]] <- object %>% autonomics.explore::plot_pca_samples(title = title)
+   #    plotlist[[4]] <- object %>% autonomics.plot::plot_pca_samples(title = title)
    #    if (is.null(result_dir)){
    #       autonomics.plot::multiplot(plotlist = plotlist, cols = 2)
    #    } else {

@@ -98,7 +98,7 @@ preprocess_eset <- function(
    # Original
    if (plot || retain_plot_objects){
       plotargs <- commonargs %>% c(list(object = object, descr = 'original'))
-      plotout  <- do.call(autonomics.explore::plot_sample_distrs_n_pca, plotargs)
+      plotout  <- do.call(autonomics.plot::plot_sample_distrs_n_pca, plotargs)
       distrs   <- plotout %>% magrittr::extract(1)
       pcas     <- plotout %>% magrittr::extract(2)
    }
@@ -108,7 +108,7 @@ preprocess_eset <- function(
       object %<>% autonomics.preprocess::normalize_samples_on_svar(normalize_on_svar)
       if (plot || retain_plot_objects){
          plotargs <- commonargs %>% c(list(object = object, descr = paste0('normalize.', normalize_on_svar)))
-         plotout <- do.call(autonomics.explore::plot_sample_distrs_n_pca, plotargs)
+         plotout <- do.call(autonomics.plot::plot_sample_distrs_n_pca, plotargs)
          distrs %<>% c(plotout[1])
          pcas   %<>% c(plotout[2])
       }
@@ -120,7 +120,7 @@ preprocess_eset <- function(
                        invert_subgroups, channel_frac = channel_frac, subgroup_frac = subgroup_frac)
       if (plot || retain_plot_objects){
          plotargs <- commonargs %>% c(list(object = object, descr = 'invert.subgroups'))
-         plotout <- do.call(autonomics.explore::plot_sample_distrs_n_pca, plotargs)
+         plotout <- do.call(autonomics.plot::plot_sample_distrs_n_pca, plotargs)
          distrs %<>% c(plotout[1])
          pcas   %<>% c(plotout[2])
       }
@@ -132,7 +132,7 @@ preprocess_eset <- function(
       object %<>% autonomics.preprocess::mode_center()
       if (plot || retain_plot_objects){
          plotargs <- commonargs %>% c(list(object = object, descr = 'mode.center'))
-         plotout <- do.call(autonomics.explore::plot_sample_distrs_n_pca, plotargs)
+         plotout <- do.call(autonomics.plot::plot_sample_distrs_n_pca, plotargs)
          distrs %<>% c(plotout[1])
          pcas   %<>% c(plotout[2])
       }
@@ -147,7 +147,7 @@ preprocess_eset <- function(
       object %<>% autonomics.preprocess::feature_center(feature_center)
       if (plot || retain_plot_objects){
          plotargs <- commonargs %>% c(list(object = object, descr = 'feature.center'))
-         plotout <- do.call(autonomics.explore::plot_sample_distrs_n_pca, plotargs)
+         plotout <- do.call(autonomics.plot::plot_sample_distrs_n_pca, plotargs)
          distrs %<>% c(plotout[1])
          pcas   %<>% c(plotout[2])
       }
@@ -159,7 +159,7 @@ preprocess_eset <- function(
       object %<>% autonomics.preprocess::invnorm()
       if (plot || retain_plot_objects){
          plotargs <- commonargs %>% c(list(object = object, descr = 'normalize.within.each.sample'))
-         plotout <- do.call(autonomics.explore::plot_sample_distrs_n_pca, plotargs)
+         plotout <- do.call(autonomics.plot::plot_sample_distrs_n_pca, plotargs)
          distrs %<>% c(plotout[1])
          pcas   %<>% c(plotout[2])
       }
@@ -171,7 +171,7 @@ preprocess_eset <- function(
       object %<>% autonomics.preprocess::quantnorm_within_subgroups()
       if (plot || retain_plot_objects){
          plotargs <- commonargs %>% c(list(object = object, descr = 'normalize.between.subgroup.samples'))
-         plotout <- do.call(autonomics.explore::plot_sample_distrs_n_pca, plotargs)
+         plotout <- do.call(autonomics.plot::plot_sample_distrs_n_pca, plotargs)
          distrs %<>% c(plotout[1])
          pcas   %<>% c(plotout[2])
       }
@@ -183,7 +183,7 @@ preprocess_eset <- function(
       object %<>% autonomics.preprocess::quantnorm()
       if (plot || retain_plot_objects){
          plotargs <- commonargs %>% c(list(object = object, descr = 'normalize.between.all.samples'))
-         plotout <- do.call(autonomics.explore::plot_sample_distrs_n_pca, plotargs)
+         plotout <- do.call(autonomics.plot::plot_sample_distrs_n_pca, plotargs)
          distrs %<>% c(plotout[1])
          pcas   %<>% c(plotout[2])
       }

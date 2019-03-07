@@ -135,7 +135,7 @@ analyze_eset <- function(
    # PCA
    message('\tPerform PCA')
    if (do_pca){
-      object %<>% autonomics.explore::add_and_write_pca(result_dir = result_dir, ...)
+      object %<>% autonomics.plot::add_and_write_pca(result_dir = result_dir, ...)
    }
 
    # Analyze contrasts

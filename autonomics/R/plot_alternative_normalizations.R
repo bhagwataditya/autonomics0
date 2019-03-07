@@ -71,7 +71,7 @@ plot_preprocessing_alternatives <- function(
    names(esets)[length(esets)] <- sprintf('%s.center.inv.qgroups', cur_name)
 
    # Plot
-   pcas                 <- autonomics.explore::plot_pca_samples %>%
+   pcas                 <- autonomics.plots::plot_pca_samples %>%
                            mapply(object = esets, title = names(esets), MoreArgs = list(color_var = color_var), SIMPLIFY = FALSE)
    sample_distributions <- autonomics.plot::plot_sample_distributions %>%
                            mapply(object = esets, title = names(esets), MoreArgs = list(color_var = color_var), SIMPLIFY = FALSE)
