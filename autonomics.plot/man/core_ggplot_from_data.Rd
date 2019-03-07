@@ -23,43 +23,43 @@ core_ggplot_from_data(object, ..., listed_objects = list(),
 
 \item{MARGIN}{Whether the reference axis is \code{samples} (default) or \code{features}}
 
-\item{x}{variable (samples or features depending on \code{MARGIN}) mapped to x (\code{horizontal == FALSE}) or y axis (\code{horizontal == TRUE})}
+\item{x}{string: variable (samples or features depending on \code{MARGIN}) mapped to x (\code{horizontal == FALSE}) or y axis (\code{horizontal == TRUE})}
 
-\item{alpha_var}{variable (samples or features depending on \code{MARGIN}) mapped to alpha aesthetic}
+\item{alpha_var}{string: variable (samples or features depending on \code{MARGIN}) mapped to alpha aesthetic}
 
-\item{color_var}{variable (samples or features depending on \code{MARGIN}) mapped to color aesthetic}
+\item{color_var}{string: variable (samples or features depending on \code{MARGIN}) mapped to color aesthetic}
 
-\item{fill_var}{variable (samples or features depending on \code{MARGIN}) mapped to fill aesthetic}
+\item{fill_var}{string: variable (samples or features depending on \code{MARGIN}) mapped to fill aesthetic}
 
-\item{group_var}{variable (samples or features depending on \code{MARGIN}) mapped to group aesthetic}
+\item{group_var}{string: variable (samples or features depending on \code{MARGIN}) mapped to group aesthetic}
 
-\item{linetype_var}{variable (samples or features depending on \code{MARGIN}) mapped to linetype aesthetic}
+\item{linetype_var}{string: variable (samples or features depending on \code{MARGIN}) mapped to linetype aesthetic}
 
-\item{shape_var}{variable (samples or features depending on \code{MARGIN}) mapped to shape aesthetic}
+\item{shape_var}{string: variable (samples or features depending on \code{MARGIN}) mapped to shape aesthetic}
 
-\item{size_var}{variable (samples or features depending on \code{MARGIN}) mapped to size aesthetic}
+\item{size_var}{string: variable (samples or features depending on \code{MARGIN}) mapped to size aesthetic}
 
-\item{stroke_var}{variable (samples or features depending on \code{MARGIN}) mapped to stroke aesthetic}
+\item{stroke_var}{string: variable (samples or features depending on \code{MARGIN}) mapped to stroke aesthetic}
 
-\item{weigth_var}{variable (samples or features depending on \code{MARGIN}) mapped to weight aesthetic}
+\item{weigth_var}{string: variable (samples or features depending on \code{MARGIN}) mapped to weight aesthetic}
 
-\item{facet1_var}{variable (samples or features depending on \code{MARGIN}) for faceting (\code{ggplot2::facet_grid(facet1_var ~ .)})}
+\item{facet1_var}{string: variable (samples or features depending on \code{MARGIN}) for faceting (\code{ggplot2::facet_grid(facet1_var ~ .)})}
 
-\item{facet2_var}{variable (samples or features depending on \code{MARGIN}) for faceting (\code{ggplot2::facet_grid(. ~ facet2_var)})}
+\item{facet2_var}{string: variable (samples or features depending on \code{MARGIN}) for faceting (\code{ggplot2::facet_grid(. ~ facet2_var)})}
 
 \item{marked_ids}{vector of explicitly marked indexes in the non-\code{MARGIN} dimension (in \code{features} if \code{MARGIN == 'samples'} and vice versa)}
 
-\item{horizontal}{whether to lay the plot out horizontally (measurements on the x, sample names on the y axis)}
+\item{horizontal}{TRUE or FALSE: layout plot horizontally (measurements on the x, sample names on the y axis)?}
 
-\item{scales}{should Scales be fixed ("fixed", the default), free ("free"), or free in one dimension ("free_x", "free_y").}
+\item{scales}{"fixed" (default), "free", "free_x", or "free_y"}
 
 \item{facet_grid_labeller}{labeller (see \code{\link[ggplot2]{labellers}}) for facetting labels}
 
-\item{xlab}{label of y axis (character)}
+\item{xlab}{string: label of y axis}
 
-\item{ylab}{label of y axis (character)}
+\item{ylab}{string: label of y axis}
 
-\item{title}{title (character)}
+\item{title}{string: title}
 }
 \value{
 ggplot2 object
