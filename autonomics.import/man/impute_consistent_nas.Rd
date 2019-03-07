@@ -16,7 +16,7 @@ impute_consistent_nas(object, imputefun = function(x)
 
 \item{imputefun}{imputation function}
 
-\item{verbose}{logical}
+\item{verbose}{TRUE or FALSE}
 
 \item{svar}{string}
 }
@@ -28,11 +28,12 @@ Impute values missing in all (subgroup) samples.
 }
 \examples{
 require(magrittr)
-if (require(graumann.lfq)){
+if (require(autonomics.data)){
 
    # Read object
-   object <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') \%>\%
-             read_proteingroups()
+   object <- 'extdata/glutaminase/glutaminase.xlsx'     \%>\%
+              system.file(package = 'autonomics.data')  \%>\%
+              read_metabolon()
 
    # Common NA values - missing in all samples
    object \%>\% split_by_svar() \%>\%

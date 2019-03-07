@@ -52,14 +52,15 @@ impute_common_nas <- function(
 #' @param object     SummarizedExperiment
 #' @param imputefun  imputation function
 #' @param svar       string
-#' @param verbose    logical
+#' @param verbose    TRUE or FALSE
 #' @examples
 #' require(magrittr)
-#' if (require(graumann.lfq)){
+#' if (require(autonomics.data)){
 #'
 #'    # Read object
-#'    object <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') %>%
-#'              read_proteingroups()
+#'    object <- 'extdata/glutaminase/glutaminase.xlsx'     %>%
+#'               system.file(package = 'autonomics.data')  %>%
+#'               read_metabolon()
 #'
 #'    # Common NA values - missing in all samples
 #'    object %>% split_by_svar() %>%

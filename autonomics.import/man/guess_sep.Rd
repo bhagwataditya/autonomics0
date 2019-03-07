@@ -59,7 +59,4 @@ require(magrittr)
 
    if (require(autonomics.data))   autonomics.data::stemcomp.proteinratios \%>\%
                                    guess_sep()
-
-   if (require(graumann.lfq))      graumann.lfq::lfq.intensities \%>\%
-                                   guess_sep()
 }

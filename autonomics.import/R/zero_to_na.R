@@ -7,12 +7,6 @@
 #'
 #' # 0 -> NA (proteinGroups LFQ intensities)
 #' #----------------------------------------
-#'    if (require(graumann.lfq)){
-#'       object <- 'extdata/proteinGroups.txt'            %>%
-#'                  system.file(package = 'graumann.lfq') %>%
-#'                  read_proteingroups()
-#'       object %>% zero_to_na(verbose = TRUE)
-#'    }
 #'
 #' # NaN -> NA (proteinGroups ratios)
 #' #---------------------------------
@@ -25,13 +19,6 @@
 #'
 #' # -Inf -> NA (log2 transformed proteinGroups LFQ intensity)
 #' #----------------------------------------------------------
-#'    if (require(graumann.lfq)){
-#'       object <- 'extdata/proteinGroups.txt'            %>%
-#'                  system.file(package = 'graumann.lfq') %>%
-#'                  read_proteingroups()
-#'       object %<>% log2transform(verbose = TRUE)
-#'       object %>% minusinf_to_na(verbose = TRUE)
-#'    }
 #'
 #' # NA -> 0
 #' #--------

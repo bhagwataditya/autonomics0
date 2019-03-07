@@ -28,12 +28,8 @@ Read proteingroups
 \examples{
 require(magrittr)
 if (require(autonomics.data)){
-   file <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
+   file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' \%>\%
             system.file(package = 'autonomics.data')
-   file \%>\% read_proteingroups()
-}
-if (require(graumann.lfq)){
-   file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
    file \%>\% read_proteingroups()
 }
 }

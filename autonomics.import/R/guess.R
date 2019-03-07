@@ -25,9 +25,6 @@
 #'
 #'    if (require(autonomics.data))   autonomics.data::stemcomp.proteinratios %>%
 #'                                    guess_sep()
-#'
-#'    if (require(graumann.lfq))      graumann.lfq::lfq.intensities %>%
-#'                                    guess_sep()
 #' @export
 guess_sep <- function (x, ...) {
    UseMethod("guess_sep", x)
