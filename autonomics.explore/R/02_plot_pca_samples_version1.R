@@ -161,7 +161,7 @@ plot_projected_samples1 <- function(
    object %<>% autonomics.plot::validify_shape_values(shape_var)
 
    # Transform
-   object_list <- object %>% autonomics.import::split_on_svar(split_var)
+   object_list <- object %>% autonomics.import::split_by_svar(split_var)
    projection  <- mapply(autonomics.explore::project, 
                          object_list, 
                          MoreArgs = list(method = method, implementation = implementation,  na.impute = na.impute), 

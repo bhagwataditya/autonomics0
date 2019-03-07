@@ -1261,3 +1261,344 @@ add_pls <- function(object, ...){
 }
 
 
+#===================================================
+# PLOT SAMPLES AND FEATURES
+#===================================================
+
+
+#' Create graphics layout for mpa feature + sample plot
+#' @param geom feature plot (character)
+#' @return graphics layout matrix
+#' @importFrom magrittr %>%
+#' @export
+layout_sample_projections_and_features <- function(geom){
+   if (geom == 'hbar'){
+      rbind(c(2,2,2,2,2,2) %>% rep(2) %>% matrix(nrow = 2, byrow = TRUE),
+            c(0,1,1,1,0,0) %>% rep(3) %>% matrix(nrow = 3, byrow = TRUE),
+            c(3,3,3,3,3,3) %>% rep(2) %>% matrix(nrow = 2, byrow = TRUE)
+      )
+   } else {
+         rbind(c(rep(0,3), rep(1,6), rep(0,4)) %>% rep(4) %>% matrix(nrow = 4, byrow = TRUE),
+               c(rep(2,6), rep(0,1), rep(3,6)) %>% rep(7) %>% matrix(nrow = 7, byrow = TRUE))
+
+   }
+}
+
+#' Plot pca samples and features
+#'
+#' Plots pca sample and features results in a combined plot
+#'
+#' @param object         eset
+#' @param method         'pca', 'lda', or 'pls'
+#' @param implementation NULL or "package::function"
+#' @param dims           pc dimensions to plot
+#' @param na.impute      TRUE or FALSE
+#' @param geom           value in \code{\link[autonomics.plot]{FEATURE_PLOTS}}
+#' @param result_dir     NULL or result directory path
+#' @param x              svar mapped to x in feature plots
+#' @param color_var      svar mapped to color in sample and feature plots
+#' @param color_values   color vector (names = color_var levels, values = colors)
+#' @param shape_var      svar mapped to shape in sample and feature plots
+#' @param group_var      svar mapped to group in feature plots
+#' @param txt_var        svar mapped to txt in feature plots
+#' @param line           whether to connect points in feature plot with line (logical)
+#' @param n              no of features to be plotted
+#' @param ...            passed to plot_projected_samples_and_features
+#' @examples
+#' \dontrun{
+#'    if (require(autonomics.data)){
+#'
+#'       # STEM CELL COMPARISON
+#'         require(magrittr)
+#'         result_dir <- tempdir() %T>% message()
+#'         object <- autonomics.data::stemcomp.proteinratios
+#'         object %>% plot_pca_samples_and_features()
+#'         object %>% plot_pca_samples_and_features(geom = 'violin')
+#'         object %>% plot_pca_samples_and_features(geom = 'violin', na.impute = TRUE)
+#'         object %>% plot_pca_samples_and_features(result_dir = result_dir)
+#'         object %>% plot_pca_samples_and_features(result_dir = result_dir, geom = 'bar')
+#'
+#'      # GLUTAMINASE
+#'         object <- autonomics.data::glutaminase
+#'         object %>% plot_pca_samples_and_features(n=2)
+#'
+#'    }
+#' }
+#' @importFrom magrittr   %>%
+#' @export
+plot_projected_samples_and_features <- function(
+   object,
+   method,
+   implementation = NULL,
+   dims         = c(1,2),
+   na.impute    = FALSE,
+   geom = default_feature_plots(object)[1],
+   result_dir   = NULL,
+   x            = default_x(object, geom),
+   color_var    = default_color_var(object),
+   color_values = default_color_values(object, color_var),
+   shape_var    = NULL,
+   group_var    = default_group_var(object),
+   txt_var      = default_txt_var(object),
+   line         = default_line(object),
+   n            = 9
+){
+   # Check input args
+   autonomics.import::assert_is_valid_object(object)
+   if (ncol(object) < 3){
+      autonomics.support::cmessage('\tExit PCA: only %d samples', ncol(object))
+      return(invisible(NULL))
+   }
+   assertive.sets::assert_is_subset(geom, FEATURE_PLOTS)
+
+   # Plot
+   feature_plot_args <- list(
+      object          = object,
+      method          = method,
+      implementation  = implementation,
+      x               = x,
+      color_var       = color_var,
+      color_values    = color_values,
+      shape_var       = shape_var,
+      group_var       = group_var,
+      line            = line,
+      na.impute       = na.impute,
+      geom    = geom,
+      legend.position = 'none',
+      n               = n
+   )
+   plotlist <- list(
+      samples = plot_projected_samples(
+                   object, method = method, implementation = implementation, color_var = color_var, color_values = color_values,
+                   shape_var = shape_var, txt_var = txt_var, dims = dims, na.impute = na.impute),
+      features1 = plot_projection_features %>% do.call(c(feature_plot_args, list(dim = dims[1]))),
+      features2 = plot_projection_features %>% do.call(c(feature_plot_args, list(dim = dims[2])))
+   )
+
+   # Print
+   if (!is.null(result_dir)){
+      dir.create(sprintf('%s', result_dir, method), showWarnings = FALSE)
+      file_name <- sprintf('%s/%s%s%s_%s_%s.pdf',
+                           result_dir, method, dims[1], dims[2], ifelse(na.impute, 'all', 'common'), geom)
+      grDevices::pdf(file_name, width = 15, height = 12)
+   }
+   layout <- layout_sample_projections_and_features(geom)
+   multiplot(plotlist = plotlist, layout = layout)
+   if (!is.null(result_dir)){
+      grDevices::dev.off()
+   }
+
+}
+
+
+#' @rdname plot_projected_samples_and_features
+#' @export
+plot_pca_samples_and_features <- function(object, ...){
+   plot_projected_samples_and_features(object, method = 'pca', ...)
+}
+
+#' @rdname plot_projected_samples_and_features
+#' @export
+plot_sma_samples_and_features <- function(object, ...){
+   plot_projected_samples_and_features(object, method = 'sma', ...)
+}
+
+#' @rdname plot_projected_samples_and_features
+#' @export
+plot_lda_samples_and_features <- function(object, ...){
+   plot_projected_samples_and_features(object, method = 'lda', ...)
+}
+
+#' @rdname plot_projected_samples_and_features
+#' @export
+plot_pls_samples_and_features <- function(object, ...){
+   plot_projected_samples_and_features(object, method = 'pls', ...)
+}
+
+
+#========================================
+# ADD AND WRITE
+#========================================
+
+utils::globalVariables('.')
+
+#' Write pca/lda/pls/sma features
+#' @param object     SummarizedExperiment
+#' @param result_dir string: result dir
+#' @param method     string: 'pca', 'lda', 'pls', 'sma'
+#' @examples
+#' require(magrittr)
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    result_dir <- tempdir() %T>% message()
+#'    object %>% add_pca() %>%
+#'               write_projected_features(method = 'pca', result_dir = result_dir)
+#' }
+#' @importFrom magrittr   %>%
+#' @export
+write_projected_features <- function(object, result_dir, method){
+   pattern <- sprintf('^(%s)([0-9]+)', method)
+   projection_columns <- autonomics.import::fvars(object) %>%
+                         magrittr::extract(stringi::stri_detect_regex(., sprintf(pattern, method)))
+   for (pca_col in projection_columns){
+      which_features <- pca_col %>% stringi::stri_replace_first_regex(pattern, '$1')
+      dim            <- pca_col %>% stringi::stri_replace_first_regex(pattern, '$2') %>% as.numeric()
+      file_name <- sprintf('%s/%s/%s%s_features.txt', result_dir, method, method, dim, which_features)
+      idx <- order(autonomics.import::fdata(object)[[pca_col]], na.last = NA)
+      object %>% magrittr::extract(idx, ) %>% autonomics.import::write_features(file_name)
+   }
+}
+
+#' Run pca/pls/lda/sma and write results
+#' @param object         SummarizedExperiment
+#' @param method        'pca', 'pls', 'lda', or 'sma'
+#' @param implementation string
+#' @param result_dir     string: result dir
+#' @param geom           subset of \code{\link[autonomics.plot]{FEATURE_PLOTS}}
+#' @param x              string: svar mapped to x in feature plots
+#' @param color_var      string: svar mapped to color in feature plots
+#' @param color_values   named string vector: names = color_var levels, values = colors
+#' @param shape_var      string: svar mapped to shape in feature plots
+#' @param group_var      string: svar mapped to group in feature plots
+#' @param txt_var        string: svar mapped to txt   in feature plots
+#' @param line           TRUE or FALSE:  connect points in feature plots with a line?
+#' @param na.impute      TRUE or FALSE: impute missing values?
+#' @param ...            for backward compatibility
+#' @return SummarizedExperiment with pca results
+#' @examples
+#' if (require(autonomics.data)){
+#'
+#'    # STEM CELL COMPARISON
+#'    require(magrittr)
+#'    result_dir <- tempdir() %T>% message()
+#'    object <- autonomics.data::stemcomp.proteinratios
+#'    object %>% add_and_write_pca(result_dir = result_dir)
+#'
+#'    # GLUTAMINASE
+#'    object <- autonomics.data::glutaminase
+#'    object %>% add_and_write_pca(result_dir = result_dir)
+#' }
+#'
+#' @importFrom magrittr   %>%  %<>%
+#' @export
+add_and_write_projection <- function(
+   object,
+   method,
+   implementation= NULL,
+   result_dir,
+   geom          = default_feature_plots(object),
+   x             = default_x(object, geom),
+   color_var     = default_color_var(object),
+   color_values  = default_color_values(object, color_var),
+   shape_var     = default_shape_var(object),
+   group_var     = default_group_var(object),
+   txt_var       = default_txt_var(object),
+   line          = default_line(object),
+   na.impute     = FALSE
+){
+   # Check input args
+   autonomics.import::assert_is_valid_object(object)
+   if (ncol(object) < 3){
+      autonomics.support::cmessage('\tNo %s (only %d samples)', method, ncol(object))
+      return(object)
+   }
+
+   # Project, add to fdata, write to file
+   object %<>% add_projection(
+                  method         = method,
+                  implementation = implementation,
+                  na.impute      = na.impute)
+   object %>% write_projected_features(result_dir, method = method)
+
+   # Create sample + feature plots
+   plot_args <- list(object         = object,
+                     method         = method,
+                     implementation = implementation,
+                     result_dir     = result_dir,
+                     color_var      = color_var,
+                     color_values   = color_values,
+                     shape_var      = shape_var,
+                     group_var      = group_var,
+                     txt_var        = txt_var,
+                     line           = line,
+                     na.impute      = na.impute)
+   for (iplot in seq_along(geom)){
+      cur_plot_args <- plot_args %>% c(list(geom = geom[iplot], x = x[iplot]))
+      plot_projected_samples_and_features %>% do.call(cur_plot_args)
+   }
+
+   # Return
+   object
+}
+
+#' @rdname add_and_write_projection
+#' @export
+add_and_write_pca <- function(object, ...){
+   add_and_write_projection(object, method = 'pca', ...)
+}
+
+#' @rdname add_and_write_projection
+#' @export
+add_and_write_sma <- function(object, ...){
+   add_and_write_projection(object, method = 'sma', ...)
+}
+
+#' @rdname add_and_write_projection
+#' @export
+add_and_write_pls <- function(object, ...){
+   add_and_write_projection(object, method = 'pls', ...)
+}
+
+#' @rdname add_and_write_projection
+#' @export
+add_and_write_lda <- function(object, ...){
+   add_and_write_projection(object, method = 'lda', ...)
+}
+
+#======================================
+# SAMPLEDISTRS AND PCA
+#======================================
+
+#' Plot sample distributions and pca
+#' @param object              SummarizedExperiment
+#' @param descr               string: used as plot title and plot name
+#' @param color_var           string: svar mapped to color
+#' @param color_values        named string vector: names = color_var levels, values = colors
+#' @param shape_var           string: svar mapped to shape
+#' @param txt_var             string: svar mapped to txt
+#' @param displayed_features  number or string vector: features to be displayed in the sample distributions)
+#' @examples
+#' if (require(autonomics.data)){
+#'    # GLUTAMINASE
+#'    require(magrittr)
+#'    object <- autonomics.data::glutaminase
+#'    object %>% plot_sample_distrs_n_pca()
+#' }
+#' @return list(descr.distr = plot1, descr.pca = plot2)
+#' @importFrom magrittr   %>%
+#' @export
+plot_sample_distrs_n_pca <- function(
+   object,
+   descr = '',
+   color_var    = default_color_var(object),
+   color_values = default_color_values(object),
+   shape_var    = default_shape_var(object),
+   txt_var      = default_txt_var(object),
+   displayed_features = NULL
+){
+   plotlist <- vector(mode = 'list', length = 2) %>% magrittr::set_names(paste0(descr, c('.distr', '.pca')))
+   plotlist[[1]] <- object %>% magrittr::extract(, 1:min(25, ncol(.))) %>%
+                               plot_sample_distributions(
+                                    title              = descr,
+                                    color_var          = color_var,
+                                    color_values       = color_values,
+                                    displayed_features = displayed_features)
+
+   plotlist[[2]] <- object %>% plot_pca_samples(
+                                    title        = descr,
+                                    color_var    = color_var,
+                                    color_values = color_values,
+                                    shape_var    = shape_var,
+                                    txt_var      = txt_var)
+   plotlist
+}
