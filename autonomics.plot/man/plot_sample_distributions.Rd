@@ -49,7 +49,7 @@ if (require(autonomics.data)){
    object <- autonomics.data::stemcomp.proteinratios
 
    # Simple plot
-     object \%>\% plot_sample_distrsibutions()
+     object \%>\% plot_sample_distributions()
 
    # Same thing vertical
      object \%>\% plot_sample_distributions(horizontal = FALSE)

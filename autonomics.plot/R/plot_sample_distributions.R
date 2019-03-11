@@ -24,7 +24,7 @@
 #'    object <- autonomics.data::stemcomp.proteinratios
 #'
 #'    # Simple plot
-#'      object %>% plot_sample_distrsibutions()
+#'      object %>% plot_sample_distributions()
 #'
 #'    # Same thing vertical
 #'      object %>% plot_sample_distributions(horizontal = FALSE)
@@ -146,13 +146,185 @@ check_args_of_plot_sample_distributions_v1 <- function(object, x, facet_var, col
    }
 }
 
-#' Plot distribution across features for each sample
+#' Prepare plot datatable
+#' @param exprsmat exprs matrix (feature x sample)
+#' @param sdata    sample dataframe
+#' @return datatable
+#' @examples
+#' if (require(autonomics.data)){
 #'
-#' The distributions are plotted as a combination of a violin plot and a box plot.
-#' A separate violin is created for each value of 'x' (rows) and 'facet_var (column).
-#' The box is colored per value of color_var
+#'    # STEM CELL COMPARISON
+#'    require(magrittr)
+#'    prepare_plot_dt(autonomics.import::exprs(stemcomp.proteinratios),
+#'                    autonomics.import::sdata(stemcomp.proteinratios))
 #'
-#' @param object              SummarizedExperiment
+#'    # GLUTAMINASE
+#'    prepare_plot_dt(autonomics.import::exprs(glutaminase),
+#'                    autonomics.import::sdata(glutaminase))
+#'
+#' }
+#' @importFrom magrittr %>%
+#' @export
+
+prepare_plot_dt <- function(object){
+   UseMethod('prepare_plot_dt', object)
+}
+
+#' @rdname prepare_plot_dt
+#' @export
+prepare_plot_dt.matrix <- function(object, sdata){
+   data.table::data.table(feature_id = rownames(exprsmat), exprsmat)     %>%
+   data.table::melt(id.vars = 'feature_id', variable.name = 'sample_id') %>%
+   merge(sdata, by = 'sample_id', all.x=TRUE, sort = FALSE)
+}
+
+#' @rdname prepare_plot_dt
+#' @export
+prepare_plot_dt.SummarizedExperiment <- function(object){
+   prepare_plot.dt.matrix(
+      autonomics.import::exprs(object),
+      autonomics.import::sdata(object)
+   )
+}
+
+
+#=================================================================================================
+
+
+#' Plot sample densities
+#' @param object  matrix, SummarizedExperiment, or list of SummarizedExperiments
+#' @param sdata   dataframe
+#' @param color   string (varname). For a list object, an equidimensional stringvector (with varlevels) is also allowed.
+#' @param ...     passed to ggplot2::aes()
+#' @param facet   string (varname). For a list object, an equidimensional stringvector (with varlevels) is also allowed.
+#' @return ggplot2 object
+#' @examples
+#' if (require(autonomics.data)){
+#'
+#'    # STEM CELL COMPARISON
+#'    require(magrittr)
+#'    plot_sample_densities(stemcomp.proteinratios)
+#'    plot_sample_densities(object = autonomics.import::exprs(stemcomp.proteinratios),
+#'                          sdata  = autonomics.import::sdata(stemcomp.proteinratios))
+#'
+#'    # GLUTAMINASE
+#'    plot_sample_densities(glutaminase, color = 'EXPERIMENT', facet = c('CONCENTRATION', 'TIME_POINT'))
+#'    plot_sample_densities(object = autonomics.import::exprs(glutaminase),
+#'                          sdata  = autonomics.import::sdata(glutaminase))
+#'    plot_sample_densities(object = list(glutaminase %>% magrittr::extract(, 1:12),
+#'                                        glutaminase %>% magrittr::extract(, 13:ncol(.))),
+#'                          color = c('UT_h10', 'other'),
+#'                          facet = c('UT_h10', 'other'))
+#' }
+#' @export
+plot_sample_densities <- function(object, ...){
+   UseMethod('plot_sample_densities', object)
+}
+
+
+#' Get sample density aesthetic mappings
+#' @param plotdt  plot datable
+#' @param x       string
+#' @param group   string
+#' @param color   string
+#' @param ... passed to ggplot2::aes_string()
+#' @return
+#' @examples
+#' if (require(autonomics.data)){
+#'    aes_sample_densities(prepare_plot_dt(autonomics.import::exprs(glutaminase),
+#'                                         autonomics.import::sdata(glutaminase)))
+#' }
+#' @export
+aes_sample_densities <- function(
+   plotdt,
+   x     = 'value',
+   group = 'sample_id',
+   color = if ('subgroup' %in% names(plotdt)) 'subgroup' else 'sample_id',
+   ...
+){
+   ggplot2::aes_string(x=x, group=group, color=color, ...)
+}
+
+
+
+#' @rdname plot_sample_densities
+#' @export
+plot_sample_densities.matrix <- function(
+   object,
+   sdata,
+   mapping = ,
+   facet = NULL,
+   xlab  = NULL,
+   ylab  = NULL,
+   title = NULL
+){
+   assertive.sets::assert_is_subset(color, names(sdata))
+   if (!is.null(facet)) assertive.sets::assert_is_subset(facet, names(sdata))
+
+   p <- ggplot2::ggplot(data = prepare_plot_dt(object, sdata),
+                        mapping = mapping) +
+        ggplot2::theme_bw() +
+        ggplot2::geom_line(stat = 'density', na.rm = TRUE) # geom_lined prefered, since geom_density draws a horizontal line
+
+   if (!is.null(facet))                    p <- p + ggplot2::facet_wrap(facet)
+   if (length(unique(sdata[[color]]))>25)  p <- p + ggplot2::guides(color = "none")
+   p <- p + ggplot2::xlab(xlab) + ggplot2::ylab(ylab) + ggplot2::ggtitle(title)
+
+   p
+
+}
+
+
+#' @rdname plot_sample_densities
+#' @export
+plot_sample_densities.SummarizedExperiment <- function(
+   object,
+   color = if ('subgroup' %in% autonomics.import::svars(object)) 'subgroup' else 'sample_id',
+   ...,
+   facet = NULL
+){
+   plot_sample_densities.matrix(object = autonomics.import::exprs(object),
+                                sdata  = autonomics.import::sdata(object),
+                                color  = color,
+                                ...,
+                                facet  = facet)
+}
+
+#' @rdname plot_sample_densities
+#' @export
+plot_sample_densities.list <- function(
+   object,
+   color = 'sample_id',
+   ...,
+   facet = NULL
+){
+   # Assert
+      objectclass <- Reduce(assertive.base::assert_are_identical, vapply(object, class, character(1)))
+      nfeatures   <- Reduce(assertive.sets::assert_are_set_equal, vapply(object, nrow, integer(1)))
+      fnames      <- Reduce(assertive.sets::assert_are_set_equal, lapply(object, rownames))
+
+
+   # Add svars on the fly if required
+      for (var in c('color', 'facet', names(list(...)))){
+         if (length(get(var)) == length(object)){
+            object <- mapply(function(sumexp, value){sumexp[[var]] <- value; sumexp}, sumexp=object, value=get(var), SIMPLIFY=TRUE)
+            assign(var, var)
+         }
+      }
+
+   # Bind cols
+      object <- switch(objectclass, SummarizedExperiment = Reduce(SummarizedExperiment::cbind, object),
+                                    matrix               = Reduce(cbind, object))
+   # Plot
+      object %>% plot_sample_densities(color = color, ..., facet = facet)
+}
+
+#===================================================================
+
+
+#' Plot sample violins
+#'
+#' @param object              SummarizedExperiment or matrix
 #' @param x                   string: sample variable mapped to x axis
 #' @param color_var           string: sample variable mapped to color
 #' @param color_values        string vector: names = subgroups, values = colors
@@ -170,7 +342,7 @@ check_args_of_plot_sample_distributions_v1 <- function(object, x, facet_var, col
 #'    # ALL
 #'       require(magrittr)
 #'       object <- autonomics.data::ALL[, 1:30]
-#'       object %>% plot_sample_distributions_v1(x = 'cod', color_var = 'BT')
+#'       object %>% plot_sample_densities(x = 'cod', color_var = 'BT')
 #'
 #'       # faceting works, but is not useful here, as there is no block variable
 #'       object %>% plot_sample_distributions_v1(x = 'cod', facet_var = 'sex', color_var = 'BT')
@@ -180,12 +352,45 @@ check_args_of_plot_sample_distributions_v1 <- function(object, x, facet_var, col
 #'       object %>% plot_sample_distributions_v1()
 #'
 #'    # GLUTMINASE
-#'       object <- autonomics.data::glutaminase
+#'       x <- autonomics.data::glutaminase
+#'       x %<>% autonomics.import::exprs()
 #'       object %>% plot_sample_distributions_v1()
 #' }
 #' @importFrom  magrittr  %>%
 #' @export
-plot_sample_distributions_v1 <- function(
+plot_sample_violins <- function(object, ...) UseMethod('plot_sample_violins', object)
+
+
+
+#' @rdname plot_sample_densities
+#' @export
+plot_sample_violins.matrix <- function(object, horiz = TRUE, color_var = 'sample_id'){
+
+   plotDF <- prep_column_densities(object)
+   p <- ggplot2::ggplot(plotDF) +
+        ggplot2::theme_bw() +
+        ggplot2::guides(fill = FALSE, color = FALSE) +
+        ggplot2::geom_violin( ggplot2::aes_string(x = 'sample_id', y = 'value', fill = color_var),
+                              na.rm        = TRUE) +
+        ggplot2::geom_boxplot(ggplot2::aes_string(x= 'sample_id', y = 'value', color = color_var),
+                              fill         = 'white',
+                              width        = 0.1,
+                              outlier.size = 1.7,
+                              na.rm        = TRUE)
+   p <- p + ggplot2::xlab(NULL)
+   p <- if (horiz){p + ggplot2::coord_flip()
+        } else {   p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1))}
+
+}
+
+
+
+
+
+
+#' @rdname plot_sample_densities
+#' @export
+plot_sample_violins.SummarizedExperiment <- function(
    object,
    x                  =  NULL,
    color_var          =  default_color_var(object),
@@ -217,90 +422,47 @@ plot_sample_distributions_v1 <- function(
    }
 
    # Combine sample IDs & exprs and plot distributions
-   plotDF <- shape_for_plotting(object, x)
+   plotDF <- prep_column_densities(object)
 
-   # Add color info
-   if (!is.null(color_var)){
-      plotDF <- cbind(plotDF, color = autonomics.import::sdata(object)[[color_var]])
-   }
-   # Add faceting info
-   if (!is.null(facet_var)){
-      plotDF <- cbind(facet = autonomics.import::sdata(object)[[facet_var]], plotDF)
-   }
    # Draw plot
    p <- ggplot2::ggplot(plotDF) +
-        ggplot2::geom_violin(ggplot2::aes_string(x = 'x', y = 'value'), fill = 'gray', na.rm = TRUE)
-   p <- p + ggplot2::geom_boxplot(
-               ggplot2::aes_string(
-                  x = 'x',
-                  y = 'value',
-                  color = if(is.null(color_var)) NULL else 'color'),
-               fill = 'white',
-               width = 0.1,
-               outlier.size = 1.7,
-               na.rm = TRUE)
+        ggplot2::geom_violin( ggplot2::aes_string(x = 'x', y = 'value'), fill = 'gray', na.rm = TRUE) +
+        ggplot2::geom_boxplot(ggplot2::aes_string(x = 'x', y = 'value',  fill = 'white',
+                                                  color = if(is.null(color_var)) NULL else 'color'),
+                                                  width = 0.1,
+                                                  outlier.size = 1.7,
+                                                  na.rm = TRUE)
 
    # Add custom color info
-   if (!is.null(color_values)){
-      p <- p + ggplot2::scale_color_manual(values = color_values)
-   }
+   if (!is.null(color_values)) p <- p + ggplot2::scale_color_manual(values = color_values)
 
    # Add individually plotted features
    if(!is.null(displayed_features)){
-      filtered_object <- object %>%
-         magrittr::extract(displayed_features,) %>%
-         shape_for_plotting(x)
-      if(
-         displayed_features %>%
-           length() %>%
-           magrittr::equals(1))
-      {
-         p <- p +
-            ggplot2::geom_point(
-               data = filtered_object,
-               ggplot2::aes_string(x = 'x', y = 'value'))
+      filtered_object <- object %>% magrittr::extract(displayed_features,) %>% shape_for_plotting(x)
+      if(length(displayed_features) == 1){
+         p <- p + ggplot2::geom_point( data = filtered_object, ggplot2::aes_string(x = 'x', y = 'value'))
       } else {
-         p <- p +
-            ggplot2::geom_jitter(
-               data = filtered_object,
-               ggplot2::aes_string(x = 'x', y = 'value'))
+         p <- p + ggplot2::geom_jitter(data = filtered_object, ggplot2::aes_string(x = 'x', y = 'value'))
       }
    }
 
    # Add faceting info
-   if (!is.null(facet_var)){
-      p <- p + ggplot2::facet_grid(facet ~ .)
-   }
+   if (!is.null(facet_var)) p <- p + ggplot2::facet_grid(facet ~ .)
 
    # Add labels & title and return
-   p <- p +
-      ggplot2::ylab(ylab) +
-      ggplot2::xlab(xlab) +
-      ggplot2::ggtitle(title) +
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1))
+   p <- p + ggplot2::ylab(ylab) +
+            ggplot2::xlab(xlab) +
+            ggplot2::ggtitle(title) +
+            ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1))
 
-   if (!is.null(file)){
-     p  %>% print_sample_distributions(file)
-   }
+   if (!is.null(file)) p  %>% print_sample_distributions(file)
 
+   # Return
    return(p)
 }
 
-shape_for_plotting <- function(object, x){
-   xVec <- autonomics.support::factorify(autonomics.import::snames(object))
-   if (!is.null(x)) {
-      xVec <- object[[x]]
-   }
-   prepDF <- data.frame(x = xVec, t(autonomics.import::exprs(object)))
-   plotDF <- suppressMessages(
-      tidyr::gather(
-         prepDF,
-         "feature",
-         "value",
-         setdiff(colnames(prepDF), "x")))
-   plotDF %>%
-      return()
-}
+
+
 #' Print sample distributions
 #' @param ggplot_obj  ggplot object
 #' @param file        file to print to

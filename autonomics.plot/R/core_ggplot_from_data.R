@@ -39,8 +39,8 @@
 #' @author Johannes Graumann
 #' @examples
 #' require(magrittr)
-#' requireNamespace('ggplot2')
-#' requireNamespace('ggstance')
+#' #requireNamespace('ggplot2')
+#' #requireNamespace('ggstance')
 #' if (require(autonomics.data)){
 #'
 #'    # Just the basics ...
@@ -84,6 +84,15 @@
 #'                             facet1_var = c('C', 'D'),
 #'                             facet2_var = c('A', 'B'),
 #'                             horizontal = TRUE) +
+#'       ggstance::geom_boxploth()
+#'
+#'    # With marked_ids
+#'       core_ggplot_from_data(autonomics.data::ALL[, 1:15],
+#'                             autonomics.data::ALL[, 16:30],
+#'                             facet1_var = c('C', 'D'),
+#'                             facet2_var = c('A', 'B'),
+#'                             horizontal = TRUE,
+#'                             marked_ids = 10) +
 #'       ggstance::geom_boxploth()
 #' }
 #' @export
@@ -135,15 +144,13 @@ core_ggplot_from_data <- function(
 
    obj_list <- list(object) %>% c(list(...), listed_objects)
    obj_list %<>% magrittr::extract(!sapply(obj_list, is.null))
-
    n_obj <- obj_list %>% length()
-
-   object %>% assertive.types::assert_is_any_of(c('eSet', 'EList', 'SummarizedExperiment'))
+   assertive.types::assert_is_any_of(object, c('eSet', 'EList', 'SummarizedExperiment'))
 
    # Check all '...' objects and ensure compatibility with master 'object'
    if (n_obj > 1){
       for (i in utils::tail(obj_list, n = -1)){
-         i %>% assertive.types::assert_is_any_of(c('eSet', 'EList', 'SummarizedExperiment', 'matrix'))
+         assertive.types::assert_is_any_of(i, c('eSet', 'EList', 'SummarizedExperiment', 'matrix'))
          if(MARGIN == 'samples'){ assertive.base::assert_are_identical(ncol(object), ncol(i))
          } else {                 assertive.base::assert_are_identical(nrow(object), nrow(i))
          }
@@ -151,47 +158,40 @@ core_ggplot_from_data <- function(
    }
 
    # Extract data in 'MARGIN' dependent way
-   localData      <- switch(MARGIN, samples  = autonomics.import::sdata(object),
-                                    features = autonomics.import::fdata(object))
-   localVars      <- switch(MARGIN, samples  = autonomics.import::svars(object),
-                                    features = autonomics.import::fvars(object))
-   localNames     <- switch(MARGIN, samples  = autonomics.import::snames(object),
-                                    features = autonomics.import::fnames(object))
-   localIdsToMark <- switch(MARGIN, samples  = autonomics.import::fdata(object) %>% magrittr::extract2('feature_id'),
-                                    features = autonomics.import::sdata(object) %>% magrittr::extract2('sample_id'))
+   localData      <- switch(MARGIN, samples  = autonomics.import::sdata(object),  features = autonomics.import::fdata(object))
+   localVars      <- switch(MARGIN, samples  = autonomics.import::svars(object),  features = autonomics.import::fvars(object))
+   localNames     <- switch(MARGIN, samples  = autonomics.import::snames(object), features = autonomics.import::fnames(object))
+   localIdsToMark <- switch(MARGIN, samples  = autonomics.import::sdata(object) %>% magrittr::extract2('sample_id'),
+                                    features = autonomics.import::fdata(object) %>% magrittr::extract2('feature_id'))
 
    # Step through variables corresponding to ggplot2 aes definitions
    for(va in vars){
       va <- arg_list[[va]]
-      va %>% assertive.types::assert_is_character() %>%
-             assertive.sets::assert_are_disjoint_sets(all_special_vars) %>%
-             length() %>%
-             assertive.sets::assert_is_subset(c(1, n_obj))
+      assertive.types::assert_is_character(va)
+      assertive.sets::assert_are_disjoint_sets(va, all_special_vars)
+      assertive.sets::assert_is_subset(length(va), c(1, n_obj))
       if(length(va) == 1){
-         va %>% assertive.sets::assert_is_subset(localVars)
+         assertive.sets::assert_is_subset(va, localVars)
          object[[va]] <- factorize_numerics(object, va, localData)
       }
    }
 
    if(!is.null(marked_ids)){
-      marked_ids %>% assertive.numbers::assert_all_are_whole_numbers() %>%
-                     assertive.numbers::assert_all_are_in_range(lower = 0,
-                                                                upper = switch(MARGIN, samples  = nrow(object), features = ncol(object)))
+      assertive.numbers::assert_all_are_whole_numbers(marked_ids)
+      assertive.numbers::assert_all_are_in_range(marked_ids, lower = 0, upper = switch(MARGIN, samples  = nrow(object),
+                                                                                               features = ncol(object)))
       marked_ids <- localIdsToMark %>% magrittr::extract2(marked_ids)
    }
 
-   horizontal %>% assertive.types::assert_is_a_bool()
-
-   facet_grid_labeller %>% assertive.types::assert_is_a_string() %>%
-                           assertive.strings::assert_all_are_matching_regex('^label_') %>%
-                           exists(where=asNamespace('ggplot2'), mode='function') %>%
-                           assertive.base::assert_all_are_true()
-
+   assertive.types::assert_is_a_bool(horizontal)
+   assertive.types::assert_is_a_string(facet_grid_labeller)
+   assertive.strings::assert_all_are_matching_regex(facet_grid_labeller, '^label_')
+   assertive.base::assert_all_are_true(exists(facet_grid_labeller, where=asNamespace('ggplot2'), mode='function'))
    scales %<>% match.arg(choices = c('fixed', 'free', 'free_x', 'free_y'), several.ok = FALSE)
 
-   if (!is.null(xlab))  xlab  %>% assertive.types::assert_is_a_string()
-   if (!is.null(ylab))  ylab  %>% assertive.types::assert_is_a_string()
-   if (!is.null(title)) title %>% assertive.types::assert_is_a_string()
+   if (!is.null(xlab))  assertive.types::assert_is_a_string(xlab)
+   if (!is.null(ylab))  assertive.types::assert_is_a_string(ylab)
+   if (!is.null(title)) assertive.types::assert_is_a_string(title)
 
 # Combine and shape the data ----------------------------------------------
    # Extract names
@@ -243,18 +243,18 @@ core_ggplot_from_data <- function(
 
 # Generate basic plot object ----------------------------------------------
    p <- ggplot2::ggplot(plotDF,
-                 ggplot2::aes_string(
-                    x        = ifelse(horizontal, 'value_plotvar', 'x_plotvar'    ),
-                    y        = ifelse(horizontal, 'x_plotvar',     'value_plotvar'),
-                    alpha    = if('alpha_var'    %in% vars) 'alpha_plotvar'     else  NULL,
-                    color    = if('color_var'    %in% vars) 'color_plotvar'     else  NULL,
-                    fill     = if('fill_var'     %in% vars) 'fill_plotvar'      else  NULL,
-                    group    = if('group_var'    %in% vars) 'group_plotvar'     else  NULL,
-                    linetype = if('linetype_var' %in% vars) 'linetype_plotvar'  else  NULL,
-                    shape    = if('shape_var'    %in% vars) 'shape_plotvar'     else  NULL,
-                    size     = if('size_var'     %in% vars) 'size_plotvar'      else  NULL,
-                    stroke   = if('stroke_var'   %in% vars) 'stroke_plotvar'    else  NULL,
-                    weight   = if('stroke_var'   %in% vars) 'stroke_plotvar'    else  NULL))
+                        ggplot2::aes_string(
+                           x        = ifelse(horizontal, 'value_plotvar', 'x_plotvar'    ),
+                           y        = ifelse(horizontal, 'x_plotvar',     'value_plotvar'),
+                           alpha    = if('alpha_var'    %in% vars) 'alpha_plotvar'     else  NULL,
+                           color    = if('color_var'    %in% vars) 'color_plotvar'     else  NULL,
+                           fill     = if('fill_var'     %in% vars) 'fill_plotvar'      else  NULL,
+                           group    = if('group_var'    %in% vars) 'group_plotvar'     else  NULL,
+                           linetype = if('linetype_var' %in% vars) 'linetype_plotvar'  else  NULL,
+                           shape    = if('shape_var'    %in% vars) 'shape_plotvar'     else  NULL,
+                           size     = if('size_var'     %in% vars) 'size_plotvar'      else  NULL,
+                           stroke   = if('stroke_var'   %in% vars) 'stroke_plotvar'    else  NULL,
+                           weight   = if('stroke_var'   %in% vars) 'stroke_plotvar'    else  NULL))
 
    # Add faceting info
    if (c('facet1_var', 'facet2_var') %>%
@@ -284,7 +284,8 @@ core_ggplot_from_data <- function(
                           weight   = ifelse('weight_var'   %in% vars && length(arg_list[['weight_var']])   == 1, arg_list[['weight_var']],   ''))
 
    if(!horizontal) p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1))
-   p %>% return()
+   p <- p + ggplot2::theme_set(ggplot2::theme_bw())
+   return(p)
 }
 
 utils::globalVariables(c('feature_plotvar'))
@@ -292,5 +293,5 @@ utils::globalVariables(c('feature_plotvar'))
 factorize_numerics <- function(object, var, localData){
    retr_var <- localData %>% magrittr::extract2(var)
    if(is.numeric(retr_var)) retr_var %<>% as.character() %>% factor()
-   retr_var %>% return()
+   return(retr_var)
 }

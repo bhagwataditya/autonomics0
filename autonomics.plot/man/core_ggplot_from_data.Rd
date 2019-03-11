@@ -83,8 +83,8 @@ Annotation is fetched from the (master)\code{object} and used on all.
 }
 \examples{
 require(magrittr)
-requireNamespace('ggplot2')
-requireNamespace('ggstance')
+#requireNamespace('ggplot2')
+#requireNamespace('ggstance')
 if (require(autonomics.data)){
 
    # Just the basics ...
@@ -128,6 +128,15 @@ if (require(autonomics.data)){
                             facet1_var = c('C', 'D'),
                             facet2_var = c('A', 'B'),
                             horizontal = TRUE) +
+      ggstance::geom_boxploth()
+
+   # With marked_ids
+      core_ggplot_from_data(autonomics.data::ALL[, 1:15],
+                            autonomics.data::ALL[, 16:30],
+                            facet1_var = c('C', 'D'),
+                            facet2_var = c('A', 'B'),
+                            horizontal = TRUE,
+                            marked_ids = 10) +
       ggstance::geom_boxploth()
 }
 }
