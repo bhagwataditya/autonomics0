@@ -155,33 +155,34 @@ check_args_of_plot_sample_distributions_v1 <- function(object, x, facet_var, col
 #'
 #'    # STEM CELL COMPARISON
 #'    require(magrittr)
+#'    prepare_plot_dt(stemcomp.proteinratios)
 #'    prepare_plot_dt(autonomics.import::exprs(stemcomp.proteinratios),
 #'                    autonomics.import::sdata(stemcomp.proteinratios))
 #'
 #'    # GLUTAMINASE
+#'    prepare_plot_dt(glutaminase)
 #'    prepare_plot_dt(autonomics.import::exprs(glutaminase),
 #'                    autonomics.import::sdata(glutaminase))
 #'
 #' }
 #' @importFrom magrittr %>%
 #' @export
-
-prepare_plot_dt <- function(object){
+prepare_plot_dt <- function(object, ...){
    UseMethod('prepare_plot_dt', object)
 }
 
 #' @rdname prepare_plot_dt
 #' @export
-prepare_plot_dt.matrix <- function(object, sdata){
-   data.table::data.table(feature_id = rownames(exprsmat), exprsmat)     %>%
+prepare_plot_dt.matrix <- function(object, sdata, ...){
+   data.table::data.table(feature_id = rownames(object), object)     %>%
    data.table::melt(id.vars = 'feature_id', variable.name = 'sample_id') %>%
    merge(sdata, by = 'sample_id', all.x=TRUE, sort = FALSE)
 }
 
 #' @rdname prepare_plot_dt
 #' @export
-prepare_plot_dt.SummarizedExperiment <- function(object){
-   prepare_plot.dt.matrix(
+prepare_plot_dt.SummarizedExperiment <- function(object, ...){
+   prepare_plot_dt.matrix(
       autonomics.import::exprs(object),
       autonomics.import::sdata(object)
    )
@@ -231,11 +232,11 @@ plot_sample_densities <- function(object, ...){
 #' @return
 #' @examples
 #' if (require(autonomics.data)){
-#'    aes_sample_densities(prepare_plot_dt(autonomics.import::exprs(glutaminase),
-#'                                         autonomics.import::sdata(glutaminase)))
+#'    sample_density_aes(prepare_plot_dt(autonomics.import::exprs(glutaminase),
+#'                                       autonomics.import::sdata(glutaminase)))
 #' }
 #' @export
-aes_sample_densities <- function(
+sample_density_aes <- function(
    plotdt,
    x     = 'value',
    group = 'sample_id',
