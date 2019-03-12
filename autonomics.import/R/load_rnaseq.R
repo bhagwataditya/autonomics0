@@ -1,14 +1,14 @@
 #download_gtf
 release_to_build <- function(release, organism){
-  if        (organism == 'Homo sapiens'){        if (release >= 76)  'GRCh38'   else 'GRCh37'
-  } else if (organism == 'Mus musculus'){        if (release >= 68)  'GRCm38'   else 'NCBIM37'
-  } else if (organism == 'Rattus norvegicus'){   if (release >= 80)  'Rnor_6.0' else 'Rnor_5.0'
-  }
+  if        (organism == 'Homo sapiens'){          if (release >= 76)  'GRCh38'   else 'GRCh37'  }
+  else if   (organism == 'Mus musculus'){          if (release >= 68)  'GRCm38'   else 'NCBIM37'  }
+  else if   (organism == 'Rattus norvegicus'){     if (release >= 80)  'Rnor_6.0' else 'Rnor_5.0'  }
 }
 
+
 #' @examples
-#' make_gtf_link('Homo sapiens', 92)
-#' make_gtf_link('Mus musculus', 92)
+#' make_gtf_link(organism = 'Homo sapiens', release = 95)
+#' make_gtf_link(organism = 'Mus musculus', release = 95)
 #' @importFrom magrittr %>%
 #' @export
 make_gtf_link <- function(organism, release){
@@ -20,17 +20,18 @@ make_gtf_link <- function(organism, release){
           release)
 }
 
-#' Download gene annotations
+
+#' Download feature annotations
 #'
-#' Download gene annotations in GTF format
+#' Download feature annotations in GTF format
 #' @param organism    'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'
-#' @param release      GTF release. By default release 92 selected
+#' @param release      GTF release. By default release 95 selected
 #' @examples
-#' download_gtf('Homo sapiens')
-#' download_gtf('Mus musculus')
-#' download_gtf('Rattus norvegicus')
+#' download_gtf(organism = 'Homo sapiens')
+#' download_gtf(organism = 'Mus musculus')
+#' download_gtf(organism = 'Rattus norvegicus')
 #' @export
-download_gtf <- function(organism, release = 92){
+download_gtf <- function(organism, release = 95){
 
   # Assert validity
   assertive.sets::assert_is_subset(organism, c('Homo sapiens', 'Mus musculus', 'Rattus norvegicus'))
@@ -38,98 +39,123 @@ download_gtf <- function(organism, release = 92){
   # Satisfy CHECK
   . <- NULL
 
-  create_dir <- dir.create(sprintf("~/.autonomics/gtf/%s", stringi::stri_replace_first_fixed(organism,' ', '_')), recursive=TRUE, showWarnings = FALSE)
+  create_dir <- dir.create(sprintf("~/.autonomics/gtf/%s/release_%s", stringi::stri_replace_first_fixed(organism,' ', '_'), release), recursive=TRUE, showWarnings = FALSE)
   remote <- make_gtf_link(organism, release)
 
-  if(!file.exists(sprintf("~/.autonomics/gtf/%s/%s", stringi::stri_replace_first_fixed(organism,' ', '_'), basename(remote)))){
-
-        local <- sprintf("~/.autonomics/gtf/%s/%s", stringi::stri_replace_first_fixed(organism,' ', '_'), basename(remote))
-        utils::download.file(url = remote, destfile = local )
-        R.utils::gunzip(local,  remove = FALSE, overwrite = TRUE)
-        message(sprintf("GTF release %s downloaded under ~/.autonomics/gtf/%s", release, stringi::stri_replace_first_fixed(organism,' ', '_')))
+  message(sprintf("\t\tChecking for GTF release %s",release))
+  Sys.sleep(2)
+  if(!file.exists(sprintf("~/.autonomics/gtf/%s/release_%s/%s", stringi::stri_replace_first_fixed(organism,' ', '_'), release, basename(remote)))){
+          local <- sprintf("~/.autonomics/gtf/%s/release_%s/%s", stringi::stri_replace_first_fixed(organism,' ', '_'), release, basename(remote))
+          utils::download.file(url = remote, destfile = local )
+          R.utils::gunzip(local,  remove = FALSE, overwrite = TRUE)
+          gtf_file = list.files(sprintf("~/.autonomics/gtf/%s/release_%s", stringi::stri_replace_first_fixed(organism,' ', '_'), release) ,pattern = "\\.gtf$")
+          message(sprintf("\t\t%s downloaded under ~/.autonomics/gtf/%s/release_%s" ,gtf_file, stringi::stri_replace_first_fixed(organism,' ', '_'), release))
   }
   else{
-        message(sprintf("GTF release %s already exists under ~/.autonomics/gtf/%s", release, stringi::stri_replace_first_fixed(organism,' ', '_')))
+          message(sprintf("\t\t%s already downloaded under ~/.autonomics/gtf/%s/release_%s" ,gtf_file, stringi::stri_replace_first_fixed(organism,' ', '_'), release))
 }
-
 }
 
 
 #get feature annotations
 select_organism_database <- function(organism){
-  if          (organism == 'Homo sapiens'){           'hsapiens_gene_ensembl'
-  }   else if (organism == 'Mus musculus'){           'mmusculus_gene_ensembl'
-  }   else if (organism == 'Rattus norvegicus'){      'rnorvegicus_gene_ensembl'
-  }
+  if          (organism == 'Homo sapiens'){       'hsapiens_gene_ensembl'  }
+  else if     (organism == 'Mus musculus'){       'mmusculus_gene_ensembl'  }
+  else if     (organism == 'Rattus norvegicus'){  'rnorvegicus_gene_ensembl'  }
 }
 
-#' Get annotations for features
 
-#' Generates feature annotation text file
-#' @param organism    'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'
-#' @param select       Select attributes By default 'ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name','gene_biotype','entrezgene' selected
-#' @param filter       Filter on feature name or feature id or entrez id. By default all features are extracted.
-#' @importFrom magrittr %>%
+#' Select feature annotations from GTF file
+
+#' Select attributes from GTF file
+#' @param organism          'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'
+#' @param release           GTF release. By default release 95 selected
+#' @param filter            Filter on feature name or feature id. By default all features are extracted.
+#' @param return_value      Display feature annotation on console. By default FALSE
+#' @importFrom magrittr %>% %<>%
+#' @examples
+#' select_gtf_annotations(organism = 'Homo sapiens',
+#'                        release = 95,
+#'                        filter = 'ENSG00000198947'
+#'                        return_value = FALSE)
 #' @export
-get_gene_annotations <- function(
-  organism,
-  select = c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name','gene_biotype'),
-  #,'entrezgene'
-  filter = NULL
+select_gtf_annotations <- function(
+   organism,
+   release = 95,
+   filter = NULL,
+   return_value = FALSE
 ){
-  # Satisfy CHECK
-  . <- NULL
+   # Satisfy CHECK
+   . <- NULL
 
-  # Assert validity
-  assertive.sets::assert_is_subset(organism, c('Homo sapiens', 'Mus musculus', 'Rattus norvegicus'))
+   # Assert validity
+   assertive.sets::assert_is_subset(organism, c('Homo sapiens', 'Mus musculus', 'Rattus norvegicus'))
+
+   download_gtf(organism, release = release)
+
+   create_dir <- dir.create(sprintf("~/.autonomics/annotations/%s", stringi::stri_replace_first_fixed(organism,' ', '_')), recursive=TRUE, showWarnings = FALSE)
+
+   gtf_file = list.files(sprintf("~/.autonomics/gtf/%s/release_%s", stringi::stri_replace_first_fixed(organism,' ', '_'), release) ,pattern = "\\.gtf$")
+
+   Sys.sleep(2)
+   message("\t\tLoading GTF file")
+
+   #import gtf file
+   import_gtf <- rtracklayer::import(sprintf("~/.autonomics/gtf/%s/release_%s/%s", stringi::stri_replace_first_fixed(organism,' ', '_'), release, gtf_file))
 
 
-  message("get gene annotations for selected organism")
+   if(isTRUE(return_value)){
+                            if (is.null(filter)){
+                                                   feature_df <- import_gtf %>%
+                                                                 as.data.frame(import_gtf)
+                            }
+                            else {
+                                                   feature_df <- import_gtf %>%
+                                                                 as.data.frame(import_gtf) %>%
+                                                                 dplyr::filter(gene_id %in% c(filter) | gene_name %in% c(filter))
+                            }
 
-  create_dir <- dir.create(sprintf("~/.autonomics/annotations/%s", stringi::stri_replace_first_fixed(organism,' ', '_')), recursive=TRUE, showWarnings = FALSE)
-  ensembl = biomaRt::useMart("ensembl", dataset=select_organism_database(organism))
-  attributes = biomaRt::listAttributes(ensembl)
-  select_attributes = biomaRt::getBM(attributes = select, mart = ensembl)
+                            feature_df
+   }
+   else {
+         if (is.null(filter)){
+                              feature_df <- import_gtf %<>%
+                                            as.data.frame(import_gtf)
+     }
+        else {
+                                feature_df <- import_gtf %<>%
+                                              as.data.frame(import_gtf) %>%
+                                              dplyr::filter(gene_id %in% c(filter) | gene_name %in% c(filter))
+        }
 
-  if(is.null(filter)){
-    select_attributes %<>%
-      tidyr::unite(chr_and_start_pos, chromosome_name,start_position, sep = ":", remove = TRUE) %>%
-      tidyr::unite(locus, chr_and_start_pos,end_position, sep = "-", remove = TRUE)
-  }
-  else{
-    select_attributes %<>%
-      dplyr::filter(ensembl_gene_id %in% c(filter) | external_gene_name %in% c(filter) | entrezgene %in% c(filter)) %>%
-      tidyr::unite(chr_and_start_pos, chromosome_name,start_position, sep = ":", remove = TRUE) %>%
-      tidyr::unite(locus, chr_and_start_pos,end_position, sep = "-", remove = TRUE)
-  }
+        write.table(feature_df,sprintf("~/.autonomics/annotations/%s_release%s_feature_annotation.txt", stringi::stri_replace_first_fixed(organism,' ', '_'), release), quote=FALSE, sep="\t", row.names=FALSE)
+        Sys.sleep(2)
+        message(sprintf("\t\t%s_release%s_feature_annotation.txt written under ~/.autonomics/annotations", stringi::stri_replace_first_fixed(organism,' ', '_'), release))
 
-  colnames(select_attributes) <- c("gene_id", "locus", "gene_name", "biotype")
-  #,"entrezg"
-  write.table(select_attributes,sprintf("~/.autonomics/annotations/%s/features.txt",stringi::stri_replace_first_fixed(organism,' ', '_')), quote=FALSE, sep="\t", row.names=FALSE)
-  message("\n")
-  message(sprintf("features.txt written under ~/.autonomics/annotations/%s", stringi::stri_replace_first_fixed(organism,' ', '_')))
+     }
 }
 
-#get_gene_annotations('Mus musculus', filter="ENSG00000125787")
-#get_gene_annotations('Mus musculus')
 
 #' Get feature counts for all samples
 
 #' Generates feature counts text file
 #' @param dir_to_samples    Path to a directory where subdirectories with bam files for each sample exists
 #' @param organism          'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'
-#' @param release           GTF release. By default release 91 selected
+#' @param release           GTF release. By default release 95 selected
 #' @param paired_end        Paried end reads. FALSE by default
 #' @param ...               passed to Rsubread::featureCounts
-#' @importFrom magrittr %>%
+#' @importFrom magrittr %>% %<>%
 #' @examples
 #' download .zip file from "https://bitbucket.org/graumannlab/billing.stemcells/downloads/rnaseq_example_data.zip" and unzip it under ~/.autonomics/
-#' get_feature_counts("~/.autonomics/rnaseq_example_data/comparison",'Homo sapiens',92, TRUE)
+#' get_feature_counts("dir_to_samples = ~/.autonomics/rnaseq_example_data/comparison",
+#'                     organism = 'Homo sapiens',
+#'                     release = 95,
+#'                     paired_end = TRUE)
 #' @export
 get_feature_counts <- function(
   dir_to_samples,
   organism,
-  release = 92,
+  release = 95,
   paired_end = FALSE,
   ...
 ){
@@ -140,45 +166,108 @@ get_feature_counts <- function(
   dir_list <- dir()
   sample_names <- dir(dir_list[1:length(dir_list)], pattern=".bam$",full.names=T)
 
-  message(sprintf("Checking for GTF release %s",release))
-  message("\n")
-  download_gtf(organism, release = release)
+  #download gtf file and select feature annotation
+  feature_annotation <- select_gtf_annotations(organism = organism, release = release, return_value = TRUE)
 
-  gtf_file = list.files(sprintf("~/.autonomics/gtf/%s", stringi::stri_replace_first_fixed(organism,' ', '_')) ,pattern = "\\.gtf$")
-  message("\n")
-  message("Counting reads per feature for given samples")
+  #select gtf file
+  gtf_file = list.files(sprintf("~/.autonomics/gtf/%s/release_%s", stringi::stri_replace_first_fixed(organism,' ', '_'), release) ,pattern = "\\.gtf$")
 
+  Sys.sleep(2)
+  message("\t\tCounting reads per feature for given samples")
+  Sys.sleep(3)
   #count features for the list of samples
   feature_count <- sapply(sample_names, function(x)
-    Rsubread::featureCounts(files = x,
-                            annot.ext = path.expand(sprintf("~/.autonomics/gtf/%s/%s", stringi::stri_replace_first_fixed(organism,' ', '_'), gtf_file)),
-                            isGTFAnnotationFile = TRUE,
-                            isPairedEnd = paired_end,
-                            ...),
-                          simplify = FALSE,
-                          USE.NAMES = TRUE
+                                                   Rsubread::featureCounts(files = x,
+                                                   annot.ext = path.expand(sprintf("~/.autonomics/gtf/%s/release_%s/%s", stringi::stri_replace_first_fixed(organism,' ', '_'), release, gtf_file)),
+                                                   isGTFAnnotationFile = TRUE,
+                                                   isPairedEnd = paired_end,
+                                                   ...),
+                                                simplify = FALSE,
+                                                USE.NAMES = TRUE
   )
 
   #convert list to dataframe
-  feature_counts <- feature_count %>%
-                   lapply(function(x) x$counts) %>%
-                   do.call(cbind, .) %>%
-                   magrittr::set_colnames(stringi::stri_replace_all_regex(names(feature_count),'/.*bam$', ''))
+  feature_count %<>%
+                    lapply(function(x) x$counts) %>%
+                                       do.call(cbind, .) %>%
+                                       magrittr::set_colnames(stringi::stri_replace_all_regex(names(feature_count),'/.*bam$', ''))
 
 
-  message("Filtering feature counts with >= 1 read")
+  message("\t\tFiltering feature counts with >= 1 read")
+  Sys.sleep(2)
+
   #filter rows with atleast 1 read
-  feature_counts <- feature_counts[which(rowSums(feature_counts) >= 1 ),]
+  feature_count <- feature_count[which(rowSums(feature_count) >= 1 ),]
+
+  message("\t\tAdding feature names to counts")
+  Sys.sleep(2)
+
+  #add gene names to feature_counts
+  select_feature_annotation_cols <- feature_annotation[feature_annotation$type == "gene",][c("gene_id", "gene_name")]
+  feature_count <- data.frame(gene_id=rownames(feature_count), feature_count)
+  feature_count <- merge(select_feature_annotation_cols,feature_count, by="gene_id")
 
   #create directory for saving gene_counts.txt file
-  create_dir <- dir.create("~/.autonomics/feature_count", recursive=TRUE, showWarnings = FALSE)
+  create_dir <- dir.create("~/.autonomics/counts", recursive=TRUE, showWarnings = FALSE)
 
-  write.table(feature_counts,"~/.autonomics/feature_count/gene_counts.txt", quote=FALSE, sep="\t", row.names = TRUE)
+  write.table(feature_count,"~/.autonomics/counts/feature_count.txt", quote=FALSE, sep="\t", row.names = FALSE)
 
-  message("gene_counts.txt file written under ~/.autonomics/feature_count/gene_counts.txt")
+  message("\t\tfeature_count.txt file written under ~/.autonomics/counts/")
 
 }
-#get_feature_counts("/Users/shh2026/Desktop/bam_file/",'Mus musculus', 91, TRUE)
+#get_feature_counts("/Users/shh2026/Desktop/bam_file/",'Mus musculus', 95, TRUE)
+
+
+
+
+
+# Get annotations for features
+# Generates feature annotation text file
+# @param organism    'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'
+# @param select       Select attributes By default 'ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name','gene_biotype','entrezgene' selected
+# @param filter       Filter on feature name or feature id or entrez id. By default all features are extracted.
+# @importFrom magrittr %>%
+# @export
+#get_gene_annotations <- function(
+#  organism,
+#  select = c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name','gene_biotype'),
+#,'entrezgene'
+#  filter = NULL
+#){
+# Satisfy CHECK
+#  . <- NULL
+
+# Assert validity
+#  assertive.sets::assert_is_subset(organism, c('Homo sapiens', 'Mus musculus', 'Rattus norvegicus'))
+
+
+#  message("get gene annotations for selected organism")
+
+#  create_dir <- dir.create(sprintf("~/.autonomics/annotations/%s", stringi::stri_replace_first_fixed(organism,' ', '_')), recursive=TRUE, showWarnings = FALSE)
+#  ensembl = biomaRt::useMart("ensembl", dataset=select_organism_database(organism))
+#  attributes = biomaRt::listAttributes(ensembl)
+#  select_attributes = biomaRt::getBM(attributes = select, mart = ensembl)
+
+# if(is.null(filter)){
+#    select_attributes %<>%
+#      tidyr::unite(chr_and_start_pos, chromosome_name,start_position, sep = ":", remove = TRUE) %>%
+#      tidyr::unite(locus, chr_and_start_pos,end_position, sep = "-", remove = TRUE)
+#  }
+#    select_attributes %<>%
+#      dplyr::filter(ensembl_gene_id %in% c(filter) | external_gene_name %in% c(filter) | entrezgene %in% c(filter)) %>%
+#      tidyr::unite(chr_and_start_pos, chromosome_name,start_position, sep = ":", remove = TRUE) %>%
+#      tidyr::unite(locus, chr_and_start_pos,end_position, sep = "-", remove = TRUE)
+#  }
+
+#  colnames(select_attributes) <- c("gene_id", "locus", "gene_name", "biotype")
+#,"entrezg"
+#  write.table(select_attributes,sprintf("~/.autonomics/annotations/%s/features.txt",stringi::stri_replace_first_fixed(organism,' ', '_')), quote=FALSE, sep="\t", row.names=FALSE)
+#  message("\n")
+#  message(sprintf("features.txt written under ~/.autonomics/annotations/%s", stringi::stri_replace_first_fixed(organism,' ', '_')))
+#}
+
+#get_gene_annotations('Mus musculus', filter="ENSG00000125787")
+#get_gene_annotations('Mus musculus')
 
 
 #create sample design
