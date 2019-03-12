@@ -2,14 +2,20 @@
 % Please edit documentation in R/plot_sample_distributions.R
 \name{prepare_plot_dt}
 \alias{prepare_plot_dt}
+\alias{prepare_plot_dt.matrix}
+\alias{prepare_plot_dt.SummarizedExperiment}
 \title{Prepare plot datatable}
 \usage{
-prepare_plot_dt(exprsmat, sdata)
+prepare_plot_dt(object, ...)
+
+\method{prepare_plot_dt}{matrix}(object, sdata, ...)
+
+\method{prepare_plot_dt}{SummarizedExperiment}(object, ...)
 }
 \arguments{
-\item{exprsmat}{exprs matrix (feature x sample)}
-
 \item{sdata}{sample dataframe}
+
+\item{exprsmat}{exprs matrix (feature x sample)}
 }
 \value{
 datatable
@@ -22,10 +28,12 @@ if (require(autonomics.data)){
 
    # STEM CELL COMPARISON
    require(magrittr)
+   prepare_plot_dt(stemcomp.proteinratios)
    prepare_plot_dt(autonomics.import::exprs(stemcomp.proteinratios),
                    autonomics.import::sdata(stemcomp.proteinratios))
 
    # GLUTAMINASE
+   prepare_plot_dt(glutaminase)
    prepare_plot_dt(autonomics.import::exprs(glutaminase),
                    autonomics.import::sdata(glutaminase))
 

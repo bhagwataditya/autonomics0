@@ -11,16 +11,14 @@
 \usage{
 plot_sample_densities(object, ...)
 
-\method{plot_sample_densities}{matrix}(object, sdata, color = if
-  ("subgroup" \%in\% names(sdata)) "subgroup" else "sample_id", ...,
-  facet = NULL, xlab = NULL, ylab = NULL, title = NULL)
+\method{plot_sample_densities}{matrix}(object, sdata, x = "value",
+  group = "sample_id", color = if ("subgroup" \%in\% names(sdata))
+  "subgroup" else "sample_id", ..., facet = NULL, xlab = "value",
+  ylab = "density", title = NULL)
 
-\method{plot_sample_densities}{SummarizedExperiment}(object, color = if
-  ("subgroup" \%in\% autonomics.import::svars(object)) "subgroup" else
-  "sample_id", ..., facet = NULL)
+\method{plot_sample_densities}{SummarizedExperiment}(object, ...)
 
-\method{plot_sample_densities}{list}(object, color = "sample_id", ...,
-  facet = NULL)
+\method{plot_sample_densities}{list}(object, sdata, ...)
 
 \method{plot_sample_violins}{matrix}(object, horiz = TRUE,
   color_var = "sample_id")
@@ -36,13 +34,23 @@ plot_sample_densities(object, ...)
 \arguments{
 \item{object}{matrix, SummarizedExperiment, or list of SummarizedExperiments}
 
-\item{...}{passed to ggplot2::aes()}
+\item{...}{ggplot2 aesthetics or parameters}
 
 \item{sdata}{dataframe}
 
-\item{color}{string (varname). For a list object, an equidimensional stringvector (with varlevels) is also allowed.}
+\item{x}{string: svar mapped to x}
 
-\item{facet}{string (varname). For a list object, an equidimensional stringvector (with varlevels) is also allowed.}
+\item{group}{string: svar mapped to group}
+
+\item{color}{string: svar mapped to color}
+
+\item{facet}{string: svar mapped to facets}
+
+\item{xlab}{string}
+
+\item{ylab}{string}
+
+\item{title}{string}
 }
 \value{
 ggplot2 object

@@ -193,11 +193,16 @@ prepare_plot_dt.SummarizedExperiment <- function(object, ...){
 
 
 #' Plot sample densities
-#' @param object  matrix, SummarizedExperiment, or list of SummarizedExperiments
-#' @param sdata   dataframe
-#' @param color   string (varname). For a list object, an equidimensional stringvector (with varlevels) is also allowed.
-#' @param ...     passed to ggplot2::aes()
-#' @param facet   string (varname). For a list object, an equidimensional stringvector (with varlevels) is also allowed.
+#' @param object    matrix, SummarizedExperiment, or list of SummarizedExperiments
+#' @param sdata     dataframe
+#' @param x         string: svar mapped to x
+#' @param group     string: svar mapped to group
+#' @param color     string: svar mapped to color
+#' @param facet     string: svar mapped to facets
+#' @param xlab      string
+#' @param ylab      string
+#' @param title     string
+#' @param ...       ggplot2 aesthetics or parameters
 #' @return ggplot2 object
 #' @examples
 #' if (require(autonomics.data)){
@@ -223,47 +228,28 @@ plot_sample_densities <- function(object, ...){
 }
 
 
-#' Get sample density aesthetic mappings
-#' @param plotdt  plot datable
-#' @param x       string
-#' @param group   string
-#' @param color   string
-#' @param ... passed to ggplot2::aes_string()
-#' @return
-#' @examples
-#' if (require(autonomics.data)){
-#'    sample_density_aes(prepare_plot_dt(autonomics.import::exprs(glutaminase),
-#'                                       autonomics.import::sdata(glutaminase)))
-#' }
-#' @export
-sample_density_aes <- function(
-   plotdt,
-   x     = 'value',
-   group = 'sample_id',
-   color = if ('subgroup' %in% names(plotdt)) 'subgroup' else 'sample_id',
-   ...
-){
-   ggplot2::aes_string(x=x, group=group, color=color, ...)
-}
-
-
-
 #' @rdname plot_sample_densities
 #' @export
 plot_sample_densities.matrix <- function(
    object,
    sdata,
-   mapping = ,
-   facet = NULL,
-   xlab  = NULL,
-   ylab  = NULL,
-   title = NULL
+   x      = 'value',
+   group  = 'sample_id',
+   color  = if ('subgroup' %in% names(sdata)) 'subgroup' else 'sample_id',
+   ...,
+   facet  = NULL,
+   xlab   = 'value',
+   ylab   = 'density',
+   title  = NULL
 ){
    assertive.sets::assert_is_subset(color, names(sdata))
    if (!is.null(facet)) assertive.sets::assert_is_subset(facet, names(sdata))
 
-   p <- ggplot2::ggplot(data = prepare_plot_dt(object, sdata),
-                        mapping = mapping) +
+   p <- ggplot2::ggplot(data    = prepare_plot_dt(object, sdata),
+                        mapping = ggplot2::aes_string(x     = x,
+                                                      group = group,
+                                                      color = color,
+                                                      ...)) +
         ggplot2::theme_bw() +
         ggplot2::geom_line(stat = 'density', na.rm = TRUE) # geom_lined prefered, since geom_density draws a horizontal line
 
@@ -280,44 +266,35 @@ plot_sample_densities.matrix <- function(
 #' @export
 plot_sample_densities.SummarizedExperiment <- function(
    object,
-   color = if ('subgroup' %in% autonomics.import::svars(object)) 'subgroup' else 'sample_id',
-   ...,
-   facet = NULL
+   ...
 ){
    plot_sample_densities.matrix(object = autonomics.import::exprs(object),
                                 sdata  = autonomics.import::sdata(object),
-                                color  = color,
-                                ...,
-                                facet  = facet)
+                                ...)
 }
+
 
 #' @rdname plot_sample_densities
 #' @export
 plot_sample_densities.list <- function(
    object,
-   color = 'sample_id',
-   ...,
-   facet = NULL
+   sdata,
+   ...
 ){
    # Assert
-      objectclass <- Reduce(assertive.base::assert_are_identical, vapply(object, class, character(1)))
+      objectclass <- c(class(object[[1]]))
+      tmp <- Reduce(assertive.base::assert_are_identical, vapply(object, class, character(1)))
       nfeatures   <- Reduce(assertive.sets::assert_are_set_equal, vapply(object, nrow, integer(1)))
       fnames      <- Reduce(assertive.sets::assert_are_set_equal, lapply(object, rownames))
 
-
-   # Add svars on the fly if required
-      for (var in c('color', 'facet', names(list(...)))){
-         if (length(get(var)) == length(object)){
-            object <- mapply(function(sumexp, value){sumexp[[var]] <- value; sumexp}, sumexp=object, value=get(var), SIMPLIFY=TRUE)
-            assign(var, var)
-         }
-      }
+   # sdata
+      sdata %>%
 
    # Bind cols
-      object <- switch(objectclass, SummarizedExperiment = Reduce(SummarizedExperiment::cbind, object),
-                                    matrix               = Reduce(cbind, object))
+      object <- switch(objectclass, SummarizedExperiment = Reduce(SummarizedExperiment::cbind, object), matrix = Reduce(cbind, object))
+      sdata  <- switch(objectclass, SummarizedExperiment = )
    # Plot
-      object %>% plot_sample_densities(color = color, ..., facet = facet)
+      object %>% plot_sample_densities()
 }
 
 #===================================================================
