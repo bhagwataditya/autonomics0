@@ -20,7 +20,6 @@ Imports:
     assertive.strings,
     assertive.types,
     autonomics.annotate,
-    autonomics.explore,
     autonomics.find,
     autonomics.import,
     autonomics.integrate,
