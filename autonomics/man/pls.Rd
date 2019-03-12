@@ -4,5 +4,5 @@
 \alias{pls}
 \title{Partial Least Squares analysis}
 \description{
-\code{\link[autonomics.explore]{pls}}
+\code{\link[autonomics.plot]{pls}}
 }

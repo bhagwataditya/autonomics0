@@ -4,5 +4,5 @@
 \alias{lda}
 \title{Linear discriminant analysis}
 \description{
-\code{\link[autonomics.explore]{lda}}
+\code{\link[autonomics.[plot]{lda}}
 }
