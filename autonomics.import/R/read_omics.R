@@ -766,8 +766,15 @@ standardize_maxquant_snames.character <- function(
 ){
    # x = mix + channel. Return mix if single channel.
    pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
-   channel <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
-   mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$2')
+
+   # Decompose mix and channel
+   if (quantity == 'Intensity'){ mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
+                                 channel <- rep('', length(mix))
+   } else {                      mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$2')
+                                 channel <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
+   }
+
+   # Standardize
    if (all(channel=='')){ cleanx <- mix
    } else               { cleanx <- sprintf('%s{%s}', mix, channel)
    }
