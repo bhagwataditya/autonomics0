@@ -7,10 +7,12 @@
 \usage{
 is_available_for_some_feature(object)
 
-filter_samples_available_for_some_feature(object)
+filter_samples_available_for_some_feature(object, verbose = FALSE)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
+
+\item{verbose}{TRUE or FALSE}
 }
 \value{
 SummarizedExperiment
