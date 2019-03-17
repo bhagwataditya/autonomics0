@@ -44,6 +44,7 @@ is_available_in_all_samples <- function(object){
    object %>% autonomics.import::exprs() %>% is.na() %>% magrittr::not() %>% matrixStats::rowAlls()
 }
 
+
 #' @rdname is_available_in_all_samples
 #' @importFrom magrittr %>%
 #' @export
@@ -69,4 +70,28 @@ filter_features_available_in_all_samples <- function(object){
 #' @noRd
 filter_features_differential_between_subgroups <- function(object){
    object$subgroup
+}
+
+
+#===========
+
+#' @rdname filter_samples_available_for_some_feature
+#' @importFrom magrittr %>%
+#' @export
+is_available_for_some_feature <- function(object){
+   subsetter <- (!is.na(autonomics.import::exprs(object))) & (autonomics.import::exprs(object) != 0)
+   subsetter %>% matrixStats::colAnys() %>% magrittr::set_names(autonomics.import::snames(object))
+}
+
+#' Filter samples available for some feature
+#' @param object SummarizedExperiment
+#' @return SummarizedExperiment
+#' @export
+filter_samples_available_for_some_feature <- function(object){
+   subsetter <- object %>% autonomics.preprocess::is_available_for_some_feature()
+   if (any(!subsetter)){
+      autonomics.support::cmessage('\t\tRetain %d/%d samples with a value available for some feature', sum(subsetter), length(subsetter))
+      object %<>% magrittr::extract(, idx)
+   }
+   object
 }
