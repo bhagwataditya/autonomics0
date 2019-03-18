@@ -39,6 +39,7 @@ if (require(autonomics.data)){
    plot(object,
         geom    = 'line',
         stat    = 'density',
-        mapping = ggplot2::aes(group = sample_id, x = value, color = subgroup))
+        mapping = ggplot2::aes(group = sample_id, x = value, color = subgroup),
+        facet   = subgroup)
 }
 }

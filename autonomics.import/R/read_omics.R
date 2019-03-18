@@ -251,7 +251,7 @@ read_omics <- function(
    fdata1 <- data.frame(feature_id = fids1, stringsAsFactors = FALSE)
    fdata_available <- !is.null(fvar_rows) & !is.null(fvar_cols)
    if (fdata_available){
-      fvars1 <- x %>% extract_rectangle(fvar_rows,  fvar_cols,  transpose = transpose, drop = TRUE)
+      fvars1 <-         extract_rectangle(x, fvar_rows,  fvar_cols,  transpose = transpose, drop = TRUE,  sheet = sheet)
       fdata1 %<>% cbind(extract_rectangle(x, fdata_rows, fdata_cols, transpose = transpose, drop = FALSE, sheet = sheet) %>%
                         magrittr::set_colnames(fvars1) %>%
                         data.frame(stringsAsFactors = FALSE, check.names = FALSE))
@@ -263,10 +263,10 @@ read_omics <- function(
    sdata1 <- data.frame(sample_id = sids1, stringsAsFactors = FALSE)
    sdata_available <- !is.null(svar_rows) & !is.null(svar_cols)
    if (sdata_available){
-      svars1 <- x %>% extract_rectangle(svar_rows,  svar_cols,  transpose =  transpose, drop = TRUE, sheet = sheet)
+      svars1 <-         extract_rectangle(x, svar_rows,  svar_cols,  transpose =  transpose, drop = TRUE,  sheet = sheet)
       sdata1 %<>% cbind(extract_rectangle(x, sdata_rows, sdata_cols, transpose = !transpose, drop = FALSE, sheet = sheet) %>%
-                           magrittr::set_colnames(svars1) %>%
-                           data.frame(stringsAsFactors = FALSE, check.names = FALSE))
+                        magrittr::set_colnames(svars1) %>%
+                        data.frame(stringsAsFactors = FALSE, check.names = FALSE))
    }
 
    # Rm features with missing ids (happens in MaxQuant files due to empty interspersed lines)

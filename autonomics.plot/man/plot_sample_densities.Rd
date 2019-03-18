@@ -73,7 +73,7 @@ if (require(autonomics.data)){
         require(magrittr)
         object <- stemcomp.proteinratios \%>\% autonomics.import::exprs()
         sdata  <- stemcomp.proteinratios \%>\% autonomics.import::sdata()
-        plot_sample_densities(object, sdata, color = subgroup, facet = subgroup)
+        plot_sample_densities(object, sdata, color = subgroup)
         plot_sample_violins(  object, sdata, color = subgroup, facet = subgroup)
         plot_sample_boxplots( object, sdata, color = subgroup, facet = subgroup)
 
