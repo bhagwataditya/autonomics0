@@ -4,5 +4,5 @@
 \alias{pca}
 \title{Principal component analysis}
 \description{
-\code{\link[autonomics.explore]{pca}}
+\code{\link[autonomics.plot]{pca}}
 }
