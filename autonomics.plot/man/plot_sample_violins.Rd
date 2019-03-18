@@ -2,30 +2,24 @@
 % Please edit documentation in R/plot_sample_distributions.R
 \name{plot_sample_violins}
 \alias{plot_sample_violins}
+\alias{plot_sample_violins.matrix}
+\alias{plot_sample_violins.SummarizedExperiment}
 \title{Plot sample violins}
 \usage{
 plot_sample_violins(object, ...)
+
+\method{plot_sample_violins}{matrix}(object, sdata, coord_flip = TRUE,
+  xlab = "", title = "Sample violins", ...)
+
+\method{plot_sample_violins}{SummarizedExperiment}(object,
+  coord_flip = TRUE, xlab = "", title = "Sample violins", ...)
 }
 \arguments{
-\item{object}{SummarizedExperiment or matrix}
+\item{object}{matrix or SummarizedExperiment}
 
-\item{x}{string: sample variable mapped to x axis}
+\item{...}{ggplot parameters or aesthetics}
 
-\item{color_var}{string: sample variable mapped to color}
-
-\item{color_values}{string vector: names = subgroups, values = colors}
-
-\item{facet_var}{string: sample variable for faceting}
-
-\item{displayed_features}{features to be displayed in the sample distributions (vector of numeric indexes or character \code{feature_id}s)}
-
-\item{xlab}{label of y axis (character)}
-
-\item{ylab}{label of y axis (character)}
-
-\item{title}{title (character)}
-
-\item{file}{file to which to print plot}
+\item{sdata}{dataframe}
 }
 \value{
 ggplot2 object
@@ -35,25 +29,17 @@ Plot sample violins
 }
 \examples{
 if (require(autonomics.data)){
-
-   # ALL
+   # matrix
       require(magrittr)
-      object <- autonomics.data::ALL[, 1:30]
-      object \%>\% plot_sample_densities(x = 'cod', color_var = 'BT')
+      object <- stemcomp.proteinratios \%>\% autonomics.import::exprs()
+      sdata  <- stemcomp.proteinratios \%>\% autonomics.import::sdata()
+      plot_sample_violins(object, sdata)
+      plot_sample_violins(object, sdata, fill = subgroup)
+      plot_sample_violins(object, sdata, fill = subgroup, horiz = FALSE)
 
-      # faceting works, but is not useful here, as there is no block variable
-      object \%>\% plot_sample_distributions_v1(x = 'cod', facet_var = 'sex', color_var = 'BT')
-
-   # STEM CELL COMPARISON
-      object <- autonomics.data::stemcomp.proteinratios
-      object \%>\% plot_sample_distributions_v1()
-
-   # GLUTMINASE
-      x <- autonomics.data::glutaminase
-      x \%<>\% autonomics.import::exprs()
-      object \%>\% plot_sample_distributions_v1()
+   # SummarizedExperiment
+      object <- stemcomp.proteinratios
+      plot_sample_violins(object,fill=subgroup)
+      plot_sample_violins(object,fill=subgroup, horiz=FALSE)
 }
-}
-\author{
-Aditya Bhagwat
 }

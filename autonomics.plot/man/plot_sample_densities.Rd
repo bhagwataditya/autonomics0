@@ -2,41 +2,22 @@
 % Please edit documentation in R/plot_sample_distributions.R
 \name{plot_sample_densities}
 \alias{plot_sample_densities}
-\alias{plot_sample_densities.matrix}
 \alias{plot_sample_densities.SummarizedExperiment}
-\alias{plot_sample_densities.list}
-\alias{plot_sample_violins.matrix}
-\alias{plot_sample_violins.SummarizedExperiment}
 \title{Plot sample densities}
 \usage{
 plot_sample_densities(object, ...)
 
-\method{plot_sample_densities}{matrix}(object, sdata, x = "value",
-  group = "sample_id", color = if ("subgroup" \%in\% names(sdata))
-  "subgroup" else "sample_id", ..., facet = NULL, xlab = "value",
-  ylab = "density", title = NULL)
-
-\method{plot_sample_densities}{SummarizedExperiment}(object, ...)
-
-\method{plot_sample_densities}{list}(object, sdata, ...)
-
-\method{plot_sample_violins}{matrix}(object, horiz = TRUE,
-  color_var = "sample_id")
-
-\method{plot_sample_violins}{SummarizedExperiment}(object, x = NULL,
-  color_var = default_color_var(object),
-  color_values = default_color_values(object, color_var),
-  facet_var = NULL, displayed_features = NULL, ylab = "",
-  xlab = "",
-  title = sprintf("Per sample distribution of all \%d features",
-  nrow(object)), file = NULL)
+\method{plot_sample_densities}{SummarizedExperiment}(object,
+  title = "Sample densities", ...)
 }
 \arguments{
 \item{object}{matrix, SummarizedExperiment, or list of SummarizedExperiments}
 
 \item{...}{ggplot2 aesthetics or parameters}
 
-\item{sdata}{dataframe}
+\item{title}{string}
+
+\item{sdata}{dataframe with sample data}
 
 \item{x}{string: svar mapped to x}
 
@@ -49,8 +30,6 @@ plot_sample_densities(object, ...)
 \item{xlab}{string}
 
 \item{ylab}{string}
-
-\item{title}{string}
 }
 \value{
 ggplot2 object
@@ -62,18 +41,28 @@ Plot sample densities
 if (require(autonomics.data)){
 
    # STEM CELL COMPARISON
-   require(magrittr)
-   plot_sample_densities(stemcomp.proteinratios)
-   plot_sample_densities(object = autonomics.import::exprs(stemcomp.proteinratios),
-                         sdata  = autonomics.import::sdata(stemcomp.proteinratios))
+      # matrix
+        require(magrittr)
+        object <- stemcomp.proteinratios \%>\% autonomics.import::exprs()
+        sdata  <- stemcomp.proteinratios \%>\% autonomics.import::sdata()
+        plot_sample_densities(object, sdata)
+        plot_sample_densities(object, sdata, color = subgroup, facet = subgroup)
+
+     # SummarizedExperiment
+        object <- stemcomp.proteinratios
+        plot_sample_densities(object)
+        plot_sample_densities(object, color = subgroup)
 
    # GLUTAMINASE
-   plot_sample_densities(glutaminase, color = 'EXPERIMENT', facet = c('CONCENTRATION', 'TIME_POINT'))
-   plot_sample_densities(object = autonomics.import::exprs(glutaminase),
-                         sdata  = autonomics.import::sdata(glutaminase))
-   plot_sample_densities(object = list(glutaminase \%>\% magrittr::extract(, 1:12),
-                                       glutaminase \%>\% magrittr::extract(, 13:ncol(.))),
-                         color = c('UT_h10', 'other'),
-                         facet = c('UT_h10', 'other'))
+      # matrix
+        object <- autonomics.import::exprs(glutaminase)
+        sdata  <- autonomics.import::sdata(glutaminase)
+        plot_sample_densities(object, sdata, color = subgroup, facet = CONCENTRATION)
+
+      # SummarizedExperiment
+        object <- glutaminase
+        plot_sample_densities(object)
+        plot_sample_densities(object, color = subgroup)
+
 }
 }
