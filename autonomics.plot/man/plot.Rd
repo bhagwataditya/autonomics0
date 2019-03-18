@@ -7,14 +7,13 @@
 \usage{
 plot(object, ...)
 
-\method{plot}{data.table}(plotdt, geom, stat, coord_flip = FALSE,
-  xlab = NULL, ylab = NULL, title = NULL, facet = NULL, x = NULL,
-  y = NULL, group = NULL, ...)
+\method{plot}{data.table}(plotdt, geom, stat, mapping,
+  coord_flip = FALSE, xlab = NULL, ylab = NULL, title = NULL, ...)
 }
 \arguments{
 \item{object}{data.table}
 
-\item{...}{ggplot2 aesthetic parameters}
+\item{...}{ggplot2 aesthetics}
 
 \item{geom}{string: ggplot2 geom}
 
@@ -37,6 +36,9 @@ Plot
 if (require(autonomics.data)){
    require(magrittr)
    object <- autonomics.data::glutaminase \%>\% prepare_plot_dt()
-   plot(object, geom = 'line', stat = 'density', group = sample_id, x = value, color = subgroup, facet = subgroup)
+   plot(object,
+        geom    = 'line',
+        stat    = 'density',
+        mapping = ggplot2::aes(group = sample_id, x = value, color = subgroup))
 }
 }

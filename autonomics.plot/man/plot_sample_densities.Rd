@@ -2,40 +2,68 @@
 % Please edit documentation in R/plot_sample_distributions.R
 \name{plot_sample_densities}
 \alias{plot_sample_densities}
+\alias{plot_sample_densities.matrix}
 \alias{plot_sample_densities.SummarizedExperiment}
-\title{Plot sample densities}
+\alias{plot_sample_violins}
+\alias{plot_sample_violins.matrix}
+\alias{plot_sample_violins.SummarizedExperiment}
+\alias{plot_sample_boxplots}
+\alias{plot_sample_boxplots.matrix}
+\alias{plot_sample_boxplots.SummarizedExperiment}
+\title{Plot sample distributions}
 \usage{
 plot_sample_densities(object, ...)
 
+\method{plot_sample_densities}{matrix}(object, sdata,
+  title = "Sample densities", facet = NULL, ...)
+
 \method{plot_sample_densities}{SummarizedExperiment}(object,
-  title = "Sample densities", ...)
+  title = "Sample densities", facet = NULL, ...)
+
+plot_sample_violins(object, ...)
+
+\method{plot_sample_violins}{matrix}(object, sdata, coord_flip = TRUE,
+  xlab = "", ylab = "", title = "Sample violins", ...)
+
+\method{plot_sample_violins}{SummarizedExperiment}(object,
+  coord_flip = TRUE, xlab = "", ylab = "",
+  title = "Sample violins", ...)
+
+plot_sample_boxplots(object, ...)
+
+\method{plot_sample_boxplots}{matrix}(object, sdata, coord_flip = TRUE,
+  xlab = "", ylab = "", title = "Sample boxplots", ...)
+
+\method{plot_sample_boxplots}{SummarizedExperiment}(object,
+  coord_flip = TRUE, xlab = "", ylab = "",
+  title = "Sample boxplots", ...)
 }
 \arguments{
 \item{object}{matrix, SummarizedExperiment, or list of SummarizedExperiments}
 
-\item{...}{ggplot2 aesthetics or parameters}
-
-\item{title}{string}
+\item{...}{ggplot2 aesthetics}
 
 \item{sdata}{dataframe with sample data}
 
-\item{x}{string: svar mapped to x}
-
-\item{group}{string: svar mapped to group}
-
-\item{color}{string: svar mapped to color}
+\item{title}{string}
 
 \item{facet}{string: svar mapped to facets}
 
 \item{xlab}{string}
 
 \item{ylab}{string}
+
+\item{x}{string: svar mapped to x}
+
+\item{group}{string: svar mapped to group}
+
+\item{color}{string: svar mapped to color}
 }
 \value{
 ggplot2 object
 }
 \description{
-Plot sample densities
+Plot sample distributions
 }
 \examples{
 if (require(autonomics.data)){
@@ -45,19 +73,22 @@ if (require(autonomics.data)){
         require(magrittr)
         object <- stemcomp.proteinratios \%>\% autonomics.import::exprs()
         sdata  <- stemcomp.proteinratios \%>\% autonomics.import::sdata()
-        plot_sample_densities(object, sdata)
         plot_sample_densities(object, sdata, color = subgroup, facet = subgroup)
+        plot_sample_violins(  object, sdata, color = subgroup, facet = subgroup)
+        plot_sample_boxplots( object, sdata, color = subgroup, facet = subgroup)
 
      # SummarizedExperiment
         object <- stemcomp.proteinratios
-        plot_sample_densities(object)
-        plot_sample_densities(object, color = subgroup)
+        plot_sample_densities(object, color = subgroup, facet = subgroup)
+        plot_sample_violins(  object, color = subgroup, facet = subgroup)
+        plot_sample_boxplots( object, color = subgroup, facet = subgroup)
 
    # GLUTAMINASE
       # matrix
         object <- autonomics.import::exprs(glutaminase)
         sdata  <- autonomics.import::sdata(glutaminase)
-        plot_sample_densities(object, sdata, color = subgroup, facet = CONCENTRATION)
+        plot_sample_densities(object, sdata, color = subgroup)
+
 
       # SummarizedExperiment
         object <- glutaminase

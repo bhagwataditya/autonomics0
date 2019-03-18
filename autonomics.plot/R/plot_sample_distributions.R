@@ -202,12 +202,15 @@ prepare_plot_dt.SummarizedExperiment <- function(object, ...){
 #' @param xlab  if non-NULL, x axis label
 #' @param ylab  if non-NULL, y axis label
 #' @param title if non-NULL, title text
-#' @param ...   ggplot2 aesthetic parameters
+#' @param ...   ggplot2 aesthetics
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::glutaminase %>% prepare_plot_dt()
-#'    plot(object, geom = 'line', stat = 'density', group = sample_id, x = value, color = subgroup, facet = subgroup)
+#'    plot(object,
+#'         geom    = 'line',
+#'         stat    = 'density',
+#'         mapping = ggplot2::aes(group = sample_id, x = value, color = subgroup))
 #' }
 #' @export
 plot <- function(object, ...){
@@ -220,32 +223,23 @@ plot.data.table <- function(
    plotdt,
    geom,
    stat,
+   mapping,
    coord_flip = FALSE,
    xlab       = NULL,
    ylab       = NULL,
    title      = NULL,
-   facet      = NULL,
-   x          = NULL,
-   y          = NULL,
-   group      = NULL,
    ...
 ){
 
-   # Enquote
-   facet <- rlang::enquo(facet)
-   x     <- rlang::enquo(x)
-   y     <- rlang::enquo(y)
-   group <- rlang::enquo(group)
+   arguments <- rlang::enquos(...)
 
    # Plot
-   p <- ggplot2::ggplot(plotdt, ggplot2::aes(x = !!x, y = !!y, group = !!group, ...)) +
+   p <- ggplot2::ggplot(plotdt, mapping) +
         ggplot2::theme_bw() +
         ggplot2::layer(geom = geom, stat = stat, params = list(na.rm=TRUE), position = 'identity')
 
    # Facet
-   if (!rlang::quo_is_null(facet)){
-      p <- p + ggplot2::facet_wrap(ggplot2::vars(!!facet))
-   }
+   if ('facet' %in% names(arguments)) p <- p + ggplot2::facet_wrap(ggplot2::vars(!!arguments$facet))
 
    # Flip coordinates
    if (coord_flip){ p <- p + ggplot2::coord_flip()
@@ -263,7 +257,7 @@ plot.data.table <- function(
 
 
 
-#' Plot sample densities
+#' Plot sample distributions
 #' @param object    matrix, SummarizedExperiment, or list of SummarizedExperiments
 #' @param sdata     dataframe with sample data
 #' @param x         string: svar mapped to x
@@ -273,7 +267,7 @@ plot.data.table <- function(
 #' @param xlab      string
 #' @param ylab      string
 #' @param title     string
-#' @param ...       ggplot2 aesthetics or parameters
+#' @param ...       ggplot2 aesthetics
 #' @return ggplot2 object
 #' @examples
 #' if (require(autonomics.data)){
@@ -283,19 +277,22 @@ plot.data.table <- function(
 #'         require(magrittr)
 #'         object <- stemcomp.proteinratios %>% autonomics.import::exprs()
 #'         sdata  <- stemcomp.proteinratios %>% autonomics.import::sdata()
-#'         plot_sample_densities(object, sdata)
 #'         plot_sample_densities(object, sdata, color = subgroup, facet = subgroup)
+#'         plot_sample_violins(  object, sdata, color = subgroup, facet = subgroup)
+#'         plot_sample_boxplots( object, sdata, color = subgroup, facet = subgroup)
 #'
 #'      # SummarizedExperiment
 #'         object <- stemcomp.proteinratios
-#'         plot_sample_densities(object)
-#'         plot_sample_densities(object, color = subgroup)
+#'         plot_sample_densities(object, color = subgroup, facet = subgroup)
+#'         plot_sample_violins(  object, color = subgroup, facet = subgroup)
+#'         plot_sample_boxplots( object, color = subgroup, facet = subgroup)
 #'
 #'    # GLUTAMINASE
 #'       # matrix
 #'         object <- autonomics.import::exprs(glutaminase)
 #'         sdata  <- autonomics.import::sdata(glutaminase)
-#'         plot_sample_densities(object, sdata, color = subgroup, facet = CONCENTRATION)
+#'         plot_sample_densities(object, sdata, color = subgroup)
+#'
 #'
 #'       # SummarizedExperiment
 #'         object <- glutaminase
@@ -308,22 +305,22 @@ plot_sample_densities <- function(object, ...){
    UseMethod('plot_sample_densities', object)
 }
 
-
+#' @rdname plot_sample_densities
+#' @export
 plot_sample_densities.matrix <- function(
    object,
    sdata,
    title = 'Sample densities',
+   facet = NULL,
    ...
 ){
    plotdt <- prepare_plot_dt.matrix(object, sdata)
    plot.data.table(plotdt,
-                   geom  = 'line',
-                   stat  = 'density',
-                   title = title,
-                   x     = value,
-                   y     = value, # will be ignored
-                   group = sample_id,
-                   ...)
+                   geom    = 'line',
+                   stat    = 'density',
+                   title   = title,
+                   mapping = ggplot2::aes(x = value, group = sample_id, ...),
+                   facet   = facet)
 }
 
 
@@ -332,6 +329,7 @@ plot_sample_densities.matrix <- function(
 plot_sample_densities.SummarizedExperiment <- function(
    object,
    title = 'Sample densities',
+   facet = NULL,
    ...
 ){
    sdata  <- autonomics.import::sdata(object)
@@ -339,33 +337,14 @@ plot_sample_densities.SummarizedExperiment <- function(
    plot_sample_densities.matrix(object, sdata, title = title, ...)
 }
 
-#' Plot sample violins
-#' @param object matrix or SummarizedExperiment
-#' @param sdata dataframe
-#' @param ... ggplot parameters or aesthetics
-#' @return ggplot2 object
-#' @examples
-#' if (require(autonomics.data)){
-#'    # matrix
-#'       require(magrittr)
-#'       object <- stemcomp.proteinratios %>% autonomics.import::exprs()
-#'       sdata  <- stemcomp.proteinratios %>% autonomics.import::sdata()
-#'       plot_sample_violins(object, sdata)
-#'       plot_sample_violins(object, sdata, fill = subgroup)
-#'       plot_sample_violins(object, sdata, fill = subgroup, horiz = FALSE)
-#'
-#'    # SummarizedExperiment
-#'       object <- stemcomp.proteinratios
-#'       plot_sample_violins(object,fill=subgroup)
-#'       plot_sample_violins(object,fill=subgroup, horiz=FALSE)
-#' }
+#' @rdname plot_sample_densities
 #' @export
 plot_sample_violins <- function(object, ...){
    UseMethod('plot_sample_violins', object)
 }
 
 
-#' @rdname plot_sample_violins
+#' @rdname plot_sample_densities
 #' @export
 plot_sample_violins.matrix <- function(
    object,
@@ -380,21 +359,18 @@ plot_sample_violins.matrix <- function(
    p <- plot.data.table(plotdt,
                         geom       = 'violin',
                         stat       = 'ydensity',
-                        x          = sample_id,
-                        y          = value,
-                        group      = sample_id, # ignored
+                        mapping    = ggplot2::aes(sample_id, y = value, ...),
                         coord_flip = coord_flip,
                         xlab       = xlab,
                         ylab       = ylab,
-                        title      = title, ...)
+                        title      = title)
 
-   p + ggplot2::geom_boxplot(width=.05, na.rm = TRUE)
-   p + ggplot2::stat_summary(fun.y=median, geom="point", na.rm = TRUE)
-   p + ggplot2::geom_jitter(na.rm=TRUE, size = 1)
+   p <- p + ggplot2::geom_boxplot(width=.05, na.rm = TRUE)
+   p
 }
 
 
-#' @rdname plot_sample_violins
+#' @rdname plot_sample_densities
 #' @export
 plot_sample_violins.SummarizedExperiment <- function(
    object,
@@ -416,30 +392,14 @@ plot_sample_violins.SummarizedExperiment <- function(
 }
 
 
-#' Plot sample boxplots
-#' @param object matrix or SummarizedExperiment
-#' @param sdata  data.table
-#' @param horiz  TRUE or FALSE
-#' @param ...    ggplot2 parameters or aesthetics, passed to plot.data.table
-#' @return ggplot2 object
-#' @examples
-#' if (require(autonomics.data)){
-#'
-#'    # matrix
-#'    require(magrittr)
-#'    object <- stemcomp.proteinratios %>% autonomics.import::exprs()
-#'    sdata  <- stemcomp.proteinratios %>% autonomics.import::sdata()
-#'    plot_sample_boxplots(object, sdata)
-#'    plot_sample_boxplots(object, sdata, color = subgroup)
-#'
-#' }
+#' @rdname plot_sample_densities
 #' @export
 plot_sample_boxplots <- function(object, ...){
    UseMethod('plot_sample_boxplots', object)
 }
 
 
-#' @rdname plot_sample_boxplots
+#' @rdname plot_sample_densities
 #' @export
 plot_sample_boxplots.matrix <- function(
    object,
@@ -458,14 +418,11 @@ plot_sample_boxplots.matrix <- function(
                    xlab       = xlab,
                    ylab       = ylab,
                    title      = title,
-                   x          = sample_id,
-                   y          = value,
-                   group      = sample_id, # ignored
-                   ...)
+                   mapping = ggplot2::aes(x = sample_id, y = value, ...))
 }
 
 
-#' @rdname plot_sample_boxplots
+#' @rdname plot_sample_densities
 #' @export
 plot_sample_boxplots.SummarizedExperiment <- function(
    object,
