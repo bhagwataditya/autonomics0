@@ -173,12 +173,12 @@ extract_rectangle.matrix <- function(
 #'    require(magrittr)
 #'
 #'    # RNASEQ
-#'       file <- system.file('extdata/stemdiff/rnaseq/gene_counts.txt', package = 'autonomics.data')
-#'       file %>% read_omics(fid_rows   = 2:56270,   fid_cols   = 1,
-#'                           sid_rows   = 1,         sid_cols   = 5:28,
-#'                           expr_rows  = 2:56270,   expr_cols  = 5:28,
-#'                           fvar_rows  = 1,         fvar_cols  = 1:4,
-#'                           fdata_rows = 2:56270,   fdata_cols = 1:4,
+#'       file <- system.file('extdata/stemcomp/rnaseq/gene_counts.txt', package = 'autonomics.data')
+#'       file %>% read_omics(fid_rows   = 2:58736,   fid_cols   = 1,
+#'                           sid_rows   = 1,         sid_cols   = 4:11,
+#'                           expr_rows  = 2:58736,   expr_cols  = 4:11,
+#'                           fvar_rows  = 1,         fvar_cols  = 1:3,
+#'                           fdata_rows = 2:58736,   fdata_cols = 1:3,
 #'                           transpose  = FALSE)
 #'
 #'    # LCMSMS PROTEINGROUPS
@@ -306,6 +306,183 @@ read_omics <- function(
 #=========================================================
 # RNASEQ
 #=========================================================
+#download_gtf
+release_to_build <- function(release, organism){
+   if        (organism == 'Homo sapiens'){          if (release >= 76)  'GRCh38'   else 'GRCh37'  }
+   else if   (organism == 'Mus musculus'){          if (release >= 68)  'GRCm38'   else 'NCBIM37'  }
+   else if   (organism == 'Rattus norvegicus'){     if (release >= 80)  'Rnor_6.0' else 'Rnor_5.0'  }
+}
+
+#' @examples
+#' make_gtf_link(organism = 'Homo sapiens', release = 95)
+#' make_gtf_link(organism = 'Mus musculus', release = 95)
+#' @importFrom magrittr %>%
+#' @export
+make_gtf_link <- function(organism, release){
+   sprintf('ftp://ftp.ensembl.org/pub/release-%s/gtf/%s/%s.%s.%s.gtf.gz',
+           release,
+           organism %>% tolower() %>% stringi::stri_replace_first_fixed(' ', '_'),
+           organism %>%               stringi::stri_replace_first_fixed(' ', '_'),
+           release_to_build(release, organism),
+           release)
+}
+
+
+#' Download feature annotations
+#'
+#' Download feature annotations in GTF format
+#' @param organism    'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'
+#' @param release      GTF release. By default release 95 selected
+#' @examples
+#' \dontrun{
+#'    download_gtf(organism = 'Homo sapiens')
+#'    download_gtf(organism = 'Mus musculus')
+#'    download_gtf(organism = 'Rattus norvegicus')
+#' }
+#' @export
+download_gtf <- function(
+   organism,
+   release = 95,
+   gtffile = sprintf("~/.autonomics/gtf/%s", basename(make_gtf_link(organism, release)))
+){
+
+   # Assert validity
+   assertive.sets::assert_is_subset(organism, c('Homo sapiens', 'Mus musculus', 'Rattus norvegicus'))
+
+   # Satisfy CHECK
+   . <- NULL
+
+   remote <- make_gtf_link(organism, release)
+
+     if(file.exists(gtffile)){
+      message(sprintf("\t\tGTF file already available at %s", gtffile))
+   } else {
+      message(sprintf("\t\tDownload and unzip GTF file to %s" , gtffile %>% substr(1, nchar(.)-3)))
+      dir.create(dirname(gtffile), showWarnings = FALSE, recursive = TRUE)
+      utils::download.file(url = remote, destfile = gtffile)
+      R.utils::gunzip(gtffile,  remove = TRUE, overwrite = TRUE)
+      gtffile %<>% stringi::stri_replace_last_fixed('.gz', '')
+   }
+   return(gtffile)
+}
+
+
+#get feature annotations
+select_organism_database <- function(organism){
+   if          (organism == 'Homo sapiens'){       'hsapiens_gene_ensembl'  }
+   else if     (organism == 'Mus musculus'){       'mmusculus_gene_ensembl'  }
+   else if     (organism == 'Rattus norvegicus'){  'rnorvegicus_gene_ensembl'  }
+}
+
+
+#' Read GTF file
+#' @param gtffile       string: path to gtf file (which can be downloaded with download_gtf)
+#' @param filter        Filter on feature name or feature id. By default all features are extracted.
+#' @param return_value  Display feature annotation on console. By default FALSE
+#' @seealso download_gtf
+#' @examples
+#' read_gtf(filter = 'ENSG00000198947', return_value = FALSE)
+#' @importFrom magrittr %>%
+#' @export
+read_gtf <- function(
+   gtffile,
+   filter = NULL,
+   return_value = FALSE
+){
+   # Satisfy CHECK
+   . <- NULL
+
+   # Assert validity
+
+   # Import gtf file
+   message("\t\tLoading GTF file")
+   import_gtf <- rtracklayer::import(gtffile)
+
+
+   if(isTRUE(return_value)){
+      if (is.null(filter)){
+         feature_df <- import_gtf %>%
+            as.data.frame(import_gtf)
+      }
+      else {
+         feature_df <- import_gtf %>%
+            as.data.frame(import_gtf) %>%
+            dplyr::filter(gene_id %in% c(filter) | gene_name %in% c(filter))
+      }
+
+      feature_df
+   }
+   else {
+      if (is.null(filter)){
+         feature_df <- import_gtf %<>%
+            as.data.frame(import_gtf)
+      }
+      else {
+         feature_df <- import_gtf %<>%
+            as.data.frame(import_gtf) %>%
+            dplyr::filter(gene_id %in% c(filter) | gene_name %in% c(filter))
+      }
+
+      write.table(feature_df,sprintf("~/.autonomics/annotations/%s_release%s_feature_annotation.txt", stringi::stri_replace_first_fixed(organism,' ', '_'), release), quote=FALSE, sep="\t", row.names=FALSE)
+      Sys.sleep(2)
+      message(sprintf("\t\t%s_release%s_feature_annotation.txt written under ~/.autonomics/annotations", stringi::stri_replace_first_fixed(organism,' ', '_'), release))
+
+   }
+}
+
+
+#' Generates feature counts text file
+#' @param filedir     string: path to SAM or BAM file directory (one SAM or BAM file per sample)
+#' @param gtffile     string: path to (organism specific) gtffile
+#' @param paired_end  TRUE or FALSE: paired end reads?
+#' @param ...         passed to Rsubread::featureCounts
+#' @importFrom magrittr %>%
+#' @examples
+#' download .zip file from "https://bitbucket.org/graumannlab/billing.stemcells/downloads/rnaseq_example_data.zip" and unzip it under ~/.autonomics/
+#' get_feature_counts( filedir = "~/.autonomics/rnaseq_example_data/comparison",
+#'                     organism = 'Homo sapiens',
+#'                     release = 95,
+#'                     paired_end = TRUE)
+#' @export
+get_feature_counts <- function(
+   filedir,
+   gtffile,
+   paired_end      = FALSE,
+   ...
+){
+   #set directory to samples with bam files
+   setwd(sprintf("%s",filedir))
+
+   #list directories with bam files
+   files <- list.files(filedir, pattern = ".sam$|.bam$", full.names = TRUE, recursive = TRUE)
+   filenames   <- files %>% stringi::stri_split_fixed('/') %>% vapply(function(y) y[length(y)], 'character') %>% stringi::stri_replace_first_regex('.bam|.sam', '')
+   subdirnames <- files %>% stringi::stri_split_fixed('/') %>% vapply(function(y) y[length(y)-1], 'character')
+   sample_names <- if (assertive.properties::has_no_duplicates(filenames)){           filenames
+                  } else if (assertive.properties::has_no_duplicates(subdirnames)){  subdirnames
+                  } else {                                                           paste0(subdirnames, '_', filenames) }
+
+   message("\t\tCounting reads per feature for given samples")
+   #count features for the list of samples
+   gene_counts <-  Rsubread::featureCounts(files = files,
+                                             annot.ext = gtffile,
+                                             isGTFAnnotationFile = TRUE,
+                                             GTF.attrType.extra = c("gene_name", "gene_biotype"),
+                                             isPairedEnd = paired_end,
+                                             ...)
+
+   message("\t\tAdding feature names and types to count table")
+   gene_counts <- cbind(gene_counts$annotation[,c("GeneID","gene_name","gene_biotype")], gene_counts$counts)  %>%
+                    magrittr::set_colnames(c("gene_id", "gene_name", "gene_biotype" ,sample_names))
+
+
+   #create directory for saving feature_count.txt file
+   create_dir <- dir.create("~/.autonomics/counts", recursive=TRUE, showWarnings = FALSE)
+
+   write.table(gene_counts,"~/.autonomics/counts/gene_counts.txt", quote=FALSE, sep="\t", row.names = FALSE)
+
+   message("\t\tgene_counts.txt file written under ~/.autonomics/counts/")
+
+}
 
 #' Read rnaseq counts
 #' @param file      string: path to rnaseq counts file
