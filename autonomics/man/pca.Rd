@@ -2,7 +2,7 @@
 % Please edit documentation in R/04_autonomics_explore.R
 \name{pca}
 \alias{pca}
-\title{Principal component analysis}
+\title{Perform PCA analysis}
 \description{
 \code{\link[autonomics.plot]{pca}}
 }

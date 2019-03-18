@@ -210,7 +210,8 @@ prepare_plot_dt.SummarizedExperiment <- function(object, ...){
 #'    plot(object,
 #'         geom    = 'line',
 #'         stat    = 'density',
-#'         mapping = ggplot2::aes(group = sample_id, x = value, color = subgroup))
+#'         mapping = ggplot2::aes(group = sample_id, x = value, color = subgroup),
+#'         facet   = subgroup)
 #' }
 #' @export
 plot <- function(object, ...){
@@ -277,7 +278,7 @@ plot.data.table <- function(
 #'         require(magrittr)
 #'         object <- stemcomp.proteinratios %>% autonomics.import::exprs()
 #'         sdata  <- stemcomp.proteinratios %>% autonomics.import::sdata()
-#'         plot_sample_densities(object, sdata, color = subgroup, facet = subgroup)
+#'         plot_sample_densities(object, sdata, color = subgroup)
 #'         plot_sample_violins(  object, sdata, color = subgroup, facet = subgroup)
 #'         plot_sample_boxplots( object, sdata, color = subgroup, facet = subgroup)
 #'

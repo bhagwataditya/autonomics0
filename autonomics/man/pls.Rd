@@ -2,7 +2,7 @@
 % Please edit documentation in R/04_autonomics_explore.R
 \name{pls}
 \alias{pls}
-\title{Partial Least Squares analysis}
+\title{Perform PLS analysis}
 \description{
 \code{\link[autonomics.plot]{pls}}
 }

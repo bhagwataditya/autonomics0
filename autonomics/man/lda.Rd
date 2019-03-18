@@ -2,7 +2,7 @@
 % Please edit documentation in R/04_autonomics_explore.R
 \name{lda}
 \alias{lda}
-\title{Linear discriminant analysis}
+\title{Perform LDA analysis}
 \description{
 \code{\link[autonomics.[plot]{lda}}
 }

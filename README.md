@@ -78,12 +78,34 @@ The **stable** branch is error-free, but now outdated:
                         sdata_rows = 1:10,      sdata_cols = 15:86,
                         transpose  = FALSE)
                         
-## Explore 
+## Explore omics data
 
+    # Sample distributions
+        require(magrittr)
+        object <- autonomics.data::glutaminase
+        object %>% autonomics.plot::plot_sample_densities()
+        object %>% autonomics::plot_sample_distributions()
+        
+
+    # Principal Component Analysis
+        object <- autonomics.data::glutaminase
+        object %>% autonomics::plot_pca_samples()
+        object %>% autonomics::plot_pca_features()
+        object %>% autonomics::plot_pca_samples_and_features()
+        
+    #  Linear Discriminant Analysis
+        object %>% autonomics::plot_lda_samples()
+        object %>% autonomics::plot_lda_features()
+        object %>% autonomics::plot_lda_samples_and_features()
+        
+    # Partial Least Squares Analysis
+        object %>% autonomics::plot_pls_samples()
+        object %>% autonomics::plot_pls_features()
+        object %>% autonomics::plot_pls_samples_and_features()
    
-          
-    
-
-
+    # Spectral Map Analysis
+        object %>% autonomics::plot_sma_samples()          
+        object %>% autonomics::plot_sma_features() 
+        object %>% autonomics::plot_sma_samples_and_features()
 
 
