@@ -4,34 +4,36 @@
 \alias{plot_sample_distributions}
 \title{Plot distribution across features for each sample}
 \usage{
-plot_sample_distributions(object, x = NULL,
+plot_sample_distributions(object, ..., x = NULL,
   color_var = default_color_var(object),
   color_values = default_color_values(object, color_var),
-  facet_var = NULL, displayed_features = NULL, ylab = "",
-  xlab = "",
+  displayed_features = NULL, jitter_features = FALSE,
+  horizontal = TRUE, xlab = "", ylab = "",
   title = sprintf("Per sample distribution of all \%d features",
-  nrow(object)), file = NULL)
+  nrow(object)))
 }
 \arguments{
 \item{object}{SummarizedExperiment}
+
+\item{...}{additonal SummarizedExperiments or matrices AND further parameters for \code{\link{core_ggplot_from_data}}}
 
 \item{x}{string: sample variable mapped to x axis}
 
 \item{color_var}{string: sample variable mapped to color}
 
-\item{color_values}{string vector: names = subgroups, values = colors}
+\item{color_values}{string vector: color values vector (names = subgroups, values = colors)}
 
-\item{facet_var}{string: sample variable for faceting}
+\item{displayed_features}{number/string vector: features to be displayed in the sample distributions (vector of numeric indexes or character \code{feature_id}s)}
 
-\item{displayed_features}{features to be displayed in the sample distributions (vector of numeric indexes or character \code{feature_id}s)}
+\item{jitter_features}{TRUE/FALSE: whether to use geom_jitter or not for the displayed features}
 
-\item{ylab}{label of y axis (character)}
+\item{horizontal}{TRUE/FALSE: whether to lay the plot out horizontally (measurements on the x, sample names on the y axis)}
 
-\item{xlab}{label of y axis (character)}
+\item{xlab}{string: label of y axis}
 
-\item{title}{title (character)}
+\item{ylab}{string: label of y axis}
 
-\item{file}{file to which to print plot}
+\item{title}{string: title}
 }
 \value{
 ggplot2 object
@@ -43,24 +45,35 @@ The box is colored per value of color_var
 }
 \examples{
 if (require(autonomics.data)){
+   require(magrittr)
+   object <- autonomics.data::stemcomp.proteinratios
 
-   # ALL
-      require(magrittr)
-      object <- autonomics.data::ALL[, 1:30]
-      object \%>\% plot_sample_distributions(x = 'cod', color_var = 'BT')
+   # Simple plot
+     object \%>\% plot_sample_distributions()
 
-      # faceting works, but is not useful here, as there is no block variable
-      object \%>\% plot_sample_distributions(x = 'cod', facet_var = 'sex', color_var = 'BT')
+   # Same thing vertical
+     object \%>\% plot_sample_distributions(horizontal = FALSE)
 
-   # STEM CELL COMPARISON
-      object <- autonomics.data::stemcomp.proteinratios
-      object \%>\% plot_sample_distributions()
+   # More complex using facetting
+     object \%>\%
+     plot_sample_distributions(
+        2^autonomics.import::exprs(autonomics.data::stemcomp.proteinratios),
+        facet2_var = c('Logarithmized', 'Raw'))
 
-   # GLUTMINASE
-      object <- autonomics.data::glutaminase
-      object \%>\% plot_sample_distributions2()
+   # Yet more crazy explicitly marking the feature with the maximum value
+     object \%>\%
+     plot_sample_distributions(2^autonomics.import::exprs(object),
+                               facet2_var         = c('Logarithmized', 'Raw'),
+                               displayed_features = autonomics.import::exprs(object)        \%>\%
+                                                    equals(autonomics.import::exprs(object) \%>\%
+                                                    max(na.rm = TRUE))                      \%>\%
+                                                    which(arr.ind = TRUE)                   \%>\%
+                                                    magrittr::extract(,'row'))
 }
+}
+\seealso{
+\code{\link{core_ggplot_from_data}}
 }
 \author{
-Aditya Bhagwat
+Aditya Bhagwat, Johannes Graumann
 }

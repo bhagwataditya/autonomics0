@@ -6,14 +6,17 @@ Authors@R: c(person("Aditya",   "Bhagwat",  email = "bhagwataditya@gmail.com",  
              person("Johannes", "Graumann", email = "johannes.graumann@mpi-bn.mpg.de",      role = "aut"), 
              person("Karsten",  "Suhre",    email = "karsten@suhre.fr",                     role = "ctb"),
              person("Richie",   "Cotton",   email = "richierocks@gmail.com",                role = "ctb"))
-Description: These functions import rnaseq, qpcr, lcmsmsprot, metabolon, and somascan data into a 
-             standardized SummarizedExperiment format.
+Description: This package contains functions to import data from a variety of omics platforms into a standardized 
+             SummarizedExperiment representation. Supported platforms include: affymetrix microarrays, rnaseq, 
+             exiqon qPCR, lcmsms proteomics, metabolon, and somascan.
 Depends:
     R (>= 3.4.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
+    affy,
+    AnnotationDbi,
     assertive.base,
     assertive.files,
     assertive.numbers,
@@ -39,15 +42,12 @@ Imports:
     SummarizedExperiment,
 Suggests:
     autonomics.data,
-    billing.differentiation.data,
-    graumann.lfq,
     knitr,
     org.Hs.eg.db,
     org.Mm.eg.db, 
     org.Rn.eg.db, 
     org.Sc.sgd.db,
     org.Dr.eg.db,
-    org.Xl.eg.db,
-    subramanian.2016
+    org.Xl.eg.db
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1

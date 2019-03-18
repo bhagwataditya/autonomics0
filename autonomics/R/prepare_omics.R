@@ -691,8 +691,9 @@ prepare_proteingroups <- function(
    assertive.sets::assert_is_subset(invert_subgroups, autonomics.import::subgroup_levels(object))
    if (!is.null(deconvolution_fastafile)) assertive.files::assert_all_are_existing_files(deconvolution_fastafile)
    
-   #if (!is.null(sample_filter))  object %<>% autonomics.import::filter_samples(!!rlang::enexpr(sample_filter), verbose = verbose)
-   
+   # Filter samples
+   object %<>% autonomics.preprocess::filter_samples_available_for_some_feature(verbose = verbose)
+
    # Filter features
    if (verbose) autonomics.support::cmessage('\tFilter features')
    if (filter_reverse)              object %<>% autonomics.import::filter_features_("Reverse != '+'", verbose = verbose)

@@ -528,6 +528,67 @@ read_rnaseq <- function(file, fid_var, fname_var = character(0)){
 
 }
 
+#========================
+# AFFYMETRIX MICROARRAYS
+#========================
+
+#' Read affymetrix microarray
+#' @param celfiles string vector: CEL file paths
+#' @export
+#' @examples
+#' \dontrun{ # since it requires to be online
+#'    if (require(autonomics.data)){
+#'
+#'       # download cel files
+#'       require(magrittr)
+#'       url <- 'http://www.bioconductor.org/help/publications/2003/Chiaretti/chiaretti2/T33.tgz'
+#'       download.file(url, destfile = file.path(tempdir(), basename(url)))
+#'       untar(file.path(tempdir(), 'T33.gz'), exdir = tempdir())
+#'       unlink('T33.gz')
+#'
+#'       # read
+#'       read_affy(celfiles = list.files(file.path(tempdir(), 'T33'), full.names = TRUE))
+#'    }
+#' }
+#' @importFrom magrittr %>%
+#' @export
+read_affy <- function(celfiles){
+
+   # read
+   autonomics.support::cmessage('Read affymetrix CEL files: %s, etc.', celfiles[1])
+   suppressWarnings(eset1 <- affy::just.rma(filenames = celfiles))
+
+   # sdata
+   autonomics.import::snames(eset1) %<>% stringi::stri_replace_first_fixed('.CEL', '')
+   autonomics.import::sdata(eset1) <- data.frame(sample_id = autonomics.import::snames(eset1),
+                                                 row.names = autonomics.import::snames(eset1),
+                                                 stringsAsFactors = FALSE)
+   # fdata
+   autonomics.import::fdata(eset1)$feature_id   <- autonomics.import::fnames(eset1)
+   pkgname <- paste0(Biobase::annotation(eset1), '.db')
+   db <- utils::getFromNamespace(pkgname, pkgname)
+   autonomics.import::fdata(eset1)$feature_entrezg <- autonomics.import::fnames(eset1)  %>%
+                                                      stringi::stri_split_fixed('_')    %>%
+                                                      vapply(extract, character(1), 1)
+   autonomics.import::fdata(eset1)$feature_name <- suppressMessages(AnnotationDbi::mapIds(db,
+                                                                         keys    = autonomics.import::fdata(eset1)$feature_entrezg,
+                                                                         keytype = 'ENTREZID',
+                                                                         column  = 'SYMBOL')) %>%
+                                                   unname()
+   autonomics.import::fdata(eset1)$feature_descr <- suppressMessages(AnnotationDbi::mapIds(db,
+                                                                         keys    = autonomics.import::fdata(eset1)$feature_entrezg,
+                                                                         keytype = 'ENTREZID',
+                                                                         column  = 'GENENAME')) %>%
+                                                   unname()
+
+   # sumexp
+   sumexp1 <- eset1 %>% SummarizedExperiment::makeSummarizedExperimentFromExpressionSet()
+   class(sumexp1) <- 'SummarizedExperiment'
+   return(sumexp1)
+
+}
+
+
 
 #==========================================================
 # EXIQON
@@ -882,8 +943,15 @@ standardize_maxquant_snames.character <- function(
 ){
    # x = mix + channel. Return mix if single channel.
    pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
-   channel <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
-   mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$2')
+
+   # Decompose mix and channel
+   if (quantity == 'Intensity'){ mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
+                                 channel <- rep('', length(mix))
+   } else {                      mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$2')
+                                 channel <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
+   }
+
+   # Standardize
    if (all(channel=='')){ cleanx <- mix
    } else               { cleanx <- sprintf('%s{%s}', mix, channel)
    }
@@ -1040,12 +1108,8 @@ demultiplex_snames.SummarizedExperiment <- function(x,verbose  = FALSE, ...){
 #' @examples
 #' require(magrittr)
 #' if (require(autonomics.data)){
-#'    file <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
+#'    file <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>%
 #'             system.file(package = 'autonomics.data')
-#'    file %>% read_proteingroups()
-#' }
-#' if (require(graumann.lfq)){
-#'    file <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq')
 #'    file %>% read_proteingroups()
 #' }
 #' @importFrom magrittr %>% %<>%

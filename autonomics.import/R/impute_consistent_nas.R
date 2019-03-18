@@ -52,14 +52,15 @@ impute_common_nas <- function(
 #' @param object     SummarizedExperiment
 #' @param imputefun  imputation function
 #' @param svar       string
-#' @param verbose    logical
+#' @param verbose    TRUE or FALSE
 #' @examples
 #' require(magrittr)
-#' if (require(graumann.lfq)){
+#' if (require(autonomics.data)){
 #'
 #'    # Read object
-#'    object <- system.file('extdata/proteinGroups.txt', package = 'graumann.lfq') %>%
-#'              read_proteingroups()
+#'    object <- 'extdata/glutaminase/glutaminase.xlsx'     %>%
+#'               system.file(package = 'autonomics.data')  %>%
+#'               read_metabolon()
 #'
 #'    # Common NA values - missing in all samples
 #'    object %>% split_by_svar() %>%
@@ -88,6 +89,8 @@ impute_consistent_nas <- function(
       autonomics.support::cmessage("\t\tSome '%s' values are missing => no imputation performed", svar)
       return(object)
    }
+   selector <- autonomics.preprocess::is_available_for_some_feature(object)
+   if (!all(selector)) stop('First rm ', names(selector)[!selector] %>% collapse_words(), ', which contain only NA/0 values')
 
    # Impute
    imputed_object <- object %>% split_by_svar(svar) %>%
@@ -101,4 +104,13 @@ impute_consistent_nas <- function(
    return(imputed_object)
 }
 
+
+# Linguistic collapse
+# x <- c('a', 'b', 'c')
+# x %>% collapse_words()
+collapse_words <- function(x, collapsor = 'and'){
+   if (length(x)==1) return(x)
+   if (length(x)==2) return(sprintf('%s %s %s', x[[1]], collapsor, x[[2]]))
+   paste0(x[-length(x)], collapse = ', ') %>% paste0(' and ', x[[3]])
+}
 
