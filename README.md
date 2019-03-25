@@ -81,13 +81,6 @@ The **stable** branch is error-free, but now outdated:
                         
 ## Explore omics data
 
-    # Sample distributions
-        require(magrittr)
-        object <- autonomics.data::glutaminase
-        object %>% autonomics.plot::plot_sample_densities()
-        object %>% autonomics::plot_sample_distributions()
-        
-
     # Principal Component Analysis
         object <- autonomics.data::glutaminase
         object %>% autonomics::plot_pca_samples()
@@ -108,5 +101,18 @@ The **stable** branch is error-free, but now outdated:
         object %>% autonomics::plot_sma_samples()          
         object %>% autonomics::plot_sma_features() 
         object %>% autonomics::plot_sma_samples_and_features()
+
+
+## Analyze contrasts
+
+    object <- autonomics.data::glutaminase
+    table(object$subgroup)
+    glutcontrasts <- c(  UT.h72   = 'UT_h72   - UT_h10',
+                         uM10.h72 = 'uM10_h72 - uM10_h10')
+    autonomics::contrastdefs(object) <- glutcontrasts
+    object %<>% autonomics::add_limma()
+    object %>% autonomics::plot_contrast_features(n=4)
+    object %>% autonomics::plot_contrast_features(contrast = glutcontrasts[2], n=4)
+    
 
 
