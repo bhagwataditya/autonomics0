@@ -312,16 +312,17 @@ plot_sample_densities.matrix <- function(
    object,
    sdata,
    title = 'Sample densities',
-   facet = NULL,
    ...
 ){
+   arguments <- rlang::enexprs(...)
+   arguments
+
    plotdt <- prepare_plot_dt.matrix(object, sdata)
    plot.data.table(plotdt,
                    geom    = 'line',
                    stat    = 'density',
                    title   = title,
-                   mapping = ggplot2::aes(x = value, group = sample_id, ...),
-                   facet   = facet)
+                   mapping = ggplot2::aes(x = value, group = sample_id, ...))
 }
 
 
