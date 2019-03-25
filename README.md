@@ -1,6 +1,6 @@
 # Intro
 
-autonomics is an R suite for making omics data analysis easier, by **automating** the automatable, and **facilitating** the interactive.
+Making omics data analysis more fun :-).
 
 
 # Installation
@@ -79,7 +79,7 @@ The **stable** branch is error-free, but now outdated:
                         sdata_rows = 1:10,      sdata_cols = 15:86,
                         transpose  = FALSE)
                         
-## Explore omics data
+## Explore omics data (dev)
 
     # Principal Component Analysis
         object <- autonomics.data::glutaminase
@@ -103,7 +103,7 @@ The **stable** branch is error-free, but now outdated:
         object %>% autonomics::plot_sma_samples_and_features()
 
 
-## Analyze contrasts
+## Analyze contrasts (dev)
 
     object <- autonomics.data::glutaminase
     table(object$subgroup)
