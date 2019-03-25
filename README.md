@@ -1,6 +1,6 @@
 # Intro
 
-autonomics is an R suite for making omics data analysis easier, by **automating** the automatable, and **facilitating** the interactive.
+autonomics wants to make omics data analysis more intuitive and more fun :-).
 
 
 # Installation
@@ -8,6 +8,7 @@ autonomics is an R suite for making omics data analysis easier, by **automating*
 The **development** version is up-to-date, but not yet stable:
 
     # First install the R package remotes
+    install.packages('remotes')
     remotes::install_github('bhagwataditya/autonomics/autonomics.data',       ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.support',    ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.import',     ref = 'dev')
@@ -77,3 +78,41 @@ The **stable** branch is error-free, but now outdated:
                         fdata_rows = 11:401,    fdata_cols = 1:14,
                         sdata_rows = 1:10,      sdata_cols = 15:86,
                         transpose  = FALSE)
+                        
+## Explore omics data
+
+    # Principal Component Analysis
+        object <- autonomics.data::glutaminase
+        object %>% autonomics::plot_pca_samples()
+        object %>% autonomics::plot_pca_features()
+        object %>% autonomics::plot_pca_samples_and_features()
+        
+    #  Linear Discriminant Analysis
+        object %>% autonomics::plot_lda_samples()
+        object %>% autonomics::plot_lda_features()
+        object %>% autonomics::plot_lda_samples_and_features()
+        
+    # Partial Least Squares Analysis
+        object %>% autonomics::plot_pls_samples()
+        object %>% autonomics::plot_pls_features()
+        object %>% autonomics::plot_pls_samples_and_features()
+   
+    # Spectral Map Analysis
+        object %>% autonomics::plot_sma_samples()          
+        object %>% autonomics::plot_sma_features() 
+        object %>% autonomics::plot_sma_samples_and_features()
+
+
+## Analyze contrasts
+
+    object <- autonomics.data::glutaminase
+    table(object$subgroup)
+    glutcontrasts <- c(  UT.h72   = 'UT_h72   - UT_h10',
+                         uM10.h72 = 'uM10_h72 - uM10_h10')
+    autonomics::contrastdefs(object) <- glutcontrasts
+    object %<>% autonomics::add_limma()
+    object %>% autonomics::plot_contrast_features(n=4)
+    object %>% autonomics::plot_contrast_features(contrast = glutcontrasts[2], n=4)
+    
+
+
