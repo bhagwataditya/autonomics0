@@ -1,6 +1,6 @@
 Package: autonomics.plot
 Title: Functions to plot SummarizedExperiments
-Version: 0.8.1
+Version: 1.0.0
 Authors@R: c(person("Aditya",   "Bhagwat",  email = "bhagwataditya@gmail.com",         role = c("aut", "cre")),
              person("Johannes", "Graumann", email = "Johannes.Graumann@mpi-bn.mpg.de", role = "aut"),
              person("Shahina",  "Hayat",    email = "shh2026@qatar-med.cornell.edu",   role = "aut"),

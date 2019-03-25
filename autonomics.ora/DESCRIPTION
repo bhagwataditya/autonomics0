@@ -1,6 +1,6 @@
 Package: autonomics.ora
 Title: over representation analysis
-Version: 0.13.3
+Version: 1.0.0
 Authors@R: c(person("Aditya",   "Bhagwat",  email = "bhagwataditya@gmail.com",         role = c("aut", "cre")), 
              person("Richie",   "Cotton",   email = "richierocks@gmail.com",           role = "ctb"), 
              person("Anja",     "Billing",  email = "anb2061@qatar-med.cornell.edu",   role = "ctb"),

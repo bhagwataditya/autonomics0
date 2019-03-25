@@ -1,6 +1,6 @@
 Package: autonomics.find
 Title: Find candidate targets from omics data
-Version: 1.5.1
+Version: 1.6.0
 Authors@R: c(person("Aditya",   "Bhagwat",    email = "bhagwataditya@gmail.com",         role = c("aut", "cre")), 
              person("Johannes", "Graumann",   email = 'jog2030@qatar-med.cornell.edu',   role = "aut"),
              person("Richard",  "Cotton",     email = 'richierocks@gmail.com',           role = "ctb"), 

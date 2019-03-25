@@ -1,6 +1,6 @@
 Package: autonomics.support
 Title: Utility functions to support autonomics
-Version: 0.9.0
+Version: 1.1.0
 Authors@R: c(person("Aditya",   "Bhagwat",  email = "bhagwataditya@gmail.com",              role = c("aut", "cre")), 
              person("Johannes", "Graumann", email = "johannes.graumann@graumannschaft.org", role = "ctb"))
 Description: This package contains low-level utility functions to support the

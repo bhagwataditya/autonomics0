@@ -1,7 +1,7 @@
 Package: autonomics.annotate
 Title: Annotate omics data
-Version: 0.1.0
-Authors@R: person("Aditya", "Bhagwat", email = "adb2018@qatar-med.cornel.edu", role = c("aut", "cre"))
+Version: 1.0.0
+Authors@R: person("Aditya", "Bhagwat", email = "bhagwataditya@gmail.com", role = c("aut", "cre"))
 Description: This package contains functions to annotate omics data.
 Depends: R (>= 3.4.0)
 License: GPL-3

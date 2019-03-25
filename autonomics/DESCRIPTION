@@ -1,6 +1,6 @@
 Package: autonomics
 Title: Automated analysis of omics data
-Version: 1.1.1
+Version: 1.2.0
 Authors@R: c(person("Aditya", "Bhagwat", email = "bhagwataditya@gmail.com", role = c("aut", "cre")), 
              person("Johannes", "Graumann", email = 'jog2030@gmail.com', role = 'ctb'), 
              person("Richard", "Cotton", email = "richierocks@gmail.com", role = "ctb"), 

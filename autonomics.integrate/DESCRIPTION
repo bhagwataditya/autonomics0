@@ -1,6 +1,6 @@
 Package: autonomics.integrate
 Title: Functions to integrate omics data
-Version: 0.0.3
+Version: 0.1.0
 Authors@R: person("Aditya", "Bhagwat", email = "adb2018@qatar-med.cornell.edu", role = c("aut", "cre"))
 Description: This package contains functions to integrate omics data.
 Depends: R (>= 3.4.0)

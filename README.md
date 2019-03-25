@@ -8,6 +8,7 @@ autonomics is an R suite for making omics data analysis easier, by **automating*
 The **development** version is up-to-date, but not yet stable:
 
     # First install the R package remotes
+    install.packages('remotes')
     remotes::install_github('bhagwataditya/autonomics/autonomics.data',       ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.support',    ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.import',     ref = 'dev')
