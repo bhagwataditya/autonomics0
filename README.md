@@ -1,6 +1,6 @@
 # Intro
 
-autonomics wants to make omics data analysis more intuitive and more fun :-).
+Making omics data analysis more fun :-).
 
 
 # Installation
