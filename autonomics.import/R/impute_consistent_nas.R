@@ -45,6 +45,30 @@ impute_common_nas <- function(
 }
 
 
+#' @rdname filter_samples_available_for_some_feature
+#' @importFrom magrittr %>%
+#' @export
+is_available_for_some_feature <- function(object){
+   subsetter <- (!is.na(autonomics.import::exprs(object))) & (autonomics.import::exprs(object) != 0)
+   subsetter %>% matrixStats::colAnys() %>% magrittr::set_names(autonomics.import::snames(object))
+}
+
+#' Filter samples available for some feature
+#' @param object SummarizedExperiment
+#' @param verbose TRUE or FALSE
+#' @return SummarizedExperiment
+#' @export
+filter_samples_available_for_some_feature <- function(object, verbose = FALSE){
+   subsetter <- object %>% autonomics.preprocess::is_available_for_some_feature()
+   if (any(!subsetter)){
+      if (verbose) autonomics.support::cmessage('\t\tRetain %d/%d samples with a value available for some feature',
+                                                sum(subsetter), length(subsetter))
+      object %<>% magrittr::extract(, subsetter)
+   }
+   object
+}
+
+
 #' Impute consistent NA values
 #'
 #' Impute values missing in all (subgroup) samples.

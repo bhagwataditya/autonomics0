@@ -25,7 +25,6 @@ Imports:
     assertive.sets,
     assertive.types,
     autonomics.annotate,
-    autonomics.preprocess,
     autonomics.support,
     Biobase,
     data.table,
