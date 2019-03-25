@@ -55,12 +55,12 @@ if (require(autonomics.data)){
    require(magrittr)
 
    # RNASEQ
-      file <- system.file('extdata/stemdiff/rnaseq/gene_counts.txt', package = 'autonomics.data')
-      file \%>\% read_omics(fid_rows   = 2:56270,   fid_cols   = 1,
-                          sid_rows   = 1,         sid_cols   = 5:28,
-                          expr_rows  = 2:56270,   expr_cols  = 5:28,
-                          fvar_rows  = 1,         fvar_cols  = 1:4,
-                          fdata_rows = 2:56270,   fdata_cols = 1:4,
+      file <- system.file('extdata/stemcomp/rnaseq/gene_counts.txt', package = 'autonomics.data')
+      file \%>\% read_omics(fid_rows   = 2:58735,   fid_cols   = 1,
+                          sid_rows   = 1,         sid_cols   = 4:15,
+                          expr_rows  = 2:58735,   expr_cols  = 4:15,
+                          fvar_rows  = 1,         fvar_cols  = 1:3,
+                          fdata_rows = 2:58735,   fdata_cols = 1:3,
                           transpose  = FALSE)
 
    # LCMSMS PROTEINGROUPS

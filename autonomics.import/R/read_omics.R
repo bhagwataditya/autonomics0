@@ -313,6 +313,9 @@ release_to_build <- function(release, organism){
    else if   (organism == 'Rattus norvegicus'){     if (release >= 80)  'Rnor_6.0' else 'Rnor_5.0'  }
 }
 
+#' Construct hyperlink to gtf file
+#' @param organism 'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'
+#' @param release  GTF release (default value: '95')
 #' @examples
 #' make_gtf_link(organism = 'Homo sapiens', release = 95)
 #' make_gtf_link(organism = 'Mus musculus', release = 95)
@@ -333,6 +336,7 @@ make_gtf_link <- function(organism, release){
 #' Download feature annotations in GTF format
 #' @param organism    'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'
 #' @param release      GTF release. By default release 95 selected
+#' @param gtffile     string: local GTF file path
 #' @examples
 #' \dontrun{
 #'    download_gtf(organism = 'Homo sapiens')
@@ -390,7 +394,7 @@ read_gtf <- function(
    return_value = FALSE
 ){
    # Satisfy CHECK
-   . <- NULL
+   . <- gene_id <- gene_name <- NULL
 
    # Assert validity
 
@@ -423,7 +427,7 @@ read_gtf <- function(
             dplyr::filter(gene_id %in% c(filter) | gene_name %in% c(filter))
       }
 
-      write.table(feature_df,sprintf("~/.autonomics/annotations/%s_release%s_feature_annotation.txt", stringi::stri_replace_first_fixed(organism,' ', '_'), release), quote=FALSE, sep="\t", row.names=FALSE)
+      write.table(feature_df,sprintf("~/.autonomics/annotations/%s", gtffile, quote=FALSE, sep="\t", row.names=FALSE))
       Sys.sleep(2)
       message(sprintf("\t\t%s_release%s_feature_annotation.txt written under ~/.autonomics/annotations", stringi::stri_replace_first_fixed(organism,' ', '_'), release))
 
@@ -438,11 +442,17 @@ read_gtf <- function(
 #' @param ...         passed to Rsubread::featureCounts
 #' @importFrom magrittr %>%
 #' @examples
-#' download .zip file from "https://bitbucket.org/graumannlab/billing.stemcells/downloads/rnaseq_example_data.zip" and unzip it under ~/.autonomics/
-#' get_feature_counts( filedir = "~/.autonomics/rnaseq_example_data/comparison",
-#'                     organism = 'Homo sapiens',
-#'                     release = 95,
-#'                     paired_end = TRUE)
+#' \dontrun{ # requires an internet connection, and can take a few minutes to complete
+#'    dir.create('~/.autonomics', showWarnings=FALSE)
+#'    data_url <- 'https://bitbucket.org/graumannlab/billing.stemcells/downloads/rnaseq_example_data.zip'
+#'    download.file(data_url, '~/.autonomics/rnaseq_example_data.zip')
+#'    utils::unzip('~/.autonomics/rnaseq_example_data.zip', exdir = '~/.autonomics')
+#'    unlink('~/.autonomics/rnaseq_example_data.zip')
+#'    get_feature_counts( filedir    = "~/.autonomics/rnaseq_example_data/comparison",
+#'                        organism   = 'Homo sapiens',
+#'                        release    = 95,
+#'                        paired_end = TRUE)
+#' }
 #' @export
 get_feature_counts <- function(
    filedir,
@@ -478,7 +488,7 @@ get_feature_counts <- function(
    #create directory for saving feature_count.txt file
    create_dir <- dir.create("~/.autonomics/counts", recursive=TRUE, showWarnings = FALSE)
 
-   write.table(gene_counts,"~/.autonomics/counts/gene_counts.txt", quote=FALSE, sep="\t", row.names = FALSE)
+   utils::write.table(gene_counts,"~/.autonomics/counts/gene_counts.txt", quote=FALSE, sep="\t", row.names = FALSE)
 
    message("\t\tgene_counts.txt file written under ~/.autonomics/counts/")
 

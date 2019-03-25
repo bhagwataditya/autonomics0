@@ -19,7 +19,7 @@ Read rnaseq counts
 \examples{
 if (require(autonomics.data)){
    require(magrittr)
-   file <- 'extdata/stemdiff/rnaseq/gene_counts.txt' \%>\%
+   file <- 'extdata/stemcomp/rnaseq/gene_counts.txt' \%>\%
             system.file(package = 'autonomics.data')
    file \%>\% read_rnaseq(fid_var = 'gene_id', fname_var = 'gene_name')
 }

@@ -1,6 +1,6 @@
 Package: autonomics.import
 Title: Import omics data from various platforms
-Version: 0.3.12
+Version: 1.0.0
 Authors@R: c(person("Aditya",   "Bhagwat",  email = "bhagwataditya@gmail.com",              role = c("aut", "cre")),
              person("Shahina",  "Hayat",    email = "shh2026@qatar-med.cornell.edu",        role = "aut"),
              person("Johannes", "Graumann", email = "johannes.graumann@mpi-bn.mpg.de",      role = "aut"), 
@@ -25,9 +25,11 @@ Imports:
     assertive.sets,
     assertive.types,
     autonomics.annotate,
+    autonomics.preprocess,
     autonomics.support,
     Biobase,
     data.table,
+    dplyr,
     imputeLCMD,
     lazyeval,
     limma,
@@ -36,7 +38,9 @@ Imports:
     methods,
     purrr,
     readxl,
+    rtracklayer,
     rlang,
+    R.utils,
     stringi, 
     S4Vectors,
     SummarizedExperiment,
@@ -48,6 +52,7 @@ Suggests:
     org.Rn.eg.db, 
     org.Sc.sgd.db,
     org.Dr.eg.db,
-    org.Xl.eg.db
+    org.Xl.eg.db, 
+    Rsubread
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
