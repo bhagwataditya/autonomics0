@@ -51,7 +51,7 @@ The **stable** branch is error-free, but now outdated:
     # RNASEQ
           object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>% 
                      system.file(package = 'autonomics.data') %>% 
-                     autonomics::read_rnaseq()
+                     autonomics::read_rnaseq(fid_var = 'gene_id')
           object %>% autonomics::prepare_rnaseq()
     
     # PROTEINGROUPS
