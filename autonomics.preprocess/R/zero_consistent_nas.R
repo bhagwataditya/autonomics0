@@ -9,27 +9,17 @@
 #' @param object SummarizedExperiment
 #' @param no_zero \code{\link{character}} defining how to react of there are no \code{0}s (zeros) present in the data set
 #' @return updated object
-#' @examples
-#' if (require(subramanian.2016)){
-#'    object <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
-#'                           package = 'subramanian.2016') %>%
-#'              autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE)
-#'    object %>% autonomics.preprocess::zero_to_na_if_not_all_zero(verbose = TRUE)
-#'
-#'    object <- system.file('extdata/metabolon/subramanian.2016.metabolon.xlsx',
-#'                           package = 'subramanian.2016') %>%
-#'              autonomics.import::load_metabolon(sheet = 5, infer_design_from_sampleids = TRUE)
-#'    object %>% autonomics.preprocess::zero_to_na_if_not_all_zero(verbose = TRUE)
-#' }
 #' @return updated object
 #' @importFrom data.table data.table :=
 #' @importFrom magrittr %<>% %>%
 #' @export
 zero_to_na_if_not_all_zero <- function(
-   no_zero = c('fail', 'warn_passthrough', 'passthrough')[1],
-   ...
+   object,
+   no_zero = c('fail', 'warn_passthrough', 'passthrough')[1]
 ){
+
 # Check prerequisites -----------------------------------------------------
+  subgroup <- NULL
   autonomics.import::assert_is_valid_object(object)
   if (!autonomics.import::has_complete_subgroup_values(object)){
      autonomics.support::cmessage('Return unmodified - object lacks complete subgroup values')
@@ -50,7 +40,7 @@ zero_to_na_if_not_all_zero <- function(
         object %>%
           autonomics.import::filter_samples(subgroup == sg)
       }) %>%
-    set_names(autonomics.import::subgroup_levels(object)) %>%
+    magrittr::set_names(autonomics.import::subgroup_levels(object)) %>%
     ## Isolate expressions
     lapply(autonomics.import::exprs)
 
@@ -112,10 +102,10 @@ zero_to_na_if_not_all_zero <- function(
   # Reassemble
   autonomics.import::exprs(object) <- do.call(cbind, subset_data_by_subroup) %>%
                                       magrittr::extract(,colnames(autonomics.import::exprs(object)))
-  autonomics.import::assert_is_valid_objectset(object)
+  autonomics.import::assert_is_valid_object(object)
 
   # Return
-  if (verbose)  autonomics.support::cmessage('\t\tConvert inconsistent zeroes into NAs')
+  autonomics.support::cmessage('\t\tConvert inconsistent zeroes into NAs')
   return(object)
 }
 

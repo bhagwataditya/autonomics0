@@ -33,11 +33,6 @@ autonomics.import::exprs() %>%
 #' \href{https://dx.doi.org/10.2139/ssrn.1690502}{Croux et al., 2010}
 #' @param object SummarizedExperiment
 #' @param method 'arithmetic' or 'geometric'
-#' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::exiqon %>% get_median_exprs()
-#' }
 #' @importFrom magrittr %>%
 #' @export
 get_median_exprs <- function(object, method = 'arithmetic'){
@@ -57,11 +52,6 @@ autonomics.import::assert_is_valid_object(object)
 #' @param ref reference subgroup level
 #' @param method 'arithmetic' or 'geometric'
 #' @return vector with median reference exprs
-#' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::exiqon %>% get_median_ref_exprs()
-#' }
 #' @importFrom magrittr %>%
 #' @export
 get_median_ref_exprs <- function(
@@ -98,12 +88,6 @@ autonomics.import::exprs(object) %<>% magrittr::subtract(values)
 #' @param ref reference subgroup level
 #' @param method 'arithmetic' or 'geometric'
 #' @return SummarizedExperiment
-#' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    subramanian.2016::exiqon
-#'    subramanian.2016::exiqon %>% autonomics.preprocess::subtract_median_ref_exprs()
-#' }
 #' @importFrom magrittr %>%
 #' @export
 #' @author Aditya Bhagwat

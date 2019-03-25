@@ -33,8 +33,8 @@ filter_features_nonzero_for_two_samples_in_some_subgroup <- function(object){
 #' @return updated object
 #' @examples
 #' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    object <- subramanian.2016::metabolon
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::glutaminase
 #'    object %>% autonomics.preprocess::is_available_in_all_samples()
 #'    object %>% autonomics.preprocess::filter_features_available_in_all_samples()
 #' }
@@ -58,42 +58,6 @@ filter_features_available_in_all_samples <- function(object){
 }
 
 
-#' Filter features which are differential between subgroups
-#' @examples
-#' require(magrittr)
-#' if (require(subramanian.2016)){
-#'    file <- system.file('extdata/metabolon/subramanian.2016.metabolon.txt',
-#'                         package = 'subramanian.2016')
-#'    object <- autonomics.import::load_metabolon_file(file) %>%
-#'              autonomics.import::filter_samples(TREATMENT == TREATMENT[1])
-#' }
-#' @noRd
-filter_features_differential_between_subgroups <- function(object){
-   object$subgroup
-}
-
 
 #===========
 
-#' @rdname filter_samples_available_for_some_feature
-#' @importFrom magrittr %>%
-#' @export
-is_available_for_some_feature <- function(object){
-   subsetter <- (!is.na(autonomics.import::exprs(object))) & (autonomics.import::exprs(object) != 0)
-   subsetter %>% matrixStats::colAnys() %>% magrittr::set_names(autonomics.import::snames(object))
-}
-
-#' Filter samples available for some feature
-#' @param object SummarizedExperiment
-#' @param verbose TRUE or FALSE
-#' @return SummarizedExperiment
-#' @export
-filter_samples_available_for_some_feature <- function(object, verbose = FALSE){
-   subsetter <- object %>% autonomics.preprocess::is_available_for_some_feature()
-   if (any(!subsetter)){
-      if (verbose) autonomics.support::cmessage('\t\tRetain %d/%d samples with a value available for some feature',
-                                                sum(subsetter), length(subsetter))
-      object %<>% magrittr::extract(, subsetter)
-   }
-   object
-}

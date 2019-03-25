@@ -7,22 +7,22 @@
 normalize_samples_on_svar(object, normvar, result_dir = NULL)
 }
 \arguments{
-\item{object}{eset}
+\item{object}{SummarizedExperiment}
 
 \item{normvar}{svar on which to normalize}
 
 \item{result_dir}{directory where normalization plots should be printed}
 }
 \value{
-normalized eset
+normalized SummarizedExperiment
 }
 \description{
 Normalize samples on svar
 }
 \examples{
 require(magrittr)
-if (require(halama.2016)){
-   object <- halama.2016::cell.metabolites
-   object \%>\% autonomics.preprocess::normalize_samples_on_svar('ProteinContent')
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase
+   object \%>\% autonomics.preprocess::normalize_samples_on_svar('PROTEIN_CONTENT')
 }
 }

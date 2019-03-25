@@ -25,6 +25,7 @@ transform_to_standard_normal <- function(x){
 #' @return transformed vector
 #' @importFrom magrittr  %>%
 transform_to_fitting_normal <- function(x){
+   . <- NULL
    pars <- x %>% (function(x){
                      x %>%
                      magrittr::extract(!is.na(.) & !is.infinite(.)) %>%
@@ -88,19 +89,20 @@ z_score_samples <- function(object){
 }
 
 #' Normalize samples on svar
-#' @param object    eset
+#' @param object      SummarizedExperiment
 #' @param normvar     svar on which to normalize
 #' @param result_dir  directory where normalization plots should be printed
-#' @return normalized eset
+#' @return normalized SummarizedExperiment
 #' @examples
 #' require(magrittr)
-#' if (require(halama.2016)){
-#'    object <- halama.2016::cell.metabolites
-#'    object %>% autonomics.preprocess::normalize_samples_on_svar('ProteinContent')
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::glutaminase
+#'    object %>% autonomics.preprocess::normalize_samples_on_svar('PROTEIN_CONTENT')
 #' }
 #' @importFrom magrittr  %<>%   %>%
 #' @export
 normalize_samples_on_svar <- function(object, normvar, result_dir = NULL){
+   . <- NULL
 
    object[[normvar]] %<>% (function(x) if (is.factor(x))    as.character(x) else x)
    object[[normvar]] %<>% (function(x) if (is.character(x)) as.numeric(x)   else x)

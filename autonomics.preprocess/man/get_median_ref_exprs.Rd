@@ -21,9 +21,3 @@ vector with median reference exprs
 \description{
 Get median reference exprs
 }
-\examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   subramanian.2016::exiqon \%>\% get_median_ref_exprs()
-}
-}

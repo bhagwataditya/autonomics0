@@ -55,9 +55,9 @@
 #'    object %>% preprocess_eset(normalize_between_subgroup_samples = TRUE, result_dir = result_dir)
 #'    object %>% preprocess_eset(normalize_between_all_samples      = TRUE, result_dir = result_dir)
 #' }
-#' if (require(halama.2016)){
-#'    object <- halama.2016::cell.metabolites
-#'    object %>% preprocess_eset(normalize_on_svar = 'ProteinContent')
+#' if (require(autonomics.data)){
+#'    object <- autonomics.data::glutaminase
+#'    object %>% preprocess_eset(normalize_on_svar = 'PROTEIN_CONTENT')
 #' }
 #' if (require(alnoubi.2017)){
 #'    object <- alnoubi.2017::proteins.replicates

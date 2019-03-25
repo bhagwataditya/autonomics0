@@ -31,9 +31,3 @@ outperformed other implementations in accuracy and speed, and is
 robust against NAS
 \href{https://dx.doi.org/10.2139/ssrn.1690502}{Croux et al., 2010}
 }
-\examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   subramanian.2016::exiqon \%>\% get_median_exprs()
-}
-}

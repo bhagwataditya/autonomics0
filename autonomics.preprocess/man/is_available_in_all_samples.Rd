@@ -20,8 +20,8 @@ Keep features that are available in all samples
 }
 \examples{
 require(magrittr)
-if (require(subramanian.2016)){
-   object <- subramanian.2016::metabolon
+if (require(autonomics.data)){
+   object <- autonomics.data::glutaminase
    object \%>\% autonomics.preprocess::is_available_in_all_samples()
    object \%>\% autonomics.preprocess::filter_features_available_in_all_samples()
 }

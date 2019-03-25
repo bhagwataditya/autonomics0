@@ -692,7 +692,7 @@ prepare_proteingroups <- function(
    if (!is.null(deconvolution_fastafile)) assertive.files::assert_all_are_existing_files(deconvolution_fastafile)
    
    # Filter samples
-   object %<>% autonomics.preprocess::filter_samples_available_for_some_feature(verbose = verbose)
+   object %<>% autonomics.import::filter_samples_available_for_some_feature(verbose = verbose)
 
    # Filter features
    if (verbose) autonomics.support::cmessage('\tFilter features')

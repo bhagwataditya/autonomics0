@@ -4,13 +4,13 @@
 \alias{zero_to_na_if_not_all_zero}
 \title{NA inconsistent zeroes}
 \usage{
-zero_to_na_if_not_all_zero(no_zero = c("fail", "warn_passthrough",
-  "passthrough")[1], ...)
+zero_to_na_if_not_all_zero(object, no_zero = c("fail",
+  "warn_passthrough", "passthrough")[1])
 }
 \arguments{
-\item{no_zero}{\code{\link{character}} defining how to react of there are no \code{0}s (zeros) present in the data set}
-
 \item{object}{SummarizedExperiment}
+
+\item{no_zero}{\code{\link{character}} defining how to react of there are no \code{0}s (zeros) present in the data set}
 }
 \value{
 updated object
@@ -23,17 +23,4 @@ inconsistent (NA rather than 0). This distinction is required in LCMS platforms 
 where a high degree of inconsistent non-detects are generated due to platform stochasticity. It is not required in
 transcriptomics platforms (RNAseq, qPCR, microarrays), where non-detecs arise due to low abundance rather than platform
 stochasticity.
-}
-\examples{
-if (require(subramanian.2016)){
-   object <- system.file('extdata/exiqon/subramanian.2016.exiqon.xlsx',
-                          package = 'subramanian.2016') \%>\%
-             autonomics.import::load_exiqon(infer_design_from_sampleids = TRUE)
-   object \%>\% autonomics.preprocess::zero_to_na_if_not_all_zero(verbose = TRUE)
-
-   object <- system.file('extdata/metabolon/subramanian.2016.metabolon.xlsx',
-                          package = 'subramanian.2016') \%>\%
-             autonomics.import::load_metabolon(sheet = 5, infer_design_from_sampleids = TRUE)
-   object \%>\% autonomics.preprocess::zero_to_na_if_not_all_zero(verbose = TRUE)
-}
 }

@@ -21,13 +21,6 @@ SummarizedExperiment
 \description{
 Subtract median ref exprs
 }
-\examples{
-require(magrittr)
-if (require(subramanian.2016)){
-   subramanian.2016::exiqon
-   subramanian.2016::exiqon \%>\% autonomics.preprocess::subtract_median_ref_exprs()
-}
-}
 \author{
 Aditya Bhagwat
 }
