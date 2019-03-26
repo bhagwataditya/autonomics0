@@ -1,6 +1,6 @@
 # Intro
 
-autonomics is an R suite for making omics data analysis easier, by **automating** the automatable, and **facilitating** the interactive.
+Making omics data analysis more fun :-).
 
 
 # Installation
@@ -51,7 +51,7 @@ The **stable** branch is error-free, but now outdated:
     # RNASEQ
           object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>% 
                      system.file(package = 'autonomics.data') %>% 
-                     autonomics::read_somascan()
+                     autonomics::read_rnaseq(fid_var = 'gene_id')
           object %>% autonomics::prepare_rnaseq()
     
     # PROTEINGROUPS
@@ -79,14 +79,7 @@ The **stable** branch is error-free, but now outdated:
                         sdata_rows = 1:10,      sdata_cols = 15:86,
                         transpose  = FALSE)
                         
-## Explore omics data
-
-    # Sample distributions
-        require(magrittr)
-        object <- autonomics.data::glutaminase
-        object %>% autonomics.plot::plot_sample_densities()
-        object %>% autonomics::plot_sample_distributions()
-        
+## Explore omics data (dev)
 
     # Principal Component Analysis
         object <- autonomics.data::glutaminase
@@ -108,5 +101,18 @@ The **stable** branch is error-free, but now outdated:
         object %>% autonomics::plot_sma_samples()          
         object %>% autonomics::plot_sma_features() 
         object %>% autonomics::plot_sma_samples_and_features()
+
+
+## Analyze contrasts (dev)
+
+    object <- autonomics.data::glutaminase
+    table(object$subgroup)
+    glutcontrasts <- c(  UT.h72   = 'UT_h72   - UT_h10',
+                         uM10.h72 = 'uM10_h72 - uM10_h10')
+    autonomics::contrastdefs(object) <- glutcontrasts
+    object %<>% autonomics::add_limma()
+    object %>% autonomics::plot_contrast_features(n=4)
+    object %>% autonomics::plot_contrast_features(contrast = glutcontrasts[2], n=4)
+    
 
 
