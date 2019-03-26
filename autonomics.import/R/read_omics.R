@@ -381,7 +381,7 @@ select_organism_database <- function(organism){
 #' @param return_feature  Display feature annotation on console. By default FALSE
 #' @seealso download_gtf
 #' @examples
-#' select_gtf_features(gtffile = "~/.autonomics/gtf/Homo_sapiens.GRCh38.95.gtf", filter = 'ENSG00000198947', return_value = FALSE)
+#' select_gtf_features(gtffile = "~/.autonomics/gtf/Homo_sapiens.GRCh38.95.gtf", filter = 'ENSG00000198947', return_feature = FALSE)
 #' @importFrom magrittr %>%
 #' @export
 select_gtf_features <- function(
