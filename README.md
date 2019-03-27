@@ -52,7 +52,7 @@ The **stable** branch is error-free, but now outdated:
           object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>% 
                      system.file(package = 'autonomics.data') %>% 
                      autonomics::read_rnaseq(fid_var = 'gene_id')
-          object %>% autonomics::prepare_rnaseq()
+          object %<>% autonomics::prepare_rnaseq()
     
     # PROTEINGROUPS
           object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>% 
@@ -84,8 +84,8 @@ The **stable** branch is error-free, but now outdated:
     # Principal Component Analysis
         object <- autonomics.data::glutaminase
         object %>% autonomics::plot_pca_samples()
-        object %>% autonomics::plot_pca_features()
-        object %>% autonomics::plot_pca_samples_and_features()
+        object %>% autonomics::plot_pca_features(n=4)
+        object %>% autonomics::plot_pca_samples_and_features(n=4)
         
     #  Linear Discriminant Analysis
         object %>% autonomics::plot_lda_samples()

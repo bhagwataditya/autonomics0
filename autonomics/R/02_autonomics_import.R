@@ -92,6 +92,15 @@ NULL
 NULL
 
 
+#' read_omics
+#' 
+#' \code{\link[autonomics.import]{read_omics}}
+#' @name read_omics
+#' @importFrom autonomics.import  read_omics
+#' @export read_omics
+NULL
+
+
 #' read_proteingroups
 #' 
 #' \code{\link[autonomics.import]{read_proteingroups}}
