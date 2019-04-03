@@ -45,5 +45,5 @@ Suggests:
     org.Sc.sgd.db,
     org.Xl.eg.db,
     testthat
-    biocViews:
+biocViews:
 
