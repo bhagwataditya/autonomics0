@@ -7,12 +7,16 @@ Making omics data analysis more fun :-).
 
 The **development** version is up-to-date, but not yet stable:
 
-    # First install the R package remotes
+    # First install Bioconductor
+    install.packages('BiocManager')
+    BiocManager::install('SummarizedExperiment')
+    
+    # Then install autonomics
     install.packages('remotes')
     remotes::install_github('bhagwataditya/autonomics/autonomics.data',       ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.support',    ref = 'dev')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.import',     ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.annotate',   ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.import',     ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess', ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.plot',       ref = 'dev')
     remotes::install_github('bhagwataditya/autonomics/autonomics.find',       ref = 'dev')
