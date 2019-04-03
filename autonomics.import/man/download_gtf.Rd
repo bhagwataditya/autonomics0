@@ -12,8 +12,6 @@ download_gtf(organism, release = 95,
 \item{organism}{'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'}
 
 \item{release}{GTF release. By default release 95 selected}
-
-\item{gtffile}{string: local GTF file path}
 }
 \description{
 Download feature annotations in GTF format

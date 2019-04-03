@@ -2,17 +2,12 @@
 % Please edit documentation in R/read_omics.R
 \name{make_gtf_link}
 \alias{make_gtf_link}
-\title{Construct hyperlink to gtf file}
+\title{Make link to GTF file}
 \usage{
 make_gtf_link(organism, release)
 }
-\arguments{
-\item{organism}{'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'}
-
-\item{release}{GTF release (default value: '95')}
-}
 \description{
-Construct hyperlink to gtf file
+Make link to GTF file
 }
 \examples{
 make_gtf_link(organism = 'Homo sapiens', release = 95)

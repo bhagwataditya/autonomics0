@@ -19,15 +19,8 @@ get_feature_counts(filedir, gtffile, paired_end = FALSE, ...)
 Generates feature counts text file
 }
 \examples{
-\dontrun{ # requires an internet connection, and can take a few minutes to complete
-   dir.create('~/.autonomics', showWarnings=FALSE)
-   data_url <- 'https://bitbucket.org/graumannlab/billing.stemcells/downloads/rnaseq_example_data.zip'
-   download.file(data_url, '~/.autonomics/rnaseq_example_data.zip')
-   utils::unzip('~/.autonomics/rnaseq_example_data.zip', exdir = '~/.autonomics')
-   unlink('~/.autonomics/rnaseq_example_data.zip')
-   get_feature_counts( filedir    = "~/.autonomics/rnaseq_example_data/comparison",
-                       organism   = 'Homo sapiens',
-                       release    = 95,
-                       paired_end = TRUE)
-}
+download .zip file from "https://bitbucket.org/graumannlab/billing.stemcells/downloads/rnaseq_example_data.zip" and unzip it under ~/.autonomics/
+get_feature_counts( filedir = "~/.autonomics/rnaseq_example_data/comparison",
+                    gtffile = "~/.autonomics/gtf/Homo_sapiens.GRCh38.95.gtf",
+                    paired_end = TRUE)
 }

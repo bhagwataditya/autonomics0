@@ -313,6 +313,9 @@ release_to_build <- function(release, organism){
    else if   (organism == 'Rattus norvegicus'){     if (release >= 80)  'Rnor_6.0' else 'Rnor_5.0'  }
 }
 
+#' Make link to GTF file
+#' @param organism 'Homo sapiens', 'Mus musculus', or 'Rattus norvegicus'
+#' @param release   number
 #' @examples
 #' make_gtf_link(organism = 'Homo sapiens', release = 95)
 #' make_gtf_link(organism = 'Mus musculus', release = 95)
