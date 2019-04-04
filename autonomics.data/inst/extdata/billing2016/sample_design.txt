@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5fc571ae55a0303dda516d66115d280aa86e04c71300fb5da219ab071c2bc569
-size 201
+sample_id	subgroup	replicate	block
+EXP1[M/L]	EM_E		
+EXP1[H/L]	BM_E		
+EXP1[H/M]	BM_EM		
+EXP2[M/L]	E_BM		
+EXP2[H/L]	EM_BM		
+EXP2[H/M]	EM_E		
+EXP3[M/L]	BM_EM		
+EXP3[H/L]	E_EM		
+EXP3[H/M]	E_BM		

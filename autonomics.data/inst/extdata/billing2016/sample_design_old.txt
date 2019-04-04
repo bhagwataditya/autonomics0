@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b4693cd1c7741b11cf614a6caffcb1803423be41d7350b38902448f6eb92aa24
-size 185
+injection	channel	subgroup	replicate
+EXP1	M/L	EM_E	
+EXP1	H/L	BM_E	
+EXP1	H/M	BM_EM	
+EXP2	M/L	E_BM	
+EXP2	H/L	EM_BM	
+EXP2	H/M	EM_E	
+EXP3	M/L	BM_EM	
+EXP3	H/L	E_EM	
+EXP3	H/M	E_BM	
