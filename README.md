@@ -33,7 +33,7 @@ The **stable** branch is error-free, but now outdated:
     # remotes::install_github('bhagwataditya/autonomics/autonomics.ora'       )
     # remotes::install_github('bhagwataditya/autonomics/autonomics'           )
 
-## Read omics data and prepare for analysis (dev)
+## Read omics data and prepare for analysis
 
     # METABOLON
           require(magrittr)
@@ -79,7 +79,7 @@ The **stable** branch is error-free, but now outdated:
                         sdata_rows = 1:10,      sdata_cols = 15:86,
                         transpose  = FALSE)
                         
-## Explore omics data (dev)
+## Explore omics data
 
     # Principal Component Analysis
         object <- autonomics.data::glutaminase
@@ -103,7 +103,7 @@ The **stable** branch is error-free, but now outdated:
         object %>% autonomics::plot_sma_samples_and_features()
 
 
-## Analyze contrasts (dev)
+## Analyze contrasts
 
     object <- autonomics.data::glutaminase
     table(object$subgroup)
