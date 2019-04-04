@@ -9,19 +9,20 @@ The **development** version is up-to-date, but not yet stable:
 
     # First install Bioconductor
     install.packages('BiocManager')
-    BiocManager::install('SummarizedExperiment')
+    BiocManager::install('SummarizedExperiment', update = FALSE)   # required to install autonomics.data
+    BiocManager::install('mixOmics',             update = FALSE)   # moved from CRAN to BioC, requires explicit installation
     
     # Then install autonomics
     install.packages('remotes')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.data',       ref = 'dev')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.support',    ref = 'dev')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.annotate',   ref = 'dev')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.import',     ref = 'dev')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess', ref = 'dev')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.plot',       ref = 'dev')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.find',       ref = 'dev')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.ora',        ref = 'dev')
-    remotes::install_github('bhagwataditya/autonomics/autonomics',            ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.data',       ref = 'dev', upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.support',    ref = 'dev', upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.annotate',   ref = 'dev', upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.import',     ref = 'dev', upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess', ref = 'dev', upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.plot',       ref = 'dev', upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.find',       ref = 'dev', upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.ora',        ref = 'dev', upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics',            ref = 'dev', upgrade = FALSE)
 
 
 The **stable** branch is error-free, but now outdated:
