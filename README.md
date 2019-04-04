@@ -33,20 +33,20 @@ The **stable** branch is error-free, but now outdated:
     # remotes::install_github('bhagwataditya/autonomics/autonomics.ora'       )
     # remotes::install_github('bhagwataditya/autonomics/autonomics'           )
 
-## Read omics data and prepare for analysis (dev)
+## Read omics data and prepare for analysis
 
     # METABOLON
           require(magrittr)
           object <- 'extdata/glutaminase/glutaminase.xlsx'    %>% 
                      system.file(package = 'autonomics.data') %>% 
                      autonomics::read_metabolon()
-          object %>% autonomics::prepare_metabolon()
+          object %<>% autonomics::prepare_metabolon()
     
     # SOMASCAN
           object <- 'extdata/stemcomp/soma/stemcomp.adat'     %>% 
                      system.file(package = 'autonomics.data') %>% 
                      autonomics::read_somascan()
-          object %>% autonomics::prepare_somascan()
+          object %<>% autonomics::prepare_somascan()
     
     # RNASEQ
           object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>% 
@@ -58,11 +58,11 @@ The **stable** branch is error-free, but now outdated:
           object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>% 
                      system.file(package = 'autonomics.data') %>% 
                      autonomics::read_proteingroups()
-          object %>% autonomics::prepare_proteingroups()
+          object %<>% autonomics::prepare_proteingroups()
     
     # EXIQON
           object <-  autonomics::read_exiqon(myfile)
-          object %>% autonomics::prepare_exiqon()
+          object %<>% autonomics::prepare_exiqon()
 
    
     # ANY OMICS DATASET
@@ -79,7 +79,7 @@ The **stable** branch is error-free, but now outdated:
                         sdata_rows = 1:10,      sdata_cols = 15:86,
                         transpose  = FALSE)
                         
-## Explore omics data (dev)
+## Explore omics data
 
     # Principal Component Analysis
         object <- autonomics.data::glutaminase
@@ -103,7 +103,7 @@ The **stable** branch is error-free, but now outdated:
         object %>% autonomics::plot_sma_samples_and_features()
 
 
-## Analyze contrasts (dev)
+## Analyze contrasts
 
     object <- autonomics.data::glutaminase
     table(object$subgroup)
