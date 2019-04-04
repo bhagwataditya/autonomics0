@@ -7,8 +7,8 @@
 #' @importFrom magrittr %>% 
 #' @export
 is_outlier <- function(x){
-   med <- x %>% median(na.rm=TRUE)
-   iqr <- x %>% IQR(na.rm = TRUE)
+   med <- x %>% stats::median(na.rm=TRUE)
+   iqr <- x %>% stats::IQR(na.rm = TRUE)
    lower <- med - 1.5*iqr
    upper <- med + 1.5*iqr
    (x < lower) | (x > upper)

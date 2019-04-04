@@ -2,7 +2,6 @@
 
 export(all_are_missing_or_empty_character)
 export(all_have_value)
-export(all_svalues_available)
 export(cdraw)
 export(cduplicated)
 export(cfile.path)
