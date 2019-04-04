@@ -74,6 +74,15 @@ NULL
 NULL
 
 
+#' limma
+#' 
+#' \code{\link[autonomics.import]{limma}}
+#' @name limma
+#' @importFrom autonomics.import  limma
+#' @export limma
+NULL
+
+
 #' read_exiqon
 #' 
 #' \code{\link[autonomics.import]{read_exiqon}}
