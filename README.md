@@ -7,6 +7,12 @@ Making omics data analysis more fun :-).
 
 The **development** version is up-to-date, but not yet stable:
 
+    # Set CRAN mirror to be used
+    local({r <- getOption("repos")
+           r["CRAN"] <- "https://cloud.r-project.org" 
+           options(repos=r)
+    })    
+
     # First install Bioconductor
     install.packages('BiocManager')
     BiocManager::install('SummarizedExperiment', update = FALSE)   # required to install autonomics.data
