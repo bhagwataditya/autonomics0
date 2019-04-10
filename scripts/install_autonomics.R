@@ -3,28 +3,27 @@ is_package_installed <- function(x){
    x %in% rownames(installed.packages())
 }
 
-if(!is_package_installed('BiocManager')) install.packages('BiocManager')
+if (!is_package_installed('BiocManager')) install.packages('BiocManager')
 
 install_if_not_available <- function(x){
    lapply(x, 
           function(x){
-             if (!is_package_installed(x)) BiocManager::install(x, update = FALSE, ask = FALSE)
+             if (!is_package_installed(x)) BiocManager::install(x,
+               update = FALSE, ask = FALSE)
    })
 }
 
 check_version_compatibility <- function(){
-  if(
+  if (
     'ggplot2' %in% utils::installed.packages() &&
-    utils::packageVersion('ggplot2') > package_version('2.2.1'))
-  {
+    utils::packageVersion('ggplot2') > package_version('2.2.1')) {
     warning("'autonomics' is currently incompatible with 'ggplot2' > v2.2.1. Downgrading.")
     remotes::install_version('ggplot2', version = '2.2.1')
   }
   
-  if(
+  if (
     'ggstance' %in% utils::installed.packages() &&
-    utils::packageVersion('ggstance') > package_version('0.3'))
-  {
+    utils::packageVersion('ggstance') > package_version('0.3')) {
     warning("'autonomics' is currently incompatible with 'ggstance' > v0.3 (which depends on 'ggplot2' v3.0). Downgrading.")
     remotes::install_version('ggstance', version = '0.3')
   } 
@@ -43,6 +42,51 @@ check_version_compatibility <- function(){
    #}
 }
 
+install_git_multiple_subdirs <- function(
+  repo, subdirs, host = NULL,
+  remote_type = c("bitbucket", "git", "github", "gitlab"),
+  repos = BiocManager::repositories()) {
+  remote_type <- match.arg(remote_type)
+  ## Download bundle (bitbucket, github, gitlab) or shallow clone (git) repo
+  ## Heavily relying on (unexported) functionality from `remotes`
+  if (is.null(host)) host <- switch(
+    remote_type,
+    bitbucket = "api.bitbucket.org/2.0",
+    git = stop("`host` definition required."),
+    github = "api.github.com",
+    gitlab = "gitlab.com")
+  remote <- switch(remote_type,
+                   bitbucket = remotes:::bitbucket_remote(repo = repo, host = host),
+                   git = remotes:::git_remote(
+                     url = utils::URLencode(paste(host, repo, sep = "/")), git = "external"),
+                   github = remotes:::github_remote(repo, host = host),
+                   gitlab = remotes:::gitlab_remote(repo, host = host))
+  bundle <- remotes:::remote_download(remote)
+  bundle_is_tarball <- grepl(pattern = "\\.tar\\.gz$", x = bundle)
+  on.exit(unlink(bundle, recursive = TRUE), add = TRUE)
+  ## Assure presence of requested subdirs
+  if (bundle_is_tarball) {
+    subdirs_present <- untar(tarfile = bundle, list = TRUE,
+                             compressed = TRUE)
+    subdirs_present <- unique(sapply(
+      subdirs_present,
+      function(x){
+        unlist(strsplit(x, split = "[/\\]"))[2]
+      }))
+  } else {
+    subdirs_present <-  list.dirs(path = bundle, recursive = FALSE)
+  }
+  names(subdirs_present) <- basename(subdirs_present)
+  missing_subdirs <- setdiff(subdirs, names(subdirs_present))
+  if (length(missing_subdirs) != 0) stop("Requested subdirs not present: ",
+                                         paste(subdirs, collapse = ", "))
+  ## Iteratively install the subdir-contained packages
+  for (sd in subdirs) {
+    remotes::install_local(path = bundle, subdir = sd, dependencies = TRUE,
+                           upgrade = "never", repos = repos)
+  }
+}
+
 install_autonomics <- function(){
    
    # remotes
@@ -51,32 +95,22 @@ install_autonomics <- function(){
    # Check version compatibility
    check_version_compatibility()
 
-   # autonomics.data & autonomics.support
-   remotes::install_github('bhagwataditya/autonomics', subdir='autonomics.data',       repos = BiocManager::repositories(), upgrade = FALSE)
-   remotes::install_github('bhagwataditya/autonomics', subdir='autonomics.support',    repos = BiocManager::repositories(), upgrade = FALSE)
-
-   # autonomics.preprocess
+   # Install prerequisite packages
+   ## autonomics.preprocess
    install_if_not_available('imputeLCMD')
-   remotes::install_github('bhagwataditya/autonomics', subdir='autonomics.preprocess', repos = BiocManager::repositories(), upgrade = FALSE)
-   
-   # autonomics.annotate & autonomics.import
+   ## autonomics.annotate & autonomics.import
    install_if_not_available(c('SummarizedExperiment', 'GenomeInfoDbData'))
-   remotes::install_github('bhagwataditya/autonomics', subdir='autonomics.annotate',   repos = BiocManager::repositories(), upgrade = FALSE)
-   remotes::install_github('bhagwataditya/autonomics', subdir='autonomics.import',     repos = BiocManager::repositories(), upgrade = FALSE)
-
-   # autonomics.plot
-   remotes::install_github('bhagwataditya/autonomics', subdir='autonomics.plot',       repos = BiocManager::repositories(), upgrade = FALSE)
-   remotes::install_github('bhagwataditya/autonomics', subdir='autonomics.explore',    repos = BiocManager::repositories(), upgrade = FALSE)
-   remotes::install_github('bhagwataditya/autonomics', subdir='autonomics.find',       repos = BiocManager::repositories(), upgrade = FALSE)
-
-   # autonomics.ora
+   ## autonomics.ora
    install_if_not_available(c('GO.db', 'PANTHER.db'))
-   remotes::install_github('bhagwataditya/autonomics', subdir='autonomics.ora',        repos = BiocManager::repositories(), upgrade = FALSE)
-   remotes::install_github('bhagwataditya/autonomics', subdir='autonomics.integrate',  repos = BiocManager::repositories(), upgrade = FALSE)
 
-   # autonomics
-   remotes::install_github('bhagwataditya/autonomics', subdir='autonomics',            repos = BiocManager::repositories(), upgrade = FALSE)
-
+   # Install autonomics (THE ORDER OF SUBDIRS MATTERS)
+   install_git_multiple_subdirs(repo = "bhagwataditya/autonomics",
+     subdirs = c("autonomics.data", "autonomics.support",
+       "autonomics.preprocess", "autonomics.annotate", "autonomics.import",
+       "autonomics.plot", "autonomics.explore", "autonomics.find",
+       "autonomics.ora", "autonomics.integrate", "autonomics"),
+     remote_type = "github")
+   
    check_version_compatibility()
 }
 
