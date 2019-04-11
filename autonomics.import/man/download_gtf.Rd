@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_omics.R
 \name{download_gtf}
 \alias{download_gtf}
-\title{Download feature annotations}
+\title{Download GTF file}
 \usage{
 download_gtf(organism, release = 95,
   gtffile = sprintf("~/.autonomics/gtf/\%s",
@@ -12,9 +12,11 @@ download_gtf(organism, release = 95,
 \item{organism}{'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'}
 
 \item{release}{GTF release. By default release 95 selected}
+
+\item{gtffile}{string: path to local GTF file}
 }
 \description{
-Download feature annotations in GTF format
+Download GTF file with feature annotations
 }
 \examples{
 \dontrun{ # requires internet and does not always work: https://stackoverflow.com/questions/55532102

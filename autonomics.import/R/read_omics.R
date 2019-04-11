@@ -331,9 +331,9 @@ make_gtf_link <- function(organism, release){
 }
 
 
-#' Download feature annotations
+#' Download GTF file
 #'
-#' Download feature annotations in GTF format
+#' Download GTF file with feature annotations
 #' @param organism    'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'
 #' @param release      GTF release. By default release 95 selected
 #' @param gtffile      string: path to local GTF file
