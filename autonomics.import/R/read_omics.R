@@ -174,11 +174,11 @@ extract_rectangle.matrix <- function(
 #'
 #'    # RNASEQ
 #'       file <- system.file('extdata/stemcomp/rnaseq/gene_counts.txt', package = 'autonomics.data')
-#'       file %>% read_omics(fid_rows   = 2:58735,   fid_cols   = 1,
-#'                           sid_rows   = 1,         sid_cols   = 4:15,
-#'                           expr_rows  = 2:58735,   expr_cols  = 4:15,
+#'       file %>% read_omics(fid_rows   = 2:58736,   fid_cols   = 1,
+#'                           sid_rows   = 1,         sid_cols   = 4:14,
+#'                           expr_rows  = 2:58736,   expr_cols  = 4:14,
 #'                           fvar_rows  = 1,         fvar_cols  = 1:3,
-#'                           fdata_rows = 2:58735,   fdata_cols = 1:3,
+#'                           fdata_rows = 2:58736,   fdata_cols = 1:3,
 #'                           transpose  = FALSE)
 #'
 #'    # LCMSMS PROTEINGROUPS
@@ -336,6 +336,7 @@ make_gtf_link <- function(organism, release){
 #' Download feature annotations in GTF format
 #' @param organism    'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'
 #' @param release      GTF release. By default release 95 selected
+#' @param gtffile      string: path to local GTF file
 #' @examples
 #' \dontrun{ # requires internet and does not always work: https://stackoverflow.com/questions/55532102
 #'    download_gtf(organism = 'Homo sapiens')
@@ -430,7 +431,7 @@ select_gtf_features <- function(
             dplyr::filter(gene_id %in% c(filter) | gene_name %in% c(filter))
       }
 
-      write.table(feature_df,sprintf("~/.autonomics/annotations/%s_feature_annotations.txt", gtffile %<>% basename(.) %>% stringi::stri_replace_last_fixed('.gtf', '')), quote=FALSE, sep="\t", row.names=FALSE)
+      utils::write.table(feature_df,sprintf("~/.autonomics/annotations/%s_feature_annotations.txt", gtffile %<>% basename(.) %>% stringi::stri_replace_last_fixed('.gtf', '')), quote=FALSE, sep="\t", row.names=FALSE)
       message(sprintf("\t\t%s_feature_annotations.txt written under ~/.autonomics/annotations", gtffile))
 
    }
