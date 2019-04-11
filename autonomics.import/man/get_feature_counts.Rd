@@ -32,8 +32,8 @@ Generates feature counts text file
      gtffile <- download_gtf('Homo sapiens', 95)
 
    # Generate feature counts
-     get_feature_counts(filedir = "~/.autonomics/rnaseq_example_data/comparison",
-                        gtffile = gtffile,
+     get_feature_counts(filedir    = "~/.autonomics/stemcomp.bamfiles",
+                        gtffile    = gtffile,
                         paired_end = TRUE)
 }
 }
