@@ -445,12 +445,14 @@ select_gtf_features <- function(
 #' @param ...         passed to Rsubread::featureCounts
 #' @importFrom magrittr %>%
 #' @examples
-#' \dontrun{ # requires internet and does not always work: https://stackoverflow.com/questions/55532102
+#' \dontrun{ # requires internet: slow and doesn't always work (https://stackoverflow.com/questions/55532102)
+#'           # requires rsubread (which is not available on windows)
 #'
 #'    # Download example data and unzip
 #'      url <- "https://bitbucket.org/graumannlab/billing.stemcells/downloads/stemcomp.bamfiles.zip"
+#'      dir.create('~/.autonomics', showWarnings = FALSE)
 #'      destfile <- "~/.autonomics/stemcomp.bamfiles.zip"
-#'      download.file(url, destfile = destfile)
+#'      download.file(url, destfile = destfile, )
 #'      utils::unzip(destfile, exdir = '~/.autonomics')
 #'      unlink(destfile)
 #'
@@ -470,7 +472,7 @@ get_feature_counts <- function(
    ...
 ){
    # Assert
-   if (!nzchar(system.file('Rsubread'))){ # https://stackoverflow.com/questions/9341635
+   if (!'Rsubread' %in% rownames(installed.packages())){ # https://stackoverflow.com/questions/9341635
       message("Install package 'Rsubread' (unix only) before running get_feature_counts()")
       return(invisible(NULL))
    }
