@@ -6,6 +6,11 @@
 \usage{
 make_gtf_link(organism, release)
 }
+\arguments{
+\item{organism}{'Homo sapiens', 'Mus musculus', or 'Rattus norvegicus'}
+
+\item{release}{number}
+}
 \description{
 Make link to GTF file
 }

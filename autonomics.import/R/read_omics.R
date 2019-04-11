@@ -337,7 +337,7 @@ make_gtf_link <- function(organism, release){
 #' @param organism    'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'
 #' @param release      GTF release. By default release 95 selected
 #' @examples
-#' \dontrun{
+#' \dontrun{ # requires internet and does not always work: https://stackoverflow.com/questions/55532102
 #'    download_gtf(organism = 'Homo sapiens')
 #'    download_gtf(organism = 'Mus musculus')
 #'    download_gtf(organism = 'Rattus norvegicus')
@@ -357,16 +357,19 @@ download_gtf <- function(
 
    remote <- make_gtf_link(organism, release)
 
-     if(file.exists(gtffile)){
-      message(sprintf("\t\tGTF file already available at %s", gtffile))
+   if(file.exists(gtffile)){
+      message(sprintf("GTF file already available at %s", gtffile))
    } else {
-      message(sprintf("\t\tDownload and unzip GTF file to %s" , gtffile %>% substr(1, nchar(.)-3)))
+      message(sprintf("download   %s'" , remote))
+      message(sprintf("to         %s", gtffile %>% substr(1, nchar(.)-3)))
       dir.create(dirname(gtffile), showWarnings = FALSE, recursive = TRUE)
-      utils::download.file(url = remote, destfile = gtffile)
-      R.utils::gunzip(gtffile,  remove = TRUE, overwrite = TRUE)
-      gtffile %<>% stringi::stri_replace_last_fixed('.gz', '')
+      tryCatch(expr  = {utils::download.file(url = remote, destfile = gtffile, quiet = TRUE)
+                        R.utils::gunzip(gtffile,  remove = TRUE, overwrite = TRUE)},
+               error = function(cond){ message('failed     repeat manually using browser\n');
+                                       message(cond)})
    }
-   return(gtffile)
+   gtffile %<>% stringi::stri_replace_last_fixed('.gz', '')
+   invisible(gtffile)
 }
 
 
@@ -379,12 +382,15 @@ select_organism_database <- function(organism){
 
 
 #' Select GTF feature
-#' @param gtffile       string: path to gtf file (which can be downloaded with download_gtf)
-#' @param filter        Filter on feature name or feature id. By default all features are extracted.
+#' @param gtffile         string: path to gtf file (which can be downloaded with download_gtf)
+#' @param filter          Filter on feature name or feature id. By default all features are extracted.
 #' @param return_feature  Display feature annotation on console. By default FALSE
 #' @seealso download_gtf
 #' @examples
-#' select_gtf_features(gtffile = "~/.autonomics/gtf/Homo_sapiens.GRCh38.95.gtf", filter = 'ENSG00000198947', return_feature = FALSE)
+#' \dontrun{ # requires internet connection
+#'    gtffile <- download_gtf(organism = 'Homo sapiens', release = 95)
+#'    select_gtf_features(gtffile = gtffile, filter = 'ENSG00000198947', return_feature = FALSE)
+#' }
 #' @importFrom magrittr %>%
 #' @export
 select_gtf_features <- function(
@@ -393,7 +399,7 @@ select_gtf_features <- function(
    return_feature = FALSE
 ){
    # Satisfy CHECK
-   . <- NULL
+   . <- gene_id <- gene_name <- NULL
 
    # Import gtf file
    message("\t\tLoading GTF file")
@@ -438,10 +444,23 @@ select_gtf_features <- function(
 #' @param ...         passed to Rsubread::featureCounts
 #' @importFrom magrittr %>%
 #' @examples
-#' download .zip file from "https://bitbucket.org/graumannlab/billing.stemcells/downloads/rnaseq_example_data.zip" and unzip it under ~/.autonomics/
-#' get_feature_counts( filedir = "~/.autonomics/rnaseq_example_data/comparison",
-#'                     gtffile = "~/.autonomics/gtf/Homo_sapiens.GRCh38.95.gtf",
-#'                     paired_end = TRUE)
+#' \dontrun{ # requires internet and does not always work: https://stackoverflow.com/questions/55532102
+#'
+#'    # Download example data and unzip
+#'      url <- "https://bitbucket.org/graumannlab/billing.stemcells/downloads/stemcomp.bamfiles.zip"
+#'      destfile <- "~/.autonomics/stemcomp.bamfiles.zip"
+#'      download.file(url, destfile = destfile)
+#'      utils::unzip(destfile, exdir = '~/.autonomics')
+#'      unlink(destfile)
+#'
+#'    # Download gtf file
+#'      gtffile <- download_gtf('Homo sapiens', 95)
+#'
+#'    # Generate feature counts
+#'      get_feature_counts(filedir    = "~/.autonomics/stemcomp.bamfiles",
+#'                         gtffile    = gtffile,
+#'                         paired_end = TRUE)
+#' }
 #' @export
 get_feature_counts <- function(
    filedir,
@@ -449,6 +468,12 @@ get_feature_counts <- function(
    paired_end      = FALSE,
    ...
 ){
+   # Assert
+   if (!nzchar(system.file('Rsubread'))){ # https://stackoverflow.com/questions/9341635
+      message("Install package 'Rsubread' (unix only) before running get_feature_counts()")
+      return(invisible(NULL))
+   }
+
    #set directory to samples with bam files
    setwd(sprintf("%s",filedir))
 
@@ -461,13 +486,14 @@ get_feature_counts <- function(
                   } else {                                                           paste0(subdirnames, '_', filenames) }
 
    message("\t\tCounting reads per feature for given samples")
+
    #count features for the list of samples
-   gene_counts <-  Rsubread::featureCounts(files = files,
-                                             annot.ext = gtffile,
-                                             isGTFAnnotationFile = TRUE,
-                                             GTF.attrType.extra = c("gene_name", "gene_biotype"),
-                                             isPairedEnd = paired_end,
-                                             ...)
+   gene_counts <-  Rsubread::featureCounts(files              = files,
+                                          annot.ext           = gtffile,
+                                          isGTFAnnotationFile = TRUE,
+                                          GTF.attrType.extra  = c("gene_name", "gene_biotype"),
+                                          isPairedEnd         = paired_end,
+                                          ...)
 
    message("\t\tAdding feature names and types to count table")
    gene_counts <- cbind(gene_counts$annotation[,c("GeneID","gene_name","gene_biotype")], gene_counts$counts)  %>%
@@ -477,7 +503,7 @@ get_feature_counts <- function(
    #create directory for saving feature_count.txt file
    create_dir <- dir.create("~/.autonomics/counts", recursive=TRUE, showWarnings = FALSE)
 
-   write.table(gene_counts,"~/.autonomics/counts/gene_counts.txt", quote=FALSE, sep="\t", row.names = FALSE)
+   utils::write.table(gene_counts,"~/.autonomics/counts/gene_counts.txt", quote=FALSE, sep="\t", row.names = FALSE)
 
    message("\t\tgene_counts.txt file written under ~/.autonomics/counts/")
 

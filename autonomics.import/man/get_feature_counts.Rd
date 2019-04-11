@@ -19,8 +19,21 @@ get_feature_counts(filedir, gtffile, paired_end = FALSE, ...)
 Generates feature counts text file
 }
 \examples{
-download .zip file from "https://bitbucket.org/graumannlab/billing.stemcells/downloads/rnaseq_example_data.zip" and unzip it under ~/.autonomics/
-get_feature_counts( filedir = "~/.autonomics/rnaseq_example_data/comparison",
-                    gtffile = "~/.autonomics/gtf/Homo_sapiens.GRCh38.95.gtf",
-                    paired_end = TRUE)
+\dontrun{ # requires internet and does not always work: https://stackoverflow.com/questions/55532102
+
+   # Download example data and unzip
+     url <- "https://bitbucket.org/graumannlab/billing.stemcells/downloads/stemcomp.bamfiles.zip"
+     destfile <- "~/.autonomics/stemcomp.bamfiles.zip"
+     download.file(url, destfile = destfile)
+     utils::unzip(destfile, exdir = '~/.autonomics')
+     unlink(destfile)
+
+   # Download gtf file
+     gtffile <- download_gtf('Homo sapiens', 95)
+
+   # Generate feature counts
+     get_feature_counts(filedir = "~/.autonomics/rnaseq_example_data/comparison",
+                        gtffile = gtffile,
+                        paired_end = TRUE)
+}
 }

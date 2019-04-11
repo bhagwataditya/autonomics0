@@ -17,7 +17,7 @@ download_gtf(organism, release = 95,
 Download feature annotations in GTF format
 }
 \examples{
-\dontrun{
+\dontrun{ # requires internet and does not always work: https://stackoverflow.com/questions/55532102
    download_gtf(organism = 'Homo sapiens')
    download_gtf(organism = 'Mus musculus')
    download_gtf(organism = 'Rattus norvegicus')

@@ -17,7 +17,10 @@ select_gtf_features(gtffile, filter = NULL, return_feature = FALSE)
 Select GTF feature
 }
 \examples{
-select_gtf_features(gtffile = "~/.autonomics/gtf/Homo_sapiens.GRCh38.95.gtf", filter = 'ENSG00000198947', return_feature = FALSE)
+\dontrun{ # requires internet connection
+   gtffile <- download_gtf(organism = 'Homo sapiens', release = 95)
+   select_gtf_features(gtffile = gtffile, filter = 'ENSG00000198947', return_feature = FALSE)
+}
 }
 \seealso{
 download_gtf
