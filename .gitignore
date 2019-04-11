@@ -3,3 +3,5 @@
 .RData
 .Rcheck
 .tar.gz
+*.Rcheck
+*.tar.gz
