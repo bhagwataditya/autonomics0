@@ -17,6 +17,17 @@ NULL
 NULL
 
 
+
+#' download_gtf
+#'
+#' \code{\link[autonomics.import]{download_gtf}}
+#' @name download_gtf
+#' @importFrom autonomics.import  download_gtf
+#' @export download_gtf
+NULL
+
+
+
 #' exprs
 #'
 #' \code{\link[autonomics.import]{fdata}}
