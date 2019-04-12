@@ -317,11 +317,11 @@ release_to_build <- function(release, organism){
 #' @param organism 'Homo sapiens', 'Mus musculus', or 'Rattus norvegicus'
 #' @param release   number
 #' @examples
-#' make_gtf_link(organism = 'Homo sapiens', release = 95)
-#' make_gtf_link(organism = 'Mus musculus', release = 95)
+#' make_gtf_url(organism = 'Homo sapiens', release = 95)
+#' make_gtf_url(organism = 'Mus musculus', release = 95)
 #' @importFrom magrittr %>%
 #' @export
-make_gtf_link <- function(organism, release){
+make_gtf_url <- function(organism, release){
    sprintf('ftp://ftp.ensembl.org/pub/release-%s/gtf/%s/%s.%s.%s.gtf.gz',
            release,
            organism %>% tolower() %>% stringi::stri_replace_first_fixed(' ', '_'),
@@ -347,7 +347,7 @@ make_gtf_link <- function(organism, release){
 download_gtf <- function(
    organism,
    release = 95,
-   gtffile = sprintf("~/.autonomics/gtf/%s", basename(make_gtf_link(organism, release)))
+   gtffile = sprintf("~/.autonomics/gtf/%s", basename(make_gtf_url(organism, release) %>% substr(1, nchar(.)-3)))
 ){
 
    # Assert validity
@@ -356,13 +356,13 @@ download_gtf <- function(
    # Satisfy CHECK
    . <- NULL
 
-   remote <- make_gtf_link(organism, release)
+   remote <- make_gtf_url(organism, release)
 
    if(file.exists(gtffile)){
       message(sprintf("GTF file already available at %s", gtffile))
    } else {
       message(sprintf("download   %s'" , remote))
-      message(sprintf("to         %s", gtffile %>% substr(1, nchar(.)-3)))
+      message(sprintf("to         %s", gtffile ))
       dir.create(dirname(gtffile), showWarnings = FALSE, recursive = TRUE)
       tryCatch(expr  = {utils::download.file(url = remote, destfile = gtffile, quiet = TRUE)
                         R.utils::gunzip(gtffile,  remove = TRUE, overwrite = TRUE)},
@@ -374,75 +374,68 @@ download_gtf <- function(
 }
 
 
-#get feature annotations
-select_organism_database <- function(organism){
-   if          (organism == 'Homo sapiens'){       'hsapiens_gene_ensembl'  }
-   else if     (organism == 'Mus musculus'){       'mmusculus_gene_ensembl'  }
-   else if     (organism == 'Rattus norvegicus'){  'rnorvegicus_gene_ensembl'  }
-}
-
-
-#' Select GTF feature
-#' @param gtffile         string: path to gtf file (which can be downloaded with download_gtf)
-#' @param filter          Filter on feature name or feature id. By default all features are extracted.
-#' @param return_feature  Display feature annotation on console. By default FALSE
-#' @seealso download_gtf
+#' Read GTF file into data.table
+#'
+#' Read GTF file into a data.table. Filter for particular values of variable.
+#'
+#' @param gtffile    string: path to gtffile
+#' @param var        string: variable on which to filter
+#' @param values     filter variable for these values. If NULL, not filtering.
+#' @param writefile  string: file to write gtf table to
+#' @param writefile  data.table
 #' @examples
 #' \dontrun{ # requires internet connection
+#'    require(magrittr)
 #'    gtffile <- download_gtf(organism = 'Homo sapiens', release = 95)
-#'    select_gtf_features(gtffile = gtffile, filter = 'ENSG00000198947', return_feature = FALSE)
+#'    gtfdt <- read_gtf(gtffile, var = 'gene_id', values = 'ENSG00000198947')
 #' }
 #' @importFrom magrittr %>%
 #' @export
-select_gtf_features <- function(
+read_gtf <- function(
    gtffile,
-   filter = NULL,
-   return_feature = FALSE
+   var       = 'gene_id',
+   values    = NULL,
+   writefile = NULL
 ){
-   # Satisfy CHECK
-   . <- gene_id <- gene_name <- NULL
 
-   # Import gtf file
-   message("\t\tLoading GTF file")
-   import_gtf <- rtracklayer::import(gtffile)
+   # Assert
+   assertive.files::assert_all_are_existing_files(gtffile)
+   assertive.types::assert_is_a_string(var)
 
+   # Read
+   dt <- rtracklayer::import(gtffile) %>% GenomicRanges::as.data.frame() %>% data.table::data.table()
 
-   if(isTRUE(return_feature)){
-      if (is.null(filter)){
-         feature_df <- import_gtf %>%
-            as.data.frame(import_gtf)
-      }
-      else {
-         feature_df <- import_gtf %>%
-            as.data.frame(import_gtf) %>%
-            dplyr::filter(gene_id %in% c(filter) | gene_name %in% c(filter))
-      }
-
-      feature_df
+   # Filter
+   if (!is.null(values)){
+      dt %>% data.table::setkeyv(var)
+      dt %<>% magrittr::extract(values)
    }
-   else {
-      if (is.null(filter)){
-         feature_df <- import_gtf %<>%
-            as.data.frame(import_gtf)
-      }
-      else {
-         feature_df <- import_gtf %<>%
-            as.data.frame(import_gtf) %>%
-            dplyr::filter(gene_id %in% c(filter) | gene_name %in% c(filter))
-      }
 
-      utils::write.table(feature_df,sprintf("~/.autonomics/annotations/%s_feature_annotations.txt", gtffile %<>% basename(.) %>% stringi::stri_replace_last_fixed('.gtf', '')), quote=FALSE, sep="\t", row.names=FALSE)
-      message(sprintf("\t\t%s_feature_annotations.txt written under ~/.autonomics/annotations", gtffile))
-
+   # Write
+   if (!is.null(writefile)){
+      message(sprintf("\t\tWrite   %s", writefile))
+      dir.create(dirname(writefile), recursive = TRUE, showWarnings = FALSE)
+      data.table::fwrite(dt, writefile)
    }
+
+   # Return
+   dt
+
 }
 
 
-#' Generates feature counts text file
-#' @param filedir     string: path to SAM or BAM file directory (one SAM or BAM file per sample)
-#' @param gtffile     string: path to (organism specific) gtffile
-#' @param paired_end  TRUE or FALSE: paired end reads?
-#' @param ...         passed to Rsubread::featureCounts
+
+#' Read BAM files
+#'
+#' Read BAM files, count reads, and pack into SummarizedExperiment
+#'
+#' @param bamdir       string: path to SAM or BAM file directory (one SAM or BAM file per sample)
+#' @param ispaired     TRUE or FALSE: paired end reads?
+#' @param gtffile      string: path to GTF file. Alternatively NULL: then Rsubread's inbuilt annotations are used - only for human and mouse.
+#' @param fvars        string vector: feature variables to include in object. Subset of c('Chr', 'Start', 'End', 'Strand', 'Length', 'gene_name', 'gene_biotype')
+#' @param sumexpfile   string: file which object is saved to (with saveRDS)
+#' @param nthreads     number: number of cores to be used by Rsubread::featureCounts()
+#' @param ...          passed to Rsubread::featureCounts
 #' @importFrom magrittr %>%
 #' @examples
 #' \dontrun{ # requires internet: slow and doesn't always work (https://stackoverflow.com/questions/55532102)
@@ -457,62 +450,84 @@ select_gtf_features <- function(
 #'      unlink(destfile)
 #'
 #'    # Download gtf file
-#'      gtffile <- download_gtf('Homo sapiens', 95)
+#'      gtffile <- '~/.autonomics/human_95.gtf'
+#'      download_gtf('Homo sapiens', 95, gtffile = gtffile)
 #'
 #'    # Generate feature counts
-#'      get_feature_counts(filedir    = "~/.autonomics/stemcomp.bamfiles",
-#'                         gtffile    = gtffile,
-#'                         paired_end = TRUE)
+#'      read_bam(bamdir  = "~/.autonomics/stemcomp.bamfiles",
+#'               gtffile = gtffile,
+#'               ispaired  = TRUE)
 #' }
 #' @export
-get_feature_counts <- function(
-   filedir,
-   gtffile,
-   paired_end      = FALSE,
+read_bam <- function(
+   bamdir,
+   ispaired   = FALSE,
+   gtffile    = NULL,
+   fvars      = c('gene_name', 'gene_biotype'),
+   sumexpfile = NULL,
+   nthreads   = parallel::detectCores(),
    ...
 ){
    # Assert
-   if (!'Rsubread' %in% rownames(installed.packages())){ # https://stackoverflow.com/questions/9341635
-      message("Install package 'Rsubread' (unix only) before running get_feature_counts()")
+   if (!'Rsubread' %in% rownames(utils::installed.packages())){ # https://stackoverflow.com/questions/9341635
+      message("Install package 'Rsubread' (unix only) before running read_bam()")
       return(invisible(NULL))
    }
+   assertive.files::assert_all_are_existing_files(bamdir)
+   assertive.types::assert_is_a_bool(ispaired)
+   if (!is.null(gtffile))   assertive.files::assert_all_are_existing_files(gtffile)
+   assertive.sets::assert_is_subset(fvars, c('Chr', 'Start', 'End', 'Strand', 'Length', 'gene_name', 'gene_biotype'))
+   if (!is.null(sumexpfile))    assertive.files::assert_all_are_existing_files(sumexpfile)
+   assertive.types::assert_is_a_number(nthreads)
 
-   #set directory to samples with bam files
-   setwd(sprintf("%s",filedir))
+   # Count reads
+   files <- list.files(bamdir, pattern = ".sam$|.bam$", full.names = TRUE, recursive = TRUE)
+   fcounts <-  Rsubread::featureCounts(files               = files,
+                                       annot.ext           = gtffile,
+                                       isGTFAnnotationFile = TRUE,
+                                       GTF.attrType.extra  = fvars,
+                                       isPairedEnd         = ispaired,
+                                       nthreads            = nthreads,
+                                       ...)
 
-   #list directories with bam files
-   files <- list.files(filedir, pattern = ".sam$|.bam$", full.names = TRUE, recursive = TRUE)
+   # Forge SummarizedExperiment
    filenames   <- files %>% stringi::stri_split_fixed('/') %>% vapply(function(y) y[length(y)], 'character') %>% stringi::stri_replace_first_regex('.bam|.sam', '')
    subdirnames <- files %>% stringi::stri_split_fixed('/') %>% vapply(function(y) y[length(y)-1], 'character')
    sample_names <- if (assertive.properties::has_no_duplicates(filenames)){           filenames
-                  } else if (assertive.properties::has_no_duplicates(subdirnames)){  subdirnames
-                  } else {                                                           paste0(subdirnames, '_', filenames) }
+   } else if (assertive.properties::has_no_duplicates(subdirnames)){  subdirnames
+   } else {                                                           paste0(subdirnames, '_', filenames) }
+   object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs = fcounts$counts %>% magrittr::set_colnames(sample_names)))
 
-   message("\t\tCounting reads per feature for given samples")
+   # Add sdata
+   message("\t\tAdd sdata")
+   autonomics.import::sdata(object) <- data.frame(sample_id = sample_names, stringsAsFactors = FALSE)
+   object$subgroup <- object %>% autonomics.import::guess_subgroup_values(verbose = FALSE)
 
-   #count features for the list of samples
-   gene_counts <-  Rsubread::featureCounts(files              = files,
-                                          annot.ext           = gtffile,
-                                          isGTFAnnotationFile = TRUE,
-                                          GTF.attrType.extra  = c("gene_name", "gene_biotype"),
-                                          isPairedEnd         = paired_end,
-                                          ...)
+   # Add fdata
+   message("\t\tAdd fdata")
+   autonomics.import::fdata(object) <- fcounts$annotation %>% magrittr::extract(, c('GeneID', fvars))
+   colnames(autonomics.import::fdata(object)) %<>% stringi::stri_replace_first_fixed('GeneID', 'feature_id')
 
-   message("\t\tAdding feature names and types to count table")
-   gene_counts <- cbind(gene_counts$annotation[,c("GeneID","gene_name","gene_biotype")], gene_counts$counts)  %>%
-                    magrittr::set_colnames(c("gene_id", "gene_name", "gene_biotype" ,sample_names))
+   # Write to file if requested
+   if (!is.null(sumexpfile)){
+      message("\t\tfeature_counts.txt file written under ~/.autonomics/counts/")
+      dir.create(dirname(sumexpfile), recursive=TRUE, showWarnings = FALSE)
+      saveRDS(object, sumexpfile)
+   }
 
-
-   #create directory for saving feature_count.txt file
-   create_dir <- dir.create("~/.autonomics/counts", recursive=TRUE, showWarnings = FALSE)
-
-   utils::write.table(gene_counts,"~/.autonomics/counts/gene_counts.txt", quote=FALSE, sep="\t", row.names = FALSE)
-
-   message("\t\tgene_counts.txt file written under ~/.autonomics/counts/")
+   # Return
+   object
 
 }
 
 #' Read rnaseq counts
+#'
+#' Read tsv file with rnaseq counts into SummarizedExperiment
+#'
+#' File format: header row
+#'              feature annotations in first few columns
+#'              feature counts      in next columns
+#'
 #' @param file      string: path to rnaseq counts file
 #' @param fid_var   string or number: feature id variable
 #' @param fname_var string or number: feature name variable
@@ -521,12 +536,16 @@ get_feature_counts <- function(
 #'    require(magrittr)
 #'    file <- 'extdata/stemcomp/rnaseq/gene_counts.txt' %>%
 #'             system.file(package = 'autonomics.data')
-#'    file %>% read_rnaseq(fid_var = 'gene_id', fname_var = 'gene_name')
+#'    file %>% read_counts(fid_var = 'gene_id', fname_var = 'gene_name')
 #' }
 #' @seealso merge_sdata, merge_fdata
 #' @importFrom magrittr %>%
 #' @export
-read_rnaseq <- function(file, fid_var, fname_var = character(0)){
+read_counts <- function(
+   file,
+   fid_var,
+   fname_var = character(0)
+){
 
    assertive.files::assert_all_are_existing_files(file)
    dt <- data.table::fread(file, integer64='numeric')
