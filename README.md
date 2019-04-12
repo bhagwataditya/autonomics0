@@ -1,6 +1,6 @@
 # Intro
 
-Making omics data analysis more fun :-).
+Making omics data analysis flow :-).
 
 
 # Installation
