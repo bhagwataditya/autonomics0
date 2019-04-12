@@ -1,6 +1,6 @@
 # Intro
 
-Making omics data analysis more fun :-).
+Making omics data analysis flow :-).
 
 
 # Installation
@@ -48,11 +48,32 @@ The **stable** branch is error-free, but now outdated:
                      autonomics::read_somascan()
           object %<>% autonomics::prepare_somascan()
     
-    # RNASEQ
+    # RNASEQ COUNTS
           object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>% 
                      system.file(package = 'autonomics.data') %>% 
-                     autonomics::read_rnaseq(fid_var = 'gene_id')
+                     autonomics::read_counts(fid_var = 'gene_id')
           object %<>% autonomics::prepare_rnaseq()
+
+    # RNASEQ BAMFILES
+    
+         # Download example BAM files
+           url <- "https://bitbucket.org/graumannlab/billing.stemcells/downloads/stemcomp.bamfiles.zip"
+           dir.create('~/.autonomics', showWarnings = FALSE)
+           destfile <- "~/.autonomics/stemcomp.bamfiles.zip"
+           download.file(url, destfile = destfile, )
+           utils::unzip(destfile, exdir = '~/.autonomics')
+           unlink(destfile)
+
+         # Download GTF file
+           gtffile <- autonomics::download_gtf('Homo sapiens', 95)
+
+         # Read BAM files into SummarizedExperiment
+           object <- autonomics::read_bam(bamdir    = "~/.autonomics/stemcomp.bamfiles",
+                                          gtffile   = gtffile,
+                                          ispaired  = TRUE)
+         # Prepare for analysis
+           object %<>% autonomics::prepare_rnaseq()
+
     
     # PROTEINGROUPS
           object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>% 
