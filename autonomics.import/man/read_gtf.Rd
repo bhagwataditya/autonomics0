@@ -14,12 +14,6 @@ read_gtf(gtffile, var = "gene_id", values = NULL, writefile = NULL)
 \item{values}{filter variable for these values. If NULL, not filtering.}
 
 \item{writefile}{string: file to write gtf table to}
-
-<<<<<<< HEAD
-\item{writefile}{data.table}
-=======
-\item{gtf}{data.table}
->>>>>>> 00976d4a30ac3c8ed217e690bbb7b4083800a493
 }
 \description{
 Read GTF file into a data.table. Filter for particular values of variable.

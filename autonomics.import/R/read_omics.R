@@ -417,28 +417,6 @@ read_gtf <- function(
       data.table::fwrite(dt, writefile)
    }
 
-=======
-
-   # Assert
-   assertive.files::assert_all_are_existing_files(gtffile)
-   assertive.types::assert_is_a_string(var)
-
-   # Read
-   dt <- rtracklayer::import(gtffile) %>% GenomicRanges::as.data.frame() %>% data.table::data.table()
-
-   # Filter
-   if (is.null(filter)) return(dt)
-   dt %>% data.table::setkeyv(var)
-   dt %>% magrittr::extract(values)
-
-   # Write
-   if (!is.null(writefile)){
-      message(sprintf("\t\tWrite   %s", writefile))
-      dir.create(dirname(writefile), recursive = TRUE, showWarnings = FALSE)
-      data.table::fwrite(dt, writefile)
-   }
-
->>>>>>> 00976d4a30ac3c8ed217e690bbb7b4083800a493
    # Return
    dt
 
