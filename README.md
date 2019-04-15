@@ -5,20 +5,18 @@ Making omics data analysis flow :-).
 
 # Installation
 
-The **development** version is up-to-date, but not yet stable:
-
     # Set CRAN mirror to be used
     local({r <- getOption("repos")
            r["CRAN"] <- "https://cloud.r-project.org" 
            options(repos=r)
     })    
 
-    # First install Bioconductor
+    # Install Bioconductor packages
     install.packages('BiocManager')
     BiocManager::install('SummarizedExperiment', update = FALSE)   # required to install autonomics.data
     BiocManager::install('mixOmics',             update = FALSE)   # moved from CRAN to BioC, requires explicit installation
     
-    # Then install autonomics
+    # Install autonomics (drop ref = 'dev' to install older autonomics stable)
     install.packages('remotes')
     remotes::install_github('bhagwataditya/autonomics/autonomics.data',       ref = 'dev', upgrade = FALSE)
     remotes::install_github('bhagwataditya/autonomics/autonomics.support',    ref = 'dev', upgrade = FALSE)
@@ -30,20 +28,6 @@ The **development** version is up-to-date, but not yet stable:
     remotes::install_github('bhagwataditya/autonomics/autonomics.ora',        ref = 'dev', upgrade = FALSE)
     remotes::install_github('bhagwataditya/autonomics/autonomics',            ref = 'dev', upgrade = FALSE)
 
-
-The **stable** branch is error-free, but now outdated:
-
-    # remotes::install_github('bhagwataditya/autonomics/autonomics.data'      )
-    # remotes::install_github('bhagwataditya/autonomics/autonomics.support'   )
-    # remotes::install_github('bhagwataditya/autonomics/autonomics.import'    )
-    # remotes::install_github('bhagwataditya/autonomics/autonomics.annotate'  )
-    # remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess')
-    # remotes::install_github('bhagwataditya/autonomics/autonomics.plot'      )
-    # remotes::install_github('bhagwataditya/autonomics/autonomics.explore'   )
-    # remotes::install_github('bhagwataditya/autonomics/autonomics.find'      )
-    # remotes::install_github('bhagwataditya/autonomics/autonomics.ora'       )
-    # remotes::install_github('bhagwataditya/autonomics/autonomics'           )
-
 ## Read omics data and prepare for analysis
 
     # METABOLON
@@ -51,29 +35,50 @@ The **stable** branch is error-free, but now outdated:
           object <- 'extdata/glutaminase/glutaminase.xlsx'    %>% 
                      system.file(package = 'autonomics.data') %>% 
                      autonomics::read_metabolon()
-          object %>% autonomics::prepare_metabolon()
+          object %<>% autonomics::prepare_metabolon()
     
     # SOMASCAN
           object <- 'extdata/stemcomp/soma/stemcomp.adat'     %>% 
                      system.file(package = 'autonomics.data') %>% 
                      autonomics::read_somascan()
-          object %>% autonomics::prepare_somascan()
+          object %<>% autonomics::prepare_somascan()
     
-    # RNASEQ
+    # RNASEQ COUNTS
           object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>% 
                      system.file(package = 'autonomics.data') %>% 
-                     autonomics::read_somascan()
-          object %>% autonomics::prepare_rnaseq()
+                     autonomics::read_counts(fid_var = 'gene_id')
+          object %<>% autonomics::prepare_rnaseq()
+
+    # RNASEQ BAMFILES
+    
+         # Download example BAM files
+           url <- "https://bitbucket.org/graumannlab/billing.stemcells/downloads/stemcomp.bamfiles.zip"
+           dir.create('~/.autonomics', showWarnings = FALSE)
+           destfile <- "~/.autonomics/stemcomp.bamfiles.zip"
+           download.file(url, destfile = destfile, )
+           utils::unzip(destfile, exdir = '~/.autonomics')
+           unlink(destfile)
+
+         # Download GTF file
+           gtffile <- autonomics::download_gtf('Homo sapiens', 95)
+
+         # Read BAM files into SummarizedExperiment
+           object <- autonomics::read_bam(bamdir    = "~/.autonomics/stemcomp.bamfiles",
+                                          gtffile   = gtffile,
+                                          ispaired  = TRUE)
+         # Prepare for analysis
+           object %<>% autonomics::prepare_rnaseq()
+
     
     # PROTEINGROUPS
           object <- 'extdata/stemcomp/maxquant/proteinGroups.txt' %>% 
                      system.file(package = 'autonomics.data') %>% 
                      autonomics::read_proteingroups()
-          object %>% autonomics::prepare_proteingroups()
+          object %<>% autonomics::prepare_proteingroups()
     
     # EXIQON
           object <-  autonomics::read_exiqon(myfile)
-          object %>% autonomics::prepare_exiqon()
+          object %<>% autonomics::prepare_exiqon()
 
    
     # ANY OMICS DATASET
@@ -95,8 +100,8 @@ The **stable** branch is error-free, but now outdated:
     # Principal Component Analysis
         object <- autonomics.data::glutaminase
         object %>% autonomics::plot_pca_samples()
-        object %>% autonomics::plot_pca_features()
-        object %>% autonomics::plot_pca_samples_and_features()
+        object %>% autonomics::plot_pca_features(n=4)
+        object %>% autonomics::plot_pca_samples_and_features(n=4)
         
     #  Linear Discriminant Analysis
         object %>% autonomics::plot_lda_samples()
