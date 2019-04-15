@@ -1,36 +1,43 @@
 # Intro
 
-Making omics data analysis flow :-).
+Let's make omics data analysis flow :-).
 
 
-# Install
+# Installation
 
-    # Set CRAN mirror to be used
-    local({r <- getOption("repos")
-           r["CRAN"] <- "https://cloud.r-project.org" 
-           options(repos=r)
-    })    
+The **development** version is up-to-date, but not yet stable:
 
-    # Install Bioconductor packages
-    install.packages('BiocManager')
-    BiocManager::install('SummarizedExperiment', update = FALSE)   # required to install autonomics.data
-    BiocManager::install('mixOmics',             update = FALSE)   # moved from CRAN to BioC, requires explicit installation
-    
-    # Install autonomics (drop ref = 'dev' to install older autonomics stable)
+    # First install the R package remotes
     install.packages('remotes')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.data',       ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.support',    ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.annotate',   ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.import',     ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess', ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.plot',       ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.find',       ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.ora',        ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics',            ref = 'dev', upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.data',       ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.support',    ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.import',     ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.annotate',   ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess', ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.plot',       ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.find',       ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics.ora',        ref = 'dev')
+    remotes::install_github('bhagwataditya/autonomics/autonomics',            ref = 'dev')
+
+
+The **stable** branch is error-free, but now outdated:
+
+    # remotes::install_github('bhagwataditya/autonomics/autonomics.data'      )
+    # remotes::install_github('bhagwataditya/autonomics/autonomics.support'   )
+    # remotes::install_github('bhagwataditya/autonomics/autonomics.import'    )
+    # remotes::install_github('bhagwataditya/autonomics/autonomics.annotate'  )
+    # remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess')
+    # remotes::install_github('bhagwataditya/autonomics/autonomics.plot'      )
+    # remotes::install_github('bhagwataditya/autonomics/autonomics.explore'   )
+    # remotes::install_github('bhagwataditya/autonomics/autonomics.find'      )
+    # remotes::install_github('bhagwataditya/autonomics/autonomics.ora'       )
+    # remotes::install_github('bhagwataditya/autonomics/autonomics'           )
 
 ## Read omics data and prepare for analysis
 
-    # METABOLON
+    # METABOLON    # Drop "ref = 'dev'" if you want to install the (outdated) stable version
+    # Drop "ref = 'dev'" if you want to install the (outdated) stable version
+
           require(magrittr)
           object <- 'extdata/glutaminase/glutaminase.xlsx'    %>% 
                      system.file(package = 'autonomics.data') %>% 
