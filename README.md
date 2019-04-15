@@ -28,7 +28,7 @@ Let's make omics data analysis flow :-).
     remotes::install_github('bhagwataditya/autonomics/autonomics.ora',        ref = 'dev', upgrade = FALSE)
     remotes::install_github('bhagwataditya/autonomics/autonomics',            ref = 'dev', upgrade = FALSE)
 
-## Read omics data and prepare for analysis
+## Read and prepare
 
     # METABOLON
           require(magrittr)
@@ -95,7 +95,7 @@ Let's make omics data analysis flow :-).
                         sdata_rows = 1:10,      sdata_cols = 15:86,
                         transpose  = FALSE)
                         
-## Explore omics data
+## Explore
 
     # Principal Component Analysis
         object <- autonomics.data::glutaminase
@@ -119,7 +119,7 @@ Let's make omics data analysis flow :-).
         object %>% autonomics::plot_sma_samples_and_features()
 
 
-## Analyze contrasts
+## Contrast
 
     object <- autonomics.data::glutaminase
     table(object$subgroup)
