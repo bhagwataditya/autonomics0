@@ -3,7 +3,7 @@
 Making omics data analysis flow :-).
 
 
-# Installation
+# Install
 
     # Set CRAN mirror to be used
     local({r <- getOption("repos")
@@ -130,5 +130,3 @@ Making omics data analysis flow :-).
     object %>% autonomics::plot_contrast_features(n=4)
     object %>% autonomics::plot_contrast_features(contrast = glutcontrasts[2], n=4)
     
-
-
