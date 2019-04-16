@@ -306,7 +306,7 @@ prepare_exiqon <- function(
        if (plot) object %>% plotfun(newmetric, newmetric) %>% print()
      # Impute consistent NAs
        if (qrilc_consistent_nondetects){
-         object %<>% autonomics::impute_consistent_nas()
+         object %<>% autonomics.import::impute_consistent_nas(verbose = TRUE)
          if (plot) object %>% plotfun(newmetric, 'Impute consistent NA values') %>% print()
        }
      # Filter for mirs conserved in human
