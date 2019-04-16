@@ -194,24 +194,26 @@ prepare_plot_dt.SummarizedExperiment <- function(object, ...){
 #=================================================================================================
 
 #' Plot
-#' @param object data.table
-#' @param geom  string: ggplot2 geom
-#' @param stat  string: ggplot2 stat
-#' @param facet string: plotdt variable mapped to facet
-#' @param horiz TRUE or FALSE: whether to flip coordinates
-#' @param xlab  if non-NULL, x axis label
-#' @param ylab  if non-NULL, y axis label
-#' @param title if non-NULL, title text
-#' @param ...   ggplot2 aesthetics
+#' @param object      data.table
+#' @param geom        string: ggplot2 geom
+#' @param stat        string: ggplot2 stat
+#' @param ...         ggplot2 aesthetic specifications: color = subgroup, facet = condition, ...
+#' @param facet       string: plotdt variable mapped to facet
+#' @param coord_flip  TRUE or FALSE: whether to flip coordinates
+#' @param xlab        if non-NULL, x axis label
+#' @param ylab        if non-NULL, y axis label
+#' @param title       if non-NULL, title text
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
 #'    object <- autonomics.data::glutaminase %>% prepare_plot_dt()
 #'    plot(object,
-#'         geom    = 'line',
-#'         stat    = 'density',
-#'         mapping = ggplot2::aes(group = sample_id, x = value, color = subgroup),
-#'         facet   = subgroup)
+#'         geom  = 'line',
+#'         stat  = 'density',
+#'         x     = value,
+#'         color = subgroup,
+#'         group = sample_id,
+#'         facet = subgroup)
 #' }
 #' @export
 plot <- function(object, ...){
@@ -224,23 +226,30 @@ plot.data.table <- function(
    plotdt,
    geom,
    stat,
-   mapping,
+   ...,
    coord_flip = FALSE,
    xlab       = NULL,
    ylab       = NULL,
-   title      = NULL,
-   ...
+   title      = NULL
 ){
 
    arguments <- rlang::enquos(...)
 
    # Plot
+   aes_specs <- arguments %>% magrittr::extract(names(.) %>% intersect(c('x', 'y', 'group', 'color', 'fill', 'shape', 'size', 'linetype', 'label')))
+   if (length(aes_specs) == 0) stop('Must have some aesthetic mapping')
+   mapping <- do.call(ggplot2::aes, aes_specs)
+
    p <- ggplot2::ggplot(plotdt, mapping) +
         ggplot2::theme_bw() +
         ggplot2::layer(geom = geom, stat = stat, params = list(na.rm=TRUE), position = 'identity')
 
    # Facet
-   if ('facet' %in% names(arguments)) p <- p + ggplot2::facet_wrap(ggplot2::vars(!!arguments$facet))
+   if ('facet' %in% names(arguments)){
+      if (!is.null(rlang::eval_tidy(arguments$facet, plotdt))){
+         p <- p + ggplot2::facet_wrap(ggplot2::vars(!!arguments$facet))
+      }
+   }
 
    # Flip coordinates
    if (coord_flip){ p <- p + ggplot2::coord_flip()
@@ -250,6 +259,15 @@ plot.data.table <- function(
    if (!is.null(xlab))   p <- p + ggplot2::xlab(xlab)
    if (!is.null(ylab))   p <- p + ggplot2::ylab(ylab)
    if (!is.null(title))  p <- p + ggplot2::ggtitle(title)
+
+   # Color
+   if ('colour' %in% names(mapping)){
+      color_values <-  rlang::eval_tidy(mapping$colour, data = plotdt) %>%
+                       unique() %>%
+                       sort()   %>%
+                       make_colors(show = FALSE)
+      p <- p + ggplot2::scale_color_manual(values = color_values)
+   }
 
    # Return
    p
@@ -292,13 +310,16 @@ plot.data.table <- function(
 #'       # matrix
 #'         object <- autonomics.import::exprs(glutaminase)
 #'         sdata  <- autonomics.import::sdata(glutaminase)
+#'         plot_sample_densities(object, sdata)
 #'         plot_sample_densities(object, sdata, color = subgroup)
+#'         plot_sample_densities(object, sdata, color = subgroup, facet = subgroup)
 #'
 #'
 #'       # SummarizedExperiment
 #'         object <- glutaminase
 #'         plot_sample_densities(object)
 #'         plot_sample_densities(object, color = subgroup)
+#'         plot_sample_densities(object, color = subgroup, facet = subgroup)
 #'
 #' }
 #' @export
@@ -311,18 +332,19 @@ plot_sample_densities <- function(object, ...){
 plot_sample_densities.matrix <- function(
    object,
    sdata,
-   title = 'Sample densities',
-   ...
+   ...,
+   title = 'Sample densities'
 ){
    arguments <- rlang::enexprs(...)
-   arguments
 
    plotdt <- prepare_plot_dt.matrix(object, sdata)
    plot.data.table(plotdt,
                    geom    = 'line',
                    stat    = 'density',
-                   title   = title,
-                   mapping = ggplot2::aes(x = value, group = sample_id, ...))
+                   x       = value,
+                   group   = sample_id,
+                   ...,
+                   title   = title)
 }
 
 
@@ -330,13 +352,12 @@ plot_sample_densities.matrix <- function(
 #' @export
 plot_sample_densities.SummarizedExperiment <- function(
    object,
-   title = 'Sample densities',
-   facet = NULL,
-   ...
+   ...,
+   title = 'Sample densities'
 ){
    sdata  <- autonomics.import::sdata(object)
    object <- autonomics.import::exprs(object)
-   plot_sample_densities.matrix(object, sdata, title = title, ...)
+   plot_sample_densities.matrix(object, sdata, ..., title = title)
 }
 
 #' @rdname plot_sample_densities
