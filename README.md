@@ -127,20 +127,25 @@ Let omics data analysis flow :-).
 
 ## Contrast
 
-    object <- autonomics.data::glutaminase
-    table(object$subgroup)
-    ctrdefs <- c(uM05.h10 = 'uM05_h10 - Veh_h10', 
-                 uM10.h10 = 'uM10_h10 - Veh_h10')
-    autonomics::contrastdefs(object) <- ctrdefs
-    object %<>% autonomics::add_limma()
+    # Add limma
+       object <- autonomics.data::glutaminase
+       table(object$subgroup)
+       ctrdefs <- c(uM05.h10 = 'uM05_h10 - Veh_h10', 
+                    uM10.h10 = 'uM10_h10 - Veh_h10')
+       autonomics::contrastdefs(object) <- ctrdefs
+       object %<>% autonomics::add_limma()
     
-    object %>% autonomics::plot_contrast_features(contrast = ctrdefs[1], n=2)
-    object %>% autonomics::plot_contrast_features(contrast = ctrdefs[2], n=2)
+    # Plot contrast features
+       object %>% autonomics::plot_contrast_features(contrast = ctrdefs[1], n=2)
+       object %>% autonomics::plot_contrast_features(contrast = ctrdefs[2], n=2)
     
-    (file <- tempdir() %>% file.path('/glutaminase_results.txt'))
-    object %>% autonomics::write_features(file)
+    # Write to file
+       (file <- tempdir() %>% file.path('/glutaminase_results.txt'))
+       object %>% autonomics::write_features(file)
     
-    object %>% autonomics::plot_volcano()
+    # Plot volcano
+       object %>% autonomics::plot_volcano()
     
-    object %>% autonomics::plot_contrast_venns(euler = TRUE)
+    # Plot venns
+       object %>% autonomics::plot_contrast_venns(euler = TRUE)
     
