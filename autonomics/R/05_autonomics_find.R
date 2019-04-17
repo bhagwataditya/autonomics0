@@ -24,3 +24,11 @@ NULL
 #' @export  plot_contrast_features
 NULL
 
+
+#' Plot contrast venns
+#' 
+#' \code{\link[autonomics.find]{plot_contrast_venns}}
+#' @name plot_contrast_venns
+#' @importFrom autonomics.find   plot_contrast_venns
+#' @export  plot_contrast_venns
+NULL

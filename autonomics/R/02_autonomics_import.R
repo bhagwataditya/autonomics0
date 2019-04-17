@@ -195,3 +195,10 @@ NULL
 NULL
 
 
+#' write_features
+#'
+#' \code{\link[autonomics.import]{write_features}}
+#' @name write_features
+#' @importFrom autonomics.import  write_features
+#' @export write_features
+NULL
