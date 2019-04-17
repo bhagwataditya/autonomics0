@@ -14,6 +14,20 @@
 NULL
 
 
+#==========================
+# PLOT_SAMPLE_XXX
+#==========================
+
+
+#' Plot sample densities/boxplots/violins
+#' 
+#' \code{\link[autonomics.plot]{plot_sample_densities}} 
+#' @name plot_sample_densities
+#' @importFrom  autonomics.plot   plot_sample_densities   plot_sample_boxplots   plot_sample_violins
+#' @export                        plot_sample_densities   plot_sample_boxplots   plot_sample_violins
+NULL
+
+
 #============================
 # PLOT_VENN
 #============================

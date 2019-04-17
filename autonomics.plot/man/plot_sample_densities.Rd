@@ -14,29 +14,31 @@
 \usage{
 plot_sample_densities(object, ...)
 
-\method{plot_sample_densities}{matrix}(object, sdata,
-  title = "Sample densities", facet = NULL, ...)
+\method{plot_sample_densities}{matrix}(object, sdata, ...,
+  title = "Sample densities")
 
-\method{plot_sample_densities}{SummarizedExperiment}(object,
-  title = "Sample densities", facet = NULL, ...)
+\method{plot_sample_densities}{SummarizedExperiment}(object, ...,
+  title = "Sample densities")
 
 plot_sample_violins(object, ...)
 
-\method{plot_sample_violins}{matrix}(object, sdata, coord_flip = TRUE,
-  xlab = "", ylab = "", title = "Sample violins", ...)
-
-\method{plot_sample_violins}{SummarizedExperiment}(object,
+\method{plot_sample_violins}{matrix}(object, sdata, ...,
   coord_flip = TRUE, xlab = "", ylab = "",
-  title = "Sample violins", ...)
+  title = "Sample violins")
+
+\method{plot_sample_violins}{SummarizedExperiment}(object, ...,
+  coord_flip = TRUE, xlab = "", ylab = "",
+  title = "Sample violins")
 
 plot_sample_boxplots(object, ...)
 
-\method{plot_sample_boxplots}{matrix}(object, sdata, coord_flip = TRUE,
-  xlab = "", ylab = "", title = "Sample boxplots", ...)
-
-\method{plot_sample_boxplots}{SummarizedExperiment}(object,
+\method{plot_sample_boxplots}{matrix}(object, sdata, ...,
   coord_flip = TRUE, xlab = "", ylab = "",
-  title = "Sample boxplots", ...)
+  title = "Sample boxplots")
+
+\method{plot_sample_boxplots}{SummarizedExperiment}(object, ...,
+  coord_flip = TRUE, xlab = "", ylab = "",
+  title = "Sample boxplots")
 }
 \arguments{
 \item{object}{matrix, SummarizedExperiment, or list of SummarizedExperiments}
@@ -47,8 +49,6 @@ plot_sample_boxplots(object, ...)
 
 \item{title}{string}
 
-\item{facet}{string: svar mapped to facets}
-
 \item{xlab}{string}
 
 \item{ylab}{string}
@@ -58,6 +58,8 @@ plot_sample_boxplots(object, ...)
 \item{group}{string: svar mapped to group}
 
 \item{color}{string: svar mapped to color}
+
+\item{facet}{string: svar mapped to facets}
 }
 \value{
 ggplot2 object
@@ -77,7 +79,7 @@ if (require(autonomics.data)){
         plot_sample_violins(  object, sdata, color = subgroup, facet = subgroup)
         plot_sample_boxplots( object, sdata, color = subgroup, facet = subgroup)
 
-     # SummarizedExperiment
+      # SummarizedExperiment
         object <- stemcomp.proteinratios
         plot_sample_densities(object, color = subgroup, facet = subgroup)
         plot_sample_violins(  object, color = subgroup, facet = subgroup)
@@ -87,13 +89,18 @@ if (require(autonomics.data)){
       # matrix
         object <- autonomics.import::exprs(glutaminase)
         sdata  <- autonomics.import::sdata(glutaminase)
+        plot_sample_densities(object, sdata)
         plot_sample_densities(object, sdata, color = subgroup)
+        plot_sample_densities(object, sdata, color = subgroup, facet = subgroup)
+        plot_sample_boxplots(object, sdata, fill = subgroup)
+        plot_sample_violins(object, sdata, fill = subgroup)
 
 
       # SummarizedExperiment
         object <- glutaminase
         plot_sample_densities(object)
         plot_sample_densities(object, color = subgroup)
+        plot_sample_densities(object, color = subgroup, facet = subgroup)
 
 }
 }

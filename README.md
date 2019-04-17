@@ -32,22 +32,22 @@ Let's make omics data analysis flow :-).
 
     # METABOLON
           require(magrittr)
-          object <- 'extdata/glutaminase/glutaminase.xlsx'    %>% 
-                     system.file(package = 'autonomics.data') %>% 
-                     autonomics::read_metabolon()
+          (object <- 'extdata/glutaminase/glutaminase.xlsx'    %>% 
+                      system.file(package = 'autonomics.data') %>% 
+                      autonomics::read_metabolon())
           object %<>% autonomics::prepare_metabolon()
     
     # SOMASCAN
-          object <- 'extdata/stemcomp/soma/stemcomp.adat'     %>% 
-                     system.file(package = 'autonomics.data') %>% 
-                     autonomics::read_somascan()
+          (object <- 'extdata/stemcomp/soma/stemcomp.adat'     %>% 
+                      system.file(package = 'autonomics.data') %>% 
+                      autonomics::read_somascan())
           object %<>% autonomics::prepare_somascan()
     
     # RNASEQ COUNTS
           object <- 'extdata/stemdiff/rnaseq/gene_counts.txt' %>% 
                      system.file(package = 'autonomics.data') %>% 
                      autonomics::read_counts(fid_var = 'gene_id')
-          object %<>% autonomics::prepare_rnaseq()
+          (object %<>% autonomics::prepare_rnaseq())
 
     # RNASEQ BAMFILES
     
@@ -97,10 +97,16 @@ Let's make omics data analysis flow :-).
                         
 ## Explore
 
+    # Sample densities
+        object <- autonomics.data::glutaminase
+        object %>% autonomics::plot_sample_densities(color = subgroup, facet = subgroup)
+        object %>% autonomics::plot_sample_boxplots( fill  = subgroup)
+        object %>% autonomics::plot_sample_violins(  fill  = subgroup)
+
     # Principal Component Analysis
         object <- autonomics.data::glutaminase
         object %>% autonomics::plot_pca_samples()
-        object %>% autonomics::plot_pca_features(n=4)
+        object %>% autonomics::plot_pca_features()
         object %>% autonomics::plot_pca_samples_and_features(n=4)
         
     #  Linear Discriminant Analysis

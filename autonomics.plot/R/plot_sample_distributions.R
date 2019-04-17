@@ -216,11 +216,6 @@ prepare_plot_dt.SummarizedExperiment <- function(object, ...){
 #'         facet = subgroup)
 #' }
 #' @export
-plot <- function(object, ...){
-   UseMethod('plot', object)
-}
-
-#' @rdname plot
 #' @export
 plot.data.table <- function(
    plotdt,
@@ -300,7 +295,7 @@ plot.data.table <- function(
 #'         plot_sample_violins(  object, sdata, color = subgroup, facet = subgroup)
 #'         plot_sample_boxplots( object, sdata, color = subgroup, facet = subgroup)
 #'
-#'      # SummarizedExperiment
+#'       # SummarizedExperiment
 #'         object <- stemcomp.proteinratios
 #'         plot_sample_densities(object, color = subgroup, facet = subgroup)
 #'         plot_sample_violins(  object, color = subgroup, facet = subgroup)
@@ -313,6 +308,8 @@ plot.data.table <- function(
 #'         plot_sample_densities(object, sdata)
 #'         plot_sample_densities(object, sdata, color = subgroup)
 #'         plot_sample_densities(object, sdata, color = subgroup, facet = subgroup)
+#'         plot_sample_boxplots(object, sdata, fill = subgroup)
+#'         plot_sample_violins(object, sdata, fill = subgroup)
 #'
 #'
 #'       # SummarizedExperiment
@@ -372,17 +369,19 @@ plot_sample_violins <- function(object, ...){
 plot_sample_violins.matrix <- function(
    object,
    sdata,
+   ...,
    coord_flip = TRUE,
    xlab       = '',
    ylab       = '',
-   title      = 'Sample violins',
-   ...
+   title      = 'Sample violins'
 ){
    plotdt <- prepare_plot_dt.matrix(object, sdata)
    p <- plot.data.table(plotdt,
                         geom       = 'violin',
                         stat       = 'ydensity',
-                        mapping    = ggplot2::aes(sample_id, y = value, ...),
+                        x          = sample_id,
+                        y          = value,
+                        ...,
                         coord_flip = coord_flip,
                         xlab       = xlab,
                         ylab       = ylab,
@@ -397,21 +396,21 @@ plot_sample_violins.matrix <- function(
 #' @export
 plot_sample_violins.SummarizedExperiment <- function(
    object,
+   ...,
    coord_flip = TRUE,
    xlab       = '',
    ylab       = '',
-   title      = 'Sample violins',
-   ...
+   title      = 'Sample violins'
 ){
    sdata  <- autonomics.import::sdata(object)
    object <- autonomics.import::exprs(object)
    plot_sample_violins.matrix(object,
                               sdata,
+                              ...,
                               coord_flip = coord_flip,
                               xlab       = xlab,
                               ylab       = ylab,
-                              title      = title,
-                              ...)
+                              title      = title)
 }
 
 
@@ -427,21 +426,23 @@ plot_sample_boxplots <- function(object, ...){
 plot_sample_boxplots.matrix <- function(
    object,
    sdata,
+   ...,
    coord_flip = TRUE,
    xlab       = '',
    ylab       = '',
-   title      = 'Sample boxplots',
-   ...
+   title      = 'Sample boxplots'
 ){
    plotdt <- prepare_plot_dt.matrix(object, sdata)
    plot.data.table(plotdt,
                    geom       = 'boxplot',
                    stat       = 'boxplot',
+                   x          = sample_id,
+                   y          = value,
+                   ...,
                    coord_flip = coord_flip,
                    xlab       = xlab,
                    ylab       = ylab,
-                   title      = title,
-                   mapping = ggplot2::aes(x = sample_id, y = value, ...))
+                   title      = title)
 }
 
 
@@ -449,21 +450,21 @@ plot_sample_boxplots.matrix <- function(
 #' @export
 plot_sample_boxplots.SummarizedExperiment <- function(
    object,
+   ...,
    coord_flip = TRUE,
    xlab       = '',
    ylab       = '',
-   title      = 'Sample boxplots',
-   ...
+   title      = 'Sample boxplots'
 ){
    sdata <- object %>% autonomics.import::sdata()
    object <- object %>% autonomics.import::exprs()
    plot_sample_boxplots(object,
                         sdata,
+                        ...,
                         coord_flip = coord_flip,
                         xlab       = xlab,
                         ylab       = ylab,
-                        title      = title,
-                        ...)
+                        title      = title)
 }
 
 
