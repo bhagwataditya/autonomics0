@@ -1,6 +1,6 @@
 # Intro
 
-Let's make omics data analysis flow :-).
+Let omics data analysis flow :-).
 
 
 # Install
