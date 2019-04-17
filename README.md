@@ -14,7 +14,7 @@ Let omics data analysis flow :-).
     # Install Bioconductor packages
     install.packages('BiocManager')
     BiocManager::install('SummarizedExperiment', update = FALSE)   # required to install autonomics.data
-    BiocManager::install('mixOmics',             update = FALSE)   # moved from CRAN to BioC, requires explicit installation
+    BiocManager::install('mixOmics',             update = FALSE)   # CRAN -> BioC, requires explicit installation
     
     # Install autonomics (drop ref = 'dev' to install older autonomics stable)
     install.packages('remotes')
@@ -100,8 +100,8 @@ Let omics data analysis flow :-).
     # Sample densities
         object <- autonomics.data::glutaminase
         object %>% autonomics::plot_sample_densities(color = subgroup, facet = subgroup)
-        object %>% autonomics::plot_sample_boxplots( fill  = subgroup)
-        object %>% autonomics::plot_sample_violins(  fill  = subgroup)
+        object %>% autonomics::plot_sample_boxplots( fill  = subgroup, coord_flip = FALSE)
+        object %>% autonomics::plot_sample_violins(fill  = subgroup, coord_flip = FALSE)
 
     # Principal Component Analysis
         object <- autonomics.data::glutaminase
@@ -129,10 +129,18 @@ Let omics data analysis flow :-).
 
     object <- autonomics.data::glutaminase
     table(object$subgroup)
-    glutcontrasts <- c(  UT.h72   = 'UT_h72   - UT_h10',
-                         uM10.h72 = 'uM10_h72 - uM10_h10')
-    autonomics::contrastdefs(object) <- glutcontrasts
+    ctrdefs <- c(uM05.h10 = 'uM05_h10 - Veh_h10', 
+                 uM10.h10 = 'uM10_h10 - Veh_h10')
+    autonomics::contrastdefs(object) <- ctrdefs
     object %<>% autonomics::add_limma()
-    object %>% autonomics::plot_contrast_features(n=4)
-    object %>% autonomics::plot_contrast_features(contrast = glutcontrasts[2], n=4)
+    
+    object %>% autonomics::plot_contrast_features(contrast = ctrdefs[1], n=2)
+    object %>% autonomics::plot_contrast_features(contrast = ctrdefs[2], n=2)
+    
+    (file <- tempdir() %>% file.path('/glutaminase_results.txt'))
+    object %>% autonomics::write_features(file)
+    
+    object %>% autonomics::plot_volcano()
+    
+    object %>% autonomics::plot_contrast_venns(euler = TRUE)
     
