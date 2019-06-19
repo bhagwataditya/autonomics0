@@ -687,7 +687,7 @@ prepare_proteingroups <- function(
 ){
 
    # Assert
-   assertive.types::assert_is_logical(c(filter_reverse, filter_contaminants, filter_complete_nondetects, log2transform, verbose))
+   assertive.types::assert_is_logical(c(filter_reverse, filter_contaminants, filter_complete_nondetects, log2transform, impute_consistent_nas, verbose, plot))
    assertive.sets::assert_is_subset(invert_subgroups, autonomics.import::subgroup_levels(object))
    if (!is.null(deconvolution_fastafile)) assertive.files::assert_all_are_existing_files(deconvolution_fastafile)
    
@@ -697,7 +697,7 @@ prepare_proteingroups <- function(
    # Filter features
    if (verbose) autonomics.support::cmessage('\tFilter features')
    if (filter_reverse)              object %<>% autonomics.import::filter_features_("Reverse != '+'", verbose = verbose)
-   if (filter_contaminants){        contaminant_var <- c('Potential contaminant', 'Contaminant') %>% intersect(autonomics.import::fvars(object))
+   if (filter_contaminants) {       contaminant_var <- c('Potential contaminant', 'Contaminant') %>% intersect(autonomics.import::fvars(object))
                                     object %<>% autonomics.import::filter_features_(sprintf("`%s` != '+'", contaminant_var), verbose = verbose)}
    if (filter_complete_nondetects)  object %<>% autonomics.preprocess::filter_features_nonzero_in_some_sample(verbose = verbose)
    
