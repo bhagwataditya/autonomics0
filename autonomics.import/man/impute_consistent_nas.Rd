@@ -5,11 +5,11 @@
 \alias{impute_consistent_nas}
 \title{Impute consistent NA values}
 \usage{
-impute_common_nas(object, imputefun = function(x)
-  imputeLCMD::impute.QRILC(x)[[1]], verbose = FALSE)
+impute_common_nas(object, imputefun = function(x) impute_around_zero(x),
+  verbose = FALSE)
 
 impute_consistent_nas(object, imputefun = function(x)
-  imputeLCMD::impute.QRILC(x)[[1]], svar = "subgroup", verbose = FALSE)
+  impute_around_zero(x), svar = "subgroup", verbose = FALSE)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -42,5 +42,9 @@ if (require(autonomics.data)){
 
    # Consistent NA values - missing in all subgroup samples
    object \%>\% impute_consistent_nas(verbose = TRUE)
+   # Use a different imputation method
+   object \%>\% impute_consistent_nas(
+      verbose = TRUE,
+      imputefun = function(x) imputeLCMD::impute.QRILC(x)[[1]])
 }
 }

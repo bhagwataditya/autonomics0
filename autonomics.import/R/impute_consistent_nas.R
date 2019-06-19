@@ -7,7 +7,7 @@
 #' @export
 impute_common_nas <- function(
    object,
-   imputefun = function(x) imputeLCMD::impute.QRILC(x)[[1]],
+   imputefun = function(x) impute_around_zero(x),
    verbose = FALSE
 ){
 
@@ -93,13 +93,17 @@ filter_samples_available_for_some_feature <- function(object, verbose = FALSE){
 #'
 #'    # Consistent NA values - missing in all subgroup samples
 #'    object %>% impute_consistent_nas(verbose = TRUE)
+#'    # Use a different imputation method
+#'    object %>% impute_consistent_nas(
+#'       verbose = TRUE,
+#'       imputefun = function(x) imputeLCMD::impute.QRILC(x)[[1]])
 #' }
 #' @return SummarizedExperiment with updated exprs
 #' @importFrom magrittr %>%
 #' @export
 impute_consistent_nas <- function(
    object,
-   imputefun    = function(x) imputeLCMD::impute.QRILC(x)[[1]],
+   imputefun    = function(x) impute_around_zero(x),
    svar         = 'subgroup',
    verbose      = FALSE
 ){
@@ -133,8 +137,45 @@ impute_consistent_nas <- function(
 # x <- c('a', 'b', 'c')
 # x %>% collapse_words()
 collapse_words <- function(x, collapsor = 'and'){
-   if (length(x)==1) return(x)
-   if (length(x)==2) return(sprintf('%s %s %s', x[[1]], collapsor, x[[2]]))
+   if (length(x) == 1) return(x)
+   if (length(x) == 2) return(sprintf('%s %s %s', x[[1]], collapsor, x[[2]]))
    paste0(x[-length(x)], collapse = ', ') %>% paste0(' and ', x[[3]])
 }
 
+#' Impute around zero
+#' @param x exprs matrix
+#' @return exprs matrix
+#' @examples
+#' require(magrittr)
+#' x <- matrix(c(20, 21, 22,
+#'               30, 31, 32,
+#'               NA, NA, NA,
+#'               40, NA, 41,
+#'               NA, NA, NA,
+#'               NA, 50, NA), ncol=3, byrow=TRUE)
+#' x %>% impute_around_zero()
+#' object <- SummarizedExperiment::SummarizedExperiment(
+#'   assays = list(exprs = x))
+#' object %>% autonomics.import::impute_common_nas(
+#'   imputefun = impute_around_zero) %>%
+#'   autonomics.import::exprs()
+#' object$subgroup <- rep('EV', 3)
+#' object %>% autonomics.import::impute_consistent_nas(
+#'   imputefun = impute_around_zero) %>%
+#'   autonomics.import::exprs()
+#' @importFrom magrittr %>% %<>%
+#' @export
+impute_around_zero <- function(x){
+   meansd <- x %>%
+      matrixStats::rowSds() %>%
+      mean(na.rm = TRUE)
+   is_common_na_feature <- x %>% is.na() %>% matrixStats::rowAlls()
+   x[is_common_na_feature, ] %<>% apply(
+      1,
+      function(y) impute_row(y, meansd)) %>% t()
+   x
+}
+
+impute_row <- function(x, sd){
+   abs(rnorm(length(x), sd = sd))
+}
