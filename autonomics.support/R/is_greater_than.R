@@ -12,14 +12,6 @@ is_greater_than <- function(a,b){
 #' @rdname is_greater_than
 #' @importFrom magrittr %>%
 #' @export
-is_weakly_greater_than <- function(a,b){
-   (a >= b) %>%
-   (function(x){ x[is.na(x)] <- FALSE; x})
-}
-
-#' @rdname is_greater_than
-#' @importFrom magrittr %>%
-#' @export
 is_less_than <- function(a,b){
   (a < b) %>%
   (function(x){ x[is.na(x)] <- FALSE; x})
