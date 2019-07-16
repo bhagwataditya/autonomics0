@@ -50,17 +50,6 @@ left_join_keeping_rownames <- function(x, y, by, ...){
 }
 
 
-#' Mutate while preserving rownames
-#' @param .data dataframe
-#' @param ... passed to dplyr::mutate
-#' @return data.frame
-#' @importFrom magrittr  %>% 
-#' @export
-mutate_keeping_rownames <- function(.data, ...){
-  dplyr::mutate(.data, ...) %>% 
-    magrittr::set_rownames(rownames(.data))
-}
-
 #' Dedupe varnames
 #' @param x list
 #' @examples
