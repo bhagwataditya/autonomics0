@@ -1,16 +1,4 @@
-#' Percentage of available values
-#' @param x vector
-#' @return rounded percentage
-#' @examples
-#' x <- c(NA, 2, 3, NA, 5, 6)
-#' pct_available(x)
-#' @importFrom magrittr %>%
-#' @export
-pct_available <- function(x){
-  selector <- !is.na(x)
-  pct <- 100*sum(selector)/length(selector)
-  floor(pct)
-}
+
 
 #' Percentage of TRUE value
 #' @param x logical vector
