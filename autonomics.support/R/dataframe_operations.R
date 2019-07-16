@@ -50,25 +50,6 @@ left_join_keeping_rownames <- function(x, y, by, ...){
 }
 
 
-#' Dedupe varnames
-#' @param x list
-#' @examples
-#' require(magrittr)
-#' x <- cbind(data.frame(a=1:3, b=1:3, c=1:3), data.frame(a=4:6))
-#' x
-#' x %>% autonomics.support::dedupe_varnames()
-#' @importFrom magrittr %>% 
-#' @export
-dedupe_varnames <- function(x){
-  selector <- duplicated(names(x))
-  if (any(selector)){
-     autonomics.support::cmessage('Rm repeated column "%s"', names(x)[selector] %>% paste0(collapse = ', '))
-     x %<>% magrittr::extract(!selector)
-  }
-  x
-}
-
-
 #' Pull columns in a dataframe to the front
 #' @param df dataframe
 #' @param first_cols columns that need to be pulled to the front
