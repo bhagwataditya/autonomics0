@@ -33,6 +33,5 @@ Suggests:
    org.Rn.eg.db, 
    org.Sc.sgd.db,
    org.Dr.eg.db,
-   org.Xl.eg.db, 
-   subramanian.2016
+   org.Xl.eg.db
 biocViews:
