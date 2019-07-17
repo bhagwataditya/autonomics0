@@ -31,9 +31,26 @@ write_design_file <- function(design_df, design_file){
    return(invisible(design_file))
 }
 
+
 #=====================
 # ADD REPLICATE VALUES
 #=======================
+
+#' Get unique unique tails
+#' @param x character vector
+#' @examples
+#' require(magrittr)
+#' x <- c("E_1", "E_2", "E_3")
+#' x %>% get_unique_tails()
+#' @importFrom magrittr %>%
+#' @export
+get_unique_tails <- function(x){
+  if (is.factor(x)) x %<>% as.character()
+   for (k in 0:max(nchar(x))){
+      xtail <- x %>% substr(max(1, nchar(.)-k), nchar(.))
+      if (!any(duplicated(xtail))) return(xtail)
+   }
+}
 
 #' Add replicate values
 #'
@@ -53,7 +70,7 @@ write_design_file <- function(design_df, design_file){
 add_replicate_values <- function(design_df){
    sample_id <- NULL
    design_df %>% data.table::data.table() %>%
-      magrittr::extract(, replicate := autonomics.support::get_unique_tails(sample_id), by = 'subgroup') %>%
+      magrittr::extract(, replicate := autonomics.suppoget_unique_tails(sample_id), by = 'subgroup') %>%
       data.frame(row.names = rownames(design_df), check.names = FALSE)
 }
 
