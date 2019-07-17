@@ -93,6 +93,20 @@ subgroup_components <- function(...){
 
 #==============================================================================================
 
+#' Matrixify datatable or dataframe
+#' @param df dataframe or datatable (first column contains rownames)
+#' @return matrix
+#' @importFrom magrittr %>% 
+#' @export
+matrixify <- function(df){
+  rownames1 <- df[[1]]
+  df[[1]] <- NULL
+  mat <- df %>% as.matrix() #data.matrix()
+  rownames(mat) <- rownames1
+  mat
+}
+
+
 #' Reshape composite values
 #'
 #' Reshapes a vector with composite values into a (2d) matrix:
@@ -124,7 +138,7 @@ reshape_values <- function(x, fill, fun.aggregate, sep = guess_sep(x)){
                            value.var = names(.)[1],
                            fill = fill,
                            fun.aggregate = fun.aggregate) %>%
-         autonomics.support::matrixify()
+         matrixify()
 }
 
 #============================================================================================

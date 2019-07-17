@@ -121,16 +121,3 @@ rm_single_value_columns <- function(df){
   Filter(function(x) length(unique(x))>1, df)
 }
 
-#' Matrixify datatable or dataframe
-#' @param df dataframe or datatable (first column contains rownames)
-#' @return matrix
-#' @importFrom magrittr %>% 
-#' @export
-matrixify <- function(df){
-  rownames1 <- df[[1]]
-  df[[1]] <- NULL
-  mat <- df %>% as.matrix() #data.matrix()
-  rownames(mat) <- rownames1
-  mat
-}
-
