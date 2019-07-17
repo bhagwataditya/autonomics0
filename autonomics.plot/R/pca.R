@@ -72,6 +72,29 @@ pca <- function(object, ndim = 2, ...){
 }
 
 
+#' Is even/odd?
+#' @param x integer
+#' @return logical
+#' @examples
+#' is_even(13)
+#' is_even(12)
+#' is_odd(13)
+#' is_odd(12)
+#' @importFrom magrittr %>% 
+#' @export
+is_even <- function(x) x %% 2 %>% magrittr::equals(0)
+
+#' @rdname is_even
+#' @importFrom magrittr %>% 
+#' @export
+is_odd <- function(x)  x %>% is_even() %>% magrittr::not()
+
+#' Evenify upwards
+#' @param x integer
+#' @export
+evenify_upwards <- function(x) if (is_odd(x)) x+1 else x
+
+
 #' Spectral Map Analysis (SMA)
 #'
 #' Returns \code{SMA} sample scores, feature loadings, and component variances.
@@ -123,7 +146,7 @@ sma <- function(object, na.impute = FALSE, ndim = 2, ...){
    mpm_tmp <- data.frame(feature = rownames(object), autonomics.import::exprs(object)) %>%
               mpm::mpm(logtrans = FALSE, closure = 'none',  center = 'double',
                        normal = 'global', row.weight = 'mean', col.weight = 'constant')
-   ncomponents <- (100*mpm_tmp$contrib) %>% magrittr::is_greater_than(1) %>% sum() %>% autonomics.support::evenify_upwards()
+   ncomponents <- (100*mpm_tmp$contrib) %>% magrittr::is_greater_than(1) %>% sum() %>% evenify_upwards()
    if(ncomponents < ndim){
       stop('\'ndim\' = \'', ndim, '\', but only \'', ncomponents, 'can be provided.')
    }
