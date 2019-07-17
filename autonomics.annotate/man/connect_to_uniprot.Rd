@@ -4,10 +4,10 @@
 \alias{connect_to_uniprot}
 \title{Open a uniprot.ws connection}
 \usage{
-connect_to_uniprot(values)
+connect_to_uniprot(x)
 }
 \arguments{
-\item{values}{uniprot ids}
+\item{x}{uniprot ids}
 }
 \value{
 uniprot.ws connection
@@ -19,7 +19,7 @@ uniprot webservice connection.
 \examples{
 \dontrun{
    require(magrittr)
-   values <- c("A0A024R4M0", "M0R210", "G3HSF3")
-   up <- values \%>\% autonomics.annotate::connect_to_uniprot()
+   x <- c("A0A024R4M0", "M0R210", "G3HSF3")
+   up <- x \%>\% connect_to_uniprot()
 }
 }

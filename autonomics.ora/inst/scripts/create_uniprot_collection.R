@@ -30,7 +30,7 @@ make_eg2uniprot <- function(organism){
       'org.%s.%s.db',
       ANNOTATED_ORGANISMS[[organism]]['abrev'],
       ANNOTATED_ORGANISMS[[organism]]['source']) %T>%
-    autonomics.annotate::install_package_if_necessary() %>%
+    install_package_if_necessary() %>%
     library(character.only = TRUE)
   sprintf(
       'org.%s.%sUNIPROT',

@@ -19,6 +19,6 @@ Metabolon files do not give cheEBI annotations.
 }
 \examples{
 \dontrun{
-   autonomics.annotate::chebi_to_smiles('28733')
+   chebi_to_smiles('28733')
 }
 }

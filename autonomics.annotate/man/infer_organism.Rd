@@ -22,5 +22,5 @@ Infer organism
 \examples{
 require(magrittr)
 keys <- c('ENSG00000000003',  'ENSG00000000005', 'ENSG00000000419')
-autonomics.annotate::infer_organism(keys, 'ensg')
+infer_organism(keys, 'ensg')
 }

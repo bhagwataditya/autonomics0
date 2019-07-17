@@ -16,7 +16,7 @@ open_uniprot_connection <- function(object){
    object                             %>%
    uniprot_values(first_only = TRUE)  %>%
    magrittr::extract(1:10)            %>%
-   autonomics.annotate::connect_to_uniprot()
+   connect_to_uniprot()
 }
 
 #' Annotate proteingroups through uniprot.ws
@@ -48,7 +48,7 @@ annotate_proteingroups <- function(
 
    # Fetch annotations from uniprot
    annotations <- fdata(object)$`Uniprot accessions` %>%
-                  autonomics.annotate::annotate_uniprot_with_webservice(connection = connection, columns = columns)
+                  annotate_uniprot_with_webservice(connection = connection, columns = columns)
 
    # Merge in annotations
    fdata(object) %<>% merge(annotations, by.x = 'Uniprot accessions', by.y = 'UNIPROTKB', sort = FALSE)

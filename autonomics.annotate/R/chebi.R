@@ -8,9 +8,8 @@
 #' @return canonical smiles string
 #' @examples
 #' \dontrun{
-#'    autonomics.annotate::chebi_to_smiles('28733')
+#'    chebi_to_smiles('28733')
 #' }
-#' @importFrom magrittr %>%
 #' @export
 chebi_to_smiles <- function(CHEBIID){
 

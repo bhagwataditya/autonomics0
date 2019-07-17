@@ -5,12 +5,12 @@
 \alias{rm_cleaved}
 \title{rm "includes" constructs from protein name values}
 \usage{
-has_cleaved(values)
+has_cleaved(x)
 
-rm_cleaved(values)
+rm_cleaved(x)
 }
 \arguments{
-\item{values}{uniprot protein name values}
+\item{x}{uniprot protein name values}
 }
 \value{
 updated values (include constructs removed)
@@ -20,8 +20,9 @@ rm "includes" constructs from protein name values
 }
 \examples{
 require(magrittr)
-values <- paste0("Dystroglycan (Dystrophin-associated glycoprotein 1) ",
-                 "[Cleaved into: Alpha-dystroglycan (Alpha-DG); Beta-dystroglycan (Beta-DG)]")
+values <- paste0(
+    "Dystroglycan (Dystrophin-associated glycoprotein 1) ",
+    "[Cleaved into: Alpha-dglycan (Alpha-DG); Beta-dystroglycan (Beta-DG)]")
 values \%>\% has_cleaved()
 values \%>\% rm_cleaved()
 }

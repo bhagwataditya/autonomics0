@@ -4,7 +4,6 @@
 #' @examples
 #' load_orgdb(organism = 'Homo sapiens')
 #' load_orgdb(organism = 'Xenopus laevis')
-#' @importFrom magrittr %>%
 #' @export
 load_orgdb <- function(organism){
    orgdb_name <- get_orgdb_name(organism)

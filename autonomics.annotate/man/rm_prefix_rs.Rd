@@ -5,23 +5,24 @@
 \alias{rm_prefix_rs}
 \title{Detect or rm prefix (3R)-}
 \usage{
-has_prefix_rs(values)
+has_prefix_rs(x)
 
-rm_prefix_rs(values)
+rm_prefix_rs(x)
 }
 \arguments{
-\item{values}{uniprot protein name values}
+\item{x}{uniprot protein name values}
 }
 \description{
 Detect or rm prefix (3R)-
 }
 \examples{
 require(magrittr)
-values <- paste0("Very-long-chain (3R)-3-hydroxyacyl-CoA dehydratase 2 ",
-                 "(EC 4.2.1.134) ",
-                 "(3-hydroxyacyl-CoA dehydratase 2) ",
-                 "(HACD2) ",
-                 "(Protein-tyrosine phosphatase-like member B)")
-values \%>\% has_prefix_rs()
-values \%>\% rm_prefix_rs()
+x <- paste0(
+    "Very-long-chain (3R)-3-hydroxyacyl-CoA dehydratase 2 ",
+    "(EC 4.2.1.134) ",
+    "(3-hydroxyacyl-CoA dehydratase 2) ",
+    "(HACD2) ",
+    "(Protein-tyrosine phosphatase-like member B)")
+x \%>\% has_prefix_rs()
+x \%>\% rm_prefix_rs()
 }

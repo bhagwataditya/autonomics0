@@ -30,6 +30,7 @@ Imports:
    xml2
 RoxygenNote: 6.1.1
 Suggests:
+   autonomics.data,
    org.Hs.eg.db, 
    org.Mm.eg.db, 
    org.Rn.eg.db, 

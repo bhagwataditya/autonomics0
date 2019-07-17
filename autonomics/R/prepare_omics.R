@@ -312,7 +312,7 @@ prepare_exiqon <- function(
      # Filter for mirs conserved in human
        if (filter_conserved_in_human){
          autonomics.import::fdata(object) %<>% (function(x){x$number <- x$feature_id %>% substr(9, nchar(.)); x})
-         conserved_human_mirs <- autonomics.annotate::load_targetscan('H.sapiens') %>% magrittr::extract2('number')
+         conserved_human_mirs <- load_targetscan('H.sapiens') %>% magrittr::extract2('number')
          object %<>% autonomics.import::filter_features(number %in% conserved_human_mirs, verbose = TRUE)
        }
    
@@ -601,7 +601,7 @@ deconvolute_proteingroups <- function(
 
    # Load fasta annotations
    autonomics.support::cmessage('\t\tLoad fasta file')
-   fasta_annotations <- fastafile %>% autonomics.annotate::load_uniprot_fasta_annotations(fastafields)
+   fasta_annotations <- fastafile %>% autonomics.annotate::read_uniprot_annotations(fastafields)
 
    # Uncollapse
    fdata1 <- object %>%

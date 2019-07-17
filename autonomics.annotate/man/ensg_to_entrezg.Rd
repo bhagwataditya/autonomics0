@@ -19,5 +19,5 @@ Map ensg to entrezg
 }
 \examples{
    x <- c("ENSG00000066248", "ENSG00000066279", "ENSG99999", NA_character_)
-   autonomics.annotate::ensg_to_entrezg(x)
+   ensg_to_entrezg(x)
 }

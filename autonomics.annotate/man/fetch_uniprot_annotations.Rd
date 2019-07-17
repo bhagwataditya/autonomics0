@@ -4,12 +4,15 @@
 \alias{fetch_uniprot_annotations}
 \title{Fetch uniprot annotations}
 \usage{
-fetch_uniprot_annotations(values, up)
+fetch_uniprot_annotations(x, up, columns = c("SUBCELLULAR-LOCATIONS",
+  "KEGG", "GO-ID", "INTERPRO"))
 }
 \arguments{
-\item{values}{uniprot ids (character vector)}
+\item{x}{uniprot ids (character vector)}
 
-\item{up}{uniprot.ws connection (output of autonomics.annotate::connect_to_uniprot)}
+\item{up}{uniprot.ws connection (output of connect_to_uniprot)}
+
+\item{columns}{character vector}
 }
 \value{
 dataframe with annotations
@@ -19,9 +22,9 @@ Fetch uniprot annotations
 }
 \examples{
 \dontrun{
-require(magrittr)
-values <- c("A0A024R4M0", "M0R210", "G3HSF3")
-up <- values \%>\% autonomics.annotate::connect_to_uniprot()
-values \%>\% autonomics.annotate::fetch_uniprot_annotations(up)
+    require(magrittr)
+    x <- c("A0A024R4M0", "M0R210", "G3HSF3")
+    up <- x \%>\% connect_to_uniprot()
+    x \%>\% fetch_uniprot_annotations(up)
 }
 }

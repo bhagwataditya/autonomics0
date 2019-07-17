@@ -4,10 +4,10 @@
 \alias{rm_protein_synonyms}
 \title{Rm synonyms from uniprot proteinname values}
 \usage{
-rm_protein_synonyms(values)
+rm_protein_synonyms(x)
 }
 \arguments{
-\item{values}{uniprot proteinname values}
+\item{x}{uniprot proteinname values}
 }
 \value{
 character vector with standard proteinname values
@@ -17,9 +17,10 @@ Rm synonyms from uniprot proteinname values
 }
 \examples{
 require(magrittr)
-values <- paste0("Rho GTPase-activating protein 10 ",
-                 "(GTPase regulator associated with focal adhesion kinase 2) ",
-                 "(Graf-related protein 2) ",
-                 "(Rho-type GTPase-activating protein 10)")
-values \%>\% rm_protein_synonyms()
+x <- paste0(
+    "Rho GTPase-activating protein 10 ",
+    "(GTPase regulator associated with focal adhesion kinase 2) ",
+    "(Graf-related protein 2) ",
+    "(Rho-type GTPase-activating protein 10)")
+x \%>\% rm_protein_synonyms()
 }

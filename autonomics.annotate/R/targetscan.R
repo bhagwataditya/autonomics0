@@ -71,7 +71,6 @@ download_targetscan_human_mouse <- function(organism = 'H.sapiens', cachefile){
 }
 
 #' @importFrom data.table   data.table   :=
-#' @importFrom magrittr     %>%   %<>%
 download_targetscan <- function(organism){
 
    # Abort if file already in cache
@@ -125,9 +124,9 @@ download_targetscan <- function(organism){
 #' @param organism Any value in TARGETSCAN_ORGANISMS
 #' @examples
 #' \dontrun{
-#'    autonomics.annotate::load_targetscan('H.sapiens')
-#'    autonomics.annotate::load_targetscan('M.musculus')
-#'    autonomics.annotate::load_targetscan('D.rerio')
+#'    load_targetscan('H.sapiens')
+#'    load_targetscan('M.musculus')
+#'    load_targetscan('D.rerio')
 #' }
 #' @export
 load_targetscan <- function(organism){
@@ -152,7 +151,6 @@ load_targetscan <- function(organism){
 #' mir <- 'rna-blablabla'
 #' infer_organism_from_mirs(mir)
 #' @importFrom data.table   data.table
-#' @importFrom magrittr     %>%
 #' @export
 infer_organism_from_mirs <- function(mir){
    # Satisfy CHECK
@@ -186,11 +184,10 @@ infer_organism_from_mirs <- function(mir){
 #' require(magrittr)
 #' mir <- c('hsa-mir-7-5p', 'hsa-mir-29a-3p', 'hsa-mir-199a-5p ')
 #' mir %>% mir_to('gsymbol')
-#' @importFrom magrittr %>%
 #' @export
 mir_to <- function(mir, to){
    organism <- infer_organism_from_mirs(mir)
-   targetscan <- autonomics.annotate::load_targetscan(organism)
+   targetscan <- load_targetscan(organism)
    targetscan %>% data.table::setkey(mir)
    targetscan %<>% extract(mir)
    targetscan %<>% split(by = 'mir', keep.by = FALSE) %>% lapply(extract2, to)
@@ -217,7 +214,6 @@ mir_to_gsymbol <- function(mir){
 #' require(magrittr)
 #' mir <- c('hsa-mir-7-5p', 'hsa-mir-29a-3p', 'hsa-mir-199a-5p ')
 #' mir %>% mir_to_ensg()
-#' @importFrom magrittr %>%
 #' @export
 mir_to_ensg <- function(mir){
    mir_to(mir, 'ensg')

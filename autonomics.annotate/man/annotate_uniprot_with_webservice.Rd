@@ -4,12 +4,11 @@
 \alias{annotate_uniprot_with_webservice}
 \title{Annotate uniprot ids}
 \usage{
-annotate_uniprot_with_webservice(values,
-  connection = autonomics.annotate::connect_to_uniprot(values),
+annotate_uniprot_with_webservice(x, connection = connect_to_uniprot(x),
   columns = c("SUBCELLULAR-LOCATIONS", "KEGG", "GO-ID", "INTERPRO"))
 }
 \arguments{
-\item{values}{uniprot accessions (character vector)}
+\item{x}{uniprot accessions (character vector)}
 
 \item{connection}{uniprot.ws connection}
 
@@ -23,10 +22,10 @@ Annotate uniprot ids
 }
 \examples{
 \dontrun{
-require(magrittr)
-values <- c('A0MZ66', 'A1KZ92', 'A1L020', 'A1XBS5', 'S4R350', 'A4D1P6')
-up <- values \%>\% autonomics.annotate::connect_to_uniprot()
-autonomics.annotate::annotate_uniprot_with_webservice(
-   values, up, columns =  'SUBCELLULAR-LOCATIONS') \%>\% print()
+    require(magrittr)
+    x <- c('A0MZ66', 'A1KZ92', 'A1L020', 'A1XBS5', 'S4R350', 'A4D1P6')
+    up <- x \%>\% connect_to_uniprot()
+    annotate_uniprot_with_webservice(
+       x, up, columns =  'SUBCELLULAR-LOCATIONS') \%>\% print()
 }
 }

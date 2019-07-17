@@ -5,12 +5,12 @@
 \alias{rm_includes}
 \title{rm "includes" constructs from protein name values}
 \usage{
-has_includes(values)
+has_includes(x)
 
-rm_includes(values)
+rm_includes(x)
 }
 \arguments{
-\item{values}{uniprot protein name values}
+\item{x}{uniprot protein name values}
 }
 \value{
 updated values (include constructs removed)
@@ -20,13 +20,14 @@ rm "includes" constructs from protein name values
 }
 \examples{
 require(magrittr)
-values <- paste0("Bifunctional 3'-phosphoadenosine 5'-phosphosulfate synthase 1 ",
-                 "(PAPS synthase 1) (PAPSS 1) (Sulfurylase kinase 1) (SK 1) (SK1) ",
-                 "[Includes: Sulfate adenylyltransferase (EC 2.7.7.4) (ATP-sulfurylase) ",
-                 "(Sulfate adenylate transferase) (SAT); Adenylyl-sulfate kinase (EC 2.7.1.25) ",
-                 "(3'-phosphoadenosine-5'-phosphosulfate synthase) (APS kinase) ",
-                 "(Adenosine-5'-phosphosulfate 3'-phosphotransferase) ",
-                 "(Adenylylsulfate 3'-phosphotransferase)]")
+values <- paste0(
+    "Bifunctional 3'-phosphoadenosine 5'-phosphosulfate synthase 1 ",
+    "(PAPS synthase 1) (PAPSS 1) (Sulfurylase kinase 1) (SK 1) (SK1) ",
+    "[Includes: Sulfate adenase (EC 2.7.7.4) (ATP-sulfurylase) ",
+    "(Sulfate adenase) (SAT); Adenylyl-sulfate kinase (EC 2.7.1.25) ",
+    "(3'-phosphoadenosine-5'-phosphosulfate synthase) (APS kinase) ",
+    "(Adenosine-5'-phosphosulfate 3'-phosphotransferase) ",
+    "(Adenylylsulfate 3'-phosphotransferase)]")
 values \%>\% has_includes()
 values \%>\% rm_includes()
 }

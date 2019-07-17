@@ -14,8 +14,8 @@ Load targetscan
 }
 \examples{
 \dontrun{
-   autonomics.annotate::load_targetscan('H.sapiens')
-   autonomics.annotate::load_targetscan('M.musculus')
-   autonomics.annotate::load_targetscan('D.rerio')
+   load_targetscan('H.sapiens')
+   load_targetscan('M.musculus')
+   load_targetscan('D.rerio')
 }
 }
