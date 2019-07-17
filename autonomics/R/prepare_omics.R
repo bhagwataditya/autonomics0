@@ -327,6 +327,25 @@ prepare_exiqon <- function(
 # SOMASCAN
 #============================================================
 
+#'Rm single value columns
+#'@param df dataframe 
+#'@return dataframe with informative columns
+#'@examples
+#' require(magrittr)
+#' df <- data.frame(
+#'    symbol    = c('A1BG', 'A2M'), 
+#'    id        = c('1',    '2'),
+#'    name      = c('alpha-1-B glycoprotein', 'alpha-2-macroglobulin'), 
+#'    relevance = c(NA_character_, NA_character_),
+#'    type      = c('proteincoding', 'proteincoding'))
+#' df %>% rm_single_value_columns()
+#' @importFrom magrittr %>% 
+#' @export
+rm_single_value_columns <- function(df){
+  Filter(function(x) length(unique(x))>1, df)
+}
+
+
 #' Prepare somascan
 #' 
 #' @param object                 SummarizedExperiment
@@ -393,7 +412,7 @@ prepare_somascan <- function(
 
    # Select
       if (rm_na_svars)            autonomics.import::sdata(object) %<>% autonomics.support::rm_na_columns()
-      if (rm_single_value_svars)  autonomics.import::sdata(object) %<>% autonomics.support::rm_single_value_columns()
+      if (rm_single_value_svars)  autonomics.import::sdata(object) %<>% rm_single_value_columns()
 
    # Log2 transform
       if (log2transform) object %<>% autonomics.import::log2transform(verbose = TRUE)
