@@ -1,3 +1,13 @@
+
+#' Save session info
+#' @param dir directory 
+#' @importFrom utils capture.output   sessionInfo
+#' @export
+save_session_info <- function(dir){
+  file_name <- sprintf("%s/sessionInfo.txt", dir)
+  writeLines(capture.output(sessionInfo()), file_name)
+}
+
 ####
 #' @title Analyze SummarizeExperiment
 #' @description
@@ -154,7 +164,7 @@ analyze_eset <- function(
 
    # Save eSet. Zip results. Return eSet.
    saveRDS(object, sprintf('%s/object.rds', result_dir))
-   result_dir %>% autonomics.support::save_session_info()
+   result_dir %>% save_session_info()
    if (zip_results)   result_dir %>% autonomics.support::zip_dir()
    return(object)
 }
