@@ -1,8 +1,8 @@
 #' Print ggplot to pdf
 #' 
-#' \code{\link[autonomics.support]{print2pdf}}
+#' \code{\link[autonomics.plot]{print2pdf}}
 #' @name print2pdf
-#' @importFrom  autonomics.support   print2pdf
+#' @importFrom  autonomics.plot   print2pdf
 #' @export  print2pdf
 NULL
 

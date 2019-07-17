@@ -122,7 +122,7 @@ plot_feature_heatmap <- function(
                             legend.box.margin =  ggplot2::margin(-10,-10,-10,-12),
                             ...)
 
-   if (!is.null(filename)) myPlot %>% autonomics.support::print2pdf(file = filename, width = width, height = height, onefile = FALSE)
+   if (!is.null(filename)) myPlot %>% print2pdf(file = filename, width = width, height = height, onefile = FALSE)
    if (!is.null(filename)) autonomics.support::cmessage(filename)
    myPlot
 }

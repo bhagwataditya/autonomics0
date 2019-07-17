@@ -111,7 +111,7 @@ plot_feature_hbars <- function(object,
   } else {
      if (is.null(width))   width  <- 5 + 1.5 * ncol(object) + (1 + nrow(object)/40) * 2
      if (is.null(height))  height <- 1 + 0.2 * nrow(object)
-     suppressWarnings(myPlot %>% autonomics.support::print2pdf(file, width = width, height = height))
+     suppressWarnings(myPlot %>% print2pdf(file, width = width, height = height))
      return(invisible(file))
   }
 }

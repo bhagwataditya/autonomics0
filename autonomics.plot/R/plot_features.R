@@ -262,7 +262,7 @@ compute_feature_plot_dims <- function(p){
 
    return(list(width = fig_width, height = fig_height))
    # print
-   #suppressMessages(suppressWarnings(p %>% autonomics.support::print2pdf(file, width = fig_width, height = fig_height)))
+   #suppressMessages(suppressWarnings(p %>% print2pdf(file, width = fig_width, height = fig_height)))
    #return(invisible(file))
 }
 
@@ -274,7 +274,7 @@ old_print_feature_boxes <- function(...){
 old_print_feature_distributions <- function(p, file, ngroups, nrows, nfvars, nsamples){
    fig_width  <- 3 + 1.5*nrows*((ngroups^0.5)/1.5) # the power ensures saturation at high ngroups
    fig_height <- 3 + nrows*(1.5 + 0.10**nfvars)
-   suppressMessages(suppressWarnings(p %>% autonomics.support::print2pdf(file, width = fig_width, height = fig_height)))
+   suppressMessages(suppressWarnings(p %>% print2pdf(file, width = fig_width, height = fig_height)))
    return(invisible(file))
 }
 
@@ -282,14 +282,14 @@ old_print_feature_distributions <- function(p, file, ngroups, nrows, nfvars, nsa
 old_print_feature_profiles <- function(p, file, ngroups, nrows, nfvars, nsamples){
   fig_width  <- 3 + 1.5*nrows + 3
   fig_height <- 3 + nrows*(1.5 + 0.10*nfvars)
-  suppressMessages(suppressWarnings(p %>% autonomics.support::print2pdf(file, width = fig_width, height = fig_height)))
+  suppressMessages(suppressWarnings(p %>% print2pdf(file, width = fig_width, height = fig_height)))
   return(invisible(file))
 }
 
 print_feature_bars <- function(p, file, ngroups, nrows, nfvars, nsamples){
    fig_width  <- 3 + 1*nsamples + 3
    fig_height <- 3 + nrows*(1.5 + 0.10*nfvars)
-   suppressMessages(suppressWarnings(p %>% autonomics.support::print2pdf(file, width = fig_width, height = fig_height)))
+   suppressMessages(suppressWarnings(p %>% print2pdf(file, width = fig_width, height = fig_height)))
    return(invisible(file))
 }
 

@@ -647,5 +647,5 @@ plot_sample_boxplots.SummarizedExperiment <- function(
 # @importFrom   magrittr   %>%   %<>%
 # @export
 # print_sample_distributions <- function(ggplot_obj, file){
-#    ggplot_obj %>% autonomics.support::print2pdf(file, height = 5, width = 5)
+#    ggplot_obj %>% print2pdf(file, height = 5, width = 5)
 # }
