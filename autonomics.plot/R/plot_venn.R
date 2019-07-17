@@ -1,3 +1,13 @@
+#' Convenient grid.draw
+#' @param x grid object
+#' @importFrom magrittr %>%
+#' @export
+cdraw <- function(x){
+  grid::grid.newpage()
+  x %>% grid::grid.draw()
+}
+
+
 #' Plot Venn/Euler diagram
 #' @param x             named list of character vectors
 #' @param color_values  string vector: values = colors, names = x levels
@@ -80,7 +90,7 @@ plot_venn <- function(
 
    # Print
    if (!is.null(filename))   grDevices::pdf(filename, width = width, height = height)
-   autonomics.support::cdraw(p)
+   cdraw(p)
    if (!is.null(filename))   grDevices::dev.off()
    if (!is.null(filename))   autonomics.support::cmessage(filename)
 }
