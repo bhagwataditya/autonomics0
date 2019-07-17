@@ -1,3 +1,15 @@
+#' All elements of vector are identical
+#' @param x vector
+#' @return logical(1)
+#' @examples
+#' require(magrittr)
+#' x <- c(2,2,1,2)
+#' x %>% has_identical_values()
+#' @export
+has_identical_values <- function(x){
+  length(unique(x))==1
+}
+
 #===================================================================================================
 #' Guess separator
 #' @param x                   character vector or SummarizedExperiment
@@ -43,7 +55,7 @@ guess_sep.character <- function(
    . <- NULL
    sep_freqs <- Map(function(y) stringi::stri_split_fixed(x, y), possible_separators)        %>%
                 lapply(function(y) y %>% vapply(length, integer(1)))                                  %>%
-                magrittr::extract( vapply(., autonomics.support::has_identical_values, logical(1)))   %>%
+                magrittr::extract( vapply(., has_identical_values, logical(1)))   %>%
                 vapply(unique, integer(1))
 
    # No separator detected - return NULL
