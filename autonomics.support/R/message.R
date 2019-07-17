@@ -16,7 +16,7 @@
 #' @export
 cmessage_df <- function(format_string, x){
   format_string %>% 
-    sprintf(capture.output(print(x))) %>% 
+    sprintf(utils::capture.output(print(x))) %>% 
     paste0(collapse = '\n') %>% 
     enc2utf8() %>% 
     message()

@@ -13,6 +13,7 @@
 #' @importFrom magrittr %>%
 #' @export
 vsprintf <- function(fmt, ..., first_slowest = TRUE){
+   . <- NULL
    arguments <- list(...)
    n <- arguments %>% vapply(length, integer(1)) %>% Reduce(max, .)
    argdf <- arguments %>%

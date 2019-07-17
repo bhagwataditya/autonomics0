@@ -47,6 +47,7 @@ pull_columns <- function(df, first_cols, verbose = TRUE){
   
   assertive.types::assert_is_data.frame(df)
   assertive.types::assert_is_character(first_cols)
+  . <- NULL
   
   idx <- first_cols %in% names(df)
   if (any(!idx)){

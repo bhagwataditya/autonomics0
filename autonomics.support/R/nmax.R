@@ -9,8 +9,9 @@
 #' @importFrom magrittr %>% 
 #' @export
 nmax <- function(x, n){
-  x      %>% 
-  sort(decreasing = TRUE) %>% 
+  . <- NULL
+  x                          %>% 
+  sort(decreasing = TRUE)    %>% 
   magrittr::extract(min(length(.), n))
 }
 
@@ -18,7 +19,8 @@ nmax <- function(x, n){
 #' @importFrom magrittr %>% 
 #' @export
 nmin <- function(x, n){
-  x      %>% 
-  sort() %>% 
+  . <- NULL
+  x                         %>% 
+  sort()                    %>% 
   magrittr::extract(min(length(.), n))
 }
