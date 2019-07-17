@@ -83,23 +83,4 @@ pull_columns <- function(df, first_cols, verbose = TRUE){
 }
 
 
-#' Rm columns with only nas
-#' @param df dataframe
-#' @return dataframe with re-ordered columns
-#' @examples 
-#' require(magrittr)
-#' df <- data.frame(
-#'    symbol    = c('A1BG', 'A2M'), 
-#'    id        = c('1',    '2'),
-#'    name      = c('alpha-1-B glycoprotein', 'alpha-2-macroglobulin'), 
-#'    relevance = c(NA_character_, NA_character_),
-#'    version   = c('NA', 'NA'), 
-#'    type      = c('proteincoding', 'proteincoding'))
-#' df %>% autonomics.support::rm_na_columns()
-#' @importFrom magrittr %>% 
-#' @export
-rm_na_columns <- function(df){
-  Filter(function(x) !all(is.na(x)|x=='NA'), df) # 
-}
-
 

@@ -327,6 +327,26 @@ prepare_exiqon <- function(
 # SOMASCAN
 #============================================================
 
+
+#' Rm columns with only nas
+#' @param df dataframe
+#' @return dataframe with re-ordered columns
+#' @examples 
+#' require(magrittr)
+#' df <- data.frame(
+#'    symbol    = c('A1BG', 'A2M'), 
+#'    id        = c('1',    '2'),
+#'    name      = c('alpha-1-B glycoprotein', 'alpha-2-macroglobulin'), 
+#'    relevance = c(NA_character_, NA_character_),
+#'    version   = c('NA', 'NA'), 
+#'    type      = c('proteincoding', 'proteincoding'))
+#' df %>% autonomics.support::rm_na_columns()
+#' @importFrom magrittr %>% 
+#' @export
+rm_na_columns <- function(df){
+  Filter(function(x) !all(is.na(x)|x=='NA'), df) # 
+}
+
 #'Rm single value columns
 #'@param df dataframe 
 #'@return dataframe with informative columns
@@ -344,7 +364,6 @@ prepare_exiqon <- function(
 rm_single_value_columns <- function(df){
   Filter(function(x) length(unique(x))>1, df)
 }
-
 
 #' Prepare somascan
 #' 
@@ -366,8 +385,6 @@ rm_single_value_columns <- function(df){
 #'               read_somascan()
 #'    object %>% prepare_somascan()
 #' }
-#' @importFrom magrittr %>%
-#' @export
 #' @importFrom magrittr %>%
 #' @export
 prepare_somascan <- function(
@@ -411,7 +428,7 @@ prepare_somascan <- function(
       }
 
    # Select
-      if (rm_na_svars)            autonomics.import::sdata(object) %<>% autonomics.support::rm_na_columns()
+      if (rm_na_svars)            autonomics.import::sdata(object) %<>% rm_na_columns()
       if (rm_single_value_svars)  autonomics.import::sdata(object) %<>% rm_single_value_columns()
 
    # Log2 transform
