@@ -31,8 +31,13 @@ get_time_stamp <- function(){
 #' dir.create(my_dir)
 #' my_dir %>% paste0('/dirA') %>%  dir.create()
 #' my_dir %>% paste0('/dirB') %>%  dir.create()
-#' data.frame(a=1,b=2) %>% print2txt(my_dir %>% paste0('/dirA/fileA.txt'))
-#' data.frame(a=3,b=4) %>% print2txt(my_dir %>% paste0('/dirB/fileB.txt'))
+#' 
+#' data.frame(a=1,b=2) %>% 
+#' autonomics.support::print2txt(my_dir %>% paste0('/dirA/fileA.txt'))
+#' 
+#' data.frame(a=3,b=4) %>% 
+#' autonomics.support::print2txt(my_dir %>% paste0('/dirB/fileB.txt'))
+#' 
 #' zip_dir(my_dir)
 #' @export
 zip_dir <- function(dir, add_time_stamp = TRUE){
@@ -208,6 +213,6 @@ analyze_eset <- function(
    # Save eSet. Zip results. Return eSet.
    saveRDS(object, sprintf('%s/object.rds', result_dir))
    result_dir %>% save_session_info()
-   if (zip_results)   result_dir %>% autonomics.support::zip_dir()
+   if (zip_results)   result_dir %>% zip_dir()
    return(object)
 }
