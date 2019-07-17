@@ -415,7 +415,21 @@ make_projected_samples_df <- function(
 }
 
 
-
+#' Identify outliers in vector
+#' @param x numeric
+#' @return logical
+#' @examples 
+#' x <- c(1:25,  200)
+#' is_outlier(x)
+#' @importFrom magrittr %>% 
+#' @export
+is_outlier <- function(x){
+   med <- x %>% stats::median(na.rm=TRUE)
+   iqr <- x %>% stats::IQR(na.rm = TRUE)
+   lower <- med - 1.5*iqr
+   upper <- med + 1.5*iqr
+   (x < lower) | (x > upper)
+}
 
 #' Plot PCA/LDA/PLS/SMA sample scores
 #' @param object            SummarizedExperiment
@@ -641,7 +655,7 @@ plot_projected_samples <- function(
       p <- p + ggrepel::geom_text_repel(ggplot2::aes_string(x='x',y='y', label='label', color = 'color'), show.legend = FALSE)
    }
    if (txt_outliers){
-      is_an_outlier <- autonomics.support::is_outlier(plotDF$x) | autonomics.support::is_outlier(plotDF$y)
+      is_an_outlier <- is_outlier(plotDF$x) | is_outlier(plotDF$y)
       p <- p + ggrepel::geom_text_repel(data    = plotDF[is_an_outlier, ],
                                         mapping = ggplot2::aes_string(x='x', y='y', color = 'color', label = 'sample_id'))
    }
