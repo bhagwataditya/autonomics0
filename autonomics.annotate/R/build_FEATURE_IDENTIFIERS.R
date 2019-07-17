@@ -24,7 +24,7 @@ build_FEATURE_IDENTIFIERS <- function(){
       }, FEATURE_ID_TYPES) %>%
          magrittr::set_names(names(FEATURE_ID_TYPES))
 
-   devtools::use_data(FEATURE_IDENTIFIERS, pkg = ".", internal = FALSE, compress = "xz", overwrite = TRUE)
+   usethis::use_data(FEATURE_IDENTIFIERS, pkg = ".", internal = FALSE, compress = "xz", overwrite = TRUE)
 
    return(invisible(TRUE))
 }

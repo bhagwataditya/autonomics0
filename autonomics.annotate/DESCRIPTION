@@ -10,6 +10,7 @@ LazyData: true
 Imports: 
    AnnotationDbi,
    assertive.base,
+   assertive.files,
    assertive.numbers,
    assertive.properties,
    assertive.sets,
@@ -18,11 +19,12 @@ Imports:
    autonomics.support,
    Biobase,
    data.table,
-   devtools,
+   usethis,
    KEGGREST,
    magrittr,
    RCurl,
    rvest,
+   seqinr,
    stringi,
    UniProt.ws,
    xml2

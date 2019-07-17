@@ -11,7 +11,7 @@ load_go_genes(goid, organism, gene = "ENTREZID")
 
 \item{organism}{'Homo sapiens'}
 
-\item{gene_id}{'ENTREZID', 'ENSEMBL', 'UNIPROT', 'SYMBOL', 'GENENAME'}
+\item{gene}{'ENTREZID', 'ENSEMBL', 'UNIPROT', 'SYMBOL', 'GENENAME'}
 }
 \value{
 character vector

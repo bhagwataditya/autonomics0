@@ -75,6 +75,7 @@ download_targetscan_human_mouse <- function(organism = 'H.sapiens', cachefile){
 download_targetscan <- function(organism){
 
    # Abort if file already in cache
+   number <- NULL
    cachefile <- get_targetscan_cachefile(organism)
    if(file.exists(cachefile)) return(cachefile)
 

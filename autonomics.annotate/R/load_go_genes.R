@@ -1,7 +1,7 @@
 #' Load GO genes
 #' @param goid       GO ID
 #' @param organism  'Homo sapiens'
-#' @param gene_id   'ENTREZID', 'ENSEMBL', 'UNIPROT', 'SYMBOL', 'GENENAME'
+#' @param gene   'ENTREZID', 'ENSEMBL', 'UNIPROT', 'SYMBOL', 'GENENAME'
 #' @return character vector
 #' @examples
 #' require(magrittr)

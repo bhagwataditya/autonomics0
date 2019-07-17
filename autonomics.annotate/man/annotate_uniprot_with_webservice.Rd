@@ -12,6 +12,8 @@ annotate_uniprot_with_webservice(values,
 \item{values}{uniprot accessions (character vector)}
 
 \item{connection}{uniprot.ws connection}
+
+\item{columns}{character vector}
 }
 \value{
 data.table with uniprot annotations

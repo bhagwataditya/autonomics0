@@ -306,6 +306,7 @@ clean_uniprot_location_values <- function(values){
 #' Annotate uniprot ids
 #' @param values      uniprot accessions (character vector)
 #' @param connection  uniprot.ws connection
+#' @param columns     character vector
 #' @return data.table with uniprot annotations
 #' @examples
 #' \dontrun{
@@ -326,6 +327,8 @@ annotate_uniprot_with_webservice <- function(
    # Assert
    assertive.base::assert_is_identical_to_true(class(connection) == 'UniProt.ws')
    assertive.sets::assert_is_subset(columns, UniProt.ws::columns(connection))
+   SCORE <- EXISTENCE <- REVIEWED <- `PROTEIN-NAMES` <- NULL
+   GENES <- `SUBCELLULAR-LOCATIONS` <- NULL
 
    # Fetch uniprot annotations
    dt <- AnnotationDbi::select(connection, keys = values, columns = columns)
@@ -370,30 +373,33 @@ annotate_uniprot_with_webservice <- function(
 #' @export
 load_uniprot_fasta_annotations <- function(
    fastafile,
-   fastafields = c('GENES', 'PROTEIN-NAMES', 'REVIEWED', 'EXISTENCE', 'ENTRYNAME', 'ORGID', 'ORGNAME', 'VERSION')
+   fastafields = c('GENES', 'PROTEIN-NAMES', 'REVIEWED', 'EXISTENCE',
+                   'ENTRYNAME', 'ORGID', 'ORGNAME', 'VERSION')
 ){
 
    # Assert
    assertive.files::assert_all_are_existing_files(fastafile)
+   GENES <- `PROTEIN-NAMES` <- REVIEWED <- EXISTENCE <- ENTRYNAME <- NULL
+   ORGID <- ORGNAME <- VERSION <- annotation <- NULL
 
    # Import
    `:=` <- data.table::`:=`
 
    # Load (relevant portion of) fasta
    fasta <- seqinr::read.fasta(fastafile)
-   all_accessions <- fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2)
+   all_accessions <- fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 2)
 
    # Extract annotations
-   dt <- data.table::data.table(UNIPROTKB  =  fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2),
+   dt <- data.table::data.table(UNIPROTKB  =  fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 2),
                                 annotation = fasta  %>% vapply(attr, character(1), 'Annot') %>% unname())
 
    # REVIEWED
    autonomics.support::cmessage('\t\t\tExtract REVIEWED: 0=trembl, 1=swissprot')
-   dt %>% magrittr::extract(, REVIEWED := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 1) %>% magrittr::equals('sp') %>% as.numeric())
+   dt %>% magrittr::extract(, REVIEWED := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 1) %>% magrittr::equals('sp') %>% as.numeric())
 
    # ENTRYNAME
    autonomics.support::cmessage('\t\t\tExtract ENTRYNAME')
-   dt %>% magrittr::extract(, ENTRYNAME := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 3))
+   dt %>% magrittr::extract(, ENTRYNAME := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 3))
 
    # VERSION
    pattern <- ' SV=[0-9]'
