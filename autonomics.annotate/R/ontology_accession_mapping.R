@@ -66,7 +66,7 @@ pathway_accessions_to_names <- function(
   if(ontology == 'auto')
   {
     test_string <- accessions %>%
-      magrittr::extract2(1)
+      extract2(1)
     if(stringi::stri_startswith_fixed(test_string,'IPR'))
     {
       ontology <- 'interpro'
@@ -121,23 +121,23 @@ pathway_accessions_to_names <- function(
 
   # Generate lookup table
   pm <- mapping_object %>%
-    magrittr::extract2('pathway_accession_to_name')
+    extract2('pathway_accession_to_name')
 
   # QC
   if(accessions %>%
     assertive.sets::is_subset(
       pm %>%
         names()) %>%
-    magrittr::not() &&
+    not() &&
     verbose)
   {
     warning('Encountered InterPro accessions NOT present in the database.')
   }
 
   pm %>%
-    magrittr::extract(accessions) %>%
+    extract(accessions) %>%
     (function(x){ifelse(is.na(x),"", x)}) %>%
-    magrittr::set_names(accessions) %>%
+    set_names(accessions) %>%
     return()
 }
 
@@ -161,7 +161,7 @@ gene_accessions_to_pathway_accessions <- function(
   if(ontology == 'auto')
   {
     test_string <- accessions %>%
-      magrittr::extract2(1)
+      extract2(1)
     if(stringi::stri_detect_regex(test_string,'^\\w{3,3}:'))
     {
       ontology <- 'kegg'
@@ -198,28 +198,28 @@ gene_accessions_to_pathway_accessions <- function(
 
    # Generate lookup table
    pm <- mapping_object %>%
-     magrittr::extract2('gene_accession_to_pathway_accession')
+     extract2('gene_accession_to_pathway_accession')
    # lut_mapping_object <-  pm %>%
-     # magrittr::extract2('NAME') %>%
-     # magrittr::set_names(
+     # extract2('NAME') %>%
+     # set_names(
        # pm %>%
-         # magrittr::extract2('ACCESSION'))
+         # extract2('ACCESSION'))
 
    # QC
    if(accessions %>%
       assertive.sets::is_subset(
         pm %>%
         names()) %>%
-      magrittr::not() &&
+      not() &&
       verbose)
    {
      warning('Encountered InterPro accessions NOT present in the database.')
    }
 
   pm %>%
-     magrittr::extract(accessions) %>%
+     extract(accessions) %>%
      (function(x){ifelse(is.na(x),"", x)}) %>%
-     magrittr::set_names(accessions) %>%
+     set_names(accessions) %>%
      return()
 }
 utils::globalVariables(c('.', 'accessions', 'interpro_url', 'verbose'))

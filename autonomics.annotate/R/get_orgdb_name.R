@@ -6,7 +6,7 @@
 #' @export
 get_orgdb_name <- function(organism){
    assertive.sets::assert_is_subset(organism, names(ANNOTATED_ORGANISMS))
-   organism <- ANNOTATED_ORGANISMS %>% magrittr::extract2(organism)
+   organism <- ANNOTATED_ORGANISMS %>% extract2(organism)
    orgdb_name <- sprintf('org.%s.%s.db', organism['abrev'], organism['source'])
    return(orgdb_name)
 }

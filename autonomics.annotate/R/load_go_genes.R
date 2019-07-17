@@ -16,5 +16,5 @@ load_go_genes <- function(goid, organism, gene = 'ENTREZID'){
    orgdb <- autonomics.annotate::load_orgdb(organism)
    assertive.sets::assert_is_subset(gene, AnnotationDbi::columns(orgdb))
    orgdb %>% AnnotationDbi::select(keys = goid, keytype = 'GO', columns = gene) %>%
-             magrittr::extract2(gene)
+             extract2(gene)
 }

@@ -16,14 +16,13 @@
 #'    values <- c("A0A024R4M0", "M0R210", "G3HSF3")
 #'    up <- values %>% autonomics.annotate::connect_to_uniprot()
 #' }
-#' @importFrom magrittr %>%
 #' @export
 connect_to_uniprot <- function(values){
    . <- NULL
    values                                                          %>%
    autonomics.annotate::infer_organism('uniprot', verbose = FALSE) %>%
-   magrittr::extract2(autonomics.annotate::ANNOTATED_ORGANISMS, .) %>%
-   magrittr::extract2('taxonid') %>%
+   extract2(autonomics.annotate::ANNOTATED_ORGANISMS, .) %>%
+   extract2('taxonid') %>%
    as.numeric() %>%
    UniProt.ws::UniProt.ws()
 }
@@ -273,7 +272,7 @@ clean_uniprot_proteinname_values <- function(values){
 clean_uniprot_gene_values <- function(values){
    values                           %>%
    stringi::stri_split_fixed(' ')   %>%
-   vapply(magrittr::extract, character(1), 1) %>%
+   vapply(extract, character(1), 1) %>%
   (function(x){x[is.na(x)]<-''; x})
 }
 
@@ -337,19 +336,19 @@ annotate_uniprot_with_webservice <- function(
    # Collapse redundant kegg ids
    if ('KEGG' %in% columns){
       n0 <- nrow(dt)
-      dt %<>% magrittr::extract(, ('KEGG') := paste0(get('KEGG'), collapse = ';'), by = 'UNIPROTKB') %>% unique()
+      dt %<>% extract(, ('KEGG') := paste0(get('KEGG'), collapse = ';'), by = 'UNIPROTKB') %>% unique()
       n1 <- nrow(dt)
       autonomics.support::cmessage('\tCollapse %d KEGG ids mapping to same uniprot accession: %d -> %d features', n0-n1, n0, n1)
       #data.table::setnames('KEGG',     'keggid')
    }
 
    # Clean values
-   if ('SCORE'                 %in% columns)  dt %>% magrittr::extract(, SCORE                  := autonomics.annotate::clean_uniprot_score_values(       SCORE)                 )
-   if ('EXISTENCE'             %in% columns)  dt %>% magrittr::extract(, EXISTENCE              := autonomics.annotate::clean_uniprot_existence_values(   EXISTENCE)             )
-   if ('REVIEWED'              %in% columns)  dt %>% magrittr::extract(, REVIEWED               := autonomics.annotate::clean_uniprot_reviewed_values(    REVIEWED)              )
-   if ('PROTEIN-NAMES'         %in% columns)  dt %>% magrittr::extract(,`PROTEIN-NAMES`         := autonomics.annotate::clean_uniprot_proteinname_values(`PROTEIN-NAMES`)        )
-   if ('GENES'                 %in% columns)  dt %>% magrittr::extract(,`GENES`                 := autonomics.annotate::clean_uniprot_gene_values(        GENES)                 )
-   if ('SUBCELLULAR-LOCATIONS' %in% columns)  dt %>% magrittr::extract(,`SUBCELLULAR-LOCATIONS` := autonomics.annotate::clean_uniprot_location_values(   `SUBCELLULAR-LOCATIONS`))
+   if ('SCORE'                 %in% columns)  dt %>% extract(, SCORE                  := autonomics.annotate::clean_uniprot_score_values(       SCORE)                 )
+   if ('EXISTENCE'             %in% columns)  dt %>% extract(, EXISTENCE              := autonomics.annotate::clean_uniprot_existence_values(   EXISTENCE)             )
+   if ('REVIEWED'              %in% columns)  dt %>% extract(, REVIEWED               := autonomics.annotate::clean_uniprot_reviewed_values(    REVIEWED)              )
+   if ('PROTEIN-NAMES'         %in% columns)  dt %>% extract(,`PROTEIN-NAMES`         := autonomics.annotate::clean_uniprot_proteinname_values(`PROTEIN-NAMES`)        )
+   if ('GENES'                 %in% columns)  dt %>% extract(,`GENES`                 := autonomics.annotate::clean_uniprot_gene_values(        GENES)                 )
+   if ('SUBCELLULAR-LOCATIONS' %in% columns)  dt %>% extract(,`SUBCELLULAR-LOCATIONS` := autonomics.annotate::clean_uniprot_location_values(   `SUBCELLULAR-LOCATIONS`))
 
    # Return
    dt
@@ -387,57 +386,57 @@ load_uniprot_fasta_annotations <- function(
 
    # Load (relevant portion of) fasta
    fasta <- seqinr::read.fasta(fastafile)
-   all_accessions <- fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 2)
+   all_accessions <- fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2)
 
    # Extract annotations
-   dt <- data.table::data.table(UNIPROTKB  =  fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 2),
+   dt <- data.table::data.table(UNIPROTKB  =  fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2),
                                 annotation = fasta  %>% vapply(attr, character(1), 'Annot') %>% unname())
 
    # REVIEWED
    autonomics.support::cmessage('\t\t\tExtract REVIEWED: 0=trembl, 1=swissprot')
-   dt %>% magrittr::extract(, REVIEWED := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 1) %>% magrittr::equals('sp') %>% as.numeric())
+   dt %>% extract(, REVIEWED := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 1) %>% equals('sp') %>% as.numeric())
 
    # ENTRYNAME
    autonomics.support::cmessage('\t\t\tExtract ENTRYNAME')
-   dt %>% magrittr::extract(, ENTRYNAME := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 3))
+   dt %>% extract(, ENTRYNAME := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 3))
 
    # VERSION
    pattern <- ' SV=[0-9]'
    autonomics.support::cmessage('\t\t\tExtract (sequence) VERSION')
-   dt  %>% magrittr::extract(, VERSION   := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,5) %>% as.numeric())
-   dt %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+   dt  %>% extract(, VERSION   := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,5) %>% as.numeric())
+   dt %>% extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
 
    # EXISTENCE
    pattern <- ' PE=[0-9]'
    autonomics.support::cmessage('\t\t\tExtract EXISTENCE: 1=protein, 2=transcript, 3=homology, 4=prediction, 5=uncertain, NA=isoform')
-   dt  %>% magrittr::extract(, EXISTENCE  := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,5) %>% as.numeric())
-   dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+   dt  %>% extract(, EXISTENCE  := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,5) %>% as.numeric())
+   dt  %>% extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
 
    # GENES
    pattern <- ' GN=.+$'
    autonomics.support::cmessage('\t\t\tExtract GENES')
-   dt  %>% magrittr::extract(, GENES      := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
-   dt  %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+   dt  %>% extract(, GENES      := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
+   dt  %>% extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
 
    # ORGID
    pattern <- ' OX=[0-9]+'
-   dt %>% magrittr::extract(, ORGID      := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
-   dt %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+   dt %>% extract(, ORGID      := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
+   dt %>% extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
 
    # ORGNAME
    pattern <- ' OS=.+$'
-   dt %>% magrittr::extract(, ORGNAME    := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
-   dt %>% magrittr::extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+   dt %>% extract(, ORGNAME    := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(5,nchar(.)))
+   dt %>% extract(, annotation := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
 
    # PROTEIN-NAMES
    pattern <- ' .+$'
    autonomics.support::cmessage('\t\t\tExtract PROTEIN-NAMES')
-   dt %>% magrittr::extract(, `PROTEIN-NAMES` := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(2,nchar(.)))
-   dt %>% magrittr::extract(, annotation      := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
+   dt %>% extract(, `PROTEIN-NAMES` := annotation %>% stringi::stri_extract_last_regex(pattern) %>% substr(2,nchar(.)))
+   dt %>% extract(, annotation      := annotation %>% stringi::stri_replace_last_regex(pattern, ''))
 
    # Order
-   dt  %>% magrittr::extract(, annotation := NULL)
-   dt %<>% magrittr::extract(, c('UNIPROTKB', fastafields), with = FALSE)
+   dt  %>% extract(, annotation := NULL)
+   dt %<>% extract(, c('UNIPROTKB', fastafields), with = FALSE)
 
    # Return
    return(dt)

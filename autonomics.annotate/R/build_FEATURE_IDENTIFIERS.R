@@ -22,7 +22,7 @@ build_FEATURE_IDENTIFIERS <- function(){
                  keys           = keys)
          }, names(ANNOTATED_ORGANISMS))
       }, FEATURE_ID_TYPES) %>%
-         magrittr::set_names(names(FEATURE_ID_TYPES))
+         set_names(names(FEATURE_ID_TYPES))
 
    usethis::use_data(FEATURE_IDENTIFIERS, pkg = ".", internal = FALSE, compress = "xz", overwrite = TRUE)
 

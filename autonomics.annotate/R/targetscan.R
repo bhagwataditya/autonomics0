@@ -103,12 +103,12 @@ download_targetscan <- function(organism){
    target_predictions[, number := mir %>% substr(9, nchar(.))]
 
    # Filter
-   mir_taxon_id = SPECIES_TO_TAXONID %>% magrittr::extract2(organism)
-   target_predictions %<>% magrittr::extract(taxonid %in% mir_taxon_id)
-   target_predictions %>%  magrittr::extract(, taxonid:=NULL)
+   mir_taxon_id = SPECIES_TO_TAXONID %>% extract2(organism)
+   target_predictions %<>% extract(taxonid %in% mir_taxon_id)
+   target_predictions %>%  extract(, taxonid:=NULL)
 
    # Arrange
-   target_predictions %<>% magrittr::extract(order(mir))
+   target_predictions %<>% extract(order(mir))
 
    # Trim ensgs (remove version suffix)
    target_predictions[, ensg := ensg %>% substr(1, stringi::stri_locate_first_fixed(., '.')[, 1] - 1)]
@@ -167,7 +167,7 @@ infer_organism_from_mirs <- function(mir){
            query_mir <- mir
            .subset2(targetscan[J(query_mir), mult = 'first', nomatch=0], "mir") %>%
               length() %>%
-              magrittr::is_greater_than(0)
+              is_greater_than(0)
         }, logical(1)) %>%
    (function(x){
      if (sum(x)==0) autonomics.support::cmessage('microRNAs do not match targetscan data of any organism - abort')
@@ -192,9 +192,9 @@ mir_to <- function(mir, to){
    organism <- infer_organism_from_mirs(mir)
    targetscan <- autonomics.annotate::load_targetscan(organism)
    targetscan %>% data.table::setkey(mir)
-   targetscan %<>% magrittr::extract(mir)
-   targetscan %<>% split(by = 'mir', keep.by = FALSE) %>% lapply(magrittr::extract2, to)
-   if (length(targetscan)==1)   targetscan %<>% magrittr::extract2(1)
+   targetscan %<>% extract(mir)
+   targetscan %<>% split(by = 'mir', keep.by = FALSE) %>% lapply(extract2, to)
+   if (length(targetscan)==1)   targetscan %<>% extract2(1)
    targetscan
 }
 

@@ -56,12 +56,12 @@ fetch_interpro_maps <- function(
       header     = FALSE,
       verbose    = verbose,
       showProgress = verbose) %>%
-    magrittr::set_names(c('ACCESSION', 'NAME'))
+    set_names(c('ACCESSION', 'NAME'))
   vectorized_mapping_object <- mapping_object %>%
-    magrittr::extract2('NAME') %>%
-    magrittr::set_names(
+    extract2('NAME') %>%
+    set_names(
       mapping_object %>%
-        magrittr::extract2('ACCESSION'))
+        extract2('ACCESSION'))
 
   output <- list(pathway_accession_to_name = vectorized_mapping_object)
   class(output) <- c('interpro_map', 'ontology_map', class(output))
@@ -95,7 +95,7 @@ fetch_kegg_maps <- function(
   list_kegg_geneids <- kegg_geneids %>%
     split(
       seq_along(.) %>%
-        magrittr::divide_by(n_request_packet) %>%
+        divide_by(n_request_packet) %>%
         ceiling)
 
   # Retreive and format
@@ -106,25 +106,25 @@ fetch_kegg_maps <- function(
       {
         x %>%
           KEGGREST::keggGet() %>%
-          magrittr::set_names(x) %>%
+          set_names(x) %>%
           return()
       }) %>%
     unlist(recursive = FALSE) %>%
-    magrittr::set_names(
+    set_names(
       stringi::stri_replace_first_regex(names(.), '^\\d+\\.(.*)', '$1'))
 
   # Create patwayid/description map
   pathway_accession_to_name <- retrieved_list %>%
-    lapply(magrittr::extract2, 'PATHWAY') %>%
+    lapply(extract2, 'PATHWAY') %>%
     lapply(as.list) %>%
     unname() %>%
     unlist(recursive = FALSE) %>%
-    magrittr::extract(!duplicated(names(.))) %>%
+    extract(!duplicated(names(.))) %>%
     unlist()
 
   # Create geneid/patwayid map
   gene_accession_to_pathway_accession <- retrieved_list %>%
-    lapply(magrittr::extract2, 'PATHWAY') %>%
+    lapply(extract2, 'PATHWAY') %>%
     lapply(names) %>%
     lapply(paste0, collapse = ';') %>%
     unlist()
