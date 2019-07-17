@@ -10,6 +10,8 @@ Description: This package contains example datasets for autonomics, an R suite
              for intuitive omics data analysis.
 Depends:
     R (>= 3.4.0),
+Imports:
+    SummarizedExperiment
 Suggests:
     ALL
 License: GPL-3
