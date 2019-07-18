@@ -19,7 +19,7 @@
 #' # Fetch InterPro map
 #'     fetch_interpro_maps() %>% str()
 #'
-#' # Fetch small KEGG map (gene/protein id specific, as whole data set not public)
+#' # Fetch small KEGG map (gene/protein id specific, whole data set not public)
 #'     c("dre:793465", "dre:571876", "dre:798771", "dre:564511") %>%
 #'     fetch_kegg_maps() %>%
 #'     str()
@@ -27,14 +27,15 @@
 #' @rdname fetch_ontology_maps
 #' @export
 fetch_interpro_maps <- function(
-    url      = 'http:/ftp.ebi.ac.uk/pub/databases/interpro/current/names.dat',
+    url = paste0( 'http:/ftp.ebi.ac.uk/pub/databases/',
+                  'interpro/current/names.dat'),
     verbose  = FALSE)
 {
     # Check prerequisites -----------------------------------------------------
     assertive.types::is_a_string(url)
     assertive.types::assert_is_a_bool(verbose)
     if (!RCurl::url.exists(url, timeout = 5)){
-        cmessage('Interpro FTP site not working - returning NULL\n', url)
+        message('Interpro FTP site not working - returning NULL\n', url)
         return(NULL)
     }
 

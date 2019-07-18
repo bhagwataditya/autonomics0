@@ -13,20 +13,20 @@
 #' @export
 chebi_to_smiles <- function(CHEBIID){
 
-   # Satisfy CHECK
-   . <- NULL
+    # Satisfy CHECK
+    . <- NULL
 
-   # Assert
-   assertive.properties::assert_is_scalar(CHEBIID)
+    # Assert
+    assertive.properties::assert_is_scalar(CHEBIID)
 
-   # Format
-   CHEBIID %<>% as.character()
+    # Format
+    CHEBIID %<>% as.character()
 
-   # Map
-   CHEBIID %>%
-      sprintf('http://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:%s', .) %>%
-      xml2::read_html() %>%
-      rvest::html_text() %>%
-      stringi::stri_extract_first_regex('SMILES\\\n.+\\n') %>%
-      stringi::stri_replace_first_regex('SMILES\\\n[ ]+', '')
+    # Map
+    CHEBIID                                                               %>%
+    sprintf('http://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:%s', .) %>%
+    xml2::read_html()                                                     %>%
+    rvest::html_text()                                                    %>%
+    stringi::stri_extract_first_regex('SMILES\\\n.+\\n')                  %>%
+    stringi::stri_replace_first_regex('SMILES\\\n[ ]+', '')
 }

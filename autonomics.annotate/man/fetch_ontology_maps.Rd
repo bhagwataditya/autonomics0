@@ -5,9 +5,8 @@
 \alias{fetch_kegg_maps}
 \title{Functions to generate maps for various ontology accession-based mapping operations}
 \usage{
-
-  fetch_interpro_maps(url = "http:/ftp.ebi.ac.uk/pub/databases/interpro/current/names.dat",
-  verbose = FALSE)
+fetch_interpro_maps(url = paste0("http:/ftp.ebi.ac.uk/pub/databases/",
+  "interpro/current/names.dat"), verbose = FALSE)
 
 fetch_kegg_maps(kegg_geneids, n_request_packet = 10, keep_raw = FALSE)
 }
@@ -38,7 +37,7 @@ library(magrittr)
 # Fetch InterPro map
     fetch_interpro_maps() \%>\% str()
 
-# Fetch small KEGG map (gene/protein id specific, as whole data set not public)
+# Fetch small KEGG map (gene/protein id specific, whole data set not public)
     c("dre:793465", "dre:571876", "dre:798771", "dre:564511") \%>\%
     fetch_kegg_maps() \%>\%
     str()
