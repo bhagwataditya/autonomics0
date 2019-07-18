@@ -7,8 +7,16 @@
 install_package_if_necessary(pkg)
 }
 \arguments{
-\item{pkg}{package}
+\item{pkg}{character(1): R package name}
+}
+\value{
+R package name
 }
 \description{
 Install package if necessary
+}
+\examples{
+\dontrun{
+    install_package_if_necessary('pracma')
+}
 }

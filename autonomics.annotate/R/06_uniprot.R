@@ -6,14 +6,14 @@
 extract_accession <- function(fastahdrs){
     message('\t\t\tExtract ACCESSION')
     fastahdrs                         %>%
-    stri_split_fixed('|')             %>%
+    stringi::stri_split_fixed('|')    %>%
     vapply(extract, character(1), 2)
 }
 
 extract_reviewed <- function(fastahdrs){
     message('\t\t\tExtract REVIEWED: 0=trembl, 1=swissprot')
     fastahdrs                         %>%
-    stri_split_fixed('|')             %>%
+    stringi::stri_split_fixed('|')    %>%
     vapply(extract, character(1), 1)  %>%
     equals('sp')                      %>%
     as.numeric()
@@ -21,8 +21,8 @@ extract_reviewed <- function(fastahdrs){
 
 extract_entryname <- function(fastahdrs){
     message('\t\t\tExtract ENTRYNAME')
-    fastahdrs                         %>%
-    stri_split_fixed('|')             %>%
+    fastahdrs                           %>%
+    stringi::stri_split_fixed('|')      %>%
     vapply(extract, character(1), 3)
 }
 
@@ -31,12 +31,12 @@ splitoff_VERSION <- function(dt){
     VERSION <- annotation <- NULL
     message('\t\t\tExtract VERSION')
     pattern <- ' SV=[0-9]'
-    dt [ , VERSION :=   annotation                        %>%
-                        stri_extract_last_regex(pattern)  %>%
-                        substr(5,5)                       %>%
+    dt [ , VERSION :=   annotation                                 %>%
+                        stringi::stri_extract_last_regex(pattern)  %>%
+                        substr(5,5)                                %>%
                         as.numeric() ]
     dt [ , annotation:= annotation %>%
-                        stri_replace_last_regex(pattern, '') ]
+                        stringi::stri_replace_last_regex(pattern, '') ]
 }
 
 
@@ -45,56 +45,56 @@ splitoff_EXISTENCE <- function(dt){
     pattern <- ' PE=[0-9]'
     message('\t\t\tExtract EXISTENCE: 1=protein, 2=transcript, ',
             '3=homology, 4=prediction, 5=uncertain, NA=isoform')
-    dt  [ , EXISTENCE  :=   annotation %>%
-                            stri_extract_last_regex(pattern) %>%
-                            substr(5,5) %>%
+    dt  [ , EXISTENCE  :=   annotation                                 %>%
+                            stringi::stri_extract_last_regex(pattern)  %>%
+                            substr(5,5)                                %>%
                             as.numeric() ]
     dt  [ , annotation :=   annotation %>%
-                            stri_replace_last_regex(pattern, '') ]
+                            stringi::stri_replace_last_regex(pattern, '') ]
 }
 
 splitoff_GENES <- function(dt, gene_var){
-    GENES <- annotation <- NULL
+    GENES <- annotation <- . <- NULL
     pattern <- ' GN=.+$'
     autonomics.support::cmessage('\t\t\tExtract GENES')
-    dt  [ , GENES :=    annotation %>%
-                        stri_extract_last_regex(pattern) %>%
+    dt  [ , GENES :=    annotation                                 %>%
+                        stringi::stri_extract_last_regex(pattern)  %>%
                         substr(5,nchar(.)) ]
     dt  [ , annotation :=   annotation %>%
-                            stri_replace_last_regex(pattern, '') ]
+                            stringi::stri_replace_last_regex(pattern, '') ]
 }
 
 splitoff_ORGID <- function(dt, orgid_var){
-    ORGID <- annotation <- NULL
+    ORGID <- annotation <- . <- NULL
     pattern <- ' OX=[0-9]+'
     autonomics.support::cmessage('\t\t\tExtract ORGID')
-    dt [ , ORGID :=     annotation %>%
-                        stri_extract_last_regex(pattern) %>%
+    dt [ , ORGID :=     annotation                                 %>%
+                        stringi::stri_extract_last_regex(pattern)  %>%
                         substr(5,nchar(.)) ]
     dt [ , annotation :=    annotation %>%
-                            stri_replace_last_regex(pattern, '') ]
+                            stringi::stri_replace_last_regex(pattern, '') ]
 }
 
 splitoff_ORGNAME <- function(dt, orgname_var){
-    ORGNAME <- annotation <- NULL
+    ORGNAME <- annotation <- . <- NULL
     pattern <- ' OS=.+$'
     autonomics.support::cmessage('\t\t\tExtract ORGNAME')
-    dt [ , ORGNAME :=   annotation %>%
-                        stri_extract_last_regex(pattern) %>%
+    dt [ , ORGNAME :=   annotation                                 %>%
+                        stringi::stri_extract_last_regex(pattern)  %>%
                         substr(5,nchar(.)) ]
-    dt [ , annotation :=    annotation %>%
-                            stri_replace_last_regex(pattern, '') ]
+    dt [ , annotation:= annotation %>%
+                        stringi::stri_replace_last_regex(pattern, '') ]
 }
 
 splitoff_PROTEINNAMES <- function(dt, proteinname_var){
-    `PROTEIN-NAMES` <- annotation <- NULL
+    `PROTEIN-NAMES` <- annotation <- . <- NULL
     pattern <- ' .+$'
     autonomics.support::cmessage('\t\t\tExtract PROTEINNAMES')
     dt [ , `PROTEIN-NAMES` :=   annotation %>%
-                                stri_extract_last_regex(pattern) %>%
+                                stringi::stri_extract_last_regex(pattern) %>%
                                 substr(2,nchar(.)) ]
     dt [ , annotation      :=   annotation %>%
-                                stri_replace_last_regex(pattern, '') ]
+                                stringi::stri_replace_last_regex(pattern, '') ]
 }
 
 #' Read uniprot annotations from fastafile
@@ -112,7 +112,6 @@ splitoff_PROTEINNAMES <- function(dt, proteinname_var){
 #' @return data.table (uniprot, genename, proteinname, reviewed, existence)
 #' @note EXISTENCE values are always those of canonical isoform
 #' @importFrom data.table   data.table   :=
-#' @import stringi
 #' @export
 read_uniprot_annotations <- function(
     fastafile,
@@ -127,8 +126,8 @@ read_uniprot_annotations <- function(
 
     # Load (relevant portion of) fasta
     fasta <- seqinr::read.fasta(fastafile)
-    all_accessions <-   names(fasta)          %>%
-                        stri_split_fixed('|') %>%
+    all_accessions <-   names(fasta)                     %>%
+                        stringi::stri_split_fixed('|')   %>%
                         vapply(extract, character(1), 2)
 
     # Extract annotations
@@ -210,13 +209,8 @@ fetch_uniprot_annotations <- function(
 #' @param x character vector
 #' @return character vectors
 #' @examples
-#' \dontrun{
-#'     require(magrittr)
-#'     x <- c("A0A024R4M0", "M0R210", "G3HSF3")
-#'     up <- values %>% connect_to_uniprot()
-#'     annotations <- x %>% fetch_uniprot_annotations(up)
-#'     annotations$SCORE %T>% print() %>% clean_score()
-#' }
+#' x <- c("1 out of 5", "2 out of 5", NA_character_)
+#' clean_score(x)
 #' @export
 clean_score <- function(x){
     x                                     %>%
@@ -231,23 +225,21 @@ clean_score <- function(x){
 #' @param x uniprot protein existence values (character vector)
 #' @return cleaned values (character vector)
 #' @examples
-#' \dontrun{
-#' require(magrittr)
-#'     x <- c("A0A024R4M0", "M0R210", "G3HSF3")
-#'     up <- x %>% connect_to_uniprot()
-#'     annotations <- x %>% fetch_uniprot_annotations(up,'EXISTENCE')
-#'     annotations$EXISTENCE %T>% print() %>% clean_existence()
-#' }
-#' @import stringi
+#' x <- c( 'Evidence at protein level',
+#'         'Evidence at transcript level',
+#'         'Inferred from homology',
+#'         'Predicted',
+#'         'Uncertain')
+#' clean_existence(x)
 #' @export
 clean_existence <- function(x){
-    x                                                             %>%
-    stri_replace_first_fixed("Evidence at protein level",    1)   %>%
-    stri_replace_first_fixed("Evidence at transcript level", 2)   %>%
-    stri_replace_first_fixed("Inferred from homology",       3)   %>%
-    stri_replace_first_fixed("Predicted",                    4)   %>%
-    stri_replace_first_fixed("Uncertain",                    5)   %>%
-    (function(y){y[is.na(y)] <- '5'; y})                          %>%
+    x                                                                      %>%
+    stringi::stri_replace_first_fixed("Evidence at protein level",    1)   %>%
+    stringi::stri_replace_first_fixed("Evidence at transcript level", 2)   %>%
+    stringi::stri_replace_first_fixed("Inferred from homology",       3)   %>%
+    stringi::stri_replace_first_fixed("Predicted",                    4)   %>%
+    stringi::stri_replace_first_fixed("Uncertain",                    5)   %>%
+    (function(y){y[is.na(y)] <- '5'; y})                                   %>%
     as.numeric()
 }
 
@@ -257,20 +249,14 @@ clean_existence <- function(x){
 #' @param x uniprot "reviewed" values (character vector)
 #' @return cleaned values (character vector)
 #' @examples
-#' \dontrun{
-#' require(magrittr)
-#' x <- c("A0A024R4M0", "M0R210", "G3HSF3")
-#' up <- x %>% connect_to_uniprot()
-#' annotations <- x %>% fetch_uniprot_annotations(up)
-#' annotations$REVIEWED %T>% print() %>% clean_reviewed()
-#' }
-#' @import stringi
+#' x <- c('unreviewed', 'reviewed', NA_character_)
+#' clean_reviewed(x)
 #' @export
 clean_reviewed <- function(x){
-    x                                          %>%
-    stri_replace_first_fixed('unreviewed', 0)  %>%
-    stri_replace_first_fixed('reviewed',   1)  %>%
-    (function(x){x[is.na(x)]<-'0'; x})         %>%
+    x                                                   %>%
+    stringi::stri_replace_first_fixed('unreviewed', 0)  %>%
+    stringi::stri_replace_first_fixed('reviewed',   1)  %>%
+    (function(x){x[is.na(x)]<-'0'; x})                  %>%
     as.numeric()
 }
 
@@ -283,11 +269,12 @@ PREFIX_RS_PATTERN <- '[(][0-9]+[RS][)]\\-'
 
 #' @rdname rm_prefix_rs
 #' @export
-has_prefix_rs <- function(x) x %>% stri_detect_regex(PREFIX_RS_PATTERN)
+has_prefix_rs <- function(x) x %>% stringi::stri_detect_regex(PREFIX_RS_PATTERN)
 
 
 #' Detect or rm prefix (3R)-
-#' @param x uniprot protein name values
+#' @param x character vector: uniprot protein name values
+#' @return character vector
 #' @examples
 #' require(magrittr)
 #' x <- paste0(
@@ -299,11 +286,13 @@ has_prefix_rs <- function(x) x %>% stri_detect_regex(PREFIX_RS_PATTERN)
 #' x %>% has_prefix_rs()
 #' x %>% rm_prefix_rs()
 #' @export
-rm_prefix_rs <- function(x) x %>% gsub(PREFIX_RS_PATTERN, '', .)
-
+rm_prefix_rs <- function(x){
+    . <- NULL
+    x %>% gsub(PREFIX_RS_PATTERN, '', .)
+}
 
 #' Rm synonyms from uniprot proteinname values
-#' @param x uniprot proteinname values
+#' @param x character vector: uniprot proteinname values
 #' @return character vector with standard proteinname values
 #' @examples
 #' require(magrittr)
@@ -315,6 +304,8 @@ rm_prefix_rs <- function(x) x %>% gsub(PREFIX_RS_PATTERN, '', .)
 #' x %>% rm_protein_synonyms()
 #' @export
 rm_protein_synonyms <- function(x){
+    . <- NULL
+
     x                                                   %>%
     gsub("\\((?>[^()]|(?R))*\\)", "", ., perl = TRUE)   %>%
     trimws()                                            %>%
@@ -332,7 +323,10 @@ INCLUDES_PATTERN <- ' \\[Includes:.+]'
 
 #' @rdname rm_includes
 #' @export
-has_includes <- function(x) x %>% stri_detect_regex(INCLUDES_PATTERN)
+has_includes <- function(x){
+    x %>%
+    stringi::stri_detect_regex(INCLUDES_PATTERN)
+}
 
 
 #' rm "includes" constructs from protein name values
@@ -351,15 +345,19 @@ has_includes <- function(x) x %>% stri_detect_regex(INCLUDES_PATTERN)
 #' values %>% has_includes()
 #' values %>% rm_includes()
 #' @export
-rm_includes <- function(x)   x %>% stri_replace_all_regex(INCLUDES_PATTERN, '')
-
+rm_includes <- function(x){
+    x %>%
+    stringi::stri_replace_all_regex(INCLUDES_PATTERN, '')
+}
 
 CLEAVED_PATTERN <- ' \\[Cleaved into:.+]'
 
 #' @rdname rm_cleaved
 #' @export
-has_cleaved <- function(x) x %>% stri_detect_regex(CLEAVED_PATTERN)
-
+has_cleaved <- function(x){
+    x %>%
+    stringi::stri_detect_regex(CLEAVED_PATTERN)
+}
 
 #' rm "includes" constructs from protein name values
 #' @param x uniprot protein name values
@@ -372,8 +370,10 @@ has_cleaved <- function(x) x %>% stri_detect_regex(CLEAVED_PATTERN)
 #' values %>% has_cleaved()
 #' values %>% rm_cleaved()
 #' @export
-rm_cleaved <- function(x)  x %>% stri_replace_all_regex(CLEAVED_PATTERN, '')
-
+rm_cleaved <- function(x){
+    x %>%
+    stringi::stri_replace_all_regex(CLEAVED_PATTERN, '')
+}
 
 #' Clean uniprot "protein name" values
 #' @param x uniprot protein name values (character vector)
@@ -422,19 +422,12 @@ clean_proteinnames <- function(x){
 #' @param x uniprot "gene" values (character vector)
 #' @return cleaned uniprot gene values (character vector)
 #' @examples
-#' \dontrun{
-#' require(magrittr)
-#' x <- c("A0A024R4M0", "M0R210", "G3HSF3")
-#' up <- x %>% connect_to_uniprot()
-#' annotations <- x %>% fetch_uniprot_annotations(up)
-#' annotations$GENE %>% print()
-#' annotations$GENE %>% clean_genes() %>% print()
-#' }
-#' @import stringi
+#' x <- c('RPS9 hCG_2009111', 'RPS16 hCG_43353', NA_character_)
+#' x %>% clean_genes()
 #' @export
 clean_genes <- function(x){
     x                                 %>%
-    stri_split_fixed(' ')             %>%
+    stringi::stri_split_fixed(' ')    %>%
     vapply(extract, character(1), 1)  %>%
     (function(y){y[is.na(y)]<-''; y})
 }
@@ -458,15 +451,14 @@ clean_genes <- function(x){
 #'    x <- dt$`SUBCELLULAR-LOCATIONS`
 #'    x %>% clean_locations()
 #' }
-#' @import stringi
 #' @export
 clean_locations <- function(x){
-    x                                                     %>%
+    x                                                              %>%
     # rm Notes (not part of controlled vocabulary)
-    stri_replace_last_regex(' Note=.+$', '')              %>%
-    stri_replace_all_fixed('SUBCELLULAR LOCATION: ', '')  %>%
+    stringi::stri_replace_last_regex(' Note=.+$', '')              %>%
+    stringi::stri_replace_all_fixed('SUBCELLULAR LOCATION: ', '')  %>%
     # make pattern lazy by using [^.;] construct
-    stri_replace_all_regex(' \\{[^;.]+\\}', '')
+    stringi::stri_replace_all_regex(' \\{[^;.]+\\}', '')
 }
 
 
@@ -493,8 +485,7 @@ annotate_uniprot_with_webservice <- function(
     columns    = c('SUBCELLULAR-LOCATIONS', 'KEGG', 'GO-ID', 'INTERPRO')
 ){
     # Assert
-    assertive.base::assert_is_identical_to_true(
-        class(connection) == 'UniProt.ws')
+    assertive.types::assert_is_all_of(connection, 'UniProt.ws')
     assertive.sets::assert_is_subset(columns, UniProt.ws::columns(connection))
     SCORE <- EXISTENCE <- REVIEWED <- `PROTEIN-NAMES` <- NULL
     GENES <- `SUBCELLULAR-LOCATIONS` <- NULL
@@ -512,10 +503,9 @@ annotate_uniprot_with_webservice <- function(
         autonomics.support::cmessage(
             paste0('\tCollapse %d KEGG ids mapping to ',
                    'same uniprot accession: %d -> %d features'), n0-n1, n0, n1)
-        #data.table::setnames('KEGG',     'keggid')
     }
 
-    # Clean values
+    # Clean values and return
     if ('SCORE' %in% columns){
         dt [, SCORE           := clean_score(SCORE) ]
     }
@@ -534,6 +524,5 @@ annotate_uniprot_with_webservice <- function(
     if ('SUBCELLULAR-LOCATIONS' %in% columns){
         dt [,`SUBCELLULAR-LOCATIONS` := clean_locations(`SUBCELLULAR-LOCATIONS`)]
     }
-    # Return
-    dt
+    return(dt)
 }

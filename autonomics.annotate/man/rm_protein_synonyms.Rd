@@ -7,7 +7,7 @@
 rm_protein_synonyms(x)
 }
 \arguments{
-\item{x}{uniprot proteinname values}
+\item{x}{character vector: uniprot proteinname values}
 }
 \value{
 character vector with standard proteinname values

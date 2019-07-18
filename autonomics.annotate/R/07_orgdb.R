@@ -1,7 +1,5 @@
 
 
-#' Annotated organisms
-#' @export
 ANNOTATED_ORGANISMS <- list(
     `Homo sapiens`            = c(  abrev   = 'Hs',
                                     source  = 'eg',
@@ -159,8 +157,6 @@ load_go_genes <- function(goid, organism, gene = 'ENTREZID'){
              extract2(gene)
 }
 
-#' Feature identifer types
-#' @export
 FEATURE_ID_TYPES <- c(uniprot = 'UNIPROT', ensg = 'ENSEMBL')
 
 build_FEATURE_IDENTIFIERS <- function(){

@@ -1,15 +1,15 @@
 Package: autonomics.annotate
 Title: Annotate omics data
-Version: 1.0.0
-Authors@R: person("Aditya", "Bhagwat", email = "bhagwataditya@gmail.com", role = c("aut", "cre"))
+Version: 1.1.0
+Authors@R: c(person("Aditya",   "Bhagwat",  email = "aditya.bhagwat@mpi-bn.mpg.de", role = c("aut", "cre")), 
+             person("Johannes", "Graumann", email = "johannes.graumann@mpi-bn.mpg.de", role = "aut"))
 Description: This package contains functions to annotate omics data.
-Depends: R (>= 3.4.0)
+Depends: R (>= 3.6)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: 
    AnnotationDbi,
-   assertive.base,
    assertive.files,
    assertive.numbers,
    assertive.properties,
@@ -17,7 +17,7 @@ Imports:
    assertive.strings,
    assertive.types,
    autonomics.support,
-   Biobase,
+   BiocManager,
    data.table,
    usethis,
    KEGGREST,
@@ -38,3 +38,4 @@ Suggests:
    org.Dr.eg.db,
    org.Xl.eg.db
 biocViews:
+   Annotation, GO, KEGG

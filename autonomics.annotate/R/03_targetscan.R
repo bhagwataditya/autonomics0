@@ -55,10 +55,9 @@ download_targetscan_human_mouse <- function(organism = 'H.sapiens', cachefile){
     cachedir <- dirname(cachefile)
 
     # Target predictions
-    subdir <- switch(
-                organism,
-                H.sapiens = 'vert_72/vert_72_data_download',
-                M.musculus = 'mmu_72/mmu_72_data_download')
+    subdir <- switch(organism,
+                    H.sapiens = 'vert_72/vert_72_data_download',
+                    M.musculus = 'mmu_72/mmu_72_data_download')
     remote <- paste0('http://www.targetscan.org/', subdir,
                     '/Summary_Counts.default_predictions.txt.zip')
     local  <-  paste0(cachedir, '/', basename(remote))
@@ -94,15 +93,11 @@ download_targetscan_human_mouse <- function(organism = 'H.sapiens', cachefile){
 #' @importFrom data.table   data.table   :=
 download_targetscan <- function(organism){
 
-    # Abort if file already in cache
+    # Checks
     number <- NULL
     cachefile <- get_targetscan_cachefile(organism)
-    if(file.exists(cachefile)) return(cachefile)
-
-    # Satisfy CHECK
+    if(file.exists(cachefile)) return(cachefile)    # abort if already in cache
     taxonid <- mir <- ensg <- . <- NULL
-
-    # Assert validity
     assertive.sets::assert_is_subset(
         organism, c('H.sapiens', 'M.musculus', 'D.rerio'))
 
@@ -111,29 +106,20 @@ download_targetscan <- function(organism){
     cachedir <- dirname(cachefile)
     dir.create(cachedir, showWarnings = FALSE, recursive = TRUE)
 
-    # Organism specific parts
+    # Download
     target_predictions <-
-        switch(
-            organism,
+        switch(organism,
             H.sapiens  = download_targetscan_human_mouse(organism, cachefile),
             M.musculus = download_targetscan_human_mouse(organism, cachefile),
             D.rerio    = download_targetscan_fish(cachefile))
 
-    # Rename
-    target_predictions[, mir := tolower(mir)]
-
-    # Number
+    # Cleanup
+    target_predictions[, mir    := tolower(mir)]
     target_predictions[, number := mir %>% substr(9, nchar(.))]
-
-    # Filter
-    mir_taxon_id = SPECIES_TO_TAXONID %>% extract2(organism)
+    mir_taxon_id <- SPECIES_TO_TAXONID %>% extract2(organism)
     target_predictions %<>% extract(taxonid %in% mir_taxon_id)
     target_predictions %>%  extract(, taxonid:=NULL)
-
-    # Arrange
     target_predictions %<>% extract(order(mir))
-
-    # Trim ensgs (remove version suffix)
     target_predictions [
         ,
         ensg := ensg %>%
@@ -141,14 +127,14 @@ download_targetscan <- function(organism){
 
     # Save
     target_predictions %>%
-    autonomics.support::print2txt(file = paste0(cachedir,
-                                                '/target_predictions.txt'))
-
+    autonomics.support::print2txt(paste0(cachedir, '/target_predictions.txt'))
+    return(NULL)
 }
 
 
 #' Load targetscan
 #' @param organism Any value in TARGETSCAN_ORGANISMS
+#' @return data.table
 #' @examples
 #' \dontrun{
 #'    load_targetscan('H.sapiens')

@@ -10,7 +10,10 @@ has_prefix_rs(x)
 rm_prefix_rs(x)
 }
 \arguments{
-\item{x}{uniprot protein name values}
+\item{x}{character vector: uniprot protein name values}
+}
+\value{
+character vector
 }
 \description{
 Detect or rm prefix (3R)-

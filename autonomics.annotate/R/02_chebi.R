@@ -7,9 +7,7 @@
 #' @param CHEBIID chEBI ID (numeric, character, or factor)
 #' @return canonical smiles string
 #' @examples
-#' \dontrun{
 #'    chebi_to_smiles('28733')
-#' }
 #' @export
 chebi_to_smiles <- function(CHEBIID){
 

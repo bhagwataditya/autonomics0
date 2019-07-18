@@ -9,6 +9,9 @@ load_targetscan(organism)
 \arguments{
 \item{organism}{Any value in TARGETSCAN_ORGANISMS}
 }
+\value{
+data.table
+}
 \description{
 Load targetscan
 }
