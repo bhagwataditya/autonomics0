@@ -16,6 +16,7 @@ filter_features_nonzero_in_some_sample <- function(object, verbose = TRUE){
          c(structure(
             sum(selector),
             names = "non-zero, non-NA, and non-NaN for some sample"))
+   }
    object
 }
 
@@ -35,7 +36,8 @@ filter_features_nonzero_for_two_samples_in_some_subgroup <- function(object){
          c(structure(
             sum(selector),
             names = "non-zero and non-NA for at least two samples in some subgroup"))
-      object
+   }
+   object
 }
 
 
@@ -71,7 +73,7 @@ filter_features_available_in_all_samples <- function(object){
          c(structure(
             sum(selector),
             names = "available value for each sample"))
-      object
+   }
    object
 }
 
