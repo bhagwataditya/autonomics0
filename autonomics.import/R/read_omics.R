@@ -3,20 +3,20 @@
 #=================================================
 
 nrows <- function(x, sheet=1){
-   if (tools::file_ext(x) %in% c('xls', 'xlsx')){
-      x %>% readxl::read_excel(sheet = sheet, .name_repair = 'minimal', col_names = FALSE) %>%  nrow()
-   } else {
-      x %>% readLines(warn=FALSE) %>% length()
-   }
+    if (tools::file_ext(x) %in% c('xls', 'xlsx')){
+        x %>% readxl::read_excel(sheet = sheet, .name_repair = 'minimal', col_names = FALSE) %>%  nrow()
+    } else {
+        x %>% readLines(warn=FALSE) %>% length()
+    }
 }
 
 
 ncols <- function(x, sheet=1){
-   if (tools::file_ext(x) %in% c('xls', 'xlsx')){
-      x %>% readxl::read_excel(sheet=sheet, .name_repair = 'minimal', col_names = FALSE) %>% ncol()
-   } else {
-      x %>% utils::count.fields(quote = "", sep = '\t') %>% max()
-   }
+    if (tools::file_ext(x) %in% c('xls', 'xlsx')){
+        x %>% readxl::read_excel(sheet=sheet, .name_repair = 'minimal', col_names = FALSE) %>% ncol()
+    } else {
+        x %>% utils::count.fields(quote = "", sep = '\t') %>% max()
+    }
 }
 
 #=================================================
@@ -59,51 +59,51 @@ ncols <- function(x, sheet=1){
 #' @importFrom magrittr %>% %<>%
 #' @export
 extract_rectangle <- function(x, ...){
-   UseMethod('extract_rectangle')
+    UseMethod('extract_rectangle')
 }
 
 #' @rdname extract_rectangle
 #' @importFrom magrittr %>%
 #' @export
 extract_rectangle.character <- function(
-   x,
-   rows      = 1:nrows(x, sheet=sheet),
-   cols      = 1:ncols(x, sheet=sheet),
-   verbose   = FALSE,
-   transpose = FALSE,
-   drop      = FALSE,
-   sheet     = 1,
-   ...
+    x,
+    rows      = 1:nrows(x, sheet=sheet),
+    cols      = 1:ncols(x, sheet=sheet),
+    verbose   = FALSE,
+    transpose = FALSE,
+    drop      = FALSE,
+    sheet     = 1,
+    ...
 ){
 
-   # Assert
-   assertive.files::assert_all_are_existing_files(x)
-   assertive.types::assert_is_numeric(rows)
-   assertive.types::assert_is_numeric(cols)
-   row1 <- min(rows); rown <- max(rows)
-   col1 <- min(cols); coln <- max(cols)
+    # Assert
+    assertive.files::assert_all_are_existing_files(x)
+    assertive.types::assert_is_numeric(rows)
+    assertive.types::assert_is_numeric(cols)
+    row1 <- min(rows); rown <- max(rows)
+    col1 <- min(cols); coln <- max(cols)
 
-   # Read file
-   dt <- if (tools::file_ext(x) %in% c('xls', 'xlsx')){
-            x %>%
+    # Read file
+    dt <- if (tools::file_ext(x) %in% c('xls', 'xlsx')){
+        x %>%
             readxl::read_excel(sheet       = sheet,
                                col_names   = FALSE,
                                range       = sprintf('R%dC%d:R%dC%d', row1, col1, rown, coln),
-                              .name_repair = 'minimal') %>%
+                               .name_repair = 'minimal') %>%
             data.table::data.table()
 
-         } else {
-            x %>%
+    } else {
+        x %>%
             data.table::fread(na.strings = "",
                               header     = FALSE,
                               integer64  = 'numeric',
                               skip       = row1-1,
                               nrow       = 1+rown-row1,
                               select     = col1:coln)
-         }
+    }
 
-   # Extract rectangle
-   dt %>% extract_rectangle.data.table(transpose = transpose, drop = drop)
+    # Extract rectangle
+    dt %>% extract_rectangle.data.table(transpose = transpose, drop = drop)
 
 }
 
@@ -116,17 +116,17 @@ extract_dt_col <- function(dt, i) dt[[i]]
 #' @importFrom magrittr %<>% %>%
 #' @export
 extract_rectangle.data.table <- function(
-   x,
-   rows = 1:nrow(x),
-   cols = 1:ncol(x),
-   transpose = FALSE,
-   drop = FALSE,
-   ...
+    x,
+    rows = 1:nrow(x),
+    cols = 1:ncol(x),
+    transpose = FALSE,
+    drop = FALSE,
+    ...
 ){
-   x %>%
-   magrittr::extract(rows, cols, with = FALSE) %>%
-   as.matrix() %>%
-   extract_rectangle.matrix(transpose = transpose, drop = drop)
+    x %>%
+        magrittr::extract(rows, cols, with = FALSE) %>%
+        as.matrix() %>%
+        extract_rectangle.matrix(transpose = transpose, drop = drop)
 }
 
 
@@ -134,17 +134,17 @@ extract_rectangle.data.table <- function(
 #' @importFrom magrittr %<>% %>%
 #' @export
 extract_rectangle.matrix <- function(
-   x,
-   rows      = 1:nrow(x),
-   cols      = 1:ncol(x),
-   transpose = FALSE,
-   drop      = FALSE,
-   ...
+    x,
+    rows      = 1:nrow(x),
+    cols      = 1:ncol(x),
+    transpose = FALSE,
+    drop      = FALSE,
+    ...
 ){
-   rectangle <- x %>% magrittr::extract(rows, cols, drop = FALSE)
-   if (transpose) rectangle %<>% t()
-   if (drop) if (nrow(rectangle)==1 | ncol(rectangle)==1) rectangle %<>% as.vector('character')
-   rectangle
+    rectangle <- x %>% magrittr::extract(rows, cols, drop = FALSE)
+    if (transpose) rectangle %<>% t()
+    if (drop) if (nrow(rectangle)==1 | ncol(rectangle)==1) rectangle %<>% as.vector('character')
+    rectangle
 }
 
 
@@ -219,87 +219,105 @@ extract_rectangle.matrix <- function(
 #' @importFrom magrittr %>% %<>%
 #' @export
 read_omics <- function(
-   file,
-   sheet = 1,
-   fid_rows,           fid_cols,
-   sid_rows,           sid_cols,
-   expr_rows,          expr_cols,
-   fvar_rows  = NULL,  fvar_cols  = NULL,
-   svar_rows  = NULL,  svar_cols  = NULL,
-   fdata_rows = NULL,  fdata_cols = NULL,
-   sdata_rows = NULL,  sdata_cols = NULL,
-   transpose  = FALSE,
-   verbose    = TRUE
+    file,
+    sheet = 1,
+    fid_rows,           fid_cols,
+    sid_rows,           sid_cols,
+    expr_rows,          expr_cols,
+    fvar_rows  = NULL,  fvar_cols  = NULL,
+    svar_rows  = NULL,  svar_cols  = NULL,
+    fdata_rows = NULL,  fdata_cols = NULL,
+    sdata_rows = NULL,  sdata_cols = NULL,
+    transpose  = FALSE,
+    verbose    = TRUE
 ){
-   # Assert
-   assertive.files::assert_all_are_existing_files(file)
-   assertive.types::assert_is_a_bool(transpose)
+    # Assert
+    assertive.files::assert_all_are_existing_files(file)
+    assertive.types::assert_is_a_bool(transpose)
 
-   # Read
-   if (verbose) autonomics.support::cmessage('\t\tRead %s %s', if (sheet==1) '' else paste0("sheet '", sheet, "' of"), file)
-   fixed_no_of_cols <- utils::count.fields(file, quote = "", sep = '\t') %>% (function(x)all(x==x[1]))
-   x <- if (fixed_no_of_cols) extract_rectangle.character(file, sheet=sheet) else file
+    # Read
+    if (verbose) autonomics.support::cmessage(
+        '\t\tRead %s %s',
+        if (sheet==1) '' else paste0("sheet '", sheet, "' of"), file)
+    fixed_no_of_cols <- utils::count.fields(file, quote = "", sep = '\t') %>%
+        (function(x)all(x==x[1]))
+    x <- if (fixed_no_of_cols) {
+            extract_rectangle.character(file, sheet=sheet)
+        } else {
+            file}
 
-   # Extract exprs
-   fids1  <- x %>% extract_rectangle(rows = fid_rows,  cols = fid_cols,  transpose = transpose, drop = TRUE,  sheet = sheet)
-   sids1  <- x %>% extract_rectangle(rows = sid_rows,  cols = sid_cols,  transpose = transpose, drop = TRUE,  sheet = sheet)
-   exprs1 <- x %>% extract_rectangle(rows = expr_rows, cols = expr_cols, transpose = transpose, drop = FALSE, sheet = sheet) %>% (function(y){class(y) <- 'numeric'; y})
+    # Extract exprs
+    fids1  <- x %>%
+        extract_rectangle(
+            rows = fid_rows,  cols = fid_cols,  transpose = transpose,
+            drop = TRUE,  sheet = sheet)
+    sids1  <- x %>%
+        extract_rectangle(
+            rows = sid_rows,  cols = sid_cols,  transpose = transpose,
+            drop = TRUE,  sheet = sheet)
+    exprs1 <- x %>%
+        extract_rectangle(
+            rows = expr_rows, cols = expr_cols, transpose = transpose,
+            drop = FALSE, sheet = sheet) %>%
+        (function(y){class(y) <- 'numeric'; y})
 
-   # Extract feature annotations
-   #    Leave rownames(fdata1) empty: fids1 may contain non-valid values
-   #    This happens in MaxQuant files, which sometimes contain missing rows (I think after opening in excell)
-   fdata1 <- data.frame(feature_id = fids1, stringsAsFactors = FALSE)
-   fdata_available <- !is.null(fvar_rows) & !is.null(fvar_cols)
-   if (fdata_available){
-      fvars1 <-         extract_rectangle(x, fvar_rows,  fvar_cols,  transpose = transpose, drop = TRUE,  sheet = sheet)
-      fdata1 %<>% cbind(extract_rectangle(x, fdata_rows, fdata_cols, transpose = transpose, drop = FALSE, sheet = sheet) %>%
-                        magrittr::set_colnames(fvars1) %>%
-                        data.frame(stringsAsFactors = FALSE, check.names = FALSE))
-   }
+    # Extract feature annotations
+    #    Leave rownames(fdata1) empty: fids1 may contain non-valid values
+    #    This happens in MaxQuant files, which sometimes contain missing rows (I think after opening in excell)
+    fdata1 <- data.frame(feature_id = fids1, stringsAsFactors = FALSE)
+    fdata_available <- !is.null(fvar_rows) & !is.null(fvar_cols)
+    if (fdata_available){
+        fvars1 <-         extract_rectangle(x, fvar_rows,  fvar_cols,  transpose = transpose, drop = TRUE,  sheet = sheet)
+        fdata1 %<>% cbind(extract_rectangle(x, fdata_rows, fdata_cols, transpose = transpose, drop = FALSE, sheet = sheet) %>%
+                              magrittr::set_colnames(fvars1) %>%
+                              data.frame(stringsAsFactors = FALSE, check.names = FALSE))
+    }
 
-   # Extract sample annotations
-   #    Leave rownames(sdata1) empty: sids may contain non-valid values
-   #    This happens in SOMA files, where CLIENT_IDENTIFIER is not unique for calibrator and buffer samples
-   sdata1 <- data.frame(sample_id = sids1, stringsAsFactors = FALSE)
-   sdata_available <- !is.null(svar_rows) & !is.null(svar_cols)
-   if (sdata_available){
-      svars1 <-         extract_rectangle(x, svar_rows,  svar_cols,  transpose =  transpose, drop = TRUE,  sheet = sheet)
-      sdata1 %<>% cbind(extract_rectangle(x, sdata_rows, sdata_cols, transpose = !transpose, drop = FALSE, sheet = sheet) %>%
-                        magrittr::set_colnames(svars1) %>%
-                        data.frame(stringsAsFactors = FALSE, check.names = FALSE))
-   }
+    # Extract sample annotations
+    #    Leave rownames(sdata1) empty: sids may contain non-valid values
+    #    This happens in SOMA files, where CLIENT_IDENTIFIER is not unique for calibrator and buffer samples
+    sdata1 <- data.frame(sample_id = sids1, stringsAsFactors = FALSE)
+    sdata_available <- !is.null(svar_rows) & !is.null(svar_cols)
+    if (sdata_available){
+        svars1 <-         extract_rectangle(x, svar_rows,  svar_cols,  transpose =  transpose, drop = TRUE,  sheet = sheet)
+        sdata1 %<>% cbind(extract_rectangle(x, sdata_rows, sdata_cols, transpose = !transpose, drop = FALSE, sheet = sheet) %>%
+                              magrittr::set_colnames(svars1) %>%
+                              data.frame(stringsAsFactors = FALSE, check.names = FALSE))
+    }
 
-   # Rm features with missing ids (happens in MaxQuant files due to empty interspersed lines)
-   idx <- !is.na(fids1)
-   if (any(!idx)){
-      if (verbose) autonomics.support::cmessage("\t\tRm %d features with missing 'feature_id' values", sum(!idx))
-      fids1  %<>% magrittr::extract(idx)
-      fdata1 %<>% magrittr::extract(idx,)
-      exprs1 %<>% magrittr::extract(idx, )
-   }
+    # Rm features with missing ids (happens in MaxQuant files due to empty interspersed lines)
+    idx <- !is.na(fids1)
+    if (any(!idx)){
+        if (verbose) autonomics.support::cmessage("\t\tRm %d features with missing 'feature_id' values", sum(!idx))
+        fids1  %<>% magrittr::extract(idx)
+        fdata1 %<>% magrittr::extract(idx,)
+        exprs1 %<>% magrittr::extract(idx, )
+    }
 
-   # Rm samples with missing ids
-   idx <- !is.na(sids1)
-   if (any(!idx)){
-      if (verbose) autonomics.support::cmessage("\t\tRm %d samples with missing 'sample_id' values", sum(!idx))
-      sids1  %<>% magrittr::extract(idx)
-      sdata1 %<>% magrittr::extract(idx,)
-      exprs1 %<>% magrittr::extract(, idx)
-   }
+    # Rm samples with missing ids
+    idx <- !is.na(sids1)
+    if (any(!idx)){
+        if (verbose) autonomics.support::cmessage("\t\tRm %d samples with missing 'sample_id' values", sum(!idx))
+        sids1  %<>% magrittr::extract(idx)
+        sdata1 %<>% magrittr::extract(idx,)
+        exprs1 %<>% magrittr::extract(, idx)
+    }
 
-   # Name features and samples
-   fids1 %<>% autonomics.support::uniquify('make.unique')
-   sids1 %<>% autonomics.support::uniquify('make.unique')
-   rownames(exprs1) <- rownames(fdata1) <- fids1
-   colnames(exprs1) <- rownames(sdata1) <- sids1
+    # Name features and samples
+    fids1 %<>% autonomics.support::uniquify('make.unique')
+    sids1 %<>% autonomics.support::uniquify('make.unique')
+    rownames(exprs1) <- rownames(fdata1) <- fids1
+    colnames(exprs1) <- rownames(sdata1) <- sids1
 
-   # Wrap into Sumexp
-   object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs = exprs1))
-   fdata(object) <- fdata1
-   sdata(object) <- sdata1
+    # Wrap into Sumexp
+    object <- SummarizedExperiment::SummarizedExperiment(
+        assays = list(exprs = exprs1))
+    fdata(object) <- fdata1
+    sdata(object) <- sdata1
+    analysis(object) <- list(nfeatures = c(all = nrow(exprs1)))
 
-   # Return
-   object
+    # Return
+    object
 }
 
 
@@ -308,9 +326,9 @@ read_omics <- function(
 #=========================================================
 #download_gtf
 release_to_build <- function(release, organism){
-   if        (organism == 'Homo sapiens'){          if (release >= 76)  'GRCh38'   else 'GRCh37'  }
-   else if   (organism == 'Mus musculus'){          if (release >= 68)  'GRCm38'   else 'NCBIM37'  }
-   else if   (organism == 'Rattus norvegicus'){     if (release >= 80)  'Rnor_6.0' else 'Rnor_5.0'  }
+    if        (organism == 'Homo sapiens'){          if (release >= 76)  'GRCh38'   else 'GRCh37'  }
+    else if   (organism == 'Mus musculus'){          if (release >= 68)  'GRCm38'   else 'NCBIM37'  }
+    else if   (organism == 'Rattus norvegicus'){     if (release >= 80)  'Rnor_6.0' else 'Rnor_5.0'  }
 }
 
 #' Make link to GTF file
@@ -322,12 +340,12 @@ release_to_build <- function(release, organism){
 #' @importFrom magrittr %>%
 #' @export
 make_gtf_url <- function(organism, release){
-   sprintf('ftp://ftp.ensembl.org/pub/release-%s/gtf/%s/%s.%s.%s.gtf.gz',
-           release,
-           organism %>% tolower() %>% stringi::stri_replace_first_fixed(' ', '_'),
-           organism %>%               stringi::stri_replace_first_fixed(' ', '_'),
-           release_to_build(release, organism),
-           release)
+    sprintf('ftp://ftp.ensembl.org/pub/release-%s/gtf/%s/%s.%s.%s.gtf.gz',
+            release,
+            organism %>% tolower() %>% stringi::stri_replace_first_fixed(' ', '_'),
+            organism %>%               stringi::stri_replace_first_fixed(' ', '_'),
+            release_to_build(release, organism),
+            release)
 }
 
 
@@ -345,32 +363,32 @@ make_gtf_url <- function(organism, release){
 #' }
 #' @export
 download_gtf <- function(
-   organism,
-   release = 95,
-   gtffile = sprintf("~/.autonomics/gtf/%s", basename(make_gtf_url(organism, release) %>% substr(1, nchar(.)-3)))
+    organism,
+    release = 95,
+    gtffile = sprintf("~/.autonomics/gtf/%s", basename(make_gtf_url(organism, release) %>% substr(1, nchar(.)-3)))
 ){
 
-   # Assert validity
-   assertive.sets::assert_is_subset(organism, c('Homo sapiens', 'Mus musculus', 'Rattus norvegicus'))
+    # Assert validity
+    assertive.sets::assert_is_subset(organism, c('Homo sapiens', 'Mus musculus', 'Rattus norvegicus'))
 
-   # Satisfy CHECK
-   . <- NULL
+    # Satisfy CHECK
+    . <- NULL
 
-   remote <- make_gtf_url(organism, release)
+    remote <- make_gtf_url(organism, release)
 
-   if(file.exists(gtffile)){
-      message(sprintf("GTF file already available at %s", gtffile))
-   } else {
-      message(sprintf("download   %s'" , remote))
-      message(sprintf("to         %s", gtffile ))
-      dir.create(dirname(gtffile), showWarnings = FALSE, recursive = TRUE)
-      tryCatch(expr  = {utils::download.file(url = remote, destfile = gtffile, quiet = TRUE)
-                        R.utils::gunzip(gtffile,  remove = TRUE, overwrite = TRUE)},
-               error = function(cond){ message('failed     repeat manually using browser\n');
-                                       message(cond)})
-   }
-   gtffile %<>% stringi::stri_replace_last_fixed('.gz', '')
-   invisible(gtffile)
+    if(file.exists(gtffile)){
+        message(sprintf("GTF file already available at %s", gtffile))
+    } else {
+        message(sprintf("download   %s'" , remote))
+        message(sprintf("to         %s", gtffile ))
+        dir.create(dirname(gtffile), showWarnings = FALSE, recursive = TRUE)
+        tryCatch(expr  = {utils::download.file(url = remote, destfile = gtffile, quiet = TRUE)
+            R.utils::gunzip(gtffile,  remove = TRUE, overwrite = TRUE)},
+            error = function(cond){ message('failed     repeat manually using browser\n');
+                message(cond)})
+    }
+    gtffile %<>% stringi::stri_replace_last_fixed('.gz', '')
+    invisible(gtffile)
 }
 
 
@@ -391,34 +409,34 @@ download_gtf <- function(
 #' @importFrom magrittr %>%
 #' @export
 read_gtf <- function(
-   gtffile,
-   var       = 'gene_id',
-   values    = NULL,
-   writefile = NULL
+    gtffile,
+    var       = 'gene_id',
+    values    = NULL,
+    writefile = NULL
 ){
 
-   # Assert
-   assertive.files::assert_all_are_existing_files(gtffile)
-   assertive.types::assert_is_a_string(var)
+    # Assert
+    assertive.files::assert_all_are_existing_files(gtffile)
+    assertive.types::assert_is_a_string(var)
 
-   # Read
-   dt <- rtracklayer::import(gtffile) %>% GenomicRanges::as.data.frame() %>% data.table::data.table()
+    # Read
+    dt <- rtracklayer::import(gtffile) %>% GenomicRanges::as.data.frame() %>% data.table::data.table()
 
-   # Filter
-   if (!is.null(values)){
-      dt %>% data.table::setkeyv(var)
-      dt %<>% magrittr::extract(values)
-   }
+    # Filter
+    if (!is.null(values)){
+        dt %>% data.table::setkeyv(var)
+        dt %<>% magrittr::extract(values)
+    }
 
-   # Write
-   if (!is.null(writefile)){
-      message(sprintf("\t\tWrite   %s", writefile))
-      dir.create(dirname(writefile), recursive = TRUE, showWarnings = FALSE)
-      data.table::fwrite(dt, writefile)
-   }
+    # Write
+    if (!is.null(writefile)){
+        message(sprintf("\t\tWrite   %s", writefile))
+        dir.create(dirname(writefile), recursive = TRUE, showWarnings = FALSE)
+        data.table::fwrite(dt, writefile)
+    }
 
-   # Return
-   dt
+    # Return
+    dt
 
 }
 
@@ -459,63 +477,63 @@ read_gtf <- function(
 #' }
 #' @export
 read_bam <- function(
-   bamdir,
-   ispaired   = FALSE,
-   gtffile    = NULL,
-   fvars      = c('gene_name', 'gene_biotype'),
-   sumexpfile = NULL,
-   nthreads   = parallel::detectCores(),
-   ...
+    bamdir,
+    ispaired   = FALSE,
+    gtffile    = NULL,
+    fvars      = c('gene_name', 'gene_biotype'),
+    sumexpfile = NULL,
+    nthreads   = parallel::detectCores(),
+    ...
 ){
-   # Assert
-   if (!'Rsubread' %in% rownames(utils::installed.packages())){ # https://stackoverflow.com/questions/9341635
-      message("Install package 'Rsubread' (unix only) before running read_bam()")
-      return(invisible(NULL))
-   }
-   assertive.files::assert_all_are_existing_files(bamdir)
-   assertive.types::assert_is_a_bool(ispaired)
-   if (!is.null(gtffile))   assertive.files::assert_all_are_existing_files(gtffile)
-   assertive.sets::assert_is_subset(fvars, c('Chr', 'Start', 'End', 'Strand', 'Length', 'gene_name', 'gene_biotype'))
-   if (!is.null(sumexpfile))    assertive.files::assert_all_are_existing_files(sumexpfile)
-   assertive.types::assert_is_a_number(nthreads)
+    # Assert
+    if (!'Rsubread' %in% rownames(utils::installed.packages())){ # https://stackoverflow.com/questions/9341635
+        message("Install package 'Rsubread' (unix only) before running read_bam()")
+        return(invisible(NULL))
+    }
+    assertive.files::assert_all_are_existing_files(bamdir)
+    assertive.types::assert_is_a_bool(ispaired)
+    if (!is.null(gtffile))   assertive.files::assert_all_are_existing_files(gtffile)
+    assertive.sets::assert_is_subset(fvars, c('Chr', 'Start', 'End', 'Strand', 'Length', 'gene_name', 'gene_biotype'))
+    if (!is.null(sumexpfile))    assertive.files::assert_all_are_existing_files(sumexpfile)
+    assertive.types::assert_is_a_number(nthreads)
 
-   # Count reads
-   files <- list.files(bamdir, pattern = ".sam$|.bam$", full.names = TRUE, recursive = TRUE)
-   fcounts <-  Rsubread::featureCounts(files               = files,
-                                       annot.ext           = gtffile,
-                                       isGTFAnnotationFile = TRUE,
-                                       GTF.attrType.extra  = fvars,
-                                       isPairedEnd         = ispaired,
-                                       nthreads            = nthreads,
-                                       ...)
+    # Count reads
+    files <- list.files(bamdir, pattern = ".sam$|.bam$", full.names = TRUE, recursive = TRUE)
+    fcounts <-  Rsubread::featureCounts(files               = files,
+                                        annot.ext           = gtffile,
+                                        isGTFAnnotationFile = TRUE,
+                                        GTF.attrType.extra  = fvars,
+                                        isPairedEnd         = ispaired,
+                                        nthreads            = nthreads,
+                                        ...)
 
-   # Forge SummarizedExperiment
-   filenames   <- files %>% stringi::stri_split_fixed('/') %>% vapply(function(y) y[length(y)], 'character') %>% stringi::stri_replace_first_regex('.bam|.sam', '')
-   subdirnames <- files %>% stringi::stri_split_fixed('/') %>% vapply(function(y) y[length(y)-1], 'character')
-   sample_names <- if (assertive.properties::has_no_duplicates(filenames)){           filenames
-   } else if (assertive.properties::has_no_duplicates(subdirnames)){  subdirnames
-   } else {                                                           paste0(subdirnames, '_', filenames) }
-   object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs = fcounts$counts %>% magrittr::set_colnames(sample_names)))
+    # Forge SummarizedExperiment
+    filenames   <- files %>% stringi::stri_split_fixed('/') %>% vapply(function(y) y[length(y)], 'character') %>% stringi::stri_replace_first_regex('.bam|.sam', '')
+    subdirnames <- files %>% stringi::stri_split_fixed('/') %>% vapply(function(y) y[length(y)-1], 'character')
+    sample_names <- if (assertive.properties::has_no_duplicates(filenames)){           filenames
+    } else if (assertive.properties::has_no_duplicates(subdirnames)){  subdirnames
+    } else {                                                           paste0(subdirnames, '_', filenames) }
+    object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs = fcounts$counts %>% magrittr::set_colnames(sample_names)))
 
-   # Add sdata
-   message("\t\tAdd sdata")
-   autonomics.import::sdata(object) <- data.frame(sample_id = sample_names, stringsAsFactors = FALSE)
-   object$subgroup <- object %>% autonomics.import::guess_subgroup_values(verbose = FALSE)
+    # Add sdata
+    message("\t\tAdd sdata")
+    autonomics.import::sdata(object) <- data.frame(sample_id = sample_names, stringsAsFactors = FALSE)
+    object$subgroup <- object %>% autonomics.import::guess_subgroup_values(verbose = FALSE)
 
-   # Add fdata
-   message("\t\tAdd fdata")
-   autonomics.import::fdata(object) <- fcounts$annotation %>% magrittr::extract(, c('GeneID', fvars))
-   colnames(autonomics.import::fdata(object)) %<>% stringi::stri_replace_first_fixed('GeneID', 'feature_id')
+    # Add fdata
+    message("\t\tAdd fdata")
+    autonomics.import::fdata(object) <- fcounts$annotation %>% magrittr::extract(, c('GeneID', fvars))
+    colnames(autonomics.import::fdata(object)) %<>% stringi::stri_replace_first_fixed('GeneID', 'feature_id')
 
-   # Write to file if requested
-   if (!is.null(sumexpfile)){
-      message("\t\tfeature_counts.txt file written under ~/.autonomics/counts/")
-      dir.create(dirname(sumexpfile), recursive=TRUE, showWarnings = FALSE)
-      saveRDS(object, sumexpfile)
-   }
+    # Write to file if requested
+    if (!is.null(sumexpfile)){
+        message("\t\tfeature_counts.txt file written under ~/.autonomics/counts/")
+        dir.create(dirname(sumexpfile), recursive=TRUE, showWarnings = FALSE)
+        saveRDS(object, sumexpfile)
+    }
 
-   # Return
-   object
+    # Return
+    object
 
 }
 
@@ -541,36 +559,36 @@ read_bam <- function(
 #' @importFrom magrittr %>%
 #' @export
 read_counts <- function(
-   file,
-   fid_var,
-   fname_var = character(0)
+    file,
+    fid_var,
+    fname_var = character(0)
 ){
 
-   assertive.files::assert_all_are_existing_files(file)
-   dt <- data.table::fread(file, integer64='numeric')
+    assertive.files::assert_all_are_existing_files(file)
+    dt <- data.table::fread(file, integer64='numeric')
 
-   assertive.sets::assert_is_subset(fid_var, names(dt))
-   fid_col <- which(names(dt)==fid_var)
-   expr_cols   <- dt %>% vapply(is.integer, logical(1)) %>% unname() %>% which()
-   fdata_cols  <- dt[, -fid_col, with = FALSE] %>% vapply(is.integer, logical(1)) %>% magrittr::not() %>% unname() %>% which() %>% magrittr::add(1) %>% c(fid_col, .)
+    assertive.sets::assert_is_subset(fid_var, names(dt))
+    fid_col <- which(names(dt)==fid_var)
+    expr_cols   <- dt %>% vapply(is.integer, logical(1)) %>% unname() %>% which()
+    fdata_cols  <- dt[, -fid_col, with = FALSE] %>% vapply(is.integer, logical(1)) %>% magrittr::not() %>% unname() %>% which() %>% magrittr::add(1) %>% c(fid_col, .)
 
-   object <- file %>% read_omics(fid_rows   = 2:nrow(dt),   fid_cols   = fid_col,
-                                 sid_rows   = 1,            sid_cols   = expr_cols,
-                                 expr_rows  = 2:nrow(dt),   expr_cols  = expr_cols,
-                                 fvar_rows  = 1,            fvar_cols  = fdata_cols,
-                                 fdata_rows = 2:nrow(dt),   fdata_cols = fdata_cols,
-                                 transpose  = FALSE,
-                                 verbose    = TRUE)
+    object <- file %>% read_omics(fid_rows   = 2:nrow(dt),   fid_cols   = fid_col,
+                                  sid_rows   = 1,            sid_cols   = expr_cols,
+                                  expr_rows  = 2:nrow(dt),   expr_cols  = expr_cols,
+                                  fvar_rows  = 1,            fvar_cols  = fdata_cols,
+                                  fdata_rows = 2:nrow(dt),   fdata_cols = fdata_cols,
+                                  transpose  = FALSE,
+                                  verbose    = TRUE)
 
-   sdata(object)$subgroup <- object %>% guess_subgroup_values(verbose = TRUE)
+    sdata(object)$subgroup <- object %>% guess_subgroup_values(verbose = TRUE)
 
-   if (length(fname_var)>0){
-      assertive.sets::assert_is_subset(fname_var, fvars(object))
-      fdata(object) %<>% (function(x){x$feature_name <- x[[fname_var]];
-                                                         x %>% autonomics.support::pull_columns(c('feature_id', 'feature_name'))})
-   }
+    if (length(fname_var)>0){
+        assertive.sets::assert_is_subset(fname_var, fvars(object))
+        fdata(object) %<>% (function(x){x$feature_name <- x[[fname_var]];
+        x %>% autonomics.support::pull_columns(c('feature_id', 'feature_name'))})
+    }
 
-   object
+    object
 
 }
 
@@ -600,37 +618,37 @@ read_counts <- function(
 #' @export
 read_affy <- function(celfiles){
 
-   # read
-   autonomics.support::cmessage('Read affymetrix CEL files: %s, etc.', celfiles[1])
-   suppressWarnings(eset1 <- affy::just.rma(filenames = celfiles))
+    # read
+    autonomics.support::cmessage('Read affymetrix CEL files: %s, etc.', celfiles[1])
+    suppressWarnings(eset1 <- affy::just.rma(filenames = celfiles))
 
-   # sdata
-   autonomics.import::snames(eset1) %<>% stringi::stri_replace_first_fixed('.CEL', '')
-   autonomics.import::sdata(eset1) <- data.frame(sample_id = autonomics.import::snames(eset1),
-                                                 row.names = autonomics.import::snames(eset1),
-                                                 stringsAsFactors = FALSE)
-   # fdata
-   autonomics.import::fdata(eset1)$feature_id   <- autonomics.import::fnames(eset1)
-   pkgname <- paste0(Biobase::annotation(eset1), '.db')
-   db <- utils::getFromNamespace(pkgname, pkgname)
-   autonomics.import::fdata(eset1)$feature_entrezg <- autonomics.import::fnames(eset1)  %>%
-                                                      stringi::stri_split_fixed('_')    %>%
-                                                      vapply(extract, character(1), 1)
-   autonomics.import::fdata(eset1)$feature_name <- suppressMessages(AnnotationDbi::mapIds(db,
-                                                                         keys    = autonomics.import::fdata(eset1)$feature_entrezg,
-                                                                         keytype = 'ENTREZID',
-                                                                         column  = 'SYMBOL')) %>%
-                                                   unname()
-   autonomics.import::fdata(eset1)$feature_descr <- suppressMessages(AnnotationDbi::mapIds(db,
-                                                                         keys    = autonomics.import::fdata(eset1)$feature_entrezg,
-                                                                         keytype = 'ENTREZID',
-                                                                         column  = 'GENENAME')) %>%
-                                                   unname()
+    # sdata
+    autonomics.import::snames(eset1) %<>% stringi::stri_replace_first_fixed('.CEL', '')
+    autonomics.import::sdata(eset1) <- data.frame(sample_id = autonomics.import::snames(eset1),
+                                                  row.names = autonomics.import::snames(eset1),
+                                                  stringsAsFactors = FALSE)
+    # fdata
+    autonomics.import::fdata(eset1)$feature_id   <- autonomics.import::fnames(eset1)
+    pkgname <- paste0(Biobase::annotation(eset1), '.db')
+    db <- utils::getFromNamespace(pkgname, pkgname)
+    autonomics.import::fdata(eset1)$feature_entrezg <- autonomics.import::fnames(eset1)  %>%
+        stringi::stri_split_fixed('_')    %>%
+        vapply(extract, character(1), 1)
+    autonomics.import::fdata(eset1)$feature_name <- suppressMessages(AnnotationDbi::mapIds(db,
+                                                                                           keys    = autonomics.import::fdata(eset1)$feature_entrezg,
+                                                                                           keytype = 'ENTREZID',
+                                                                                           column  = 'SYMBOL')) %>%
+        unname()
+    autonomics.import::fdata(eset1)$feature_descr <- suppressMessages(AnnotationDbi::mapIds(db,
+                                                                                            keys    = autonomics.import::fdata(eset1)$feature_entrezg,
+                                                                                            keytype = 'ENTREZID',
+                                                                                            column  = 'GENENAME')) %>%
+        unname()
 
-   # sumexp
-   sumexp1 <- eset1 %>% SummarizedExperiment::makeSummarizedExperimentFromExpressionSet()
-   class(sumexp1) <- 'SummarizedExperiment'
-   return(sumexp1)
+    # sumexp
+    sumexp1 <- eset1 %>% SummarizedExperiment::makeSummarizedExperimentFromExpressionSet()
+    class(sumexp1) <- 'SummarizedExperiment'
+    return(sumexp1)
 
 }
 
@@ -645,18 +663,18 @@ read_affy <- function(celfiles){
 #' @importFrom magrittr %>%
 #' @export
 read_exiqon <- function(file){
-   assertive.files::assert_all_are_existing_files(file)
-   dt <- extract_rectangle(file, sheet=1)
-   file %>% read_omics(sheet      = 1,
-                       fid_rows   = 1,                       fid_cols   = 2:(ncol(dt)-2),
-                       sid_rows   = 2:(nrow(dt)-3),          sid_cols   = 1,
-                       expr_rows  = 2:(nrow(dt)-3),          expr_cols  = 2:(ncol(dt)-2),
-                       fvar_rows  = (nrow(dt)-2):nrow(dt),   fvar_cols  = 1,
-                       svar_rows  = 1,                       svar_cols  = (ncol(dt)-1):ncol(dt),
-                       fdata_rows = (nrow(dt)-2):nrow(dt),   fdata_cols = 2:(ncol(dt)-2),
-                       sdata_rows = 2:(nrow(dt)-3),          sdata_cols = (ncol(dt)-1):ncol(dt),
-                       transpose  = TRUE,
-                       verbose    = TRUE)
+    assertive.files::assert_all_are_existing_files(file)
+    dt <- extract_rectangle(file, sheet=1)
+    file %>% read_omics(sheet      = 1,
+                        fid_rows   = 1,                       fid_cols   = 2:(ncol(dt)-2),
+                        sid_rows   = 2:(nrow(dt)-3),          sid_cols   = 1,
+                        expr_rows  = 2:(nrow(dt)-3),          expr_cols  = 2:(ncol(dt)-2),
+                        fvar_rows  = (nrow(dt)-2):nrow(dt),   fvar_cols  = 1,
+                        svar_rows  = 1,                       svar_cols  = (ncol(dt)-1):ncol(dt),
+                        fdata_rows = (nrow(dt)-2):nrow(dt),   fdata_cols = 2:(ncol(dt)-2),
+                        sdata_rows = 2:(nrow(dt)-3),          sdata_cols = (ncol(dt)-1):ncol(dt),
+                        transpose  = TRUE,
+                        verbose    = TRUE)
 }
 
 
@@ -685,81 +703,81 @@ read_exiqon <- function(file){
 #' @importFrom magrittr %>%
 #' @export
 read_somascan <- function(
-   file,
-   fid_var      = 'SeqId',
-   sid_var      = 'SampleId',
-   subgroup_var = 'SampleGroup',
-   fname_var    = 'EntrezGeneSymbol'
+    file,
+    fid_var      = 'SeqId',
+    sid_var      = 'SampleId',
+    subgroup_var = 'SampleGroup',
+    fname_var    = 'EntrezGeneSymbol'
 ){
-   # Assert
-   assertive.files::assert_all_are_existing_files(file)
-   assertive.types::assert_is_a_string(fid_var)
-   assertive.types::assert_is_a_string(sid_var)
+    # Assert
+    assertive.files::assert_all_are_existing_files(file)
+    assertive.types::assert_is_a_string(fid_var)
+    assertive.types::assert_is_a_string(sid_var)
 
-   # Understand file structure
-   content <- readLines(file)
-   n_row <- length(content)
-   n_col <- utils::count.fields(file, quote='', sep='\t') %>% max()
+    # Understand file structure
+    content <- readLines(file)
+    n_row <- length(content)
+    n_col <- utils::count.fields(file, quote='', sep='\t') %>% max()
 
-   f_row <- 1 + which(stringi::stri_detect_fixed(content, '^TABLE_BEGIN'))
+    f_row <- 1 + which(stringi::stri_detect_fixed(content, '^TABLE_BEGIN'))
 
-   s_row <- content                                 %>%
-            magrittr::extract(f_row:length(.)) %>%
-            purrr::detect_index(function(y) stringi::stri_detect_regex(y, '^\t+', negate=TRUE)) %>%
-            magrittr::add(f_row-1)
+    s_row <- content                                 %>%
+        magrittr::extract(f_row:length(.)) %>%
+        purrr::detect_index(function(y) stringi::stri_detect_regex(y, '^\t+', negate=TRUE)) %>%
+        magrittr::add(f_row-1)
 
-   f_col <- content                                    %>%
-            magrittr::extract(f_row)                   %>%
-            stringi::stri_extract_first_regex('^\\t+') %>%
-            stringi::stri_count_fixed('\t')            %>%
-            magrittr::add(1)
+    f_col <- content                                    %>%
+        magrittr::extract(f_row)                   %>%
+        stringi::stri_extract_first_regex('^\\t+') %>%
+        stringi::stri_count_fixed('\t')            %>%
+        magrittr::add(1)
 
-   fid_cols <- (1+f_col):n_col
-   fid_rows <- content                             %>%
-               magrittr::extract(f_row:(s_row-1))  %>%
-               stringi::stri_extract_first_words() %>%
-               magrittr::equals(fid_var)           %>%
-               which()                             %>%
-               magrittr::add(f_row-1)
+    fid_cols <- (1+f_col):n_col
+    fid_rows <- content                             %>%
+        magrittr::extract(f_row:(s_row-1))  %>%
+        stringi::stri_extract_first_words() %>%
+        magrittr::equals(fid_var)           %>%
+        which()                             %>%
+        magrittr::add(f_row-1)
 
-   sid_rows <- (1+s_row):n_row
-   sid_cols <- content                           %>%
-               magrittr::extract(s_row)          %>%
-               stringi::stri_extract_all_words() %>%
-               unlist()                          %>%
-               magrittr::equals(sid_var)         %>%
-               which()
+    sid_rows <- (1+s_row):n_row
+    sid_cols <- content                           %>%
+        magrittr::extract(s_row)          %>%
+        stringi::stri_extract_all_words() %>%
+        unlist()                          %>%
+        magrittr::equals(sid_var)         %>%
+        which()
 
-   # Read
-   object <- file %>% read_omics(fid_rows   =  fid_rows,         fid_cols   =  fid_cols,
-                                 sid_rows   =  sid_rows,         sid_cols   =  sid_cols,
-                                 expr_rows  = (s_row+1):n_row,   expr_cols  = (f_col+1):n_col,
-                                 fvar_rows  =  f_row:(s_row-1),  fvar_cols  =  f_col,
-                                 fdata_rows =  f_row:(s_row-1),  fdata_cols  = (f_col+1):n_col,
-                                 svar_rows  =  s_row,            svar_cols  = 1:(f_col-1),
-                                 sdata_rows = (s_row+1):n_row,   sdata_cols = 1:(f_col-1),
-                                 transpose  = TRUE,
-                                 verbose    = TRUE)
+    # Read
+    object <- file %>% read_omics(fid_rows   =  fid_rows,         fid_cols   =  fid_cols,
+                                  sid_rows   =  sid_rows,         sid_cols   =  sid_cols,
+                                  expr_rows  = (s_row+1):n_row,   expr_cols  = (f_col+1):n_col,
+                                  fvar_rows  =  f_row:(s_row-1),  fvar_cols  =  f_col,
+                                  fdata_rows =  f_row:(s_row-1),  fdata_cols  = (f_col+1):n_col,
+                                  svar_rows  =  s_row,            svar_cols  = 1:(f_col-1),
+                                  sdata_rows = (s_row+1):n_row,   sdata_cols = 1:(f_col-1),
+                                  transpose  = TRUE,
+                                  verbose    = TRUE)
 
-   # sdata
-   sdata(object) %<>% (function(y){ y$subgroup <- y[[subgroup_var]]
-                                    y %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
+    # sdata
+    sdata(object) %<>% (function(y){ y$subgroup <- y[[subgroup_var]]
+    y %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
 
-   # fdata
-   assertive.sets::assert_is_subset(fname_var, fvars(object))
-   fdata(object) %<>% (function(y){ y$feature_name <- y[[fname_var]]
-                                    y %>% autonomics.support::pull_columns(c('feature_id', 'feature_name'))})
+    # fdata
+    assertive.sets::assert_is_subset(fname_var, fvars(object))
+    fdata(object) %<>% (function(y){ y$feature_name <- y[[fname_var]]
+    y %>% autonomics.support::pull_columns(c('feature_id', 'feature_name'))})
 
-   # Return
-   object
+    # Return
+    object
 
 }
 
 #' @export
 #' @rdname read_somascan
 load_soma <- function(file, ...){
-   .Deprecated('read_somascan')
-   read_somascan(file = file)
+    .Deprecated('read_somascan')
+    read_somascan(file = file)
 }
 
 
@@ -785,57 +803,57 @@ load_soma <- function(file, ...){
 #' @importFrom magrittr %>%
 #' @export
 read_metabolon <- function(
-   file,
-   sheet        = 2,
-   fid_var      = 'COMP_ID',
-   sid_var      = 'CLIENT_IDENTIFIER',
-   subgroup_var = 'Group',
-   fname_var    = 'BIOCHEMICAL'
+    file,
+    sheet        = 2,
+    fid_var      = 'COMP_ID',
+    sid_var      = 'CLIENT_IDENTIFIER',
+    subgroup_var = 'Group',
+    fname_var    = 'BIOCHEMICAL'
 ){
 
-   assertive.files::assert_all_are_existing_files(file)
+    assertive.files::assert_all_are_existing_files(file)
 
-   d_f <- readxl::read_excel(file, sheet, col_names = FALSE, .name_repair = 'minimal')
+    d_f <- readxl::read_excel(file, sheet, col_names = FALSE, .name_repair = 'minimal')
 
-   fvar_rows <- which(!is.na(d_f %>% extract_dt_col(1))) %>% magrittr::extract(1)
-   svar_cols <- which(!is.na(d_f %>% extract_dt_row(1))) %>% magrittr::extract(1)
-   fvar_cols <- fdata_cols <- 1:svar_cols
-   svar_rows <- sdata_rows <- 1:fvar_rows
+    fvar_rows <- which(!is.na(d_f %>% extract_dt_col(1))) %>% magrittr::extract(1)
+    svar_cols <- which(!is.na(d_f %>% extract_dt_row(1))) %>% magrittr::extract(1)
+    fvar_cols <- fdata_cols <- 1:svar_cols
+    svar_rows <- sdata_rows <- 1:fvar_rows
 
-   fid_rows  <- fdata_rows <- expr_rows <- (fvar_rows+1):nrow(d_f)
-   sid_cols  <- sdata_cols <- expr_cols <- (svar_cols+1):ncol(d_f)
-   fid_cols  <-  d_f %>% extract_dt_row(fvar_rows) %>% magrittr::extract(1:svar_cols) %>% magrittr::equals(fid_var) %>% which()
-   sid_rows  <-  d_f %>% extract_dt_col(svar_cols) %>% magrittr::extract(1:fvar_rows) %>% magrittr::equals(sid_var) %>% which()
+    fid_rows  <- fdata_rows <- expr_rows <- (fvar_rows+1):nrow(d_f)
+    sid_cols  <- sdata_cols <- expr_cols <- (svar_cols+1):ncol(d_f)
+    fid_cols  <-  d_f %>% extract_dt_row(fvar_rows) %>% magrittr::extract(1:svar_cols) %>% magrittr::equals(fid_var) %>% which()
+    sid_rows  <-  d_f %>% extract_dt_col(svar_cols) %>% magrittr::extract(1:fvar_rows) %>% magrittr::equals(sid_var) %>% which()
 
-   object <- file %>% read_omics(sheet      = sheet,
-                                 fid_rows   = fid_rows,      fid_cols   = fid_cols,
-                                 sid_rows   = sid_rows,      sid_cols   = sid_cols,
-                                 expr_rows  = expr_rows,     expr_cols  = expr_cols,
-                                 fvar_rows  = fvar_rows,     fvar_cols  = fvar_cols,
-                                 svar_rows  = svar_rows,     svar_cols  = svar_cols,
-                                 fdata_rows = fdata_rows,    fdata_cols = fdata_cols,
-                                 sdata_rows = svar_rows,     sdata_cols = sdata_cols,
-                                 transpose  = FALSE,
-                                 verbose    = TRUE)
+    object <- file %>% read_omics(sheet      = sheet,
+                                  fid_rows   = fid_rows,      fid_cols   = fid_cols,
+                                  sid_rows   = sid_rows,      sid_cols   = sid_cols,
+                                  expr_rows  = expr_rows,     expr_cols  = expr_cols,
+                                  fvar_rows  = fvar_rows,     fvar_cols  = fvar_cols,
+                                  svar_rows  = svar_rows,     svar_cols  = svar_cols,
+                                  fdata_rows = fdata_rows,    fdata_cols = fdata_cols,
+                                  sdata_rows = svar_rows,     sdata_cols = sdata_cols,
+                                  transpose  = FALSE,
+                                  verbose    = TRUE)
 
-   # sdata
-   subgroup_var <- svars(object) %>% magrittr::extract(stringi::stri_detect_fixed(., subgroup_var))
-   sdata(object) %<>% (function(y){ y$subgroup <- y[[subgroup_var]]
-                                    y %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
-   # fdata
-   assertive.sets::assert_is_subset(fname_var, fvars(object))
-   fdata(object) %<>% (function(y){ y$feature_name <- y[[fname_var]]
-                                    y %>% autonomics.support::pull_columns(c('feature_id', 'feature_name'))})
+    # sdata
+    subgroup_var <- svars(object) %>% magrittr::extract(stringi::stri_detect_fixed(., subgroup_var))
+    sdata(object) %<>% (function(y){ y$subgroup <- y[[subgroup_var]]
+    y %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
+    # fdata
+    assertive.sets::assert_is_subset(fname_var, fvars(object))
+    fdata(object) %<>% (function(y){ y$feature_name <- y[[fname_var]]
+    y %>% autonomics.support::pull_columns(c('feature_id', 'feature_name'))})
 
-   # return
-   object
+    # return
+    object
 }
 
 #' @rdname read_metabolon
 #' @export
 load_metabolon <- function(file, sheet=2, ...){
-   .Deprecated('read_metabolon')
-   read_metabolon(file = file, sheet=sheet)
+    .Deprecated('read_metabolon')
+    read_metabolon(file = file, sheet=sheet)
 }
 
 #====================================
@@ -892,47 +910,47 @@ maxquant_patterns <- c(`Ratio normalized`             =  '^Ratio ([HM]/[ML]) nor
 #' }
 #' @export
 guess_maxquant_quantity <- function(x, ...){
-   UseMethod("guess_maxquant_quantity", x)
+    UseMethod("guess_maxquant_quantity", x)
 }
 
 #' @rdname guess_maxquant_quantity
 #' @export
 guess_maxquant_quantity.character <- function(x, ...){      # x = character vector of maxquant colnames
 
-   # read if x is filename
-   if (assertive.files::is_existing_file(x)){
-      x %<>% data.table::fread(header = TRUE, nrows = 1) %>% names()
-   }
+    # read if x is filename
+    if (assertive.files::is_existing_file(x)){
+        x %<>% data.table::fread(header = TRUE, nrows = 1) %>% names()
+    }
 
-   # guess from character vector
-   for (quantity in names(maxquant_patterns)){
-      pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
-      if (any(stringi::stri_detect_regex(x, pattern)))   return(quantity)
-   }
-   stop('quantity could not be infered')
+    # guess from character vector
+    for (quantity in names(maxquant_patterns)){
+        pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
+        if (any(stringi::stri_detect_regex(x, pattern)))   return(quantity)
+    }
+    stop('quantity could not be infered')
 }
 
 
 #' @rdname guess_maxquant_quantity
 #' @export
 guess_maxquant_quantity.data.frame <- function(x, ...){     # x = maxquant dataframe
-   x <- names(x)
-   for (quantity in names(maxquant_patterns)){
-      pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
-      if (any(stringi::stri_detect_regex(x, pattern)))   return(quantity)
-   }
-   stop('quantity could not be infered')
+    x <- names(x)
+    for (quantity in names(maxquant_patterns)){
+        pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
+        if (any(stringi::stri_detect_regex(x, pattern)))   return(quantity)
+    }
+    stop('quantity could not be infered')
 }
 
 #' @rdname guess_maxquant_quantity
 #' @export
 guess_maxquant_quantity.SummarizedExperiment <- function(x, ...){     # x = SummarizedExperiment
-   x <- snames(x)
-   for (quantity in names(maxquant_patterns)){
-      pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
-      if (any(stringi::stri_detect_regex(x, pattern)))   return(quantity)
-   }
-   stop('quantity could not be infered')
+    x <- snames(x)
+    for (quantity in names(maxquant_patterns)){
+        pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
+        if (any(stringi::stri_detect_regex(x, pattern)))   return(quantity)
+    }
+    stop('quantity could not be infered')
 }
 
 
@@ -974,7 +992,7 @@ proteingroups_fvars <- c(c('id', 'Majority protein IDs', 'Protein names', 'Gene 
 #' @importFrom magrittr %>%
 #' @export
 standardize_maxquant_snames <- function (x, ...) {
-   UseMethod("standardize_maxquant_snames", x)
+    UseMethod("standardize_maxquant_snames", x)
 }
 
 
@@ -982,41 +1000,41 @@ standardize_maxquant_snames <- function (x, ...) {
 #' @export
 #' @rdname standardize_maxquant_snames
 standardize_maxquant_snames.character <- function(
-   x,
-   quantity = guess_maxquant_quantity(x),
-   verbose  = FALSE,
-   ...
+    x,
+    quantity = guess_maxquant_quantity(x),
+    verbose  = FALSE,
+    ...
 ){
-   # x = mix + channel. Return mix if single channel.
-   pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
+    # x = mix + channel. Return mix if single channel.
+    pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
 
-   # Decompose mix and channel
-   if (quantity == 'Intensity'){ mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
-                                 channel <- rep('', length(mix))
-   } else {                      mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$2')
-                                 channel <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
-   }
+    # Decompose mix and channel
+    if (quantity == 'Intensity'){ mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
+    channel <- rep('', length(mix))
+    } else {                      mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$2')
+    channel <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
+    }
 
-   # Standardize
-   if (all(channel=='')){ cleanx <- mix
-   } else               { cleanx <- sprintf('%s{%s}', mix, channel)
-   }
-   autonomics.support::cmessage('\t\tStandardize snames: %s  ->  %s', x[1], cleanx[1])
-   return(cleanx)
+    # Standardize
+    if (all(channel=='')){ cleanx <- mix
+    } else               { cleanx <- sprintf('%s{%s}', mix, channel)
+    }
+    autonomics.support::cmessage('\t\tStandardize snames: %s  ->  %s', x[1], cleanx[1])
+    return(cleanx)
 }
 
 #' @importFrom magrittr %>%
 #' @export
 #' @rdname standardize_maxquant_snames
 standardize_maxquant_snames.SummarizedExperiment <- function(
-   x,
-   quantity = guess_maxquant_quantity(x),
-   verbose  = FALSE,
-   ...
+    x,
+    quantity = guess_maxquant_quantity(x),
+    verbose  = FALSE,
+    ...
 ){
-   newsnames <- snames(x) %>% standardize_maxquant_snames(quantity = quantity, verbose=verbose)
-   snames(x) <- sdata(x)$sample_id <- newsnames
-   x
+    newsnames <- snames(x) %>% standardize_maxquant_snames(quantity = quantity, verbose=verbose)
+    snames(x) <- sdata(x)$sample_id <- newsnames
+    x
 }
 
 
@@ -1061,86 +1079,86 @@ standardize_maxquant_snames.SummarizedExperiment <- function(
 #'
 #' @export
 demultiplex_snames <- function (x, ...) {
-   UseMethod("demultiplex_snames", x)
+    UseMethod("demultiplex_snames", x)
 }
 
 #' @rdname demultiplex_snames
 #' @export
 demultiplex_snames.character <- function(x, verbose = FALSE, ...){
 
-   # Return unchanged if not multiplexed
-   # KD(H)WT(L){H/L}
-   pattern <- '(.+)\\{(.+)\\}'
-   n_open   <- x %>% stringi::stri_count_fixed('(')
-   n_closed <- x %>% stringi::stri_count_fixed(')')
-   is_multiplexed <- all(stringi::stri_detect_regex(x, pattern) & (n_open==n_closed) & (n_open>0))
-   if (!is_multiplexed) return(x)
+    # Return unchanged if not multiplexed
+    # KD(H)WT(L){H/L}
+    pattern <- '(.+)\\{(.+)\\}'
+    n_open   <- x %>% stringi::stri_count_fixed('(')
+    n_closed <- x %>% stringi::stri_count_fixed(')')
+    is_multiplexed <- all(stringi::stri_detect_regex(x, pattern) & (n_open==n_closed) & (n_open>0))
+    if (!is_multiplexed) return(x)
 
-   # Separate mix and channel
-   mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
-   channel <- x %>% stringi::stri_replace_first_regex(pattern, '$2')
+    # Separate mix and channel
+    mix     <- x %>% stringi::stri_replace_first_regex(pattern, '$1')
+    channel <- x %>% stringi::stri_replace_first_regex(pattern, '$2')
 
-   # Separate labels and samples
-   pattern <- '\\(.+?\\)'
-   labels  <- mix %>% stringi::stri_extract_all_regex(pattern) %>% lapply(stringi::stri_replace_first_fixed, '(', '') %>%
-      lapply(stringi::stri_replace_first_fixed, ')', '')
-   samples <- mix %>% stringi::stri_split_regex(pattern) %>%
-      # rm sep from samples (but not from replicate - needed to glue back later!)
-      lapply(function(y){y[1:length(labels[[1]])] %<>% stringi::stri_replace_first_regex('^[_. ]', ''); y})
+    # Separate labels and samples
+    pattern <- '\\(.+?\\)'
+    labels  <- mix %>% stringi::stri_extract_all_regex(pattern) %>% lapply(stringi::stri_replace_first_fixed, '(', '') %>%
+        lapply(stringi::stri_replace_first_fixed, ')', '')
+    samples <- mix %>% stringi::stri_split_regex(pattern) %>%
+        # rm sep from samples (but not from replicate - needed to glue back later!)
+        lapply(function(y){y[1:length(labels[[1]])] %<>% stringi::stri_replace_first_regex('^[_. ]', ''); y})
 
-   # Return unchanged if mixes differ in no of labels or samples
-   are_all_identical <- function(y) if (length(y)==1) TRUE else all(y[-1] == y[1])
-   n_samples <- vapply(samples,  length, integer(1))
-   n_labels  <- vapply(labels, length, integer(1))
-   if (!are_all_identical(n_samples) | !are_all_identical(n_labels)){
-      autonomics.support::cmessage('\t\tCannot demultiplexing snames: mixes differ in number of samples or labels')
-      return(x)
-   }
+    # Return unchanged if mixes differ in no of labels or samples
+    are_all_identical <- function(y) if (length(y)==1) TRUE else all(y[-1] == y[1])
+    n_samples <- vapply(samples,  length, integer(1))
+    n_labels  <- vapply(labels, length, integer(1))
+    if (!are_all_identical(n_samples) | !are_all_identical(n_labels)){
+        autonomics.support::cmessage('\t\tCannot demultiplexing snames: mixes differ in number of samples or labels')
+        return(x)
+    }
 
-   # Extract replicate
-   n_samples %<>% unique()
-   n_labels  %<>% unique()
-   if (n_samples > n_labels){ replicate <- mix %>% stringi::stri_split_regex(pattern) %>% vapply((function(y) y %>% magrittr::extract(length(y))), character(1))
-                              samples %<>% lapply(magrittr::extract, 1:(n_samples-1))
-   } else {                   replicate <- rep('', length(samples))
-   }
+    # Extract replicate
+    n_samples %<>% unique()
+    n_labels  %<>% unique()
+    if (n_samples > n_labels){ replicate <- mix %>% stringi::stri_split_regex(pattern) %>% vapply((function(y) y %>% magrittr::extract(length(y))), character(1))
+    samples %<>% lapply(magrittr::extract, 1:(n_samples-1))
+    } else {                   replicate <- rep('', length(samples))
+    }
 
-   # Extract channel samples from mix
-   is_ratio <- channel %>% stringi::stri_detect_fixed('/') %>% all()
-   samples %<>% mapply(magrittr::set_names, ., labels, SIMPLIFY = FALSE)
-   if (is_ratio){
-      num_label <- channel %>% stringi::stri_split_fixed('/') %>% vapply(magrittr::extract, character(1), 1)
-      den_label <- channel %>% stringi::stri_split_fixed('/') %>% vapply(magrittr::extract, character(1), 2)
-      den_samples <- mapply(magrittr::extract, samples, den_label)
-      num_samples <- mapply(magrittr::extract, samples, num_label)
-      xdemultiplex <- sprintf('%s_%s%s', num_samples, den_samples, replicate)
-   } else {
-      samples %<>% mapply(magrittr::extract, ., channel)
-      xdemultiplex <- sprintf('%s%s', samples, replicate)
-   }
-   if (verbose) autonomics.support::cmessage('\t\tDemultiplex snames: %s  ->  %s', x[1], xdemultiplex[1])
+    # Extract channel samples from mix
+    is_ratio <- channel %>% stringi::stri_detect_fixed('/') %>% all()
+    samples %<>% mapply(magrittr::set_names, ., labels, SIMPLIFY = FALSE)
+    if (is_ratio){
+        num_label <- channel %>% stringi::stri_split_fixed('/') %>% vapply(magrittr::extract, character(1), 1)
+        den_label <- channel %>% stringi::stri_split_fixed('/') %>% vapply(magrittr::extract, character(1), 2)
+        den_samples <- mapply(magrittr::extract, samples, den_label)
+        num_samples <- mapply(magrittr::extract, samples, num_label)
+        xdemultiplex <- sprintf('%s_%s%s', num_samples, den_samples, replicate)
+    } else {
+        samples %<>% mapply(magrittr::extract, ., channel)
+        xdemultiplex <- sprintf('%s%s', samples, replicate)
+    }
+    if (verbose) autonomics.support::cmessage('\t\tDemultiplex snames: %s  ->  %s', x[1], xdemultiplex[1])
 
-   # Ensure uniqueness. Add labels if required.
-   idx <- autonomics.support::cduplicated(xdemultiplex) %>% which()
-   if (length(idx)>0){
-      label_tags <- channel[idx] %>% stringi::stri_replace_first_fixed('/', '')
-      if (verbose)   autonomics.support::cmessage('\t\tUniquify snames: %s -> %s%s (for %d/%d snames)',
-                                                  xdemultiplex[idx][1], xdemultiplex[idx][1], label_tags[1],
-                                                  length(idx), length(xdemultiplex))
-      xdemultiplex[idx] %<>% paste0(label_tags)
-   }
+    # Ensure uniqueness. Add labels if required.
+    idx <- autonomics.support::cduplicated(xdemultiplex) %>% which()
+    if (length(idx)>0){
+        label_tags <- channel[idx] %>% stringi::stri_replace_first_fixed('/', '')
+        if (verbose)   autonomics.support::cmessage('\t\tUniquify snames: %s -> %s%s (for %d/%d snames)',
+                                                    xdemultiplex[idx][1], xdemultiplex[idx][1], label_tags[1],
+                                                    length(idx), length(xdemultiplex))
+        xdemultiplex[idx] %<>% paste0(label_tags)
+    }
 
-   # Return
-   return(xdemultiplex)
+    # Return
+    return(xdemultiplex)
 }
 
 #' @rdname demultiplex_snames
 #' @importFrom magrittr %>%
 #' @export
 demultiplex_snames.SummarizedExperiment <- function(x,verbose  = FALSE, ...){
-   newsnames <- snames(x) %>% demultiplex_snames(verbose = verbose)
-   snames(x) <- sdata(x)$sample_id <- newsnames
-   x
+    newsnames <- snames(x) %>% demultiplex_snames(verbose = verbose)
+    snames(x) <- sdata(x)$sample_id <- newsnames
+    x
 }
 
 #' Read proteingroups
@@ -1161,60 +1179,60 @@ demultiplex_snames.SummarizedExperiment <- function(x,verbose  = FALSE, ...){
 #' @importFrom magrittr %>% %<>%
 #' @export
 read_proteingroups <- function(
-   file,
-   quantity           = guess_maxquant_quantity(file),
-   fvars              = proteingroups_fvars,
-   standardize_snames = TRUE,
-   demultiplex_snames = TRUE,
-   verbose            = TRUE
+    file,
+    quantity           = guess_maxquant_quantity(file),
+    fvars              = proteingroups_fvars,
+    standardize_snames = TRUE,
+    demultiplex_snames = TRUE,
+    verbose            = TRUE
 ){
 
-   # Assert
-   assertive.files::assert_all_are_existing_files(file)
-   assertive.sets::assert_is_subset(quantity, names(maxquant_patterns))
-   assertive.types::assert_is_a_bool(verbose)
+    # Assert
+    assertive.files::assert_all_are_existing_files(file)
+    assertive.sets::assert_is_subset(quantity, names(maxquant_patterns))
+    assertive.types::assert_is_a_bool(verbose)
 
-   # Initial Read
-   assertive.files::assert_all_are_existing_files(file)
-   dt <- data.table::fread(file, integer64 = 'numeric', header = TRUE)
-   fvars %<>% intersect(names(dt))
+    # Initial Read
+    assertive.files::assert_all_are_existing_files(file)
+    dt <- data.table::fread(file, integer64 = 'numeric', header = TRUE)
+    fvars %<>% intersect(names(dt))
 
-   # Define components
-   fid_rows   <- 2:nrow(dt)
-   fid_cols   <- which(names(dt) == 'id')
-   sid_rows   <- 1
-   sid_cols   <- names(dt) %>% stringi::stri_detect_regex(maxquant_patterns[[quantity]]) %>% which()
-   expr_rows  <- 2:nrow(dt)
-   expr_cols  <- sid_cols
-   fvar_rows  <- 1
-   fvar_cols  <- match(fvars, names(dt))
-   fdata_rows <- 2:nrow(dt)
-   fdata_cols <- fvar_cols
+    # Define components
+    fid_rows   <- 2:nrow(dt)
+    fid_cols   <- which(names(dt) == 'id')
+    sid_rows   <- 1
+    sid_cols   <- names(dt) %>% stringi::stri_detect_regex(maxquant_patterns[[quantity]]) %>% which()
+    expr_rows  <- 2:nrow(dt)
+    expr_cols  <- sid_cols
+    fvar_rows  <- 1
+    fvar_cols  <- match(fvars, names(dt))
+    fdata_rows <- 2:nrow(dt)
+    fdata_cols <- fvar_cols
 
-   # Read sumexp
-   object <- file %>% read_omics(fid_rows   = fid_rows,     fid_cols   = fid_cols,
-                                 sid_rows   = sid_rows,     sid_cols   = sid_cols,
-                                 expr_rows  = expr_rows,    expr_cols  = expr_cols,
-                                 fvar_rows  = fvar_rows,    fvar_cols  = fvar_cols,
-                                 fdata_rows = fdata_rows,   fdata_cols = fdata_cols,
-                                 transpose  = FALSE,
-                                 verbose    = verbose)
-   # Clean sdata
-   if (standardize_snames) object %<>% standardize_maxquant_snames(verbose = verbose)
-   if (demultiplex_snames) object %<>% demultiplex_snames(verbose = verbose)
-   object$subgroup <- object$sample_id %>% guess_subgroup_values(verbose = verbose)
-   #object$block    <- object$sample_id %>% guess_subject_values( verbose = TRUE)
+    # Read sumexp
+    object <- file %>% read_omics(fid_rows   = fid_rows,     fid_cols   = fid_cols,
+                                  sid_rows   = sid_rows,     sid_cols   = sid_cols,
+                                  expr_rows  = expr_rows,    expr_cols  = expr_cols,
+                                  fvar_rows  = fvar_rows,    fvar_cols  = fvar_cols,
+                                  fdata_rows = fdata_rows,   fdata_cols = fdata_cols,
+                                  transpose  = FALSE,
+                                  verbose    = verbose)
+    # Clean sdata
+    if (standardize_snames) object %<>% standardize_maxquant_snames(verbose = verbose)
+    if (demultiplex_snames) object %<>% demultiplex_snames(verbose = verbose)
+    object$subgroup <- object$sample_id %>% guess_subgroup_values(verbose = verbose)
+    #object$block    <- object$sample_id %>% guess_subject_values( verbose = TRUE)
 
-   # Clean fdata
-   contaminant_var <- c('Contaminant', 'Potential contaminant') %>% intersect(fvars(object))
-   fdata(object)[[contaminant_var]] %<>% (function(x){x[is.na(x)] <- ''; x})
-   fdata(object)[['Reverse'      ]] %<>% (function(x){x[is.na(x)] <- ''; x})
-   fdata(object)$feature_name    <- fdata(object)$`Gene names`
-   fdata(object)$feature_uniprot <- fdata(object)$`Majority protein IDs`
-   fdata(object) %<>% autonomics.support::pull_columns(c('feature_id', 'feature_name', 'feature_uniprot'))
+    # Clean fdata
+    contaminant_var <- c('Contaminant', 'Potential contaminant') %>% intersect(fvars(object))
+    fdata(object)[[contaminant_var]] %<>% (function(x){x[is.na(x)] <- ''; x})
+    fdata(object)[['Reverse'      ]] %<>% (function(x){x[is.na(x)] <- ''; x})
+    fdata(object)$feature_name    <- fdata(object)$`Gene names`
+    fdata(object)$feature_uniprot <- fdata(object)$`Majority protein IDs`
+    fdata(object) %<>% autonomics.support::pull_columns(c('feature_id', 'feature_name', 'feature_uniprot'))
 
-   # Return
-   object
+    # Return
+    object
 
 }
 
@@ -1243,62 +1261,62 @@ phosphosite_fvars <- c('id', 'Protein group IDs', 'Positions within proteins', '
 #' @importFrom magrittr %>%
 #' @export
 read_phosphosites <- function(
-   file,
-   proteingroups_file = dirname(file) %>% paste0('/phospho (STY)Sites.txt'),
-   quantity           = guess_maxquant_quantity(file),
-   fvars              = phosphosite_fvars,
-   standardize_snames = TRUE,
-   demultiplex_snames = TRUE,
-   verbose            = FALSE
+    file,
+    proteingroups_file = dirname(file) %>% paste0('/phospho (STY)Sites.txt'),
+    quantity           = guess_maxquant_quantity(file),
+    fvars              = phosphosite_fvars,
+    standardize_snames = TRUE,
+    demultiplex_snames = TRUE,
+    verbose            = FALSE
 ){
 
-   # Check
-   `Protein group IDs` <- `Localization prob` <- NULL
+    # Check
+    `Protein group IDs` <- `Localization prob` <- NULL
 
-   # Assert
-   assertive.files::assert_all_are_existing_files(file)
-   assertive.sets::assert_is_subset(quantity, names(maxquant_patterns))
-   assertive.types::assert_is_character(fvars)
+    # Assert
+    assertive.files::assert_all_are_existing_files(file)
+    assertive.sets::assert_is_subset(quantity, names(maxquant_patterns))
+    assertive.types::assert_is_character(fvars)
 
-   # Initial Read
-   dt <- data.table::fread(file, integer64 = 'numeric', header = TRUE)
-   pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
-   value_cols <- names(dt) %>% (function(x) stringi::stri_detect_regex(x,pattern) & !stringi::stri_detect_regex(x, '___[1-3]')) %>% which()
-   fvar_cols  <- which(names(dt) %in% fvars)
-   #dt %<>% magrittr::extract(, c(fvars, value_cols), with = FALSE)
+    # Initial Read
+    dt <- data.table::fread(file, integer64 = 'numeric', header = TRUE)
+    pattern <- maxquant_patterns %>% magrittr::extract2(quantity)
+    value_cols <- names(dt) %>% (function(x) stringi::stri_detect_regex(x,pattern) & !stringi::stri_detect_regex(x, '___[1-3]')) %>% which()
+    fvar_cols  <- which(names(dt) %in% fvars)
+    #dt %<>% magrittr::extract(, c(fvars, value_cols), with = FALSE)
 
-   # Read phosphosites
-   fid_rows   <- 2:nrow(dt)
-   fid_cols   <- which(names(dt) == 'id')
-   sid_rows   <- 1
-   sid_cols   <- value_cols
-   expr_rows  <- 2:nrow(dt)
-   expr_cols  <- value_cols
-   fvar_rows  <- 1
-   fvar_cols  <- fvar_cols
-   fdata_rows <- 2:nrow(dt)
-   fdata_cols <- fvar_cols
-   phosphosites  <- file  %>% read_omics(fid_rows   = fid_rows,  fid_cols   = fid_cols,
-                                         sid_rows   = sid_rows,     sid_cols   = sid_cols,
-                                         expr_rows  = expr_rows,    expr_cols  = expr_cols,
-                                         fvar_rows  = fvar_rows,    fvar_cols  = fvar_cols,
-                                         fdata_rows = fdata_rows,   fdata_cols = fdata_cols,
-                                         transpose  = FALSE,
-                                         verbose    = verbose)
+    # Read phosphosites
+    fid_rows   <- 2:nrow(dt)
+    fid_cols   <- which(names(dt) == 'id')
+    sid_rows   <- 1
+    sid_cols   <- value_cols
+    expr_rows  <- 2:nrow(dt)
+    expr_cols  <- value_cols
+    fvar_rows  <- 1
+    fvar_cols  <- fvar_cols
+    fdata_rows <- 2:nrow(dt)
+    fdata_cols <- fvar_cols
+    phosphosites  <- file  %>% read_omics(fid_rows   = fid_rows,  fid_cols   = fid_cols,
+                                          sid_rows   = sid_rows,     sid_cols   = sid_cols,
+                                          expr_rows  = expr_rows,    expr_cols  = expr_cols,
+                                          fvar_rows  = fvar_rows,    fvar_cols  = fvar_cols,
+                                          fdata_rows = fdata_rows,   fdata_cols = fdata_cols,
+                                          transpose  = FALSE,
+                                          verbose    = verbose)
 
-   # Calculate occupancies (allows to disentangle phosphorylation and protein expression)
-   autonomics.support::cmessage('\t\toccupancies(phosphosites) = exprs(phosphosites) - exprs(proteingroups)')
-   proteingroups <- read_proteingroups(proteingroups_file, quantity = quantity, verbose = FALSE) %>%
-                    magrittr::extract(phosphosites %>% fvalues("Protein group IDs"), ) %>%
-                    magrittr::extract(, phosphosites %>% snames())
-   occupancies(phosphosites) <- exprs(phosphosites) - exprs(proteingroups)
+    # Calculate occupancies (allows to disentangle phosphorylation and protein expression)
+    autonomics.support::cmessage('\t\toccupancies(phosphosites) = exprs(phosphosites) - exprs(proteingroups)')
+    proteingroups <- read_proteingroups(proteingroups_file, quantity = quantity, verbose = FALSE) %>%
+        magrittr::extract(phosphosites %>% fvalues("Protein group IDs"), ) %>%
+        magrittr::extract(, phosphosites %>% snames())
+    occupancies(phosphosites) <- exprs(phosphosites) - exprs(proteingroups)
 
-   # Simplify snames
-   if (standardize_snames) phosphosites %<>% standardize_maxquant_snames(verbose = verbose)
-   if (demultiplex_snames) phosphosites %<>% demultiplex_snames(verbose = verbose)
+    # Simplify snames
+    if (standardize_snames) phosphosites %<>% standardize_maxquant_snames(verbose = verbose)
+    if (demultiplex_snames) phosphosites %<>% demultiplex_snames(verbose = verbose)
 
-   # Return
-   phosphosites
+    # Return
+    phosphosites
 
 }
 
