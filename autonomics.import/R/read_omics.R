@@ -314,7 +314,9 @@ read_omics <- function(
         assays = list(exprs = exprs1))
     fdata(object) <- fdata1
     sdata(object) <- sdata1
-    analysis(object) <- list(nfeatures = c(all = nrow(exprs1)))
+    analysis(object) <- list(
+        nfeatures = c(all = nrow(exprs1)),
+        nsamples  = c(all = ncol(exprs1)))
 
     # Return
     object

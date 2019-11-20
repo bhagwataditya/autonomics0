@@ -170,6 +170,14 @@ is_fvalue_feature <- function(object, fvar, split, fvalues){
 #'    object %>% filter_features_on_fvalues(fvar    = 'Uniprot accessions',
 #'                                          split   = ';',
 #'                                          fvalues = fvalues)
+#'    if(is.null(analysis(object))) {
+#'        analysis(object) <- list(nsamples = nrow(sdata(object)))
+#'    }
+#'    analysis(object)$nsamples
+#'    object %<>% filter_features_on_fvalues(fvar    = 'Uniprot accessions',
+#'                                          split   = ';',
+#'                                          fvalues = fvalues)
+#'    analysis(object)$nsamples
 #' }
 #' @return subset of object with reference features
 #' @importFrom magrittr       %>%     %<>%
@@ -179,8 +187,11 @@ filter_features_on_fvalues <- function(object, fvar, split, fvalues){
     idx <- object %>% is_fvalue_feature(fvar, split, fvalues)
     object %<>% magrittr::extract(idx, )
     if (!is.null(analysis(object))) {
-        analysis(object)$nfeatures %<>%
-            c(structure(sum(idx), names = condition))
+        analysis(object)$nsamples %<>%
+            c(structure(
+                sum(idx),
+                names = sprintf("c('%s') %%in%% `%s`",
+                                paste(fvalues, collapse = "', '"), fvar)))
     }
     object
 }
@@ -202,6 +213,12 @@ filter_samples_ <- function(object, condition, verbose = FALSE){
     if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' samples: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
     object %<>% magrittr::extract(, idx)
     sdata(object) %<>% droplevels()
+    if (!is.null(analysis(object))) {
+        analysis(object)$nsamples %<>%
+            c(structure(
+                sum(idx),
+                names = if (class(condition)=='lazy') deparse(condition$expr) else condition))
+    }
     object
 }
 
@@ -214,6 +231,14 @@ filter_samples_ <- function(object, condition, verbose = FALSE){
 #' if (require(autonomics.data)){
 #'    filter_samples( autonomics.data::ALL,  sex == 'M')
 #'    filter_samples_(autonomics.data::ALL, "sex == 'M'")
+#'
+#'    sumexp <- autonomics.data::ALL
+#'    if (is.null(analysis(sumexp))) {
+#'        analysis(sumexp) <- list(nsamples = nrow(sdata(sumexp)))
+#'    }
+#'    analysis(sumexp)$nsamples
+#'    sumexp <- filter_samples_(sumexp, "sex == 'M'")
+#'    analysis(sumexp)$nsamples
 #' }
 #' @export
 filter_samples <- function(object, condition, verbose = FALSE){
@@ -225,6 +250,12 @@ filter_samples <- function(object, condition, verbose = FALSE){
     if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' samples: ', rlang::expr_text(condition))
     object %<>% magrittr::extract(, idx)
     sdata(object) %<>% droplevels()
+    if (!is.null(analysis(object))) {
+        analysis(object)$nsamples %<>%
+            c(structure(
+                sum(idx),
+                names = rlang::expr_text(condition)))
+    }
     object
 }
 
