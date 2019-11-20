@@ -21,33 +21,42 @@ utils::globalVariables('.')
 #' @importFrom magrittr %>%
 #' @export
 filter_exprs_replicated_in_some_subgroup <- function(
-   object,
-   comparator = if (contains_ratios(object)) '!=' else '>',
-   lod = 0
+    object,
+    comparator = if (contains_ratios(object)) '!=' else '>',
+    lod = 0
 ){
 
-   # Return if no subgroup (filtering not possible) or no replicates (filtering leads to empty SumExp )
-   if (!'subgroup' %in% svars(object))             return(object)
-   if (all(!duplicated(sdata(object)$subgroup)))   return(object)
+    # Return if no subgroup (filtering not possible) or no replicates (filtering leads to empty SumExp )
+    if (!'subgroup' %in% svars(object))             return(object)
+    if (all(!duplicated(sdata(object)$subgroup)))   return(object)
 
-   # Datatablify
-   replicated_in_its_subgroup <- replicated_in_any_subgroup <- value <- NULL
-   dt <- object %>% sumexp_to_long_dt(svars = 'subgroup')
+    # Datatablify
+    replicated_in_its_subgroup <- replicated_in_any_subgroup <- value <- NULL
+    dt <- object %>% sumexp_to_long_dt(svars = 'subgroup')
 
-   # Is expr replicated in its subgroup?
-   if (comparator ==  '>') dt %>% magrittr::extract(, replicated_in_its_subgroup := sum(value  > lod, na.rm=TRUE) > 1,   by = c('feature_id', 'subgroup'))
-   if (comparator == '!=') dt %>% magrittr::extract(, replicated_in_its_subgroup := sum(value != lod, na.rm=TRUE) > 1,   by = c('feature_id', 'subgroup'))
+    # Is expr replicated in its subgroup?
+    if (comparator ==  '>') dt %>% magrittr::extract(, replicated_in_its_subgroup := sum(value  > lod, na.rm=TRUE) > 1,   by = c('feature_id', 'subgroup'))
+    if (comparator == '!=') dt %>% magrittr::extract(, replicated_in_its_subgroup := sum(value != lod, na.rm=TRUE) > 1,   by = c('feature_id', 'subgroup'))
 
-   # Is it replicated in any subgroup
-   dt %>% magrittr::extract(, replicated_in_any_subgroup := any(replicated_in_its_subgroup),    by =  'feature_id')
+    # Is it replicated in any subgroup
+    dt %>% magrittr::extract(, replicated_in_any_subgroup := any(replicated_in_its_subgroup),    by =  'feature_id')
 
-   # Keep only replicated features
-   replicated_features <- dt %>% magrittr::extract(replicated_in_any_subgroup == TRUE, 'feature_id')
-   idx <- fid_values(object) %in% replicated_features
-   autonomics.support::cmessage('\t\tFilter %d/%d features: expr %s %s, for at least two samples in some subgroup', sum(idx), length(idx), comparator, as.character(lod))
-   object %>% extract_features(idx)
-      # use this rather than magrittr::extract() directly
-      # to ensure that the limma(.) object is properly taken care of
+    # Keep only replicated features
+    replicated_features <- dt %>% magrittr::extract(replicated_in_any_subgroup == TRUE, 'feature_id')
+    idx <- fid_values(object) %in% replicated_features
+    autonomics.support::cmessage('\t\tFilter %d/%d features: expr %s %s, for at least two samples in some subgroup', sum(idx), length(idx), comparator, as.character(lod))
+    object %<>% extract_features(idx)
+    # use this rather than magrittr::extract() directly
+    # to ensure that the limma(.) object is properly taken care of
+    if (!is.null(analysis(object))) {
+        analysis(object)$nfeatures %<>%
+            c(structure(
+                sum(idx),
+                names = sprintf(
+                    "exp %s %s, for at least two samples in some subgroup",
+                    comparator, as.character(lod))))
+    }
+    object
 }
 
 
@@ -60,11 +69,16 @@ filter_exprs_replicated_in_some_subgroup <- function(
 #' @rdname filter_features
 #' @export
 filter_features_ <- function(object, condition, verbose = FALSE){
-   if (is.null(condition)) return(object)
-   idx <- lazyeval::lazy_eval(condition, fdata(object))
-   idx <- idx & !is.na(idx)
-   if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' features: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
-   object %>% extract_features(idx)
+    if (is.null(condition)) return(object)
+    idx <- lazyeval::lazy_eval(condition, fdata(object))
+    idx <- idx & !is.na(idx)
+    if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' features: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
+    object %<>% extract_features(idx)
+    if (!is.null(analysis(object))) {
+        analysis(object)$nfeatures %<>%
+            c(structure(sum(idx), names = condition))
+    }
+    object
 }
 
 #' Filter features on condition
@@ -87,19 +101,35 @@ filter_features_ <- function(object, condition, verbose = FALSE){
 #'
 #'    autonomics.data::ALL %>%
 #'    filter_features_("gene_symbols %in% c('LIG4', 'MAPK12', 'MAPK1')", verbose = TRUE)
+#'
+#'    file <- 'extdata/stemdiff/maxquant/proteinGroups.txt' %>%
+#'    system.file(package = 'autonomics.data')
+#'    sumexp <- file %>% read_omics(fid_rows   = 2:9783,  fid_cols   = 383,
+#'                        sid_rows   = 1,       sid_cols   = seq(124, 316, by = 6),
+#'                        expr_rows  = 2:9783,  expr_cols  = seq(124, 316, by = 6),
+#'                        fvar_rows  = 1,       fvar_cols  = c(2, 6, 7, 383),
+#'                        fdata_rows = 2:9783,  fdata_cols = c(2, 6, 7, 383),
+#'                        transpose  = FALSE)
+#'    analysis(sumexp)
+#'    sumexp %<>% filter_features_("c('UBA6', 'KRT8') %in% `Gene names`")
+#'    analysis(sumexp)
 #' }
 #' }
 #' @export
 filter_features <- function(object, condition, verbose = FALSE){
-   # earlier version based on lazyeval (still functional, but soft deprecated by Hadley and co)
-   # filter_features_(object, lazyeval::lazy(condition), verbose = verbose)
-   condition <- rlang::enquo(condition)
-   idx <- rlang::eval_tidy(condition, fdata(object))
-   idx <- idx & !is.na(idx)
-   if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' features: ', rlang::expr_text(condition))
-   object %<>% magrittr::extract(idx,)
-   fdata(object) %<>% droplevels()
-   object
+    # earlier version based on lazyeval (still functional, but soft deprecated by Hadley and co)
+    # filter_features_(object, lazyeval::lazy(condition), verbose = verbose)
+    condition <- rlang::enquo(condition)
+    idx <- rlang::eval_tidy(condition, fdata(object))
+    idx <- idx & !is.na(idx)
+    if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' features: ', rlang::expr_text(condition))
+    object %<>% magrittr::extract(idx,)
+    fdata(object) %<>% droplevels()
+    if (!is.null(analysis(object))) {
+        analysis(object)$nfeatures %<>%
+            c(structure(sum(idx), names = rlang::as_name(condition)))
+    }
+    object
 }
 
 #' Identify reference features
@@ -119,11 +149,11 @@ filter_features <- function(object, condition, verbose = FALSE){
 #' @importFrom magrittr  %>%
 #' @export
 is_fvalue_feature <- function(object, fvar, split, fvalues){
-   fdata(object) %>%
-      magrittr::extract2(fvar) %>%
-      as.character() %>%
-      strsplit(split) %>%
-      vapply(function(x) any(x %in% fvalues), logical(1))
+    fdata(object) %>%
+        magrittr::extract2(fvar) %>%
+        as.character() %>%
+        strsplit(split) %>%
+        vapply(function(x) any(x %in% fvalues), logical(1))
 }
 
 
@@ -145,9 +175,14 @@ is_fvalue_feature <- function(object, fvar, split, fvalues){
 #' @importFrom magrittr       %>%     %<>%
 #' @export
 filter_features_on_fvalues <- function(object, fvar, split, fvalues){
-   fvalues %<>% unique()
-   idx <- object %>% is_fvalue_feature(fvar, split, fvalues)
-   object %>% magrittr::extract(idx, )
+    fvalues %<>% unique()
+    idx <- object %>% is_fvalue_feature(fvar, split, fvalues)
+    object %<>% magrittr::extract(idx, )
+    if (!is.null(analysis(object))) {
+        analysis(object)$nfeatures %<>%
+            c(structure(sum(idx), names = condition))
+    }
+    object
 }
 
 
@@ -161,13 +196,13 @@ filter_features_on_fvalues <- function(object, fvar, split, fvalues){
 #' @importFrom magrittr %<>%
 #' @export
 filter_samples_ <- function(object, condition, verbose = FALSE){
-   if (is.null(condition)) return(object)
-   idx <- lazyeval::lazy_eval(condition, sdata(object))
-   idx <- idx & !is.na(idx)
-   if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' samples: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
-   object %<>% magrittr::extract(, idx)
-   sdata(object) %<>% droplevels()
-   object
+    if (is.null(condition)) return(object)
+    idx <- lazyeval::lazy_eval(condition, sdata(object))
+    idx <- idx & !is.na(idx)
+    if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' samples: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
+    object %<>% magrittr::extract(, idx)
+    sdata(object) %<>% droplevels()
+    object
 }
 
 #' Filter samples on condition
@@ -182,14 +217,14 @@ filter_samples_ <- function(object, condition, verbose = FALSE){
 #' }
 #' @export
 filter_samples <- function(object, condition, verbose = FALSE){
-   # earlier version based on lazyeval (still functional, but soft deprecated by Hadley and co)
-   # filter_samples_(object, lazyeval::lazy(condition), verbose = verbose)
-   condition <- rlang::enquo(condition)
-   idx <- rlang::eval_tidy(condition, sdata(object))
-   idx <- idx & !is.na(idx)
-   if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' samples: ', rlang::expr_text(condition))
-   object %<>% magrittr::extract(, idx)
-   sdata(object) %<>% droplevels()
-   object
+    # earlier version based on lazyeval (still functional, but soft deprecated by Hadley and co)
+    # filter_samples_(object, lazyeval::lazy(condition), verbose = verbose)
+    condition <- rlang::enquo(condition)
+    idx <- rlang::eval_tidy(condition, sdata(object))
+    idx <- idx & !is.na(idx)
+    if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' samples: ', rlang::expr_text(condition))
+    object %<>% magrittr::extract(, idx)
+    sdata(object) %<>% droplevels()
+    object
 }
 
