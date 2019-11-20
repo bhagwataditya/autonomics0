@@ -53,7 +53,7 @@ filter_exprs_replicated_in_some_subgroup <- function(
             c(structure(
                 sum(idx),
                 names = sprintf(
-                    "exp %s %s, for at least two samples in some subgroup",
+                    "expr %s %s, for at least two samples in some subgroup",
                     comparator, as.character(lod))))
     }
     object
