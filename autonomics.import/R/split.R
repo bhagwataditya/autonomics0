@@ -16,7 +16,7 @@ split_by_svar <- function(object, svar = 'subgroup'){
    if (is.null(svar)) return(list(object))
 
    # Split
-   Map(function(sg) object %>% filter_samples_(sprintf("%s %%in%% '%s'", svar, sg)),
+   Map(function(sg) object %>% filter_samples_(sprintf("%s %%in%% '%s'", svar, sg), record = FALSE),
        slevels(object, svar))
 }
 

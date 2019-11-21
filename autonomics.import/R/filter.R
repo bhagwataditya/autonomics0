@@ -206,14 +206,14 @@ filter_features_on_fvalues <- function(object, fvar, split, fvalues){
 #' @rdname filter_samples
 #' @importFrom magrittr %<>%
 #' @export
-filter_samples_ <- function(object, condition, verbose = FALSE){
+filter_samples_ <- function(object, condition, verbose = FALSE, record = TRUE){
     if (is.null(condition)) return(object)
     idx <- lazyeval::lazy_eval(condition, sdata(object))
     idx <- idx & !is.na(idx)
     if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' samples: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
     object %<>% magrittr::extract(, idx)
     sdata(object) %<>% droplevels()
-    if (!is.null(analysis(object))) {
+    if (recrod && !is.null(analysis(object))) {
         analysis(object)$nsamples %<>%
             c(structure(
                 sum(idx),
@@ -226,6 +226,7 @@ filter_samples_ <- function(object, condition, verbose = FALSE){
 #' @param object SummarizedExperiment
 #' @param condition filter condition
 #' @param verbose logical
+#' @param record TRUE (default) or FALSE
 #' @return filtered SummarizedExperiment
 #' @examples
 #' if (require(autonomics.data)){
@@ -241,7 +242,7 @@ filter_samples_ <- function(object, condition, verbose = FALSE){
 #'    analysis(sumexp)$nsamples
 #' }
 #' @export
-filter_samples <- function(object, condition, verbose = FALSE){
+filter_samples <- function(object, condition, verbose = FALSE, record = TRUE){
     # earlier version based on lazyeval (still functional, but soft deprecated by Hadley and co)
     # filter_samples_(object, lazyeval::lazy(condition), verbose = verbose)
     condition <- rlang::enquo(condition)
@@ -250,7 +251,7 @@ filter_samples <- function(object, condition, verbose = FALSE){
     if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' samples: ', rlang::expr_text(condition))
     object %<>% magrittr::extract(, idx)
     sdata(object) %<>% droplevels()
-    if (!is.null(analysis(object))) {
+    if (record && !is.null(analysis(object))) {
         analysis(object)$nsamples %<>%
             c(structure(
                 sum(idx),
