@@ -213,7 +213,7 @@ filter_samples_ <- function(object, condition, verbose = FALSE, record = TRUE){
     if (verbose) if (verbose) message('\t\tRetain ', sum(idx), '/', length(idx), ' samples: ', if (class(condition)=='lazy') deparse(condition$expr) else condition)
     object %<>% magrittr::extract(, idx)
     sdata(object) %<>% droplevels()
-    if (recrod && !is.null(analysis(object))) {
+    if (record && !is.null(analysis(object))) {
         analysis(object)$nsamples %<>%
             c(structure(
                 sum(idx),
