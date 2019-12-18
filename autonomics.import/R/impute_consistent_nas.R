@@ -177,5 +177,5 @@ impute_around_zero <- function(x){
 }
 
 impute_row <- function(x, sd){
-   abs(rnorm(length(x), sd = sd))
+   abs(rnorm(length(x), sd = sd * 2))
 }
