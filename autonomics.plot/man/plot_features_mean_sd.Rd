@@ -4,9 +4,15 @@
 \alias{plot_features_mean_sd}
 \title{Mean/SD Plot(s)}
 \usage{
-plot_features_mean_sd(object, ..., exponent = c(0.5, 1, 2),
-  complete_data = TRUE, facet_labels = NULL,
-  facet_grid_labeller = "label_parsed", alpha = 0.1)
+plot_features_mean_sd(
+  object,
+  ...,
+  exponent = c(0.5, 1, 2),
+  complete_data = TRUE,
+  facet_labels = NULL,
+  facet_grid_labeller = "label_parsed",
+  alpha = 0.1
+)
 }
 \arguments{
 \item{object}{eSet, EList or SummarizedExperiment}

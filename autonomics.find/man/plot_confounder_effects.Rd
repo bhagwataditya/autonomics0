@@ -4,8 +4,12 @@
 \alias{plot_confounder_effects}
 \title{Plot confounder effects}
 \usage{
-plot_confounder_effects(object, confounders = character(), fvars,
-  color_var = "subgroup")
+plot_confounder_effects(
+  object,
+  confounders = character(),
+  fvars,
+  color_var = "subgroup"
+)
 }
 \arguments{
 \item{object}{exprs object}

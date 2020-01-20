@@ -4,8 +4,13 @@
 \alias{merge_sdata}
 \title{Merge sdata into SummarizedExperiment}
 \usage{
-merge_sdata(object, newdata, by = "sample_id", newdata_first = FALSE,
-  verbose = TRUE)
+merge_sdata(
+  object,
+  newdata,
+  by = "sample_id",
+  newdata_first = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

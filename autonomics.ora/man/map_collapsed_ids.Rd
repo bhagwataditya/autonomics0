@@ -4,8 +4,13 @@
 \alias{map_collapsed_ids}
 \title{Map collapsed ids from one identifer format to another}
 \usage{
-map_collapsed_ids(x, from = c("SYMBOL", "ENTREZID", "UNIPROT"),
-  to = c("SYMBOL", "ENTREZID", "UNIPROT"), org.xx.eg.db, split = ";")
+map_collapsed_ids(
+  x,
+  from = c("SYMBOL", "ENTREZID", "UNIPROT"),
+  to = c("SYMBOL", "ENTREZID", "UNIPROT"),
+  org.xx.eg.db,
+  split = ";"
+)
 }
 \arguments{
 \item{x}{vector with collapsed entrezg ids}

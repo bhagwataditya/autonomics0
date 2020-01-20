@@ -15,5 +15,5 @@ cmessage(format_string, ...)
 Print message to screen with sprintf syntax
 }
 \examples{
-cmessage('\\t\%s\\t\%s', 'Hi', 'there')
+cmessage('\t\%s\t\%s', 'Hi', 'there')
 }

@@ -4,11 +4,18 @@
 \alias{prepare_proteingroups}
 \title{Prepare proteingroups}
 \usage{
-prepare_proteingroups(object, filter_reverse = TRUE,
-  filter_contaminants = TRUE, filter_complete_nondetects = TRUE,
-  invert_subgroups = character(0), log2transform = TRUE,
-  impute_consistent_nas = TRUE, deconvolution_fastafile = NULL,
-  verbose = TRUE, plot = TRUE)
+prepare_proteingroups(
+  object,
+  filter_reverse = TRUE,
+  filter_contaminants = TRUE,
+  filter_complete_nondetects = TRUE,
+  invert_subgroups = character(0),
+  log2transform = TRUE,
+  impute_consistent_nas = TRUE,
+  deconvolution_fastafile = NULL,
+  verbose = TRUE,
+  plot = TRUE
+)
 }
 \arguments{
 \item{filter_reverse}{logical:   filter out "reverse peptide" groups (used for peptide identification FDR computation)?}

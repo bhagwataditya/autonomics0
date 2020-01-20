@@ -4,11 +4,22 @@
 \alias{plot_venn}
 \title{Plot Venn/Euler diagram}
 \usage{
-plot_venn(x, color_values = if (assertive.properties::has_names(x)) {    
-  make_colors(names(x)) } else {     make_gg_colors(1:length(x)) },
-  euler = FALSE, filename = NULL, width = 7, height = width,
-  title = NULL, scaled = FALSE, cat.dist = 0.3, margin = cat.dist,
-  main.cex = 1.5, main.pos = c(0.5, 0.97), ...)
+plot_venn(
+  x,
+  color_values = if (assertive.properties::has_names(x)) {     make_colors(names(x)) }
+    else {     make_gg_colors(1:length(x)) },
+  euler = FALSE,
+  filename = NULL,
+  width = 7,
+  height = width,
+  title = NULL,
+  scaled = FALSE,
+  cat.dist = 0.3,
+  margin = cat.dist,
+  main.cex = 1.5,
+  main.pos = c(0.5, 0.97),
+  ...
+)
 }
 \arguments{
 \item{x}{named list of character vectors}

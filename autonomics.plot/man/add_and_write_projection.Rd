@@ -8,14 +8,21 @@
 \alias{add_and_write_lda}
 \title{Run pca/pls/lda/sma and write results}
 \usage{
-add_and_write_projection(object, method, implementation = NULL,
-  result_dir, geom = default_feature_plots(object),
-  x = default_x(object, geom), color_var = default_color_var(object),
+add_and_write_projection(
+  object,
+  method,
+  implementation = NULL,
+  result_dir,
+  geom = default_feature_plots(object),
+  x = default_x(object, geom),
+  color_var = default_color_var(object),
   color_values = default_color_values(object, color_var),
   shape_var = default_shape_var(object),
   group_var = default_group_var(object),
-  txt_var = default_txt_var(object), line = default_line(object),
-  na.impute = FALSE)
+  txt_var = default_txt_var(object),
+  line = default_line(object),
+  na.impute = FALSE
+)
 
 add_and_write_pca(object, ...)
 

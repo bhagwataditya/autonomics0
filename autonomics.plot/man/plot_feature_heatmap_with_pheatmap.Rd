@@ -4,10 +4,19 @@
 \alias{plot_feature_heatmap_with_pheatmap}
 \title{Plot feature heatmap}
 \usage{
-plot_feature_heatmap_with_pheatmap(object, fvar = "feature_id",
-  filename = NULL, width = 7, height = 7, cellheight = 8,
-  fontsize = 6, treeheight_row = 0, treeheight_col = 0,
-  cluster_cols = FALSE, ...)
+plot_feature_heatmap_with_pheatmap(
+  object,
+  fvar = "feature_id",
+  filename = NULL,
+  width = 7,
+  height = 7,
+  cellheight = 8,
+  fontsize = 6,
+  treeheight_row = 0,
+  treeheight_col = 0,
+  cluster_cols = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

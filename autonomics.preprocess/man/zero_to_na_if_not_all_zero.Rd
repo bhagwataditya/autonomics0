@@ -4,8 +4,10 @@
 \alias{zero_to_na_if_not_all_zero}
 \title{NA inconsistent zeroes}
 \usage{
-zero_to_na_if_not_all_zero(object, no_zero = c("fail",
-  "warn_passthrough", "passthrough")[1])
+zero_to_na_if_not_all_zero(
+  object,
+  no_zero = c("fail", "warn_passthrough", "passthrough")[1]
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

@@ -10,8 +10,7 @@ demultiplex_snames(x, ...)
 
 \method{demultiplex_snames}{character}(x, verbose = FALSE, ...)
 
-\method{demultiplex_snames}{SummarizedExperiment}(x, verbose = FALSE,
-  ...)
+\method{demultiplex_snames}{SummarizedExperiment}(x, verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{character vector or SummarizedExperiment}

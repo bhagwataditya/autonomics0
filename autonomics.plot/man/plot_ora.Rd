@@ -4,10 +4,15 @@
 \alias{plot_ora}
 \title{Plot ORA results}
 \usage{
-plot_ora(ora_results, top_n = 5, collections = c("gobp", "gocc",
-  "gomf", "kegg"), directions = c("neg", "pos", "both"),
-  contrasts = NULL, facet_var_x = "contrast",
-  facet_var_y = "direction")
+plot_ora(
+  ora_results,
+  top_n = 5,
+  collections = c("gobp", "gocc", "gomf", "kegg"),
+  directions = c("neg", "pos", "both"),
+  contrasts = NULL,
+  facet_var_x = "contrast",
+  facet_var_y = "direction"
+)
 }
 \arguments{
 \item{ora_results}{\code{\link{data.frame}} as (silently) returned from \code{autonomics.ora::run_ora_on_eset}}

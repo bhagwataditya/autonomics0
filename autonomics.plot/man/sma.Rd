@@ -29,7 +29,7 @@ Returns \code{SMA} sample scores, feature loadings, and component variances.
 \code{SMA} and \code{PCA} are related: their \code{SVD} is identical, but score and loading computation differ:\preformatted{   PCA Scores  : U * D
    SMA Scores  : U * D^(1/2)
 
-PCA Loadings:         V
+   PCA Loadings:         V
    SMA Loadings: D^(1/2)*V
 }
 }

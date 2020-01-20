@@ -4,10 +4,14 @@
 \alias{preprocess_smart}
 \title{Sample normalize object automatically}
 \usage{
-preprocess_smart(object, plot = TRUE, result_dir = NULL,
+preprocess_smart(
+  object,
+  plot = TRUE,
+  result_dir = NULL,
   color_var = autonomics.plot::default_color_var(object),
   shape_var = autonomics.plot::default_shape_var(object),
-  txt_var = autonomics.plot::default_txt_var(object))
+  txt_var = autonomics.plot::default_txt_var(object)
+)
 }
 \arguments{
 \item{object}{eset}

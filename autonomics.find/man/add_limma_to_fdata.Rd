@@ -4,9 +4,11 @@
 \alias{add_limma_to_fdata}
 \title{Run "limma" analysis and add to SummarizedExperiment}
 \usage{
-add_limma_to_fdata(object,
+add_limma_to_fdata(
+  object,
   contrasts = autonomics.find::default_contrasts(object),
-  design = autonomics.import::create_design_matrix(object))
+  design = autonomics.import::create_design_matrix(object)
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

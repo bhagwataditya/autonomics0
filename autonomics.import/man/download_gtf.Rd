@@ -4,9 +4,12 @@
 \alias{download_gtf}
 \title{Download GTF file}
 \usage{
-download_gtf(organism, release = 95,
-  gtffile = sprintf("~/.autonomics/gtf/\%s",
-  basename(make_gtf_url(organism, release) \%>\% substr(1, nchar(.) - 3))))
+download_gtf(
+  organism,
+  release = 95,
+  gtffile = sprintf("~/.autonomics/gtf/\%s", basename(make_gtf_url(organism, release)
+    \%>\% substr(1, nchar(.) - 3)))
+)
 }
 \arguments{
 \item{organism}{'Homo sapiens', 'Mus musculus' or 'Rattus norvegicus'}

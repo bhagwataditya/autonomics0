@@ -4,9 +4,11 @@
 \alias{run_ora_on_sumexp}
 \title{Run ora on sumexp}
 \usage{
-run_ora_on_sumexp(object,
+run_ora_on_sumexp(
+  object,
   top_definition = autonomics.find::default_top_definition(object),
-  oraset_var = "goid")
+  oraset_var = "goid"
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

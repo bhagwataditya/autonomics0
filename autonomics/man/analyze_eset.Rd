@@ -5,25 +5,41 @@
 \alias{analyze_eset}
 \title{Analyze SummarizeExperiment}
 \usage{
-analyze_contrasts(object, result_dir = default_result_dir(object),
+analyze_contrasts(
+  object,
+  result_dir = default_result_dir(object),
   design = autonomics.find::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
   direction = c("neg", "pos"),
-  topdef = autonomics.find::default_topdef(object), universe = NULL,
+  topdef = autonomics.find::default_topdef(object),
+  universe = NULL,
   cluster_features = autonomics::default_cluster_features(),
   nplot = autonomics.find::default_nplot(object),
-  feature_plot_width = NULL, feature_plot_height = NULL,
-  min_set_size = 5, max_set_size = Inf, ...)
+  feature_plot_width = NULL,
+  feature_plot_height = NULL,
+  min_set_size = 5,
+  max_set_size = Inf,
+  ...
+)
 
-analyze_eset(object, result_dir = default_result_dir(object),
+analyze_eset(
+  object,
+  result_dir = default_result_dir(object),
   design = autonomics.import::create_design_matrix(object),
   contrasts = autonomics.find::default_contrasts(object),
-  topdef = autonomics.find::default_topdef(object), universe = NULL,
-  dodge_width = 0, do_pca = TRUE,
+  topdef = autonomics.find::default_topdef(object),
+  universe = NULL,
+  dodge_width = 0,
+  do_pca = TRUE,
   cluster_features = default_cluster_features(),
   nplot = autonomics.find::default_nplot(object),
-  feature_plot_width = NULL, feature_plot_height = NULL,
-  min_set_size = 5, max_set_size = Inf, zip_results = FALSE, ...)
+  feature_plot_width = NULL,
+  feature_plot_height = NULL,
+  min_set_size = 5,
+  max_set_size = Inf,
+  zip_results = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

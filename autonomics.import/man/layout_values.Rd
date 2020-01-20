@@ -17,8 +17,7 @@ layout_values(x, ...)
 
 \method{layout_values}{factor}(x, sep = guess_sep(x), ...)
 
-\method{layout_values}{SummarizedExperiment}(x, svar = "subgroup",
-  sep = guess_sep(x), ...)
+\method{layout_values}{SummarizedExperiment}(x, svar = "subgroup", sep = guess_sep(x), ...)
 }
 \arguments{
 \item{x}{character(n), factor(n), or SummarizedExperiment with composite (s)values}

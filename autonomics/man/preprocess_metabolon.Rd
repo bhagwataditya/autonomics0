@@ -4,10 +4,14 @@
 \alias{preprocess_metabolon}
 \title{Normalize metabolon data}
 \usage{
-preprocess_metabolon(object, plot, result_dir = NULL,
+preprocess_metabolon(
+  object,
+  plot,
+  result_dir = NULL,
   color_var = autonomics.plot::default_color_var(object),
   shape_var = autonomics.plot::default_shape_var(object),
-  txt_var = autonomics.plot::default_txt_var(object))
+  txt_var = autonomics.plot::default_txt_var(object)
+)
 }
 \arguments{
 \item{object}{eset}

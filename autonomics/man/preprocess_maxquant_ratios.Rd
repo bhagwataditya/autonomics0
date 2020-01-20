@@ -4,10 +4,14 @@
 \alias{preprocess_maxquant_ratios}
 \title{Preprocess max quant ratios}
 \usage{
-preprocess_maxquant_ratios(object, plot, result_dir = NULL,
+preprocess_maxquant_ratios(
+  object,
+  plot,
+  result_dir = NULL,
   color_var = autonomics.plot::default_color_var(object),
   shape_var = autonomics.plot::default_shape_var(object),
-  txt_var = autonomics.plot::default_txt_var(object))
+  txt_var = autonomics.plot::default_txt_var(object)
+)
 }
 \arguments{
 \item{object}{eset}

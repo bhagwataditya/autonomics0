@@ -9,15 +9,34 @@
 \usage{
 extract_rectangle(x, ...)
 
-\method{extract_rectangle}{character}(x, rows = 1:nrows(x, sheet =
-  sheet), cols = 1:ncols(x, sheet = sheet), verbose = FALSE,
-  transpose = FALSE, drop = FALSE, sheet = 1, ...)
+\method{extract_rectangle}{character}(
+  x,
+  rows = 1:nrows(x, sheet = sheet),
+  cols = 1:ncols(x, sheet = sheet),
+  verbose = FALSE,
+  transpose = FALSE,
+  drop = FALSE,
+  sheet = 1,
+  ...
+)
 
-\method{extract_rectangle}{data.table}(x, rows = 1:nrow(x),
-  cols = 1:ncol(x), transpose = FALSE, drop = FALSE, ...)
+\method{extract_rectangle}{data.table}(
+  x,
+  rows = 1:nrow(x),
+  cols = 1:ncol(x),
+  transpose = FALSE,
+  drop = FALSE,
+  ...
+)
 
-\method{extract_rectangle}{matrix}(x, rows = 1:nrow(x),
-  cols = 1:ncol(x), transpose = FALSE, drop = FALSE, ...)
+\method{extract_rectangle}{matrix}(
+  x,
+  rows = 1:nrow(x),
+  cols = 1:ncol(x),
+  transpose = FALSE,
+  drop = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{omics datafile or datatable}

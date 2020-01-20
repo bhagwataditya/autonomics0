@@ -8,19 +8,33 @@
 \alias{plot_feature_boxes}
 \title{Plot features}
 \usage{
-plot_features(object, geom = default_feature_plots(object)[1],
+plot_features(
+  object,
+  geom = default_feature_plots(object)[1],
   x = default_x(object, geom[1]),
   color_var = default_color_var(object),
   color_values = default_color_values(object, color_var),
   shape_var = default_shape_var(object),
   group_var = default_group_var(object),
-  txt_var = default_txt_var(object), facet_var = NULL,
-  alpha_var = NULL, fvars = default_fvars(object), title = "",
-  scales = "free_y", x_text_angle = 90, line = default_line(object),
-  zero_hline = default_zero_hline(object), xlab = NULL, ylab = NULL,
-  dodge_width = 0, verbose = FALSE, file = NULL, width = NULL,
-  height = NULL, theme = ggplot2::theme_bw(),
-  legend.position = "right")
+  txt_var = default_txt_var(object),
+  facet_var = NULL,
+  alpha_var = NULL,
+  fvars = default_fvars(object),
+  title = "",
+  scales = "free_y",
+  x_text_angle = 90,
+  line = default_line(object),
+  zero_hline = default_zero_hline(object),
+  xlab = NULL,
+  ylab = NULL,
+  dodge_width = 0,
+  verbose = FALSE,
+  file = NULL,
+  width = NULL,
+  height = NULL,
+  theme = ggplot2::theme_bw(),
+  legend.position = "right"
+)
 
 plot_feature_bars(...)
 

@@ -8,14 +8,23 @@
 \alias{plot_pls_samples_and_features}
 \title{Plot pca samples and features}
 \usage{
-plot_projected_samples_and_features(object, method,
-  implementation = NULL, dims = c(1, 2), na.impute = FALSE,
-  geom = default_feature_plots(object)[1], result_dir = NULL,
-  x = default_x(object, geom), color_var = default_color_var(object),
+plot_projected_samples_and_features(
+  object,
+  method,
+  implementation = NULL,
+  dims = c(1, 2),
+  na.impute = FALSE,
+  geom = default_feature_plots(object)[1],
+  result_dir = NULL,
+  x = default_x(object, geom),
+  color_var = default_color_var(object),
   color_values = default_color_values(object, color_var),
-  shape_var = NULL, group_var = default_group_var(object),
-  txt_var = default_txt_var(object), line = default_line(object),
-  n = 9)
+  shape_var = NULL,
+  group_var = default_group_var(object),
+  txt_var = default_txt_var(object),
+  line = default_line(object),
+  n = 9
+)
 
 plot_pca_samples_and_features(object, ...)
 

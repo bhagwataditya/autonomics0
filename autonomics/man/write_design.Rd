@@ -4,8 +4,12 @@
 \alias{write_design}
 \title{Write design}
 \usage{
-write_design(object, subgroup_var = NULL, sep = object \%>\%
-  autonomics.import::guess_sep(verbose = TRUE), file = NULL)
+write_design(
+  object,
+  subgroup_var = NULL,
+  sep = object \%>\% autonomics.import::guess_sep(verbose = TRUE),
+  file = NULL
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

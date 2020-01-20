@@ -4,9 +4,11 @@
 \alias{create_grid_arrow_plot}
 \title{Create grid arrow plot}
 \usage{
-create_grid_arrow_plot(object, color_var = object \%>\%
-  autonomics.plot::default_color_var(), color_values = object \%>\%
-  autonomics.plot::default_color_values(color_var))
+create_grid_arrow_plot(
+  object,
+  color_var = object \%>\% autonomics.plot::default_color_var(),
+  color_values = object \%>\% autonomics.plot::default_color_values(color_var)
+)
 }
 \description{
 Create grid arrow plot

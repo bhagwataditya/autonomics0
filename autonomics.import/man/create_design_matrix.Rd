@@ -4,9 +4,11 @@
 \alias{create_design_matrix}
 \title{Create design matrix for statistical analysis}
 \usage{
-create_design_matrix(object,
+create_design_matrix(
+  object,
   intercept = length(unique(sdata(object)$subgroup)) == 1,
-  confounders = character(0))
+  confounders = character(0)
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

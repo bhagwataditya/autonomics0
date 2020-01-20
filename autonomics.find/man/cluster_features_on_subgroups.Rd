@@ -4,13 +4,17 @@
 \alias{cluster_features_on_subgroups}
 \title{Cluster features on subgroup profiles}
 \usage{
-cluster_features_on_subgroups(object, result_dir,
-  geom = autonomics.plot::default_feature_plots(object) \%>\%
-  setdiff("bars"), x = autonomics.plot::default_x(object, geom[1]),
+cluster_features_on_subgroups(
+  object,
+  result_dir,
+  geom = autonomics.plot::default_feature_plots(object) \%>\% setdiff("bars"),
+  x = autonomics.plot::default_x(object, geom[1]),
   color_var = autonomics.plot::default_color_var(object),
   shape_var = autonomics.plot::default_shape_var(object),
   group_var = autonomics.plot::default_group_var(object),
-  txt_var = autonomics.plot::default_txt_var(object), line = TRUE)
+  txt_var = autonomics.plot::default_txt_var(object),
+  line = TRUE
+)
 }
 \arguments{
 \item{object}{eset}

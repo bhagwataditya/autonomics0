@@ -4,9 +4,12 @@
 \alias{prepare_phosphosites}
 \title{Prepare phosphosites}
 \usage{
-prepare_phosphosites(object, min_localization_prob = 0.75,
+prepare_phosphosites(
+  object,
+  min_localization_prob = 0.75,
   proteingroups_file = paste0(dirname(file), "/proteinGroups.txt"),
-  verbose = FALSE)
+  verbose = FALSE
+)
 }
 \arguments{
 \item{min_localization_prob}{numeric(1)}

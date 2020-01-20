@@ -13,8 +13,12 @@ kegg_entry_to_pathways(x, ...)
 
 \method{kegg_entry_to_pathways}{factor}(x, ...)
 
-\method{kegg_entry_to_pathways}{SummarizedExperiment}(x,
-  entry_var = "KEGG", pathway_var = "KEGGPATHWAYS", ...)
+\method{kegg_entry_to_pathways}{SummarizedExperiment}(
+  x,
+  entry_var = "KEGG",
+  pathway_var = "KEGGPATHWAYS",
+  ...
+)
 }
 \arguments{
 \item{x}{charactervector, factorvector, or SummarizedExperiment}

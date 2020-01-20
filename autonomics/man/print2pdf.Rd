@@ -4,5 +4,5 @@
 \alias{print2pdf}
 \title{Print ggplot to pdf}
 \description{
-\code{\link[autonomics.support]{print2pdf}}
+\code{\link[autonomics.plot]{print2pdf}}
 }

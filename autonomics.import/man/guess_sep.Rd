@@ -11,13 +11,17 @@
 \usage{
 guess_sep(x, ...)
 
-\method{guess_sep}{character}(x, possible_separators = c(".", " ", "_"),
-  verbose = FALSE, ...)
+\method{guess_sep}{character}(x, possible_separators = c(".", " ", "_"), verbose = FALSE, ...)
 
 \method{guess_sep}{factor}(x, ...)
 
-\method{guess_sep}{SummarizedExperiment}(x, var = "sample_id",
-  possible_separators = c(".", "_", " "), verbose = FALSE, ...)
+\method{guess_sep}{SummarizedExperiment}(
+  x,
+  var = "sample_id",
+  possible_separators = c(".", "_", " "),
+  verbose = FALSE,
+  ...
+)
 
 ssep(...)
 

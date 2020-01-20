@@ -4,8 +4,11 @@
 \alias{filter_exprs_replicated_in_some_subgroup}
 \title{Filter features with replicated expression in some subgroup}
 \usage{
-filter_exprs_replicated_in_some_subgroup(object, comparator = if
-  (contains_ratios(object)) "!=" else ">", lod = 0)
+filter_exprs_replicated_in_some_subgroup(
+  object,
+  comparator = if (contains_ratios(object)) "!=" else ">",
+  lod = 0
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

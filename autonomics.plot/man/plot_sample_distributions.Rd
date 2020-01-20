@@ -4,13 +4,19 @@
 \alias{plot_sample_distributions}
 \title{Plot distribution across features for each sample}
 \usage{
-plot_sample_distributions(object, ..., x = NULL,
+plot_sample_distributions(
+  object,
+  ...,
+  x = NULL,
   color_var = default_color_var(object),
   color_values = default_color_values(object, color_var),
-  displayed_features = NULL, jitter_features = FALSE,
-  horizontal = TRUE, xlab = "", ylab = "",
-  title = sprintf("Per sample distribution of all \%d features",
-  nrow(object)))
+  displayed_features = NULL,
+  jitter_features = FALSE,
+  horizontal = TRUE,
+  xlab = "",
+  ylab = "",
+  title = sprintf("Per sample distribution of all \%d features", nrow(object))
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

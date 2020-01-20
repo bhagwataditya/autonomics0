@@ -4,11 +4,15 @@
 \alias{plot_sample_distrs_n_pca}
 \title{Plot sample distributions and pca}
 \usage{
-plot_sample_distrs_n_pca(object, descr = "",
+plot_sample_distrs_n_pca(
+  object,
+  descr = "",
   color_var = default_color_var(object),
   color_values = default_color_values(object),
   shape_var = default_shape_var(object),
-  txt_var = default_txt_var(object), displayed_features = NULL)
+  txt_var = default_txt_var(object),
+  displayed_features = NULL
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

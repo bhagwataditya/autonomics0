@@ -4,9 +4,11 @@
 \alias{subtract_median_ref_exprs}
 \title{Subtract median ref exprs}
 \usage{
-subtract_median_ref_exprs(object,
+subtract_median_ref_exprs(
+  object,
   ref = levels(autonomics.import::sdata(object)$subgroup)[1],
-  method = "arithmetic")
+  method = "arithmetic"
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

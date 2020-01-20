@@ -4,13 +4,17 @@
 \alias{run_ora_on_eset}
 \title{Run over representation analysis}
 \usage{
-run_ora_on_eset(object,
-  contrasts = autonomics.find::default_contrasts(object), result_dir,
+run_ora_on_eset(
+  object,
+  contrasts = autonomics.find::default_contrasts(object),
+  result_dir,
   gene_set_collections = GENE_SET_COLLECTIONS,
   top_definition = autonomics.find::default_top_definition(object),
-  universe = default_universe(object), min_set_size = 5,
+  universe = default_universe(object),
+  min_set_size = 5,
   max_set_size = Inf,
-  ora_detectome_in_genome = default_ora_detectome_in_genome())
+  ora_detectome_in_genome = default_ora_detectome_in_genome()
+)
 }
 \arguments{
 \item{object}{eset as returned by \code{\link[autonomics.find]{add_limma_to_fdata}}}

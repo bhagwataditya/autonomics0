@@ -4,11 +4,16 @@
 \alias{prepare_exiqon}
 \title{Prepare exiqon sumexp for analysis}
 \usage{
-prepare_exiqon(object,
+prepare_exiqon(
+  object,
   filter_features = "`#RefGenes`==0 & `#Spike`   ==0",
-  align_sample_means = TRUE, lod = 37,
+  align_sample_means = TRUE,
+  lod = 37,
   qrilc_consistent_nondetects = TRUE,
-  filter_conserved_in_human = FALSE, plot = TRUE, verbose = TRUE)
+  filter_conserved_in_human = FALSE,
+  plot = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{filter_features}{string: fvar condition on which to filter features}

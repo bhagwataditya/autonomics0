@@ -4,11 +4,16 @@
 \alias{prepare_somascan}
 \title{Prepare somascan}
 \usage{
-prepare_somascan(object, filter_sample_type = "Sample",
-  filter_feature_type = "Protein", filter_sample_quality = c("FLAG",
-  "PASS"), filter_feature_quality = c("FLAG", "PASS"),
-  rm_na_svars = TRUE, rm_single_value_svars = TRUE,
-  log2transform = TRUE)
+prepare_somascan(
+  object,
+  filter_sample_type = "Sample",
+  filter_feature_type = "Protein",
+  filter_sample_quality = c("FLAG", "PASS"),
+  filter_feature_quality = c("FLAG", "PASS"),
+  rm_na_svars = TRUE,
+  rm_single_value_svars = TRUE,
+  log2transform = TRUE
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

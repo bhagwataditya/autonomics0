@@ -4,8 +4,16 @@
 \alias{plot.data.table}
 \title{Plot}
 \usage{
-\method{plot}{data.table}(plotdt, geom, stat, ..., coord_flip = FALSE,
-  xlab = NULL, ylab = NULL, title = NULL)
+\method{plot}{data.table}(
+  plotdt,
+  geom,
+  stat,
+  ...,
+  coord_flip = FALSE,
+  xlab = NULL,
+  ylab = NULL,
+  title = NULL
+)
 }
 \arguments{
 \item{geom}{string: ggplot2 geom}

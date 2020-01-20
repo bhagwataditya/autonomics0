@@ -4,9 +4,11 @@
 \alias{get_median_ref_exprs}
 \title{Get median reference exprs}
 \usage{
-get_median_ref_exprs(object,
+get_median_ref_exprs(
+  object,
   ref = levels(autonomics.import::sdata(object)$subgroup)[1],
-  method = "arithmetic")
+  method = "arithmetic"
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

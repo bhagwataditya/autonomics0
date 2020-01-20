@@ -4,8 +4,12 @@
 \alias{impute}
 \title{Impute}
 \usage{
-impute(object, method = c("none", "missForest", "impute.minDet",
-  "impute.minProb", "impute.QRILC"), random_seed = NULL, ...)
+impute(
+  object,
+  method = c("none", "missForest", "impute.minDet", "impute.minProb", "impute.QRILC"),
+  random_seed = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment, eSet, or EList}

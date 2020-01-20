@@ -4,8 +4,11 @@
 \alias{prepare_rnaseq}
 \title{Prepare rnaseq counts for analysis}
 \usage{
-prepare_rnaseq(object, filter_exprs_replicated_in_some_subgroup = FALSE,
-  plot = TRUE)
+prepare_rnaseq(
+  object,
+  filter_exprs_replicated_in_some_subgroup = FALSE,
+  plot = TRUE
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

@@ -8,30 +8,71 @@
 \alias{plot_pls_features}
 \title{Plot PCA/PLS/LDA/SMA features}
 \usage{
-plot_projection_features(object, method, implementation = NULL,
+plot_projection_features(
+  object,
+  method,
+  implementation = NULL,
   geom = default_feature_plots(object)[1],
-  fvars = default_fvars(object), dim = 1, n = 9, na.impute = FALSE,
-  title = sprintf("X\%d", dim), file = NULL, ...)
+  fvars = default_fvars(object),
+  dim = 1,
+  n = 9,
+  na.impute = FALSE,
+  title = sprintf("X\%d", dim),
+  file = NULL,
+  ...
+)
 
-plot_pca_features(object, implementation = NULL,
+plot_pca_features(
+  object,
+  implementation = NULL,
   geom = default_feature_plots(object)[1],
-  fvars = default_fvars(object), dim = 1, n = 9, na.impute = FALSE,
-  title = sprintf("X\%d", dim), file = NULL, ...)
+  fvars = default_fvars(object),
+  dim = 1,
+  n = 9,
+  na.impute = FALSE,
+  title = sprintf("X\%d", dim),
+  file = NULL,
+  ...
+)
 
-plot_sma_features(object, implementation = NULL,
+plot_sma_features(
+  object,
+  implementation = NULL,
   geom = default_feature_plots(object)[1],
-  fvars = default_fvars(object), dim = 1, n = 9, na.impute = FALSE,
-  title = sprintf("X\%d", dim), file = NULL, ...)
+  fvars = default_fvars(object),
+  dim = 1,
+  n = 9,
+  na.impute = FALSE,
+  title = sprintf("X\%d", dim),
+  file = NULL,
+  ...
+)
 
-plot_lda_features(object, implementation = NULL,
+plot_lda_features(
+  object,
+  implementation = NULL,
   geom = default_feature_plots(object)[1],
-  fvars = default_fvars(object), dim = 1, n = 9, na.impute = FALSE,
-  title = sprintf("X\%d", dim), file = NULL, ...)
+  fvars = default_fvars(object),
+  dim = 1,
+  n = 9,
+  na.impute = FALSE,
+  title = sprintf("X\%d", dim),
+  file = NULL,
+  ...
+)
 
-plot_pls_features(object, implementation = NULL,
+plot_pls_features(
+  object,
+  implementation = NULL,
   geom = default_feature_plots(object)[1],
-  fvars = default_fvars(object), dim = 1, n = 9, na.impute = FALSE,
-  title = sprintf("X\%d", dim), file = NULL, ...)
+  fvars = default_fvars(object),
+  dim = 1,
+  n = 9,
+  na.impute = FALSE,
+  title = sprintf("X\%d", dim),
+  file = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

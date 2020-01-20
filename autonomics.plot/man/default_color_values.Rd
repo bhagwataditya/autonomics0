@@ -4,8 +4,11 @@
 \alias{default_color_values}
 \title{Default color values}
 \usage{
-default_color_values(object, color_var = default_color_var(object),
-  show = FALSE)
+default_color_values(
+  object,
+  color_var = default_color_var(object),
+  show = FALSE
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

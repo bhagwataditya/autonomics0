@@ -7,8 +7,7 @@
 \usage{
 filter_n_arrange_top_features(...)
 
-filter_n_arrange_contrast_features(object, contrast_name, topdef,
-  nmax = Inf)
+filter_n_arrange_contrast_features(object, contrast_name, topdef, nmax = Inf)
 }
 \arguments{
 \item{...}{for backward compatibility only}

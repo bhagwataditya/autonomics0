@@ -5,9 +5,14 @@
 \alias{load_metabolon}
 \title{Read metabolon}
 \usage{
-read_metabolon(file, sheet = 2, fid_var = "COMP_ID",
-  sid_var = "CLIENT_IDENTIFIER", subgroup_var = "Group",
-  fname_var = "BIOCHEMICAL")
+read_metabolon(
+  file,
+  sheet = 2,
+  fid_var = "COMP_ID",
+  sid_var = "CLIENT_IDENTIFIER",
+  subgroup_var = "Group",
+  fname_var = "BIOCHEMICAL"
+)
 
 load_metabolon(file, sheet = 2, ...)
 }

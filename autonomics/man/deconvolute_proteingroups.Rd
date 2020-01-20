@@ -4,8 +4,12 @@
 \alias{deconvolute_proteingroups}
 \title{Deconvolute proteingroups}
 \usage{
-deconvolute_proteingroups(object, fastafile, fastafields = c("GENES",
-  "PROTEIN-NAMES", "EXISTENCE", "REVIEWED"), drop_isoform_info = FALSE)
+deconvolute_proteingroups(
+  object,
+  fastafile,
+  fastafields = c("GENES", "PROTEIN-NAMES", "EXISTENCE", "REVIEWED"),
+  drop_isoform_info = FALSE
+)
 }
 \arguments{
 \item{object}{SummerizedExperiment with proteinGroups data}

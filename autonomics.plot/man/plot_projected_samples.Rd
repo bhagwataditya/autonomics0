@@ -8,65 +8,128 @@
 \alias{plot_pls_samples}
 \title{Plot PCA/LDA/PLS/SMA sample scores}
 \usage{
-plot_projected_samples(object, ..., listed_objects = NULL,
+plot_projected_samples(
+  object,
+  ...,
+  listed_objects = NULL,
   method = c("pca", "lda", "sma", "pls")[1],
-  implementation = c("mixOmics::plsda", "mixOmics::splsda",
-  "ropls::opls")[1], dims = 1:2, color_var = "subgroup",
+  implementation = c("mixOmics::plsda", "mixOmics::splsda", "ropls::opls")[1],
+  dims = 1:2,
+  color_var = "subgroup",
   color_values = default_color_values(object, color_var),
-  shape_var = default_shape_var(object), size_var = NULL,
-  txt_var = default_txt_var(object), txt_outliers = FALSE,
-  group_var = NULL, split_var = NULL, facet_var = NULL,
+  shape_var = default_shape_var(object),
+  size_var = NULL,
+  txt_var = default_txt_var(object),
+  txt_outliers = FALSE,
+  group_var = NULL,
+  split_var = NULL,
+  facet_var = NULL,
   scales = ifelse(is.null(facet_var), "fixed", "free"),
   labs = list(color = stringi::stri_trans_totitle(color_var), shape =
-  stringi::stri_trans_totitle(shape_var)), nrow = NULL,
+    stringi::stri_trans_totitle(shape_var)),
+  nrow = NULL,
   mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
-  title = NULL, na.impute = FALSE, legend.position = "right")
+  title = NULL,
+  na.impute = FALSE,
+  legend.position = "right"
+)
 
-plot_pca_samples(object, ..., listed_objects = NULL, dims = 1:2,
-  color_var = "subgroup", color_values = default_color_values(object,
-  color_var), shape_var = default_shape_var(object), size_var = NULL,
-  txt_var = default_txt_var(object), txt_outliers = FALSE,
-  group_var = NULL, split_var = NULL, facet_var = NULL,
-  scales = ifelse(is.null(facet_var), "fixed", "free"),
-  labs = list(color = stringi::stri_trans_totitle(color_var), shape =
-  stringi::stri_trans_totitle(shape_var)), nrow = NULL,
-  mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
-  title = NULL, na.impute = FALSE, legend.position = "right")
-
-plot_sma_samples(object, ..., listed_objects = NULL, dims = 1:2,
-  color_var = "subgroup", color_values = default_color_values(object,
-  color_var), shape_var = default_shape_var(object), size_var = NULL,
-  txt_var = default_txt_var(object), txt_outliers = FALSE,
-  group_var = NULL, split_var = NULL, facet_var = NULL,
-  scales = ifelse(is.null(facet_var), "fixed", "free"),
-  labs = list(color = stringi::stri_trans_totitle(color_var), shape =
-  stringi::stri_trans_totitle(shape_var)), nrow = NULL,
-  mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
-  title = NULL, na.impute = FALSE, legend.position = "right")
-
-plot_lda_samples(object, ..., listed_objects = NULL, dims = 1:2,
-  color_var = "subgroup", color_values = default_color_values(object,
-  color_var), shape_var = default_shape_var(object), size_var = NULL,
-  txt_var = default_txt_var(object), txt_outliers = FALSE,
-  group_var = NULL, split_var = NULL, facet_var = NULL,
-  scales = ifelse(is.null(facet_var), "fixed", "free"),
-  labs = list(color = stringi::stri_trans_totitle(color_var), shape =
-  stringi::stri_trans_totitle(shape_var)), nrow = NULL,
-  mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
-  title = NULL, na.impute = FALSE, legend.position = "right")
-
-plot_pls_samples(object, ..., listed_objects = NULL,
-  implementation = c("mixOmics::plsda", "mixOmics::splsda",
-  "ropls::opls")[1], dims = 1:2, color_var = "subgroup",
+plot_pca_samples(
+  object,
+  ...,
+  listed_objects = NULL,
+  dims = 1:2,
+  color_var = "subgroup",
   color_values = default_color_values(object, color_var),
-  shape_var = default_shape_var(object), size_var = NULL,
-  txt_var = default_txt_var(object), txt_outliers = FALSE,
-  group_var = NULL, split_var = NULL, facet_var = NULL,
+  shape_var = default_shape_var(object),
+  size_var = NULL,
+  txt_var = default_txt_var(object),
+  txt_outliers = FALSE,
+  group_var = NULL,
+  split_var = NULL,
+  facet_var = NULL,
   scales = ifelse(is.null(facet_var), "fixed", "free"),
   labs = list(color = stringi::stri_trans_totitle(color_var), shape =
-  stringi::stri_trans_totitle(shape_var)), nrow = NULL,
+    stringi::stri_trans_totitle(shape_var)),
+  nrow = NULL,
   mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
-  title = NULL, na.impute = FALSE, legend.position = "right")
+  title = NULL,
+  na.impute = FALSE,
+  legend.position = "right"
+)
+
+plot_sma_samples(
+  object,
+  ...,
+  listed_objects = NULL,
+  dims = 1:2,
+  color_var = "subgroup",
+  color_values = default_color_values(object, color_var),
+  shape_var = default_shape_var(object),
+  size_var = NULL,
+  txt_var = default_txt_var(object),
+  txt_outliers = FALSE,
+  group_var = NULL,
+  split_var = NULL,
+  facet_var = NULL,
+  scales = ifelse(is.null(facet_var), "fixed", "free"),
+  labs = list(color = stringi::stri_trans_totitle(color_var), shape =
+    stringi::stri_trans_totitle(shape_var)),
+  nrow = NULL,
+  mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
+  title = NULL,
+  na.impute = FALSE,
+  legend.position = "right"
+)
+
+plot_lda_samples(
+  object,
+  ...,
+  listed_objects = NULL,
+  dims = 1:2,
+  color_var = "subgroup",
+  color_values = default_color_values(object, color_var),
+  shape_var = default_shape_var(object),
+  size_var = NULL,
+  txt_var = default_txt_var(object),
+  txt_outliers = FALSE,
+  group_var = NULL,
+  split_var = NULL,
+  facet_var = NULL,
+  scales = ifelse(is.null(facet_var), "fixed", "free"),
+  labs = list(color = stringi::stri_trans_totitle(color_var), shape =
+    stringi::stri_trans_totitle(shape_var)),
+  nrow = NULL,
+  mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
+  title = NULL,
+  na.impute = FALSE,
+  legend.position = "right"
+)
+
+plot_pls_samples(
+  object,
+  ...,
+  listed_objects = NULL,
+  implementation = c("mixOmics::plsda", "mixOmics::splsda", "ropls::opls")[1],
+  dims = 1:2,
+  color_var = "subgroup",
+  color_values = default_color_values(object, color_var),
+  shape_var = default_shape_var(object),
+  size_var = NULL,
+  txt_var = default_txt_var(object),
+  txt_outliers = FALSE,
+  group_var = NULL,
+  split_var = NULL,
+  facet_var = NULL,
+  scales = ifelse(is.null(facet_var), "fixed", "free"),
+  labs = list(color = stringi::stri_trans_totitle(color_var), shape =
+    stringi::stri_trans_totitle(shape_var)),
+  nrow = NULL,
+  mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
+  title = NULL,
+  na.impute = FALSE,
+  legend.position = "right"
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

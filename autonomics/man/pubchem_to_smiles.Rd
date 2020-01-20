@@ -13,8 +13,7 @@ pubchem_to_smiles(x, ...)
 
 \method{pubchem_to_smiles}{factor}(x, ...)
 
-\method{pubchem_to_smiles}{SummarizedExperiment}(x,
-  pubchem_var = "PUBCHEM", smiles_var = "SMILES", ...)
+\method{pubchem_to_smiles}{SummarizedExperiment}(x, pubchem_var = "PUBCHEM", smiles_var = "SMILES", ...)
 }
 \arguments{
 \item{x}{charactervector, factorvector, or SummarizedExperiment}
