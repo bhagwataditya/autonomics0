@@ -34,7 +34,7 @@ analyze_contrasts <- function(
 
   # Run limma analysis
   message('\tRun significance analysis (limma)')
-  object %<>% autonomics.find::add_limma_to_fdata(contrasts, design, overwrite = FALSE)
+  object %<>% autonomics.find::add_limma(contrasts, design)
 
   # Create dirs
   subdirs <- autonomics.find::get_contrast_subdir(result_dir, names(contrasts))
@@ -42,19 +42,14 @@ analyze_contrasts <- function(
 
   # Write to file
   message('\tWrite results to file')
-  object %>% autonomics.import::write_features(
-                design         = design, 
-                contrasts      = contrasts, 
-                direction      = direction,
-                topdef         = topdef, 
-                result_dir     = result_dir)
+  file <- paste0(result_dir, '/features.txt')
+  autonomics.import::write_features(object, file)
 
   # Plot top features
   message('\tPlot features')
-  object %>% autonomics.find::plot_top_features_all_contrasts(
-                 design         = design,
+  object %>% autonomics.find::plot_per_contrast_features(
                  contrasts      = contrasts,
-                 direction      = direction,
+                 design         = design,
                  topdef         = topdef,
                  result_dir     = result_dir,
                  nplot          = nplot, 
