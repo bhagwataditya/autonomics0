@@ -4,8 +4,11 @@
 \alias{ensg_to_entrezg}
 \title{Map ensg to entrezg}
 \usage{
-ensg_to_entrezg(x, organism = infer_organism(keys = x, keytype = "ensg"),
-  verbose = TRUE)
+ensg_to_entrezg(
+  x,
+  organism = infer_organism(keys = x, keytype = "ensg"),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{ensg vector}

@@ -8,8 +8,7 @@
 \usage{
 extract_first_from_collapsed(x, ...)
 
-\method{extract_first_from_collapsed}{character}(x, sep = guess_sep(x),
-  ...)
+\method{extract_first_from_collapsed}{character}(x, sep = guess_sep(x), ...)
 
 \method{extract_first_from_collapsed}{factor}(x, sep = guess_sep(x), ...)
 }

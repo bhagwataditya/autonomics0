@@ -4,9 +4,18 @@
 \alias{plot_feature_heatmap}
 \title{Plot feature heatmap}
 \usage{
-plot_feature_heatmap(object, fvar = "feature_id", filename = NULL,
-  lowColor = "yellow", highColor = "blue1", midColor = "gray",
-  width = 2, height = 4, fontsize = 0, ...)
+plot_feature_heatmap(
+  object,
+  fvar = "feature_id",
+  filename = NULL,
+  lowColor = "yellow",
+  highColor = "blue1",
+  midColor = "gray",
+  width = 2,
+  height = 4,
+  fontsize = 0,
+  ...
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

@@ -4,8 +4,12 @@
 \alias{make_ref_contrasts_within_stratum}
 \title{Make ref contrasts within stratum}
 \usage{
-make_ref_contrasts_within_stratum(dt, sep, component = 1,
-  ref_levels = vapply(dt, magrittr::extract, character(1), 1))
+make_ref_contrasts_within_stratum(
+  dt,
+  sep,
+  component = 1,
+  ref_levels = vapply(dt, magrittr::extract, character(1), 1)
+)
 }
 \arguments{
 \item{dt}{subgroup data.table for single stratum}

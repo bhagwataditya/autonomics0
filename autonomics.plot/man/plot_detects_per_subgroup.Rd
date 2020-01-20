@@ -4,8 +4,11 @@
 \alias{plot_detects_per_subgroup}
 \title{Plot detects}
 \usage{
-plot_detects_per_subgroup(object, svar = "subgroup",
-  color_values = default_color_values(object, svar))
+plot_detects_per_subgroup(
+  object,
+  svar = "subgroup",
+  color_values = default_color_values(object, svar)
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

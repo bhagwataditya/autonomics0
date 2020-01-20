@@ -7,11 +7,15 @@
 \usage{
 plot_top_features_all_contrasts(...)
 
-plot_per_contrast_features(object,
+plot_per_contrast_features(
+  object,
   contrasts = autonomics.find::default_contrasts(object),
   design = autonomics.import::create_design_matrix(object),
   topdef = autonomics.find::default_topdef(object),
-  geom = autonomics.plot::default_feature_plots(object), result_dir, ...)
+  geom = autonomics.plot::default_feature_plots(object),
+  result_dir,
+  ...
+)
 }
 \arguments{
 \item{...}{passed to autonomics.plot::plot_features}

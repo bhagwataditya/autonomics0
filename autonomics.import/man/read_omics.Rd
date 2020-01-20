@@ -4,11 +4,26 @@
 \alias{read_omics}
 \title{Read omics data from file}
 \usage{
-read_omics(file, sheet = 1, fid_rows, fid_cols, sid_rows, sid_cols,
-  expr_rows, expr_cols, fvar_rows = NULL, fvar_cols = NULL,
-  svar_rows = NULL, svar_cols = NULL, fdata_rows = NULL,
-  fdata_cols = NULL, sdata_rows = NULL, sdata_cols = NULL,
-  transpose = FALSE, verbose = TRUE)
+read_omics(
+  file,
+  sheet = 1,
+  fid_rows,
+  fid_cols,
+  sid_rows,
+  sid_cols,
+  expr_rows,
+  expr_cols,
+  fvar_rows = NULL,
+  fvar_cols = NULL,
+  svar_rows = NULL,
+  svar_cols = NULL,
+  fdata_rows = NULL,
+  fdata_cols = NULL,
+  sdata_rows = NULL,
+  sdata_cols = NULL,
+  transpose = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{file}{string: name of text (txt, csv, tsv, adat) or excel (xls, xlsx) file}

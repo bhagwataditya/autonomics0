@@ -4,9 +4,11 @@
 \alias{annotate_proteingroups}
 \title{Annotate proteingroups through uniprot.ws}
 \usage{
-annotate_proteingroups(object, connection = object \%>\%
-  open_uniprot_connection(), columns = c("SUBCELLULAR-LOCATIONS",
-  "INTERPRO", "GO-ID"))
+annotate_proteingroups(
+  object,
+  connection = object \%>\% open_uniprot_connection(),
+  columns = c("SUBCELLULAR-LOCATIONS", "INTERPRO", "GO-ID")
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

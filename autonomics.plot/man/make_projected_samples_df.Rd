@@ -4,8 +4,18 @@
 \alias{make_projected_samples_df}
 \title{Make datatable to plot PCA/PLS/LDA/SMA scores}
 \usage{
-make_projected_samples_df(projection, object, dims, color_var, shape_var,
-  size_var, txt_var, split_var, facet_var, group_var)
+make_projected_samples_df(
+  projection,
+  object,
+  dims,
+  color_var,
+  shape_var,
+  size_var,
+  txt_var,
+  split_var,
+  facet_var,
+  group_var
+)
 }
 \arguments{
 \item{projection}{output from PCA/PLS/LDA/SMA}

@@ -4,10 +4,15 @@
 \alias{plot_contrast_venns}
 \title{Plot contrast venns}
 \usage{
-plot_contrast_venns(object, contrast_names = object \%>\%
-  autonomics.find::infer_contrast_names(),
-  topdef = autonomics.find::default_topdef(object), title = topdef,
-  euler = FALSE, file = NULL, ...)
+plot_contrast_venns(
+  object,
+  contrast_names = object \%>\% autonomics.find::infer_contrast_names(),
+  topdef = autonomics.find::default_topdef(object),
+  title = topdef,
+  euler = FALSE,
+  file = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

@@ -4,9 +4,11 @@
 \alias{plot_overlayed_sample_distributions}
 \title{Plot overlayed sample distributions}
 \usage{
-plot_overlayed_sample_distributions(object,
+plot_overlayed_sample_distributions(
+  object,
   color_var = default_color_var(object),
-  color_values = default_color_values(object, color_var))
+  color_values = default_color_values(object, color_var)
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

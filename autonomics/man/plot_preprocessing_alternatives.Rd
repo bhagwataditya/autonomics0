@@ -4,9 +4,12 @@
 \alias{plot_preprocessing_alternatives}
 \title{Plot preprocessing alternatives}
 \usage{
-plot_preprocessing_alternatives(object, result_dir,
+plot_preprocessing_alternatives(
+  object,
+  result_dir,
   color_var = autonomics.plot::default_color_var(object),
-  invert_subgroups = NULL)
+  invert_subgroups = NULL
+)
 }
 \arguments{
 \item{object}{eset}

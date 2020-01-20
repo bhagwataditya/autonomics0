@@ -18,7 +18,7 @@ Use place holder '%s' for data.frame.
 \examples{
 require(magrittr)
 x <- data.frame(feature_id = c('F001', 'F002'), symbol = c('FEAT1', 'FEAT2'))
-autonomics.support::cmessage_df('\\t\%s', x)
+autonomics.support::cmessage_df('\t\%s', x)
 
 x <- c(rep('PASS', 25), rep('FAIL', 25))
 autonomics.support::cmessage_df(format_string = '\%s', table(x))

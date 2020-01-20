@@ -4,8 +4,7 @@
 \alias{multiplot}
 \title{Multiple plot function}
 \usage{
-multiplot(..., plotlist = NULL, cols = 1, layout = NULL,
-  file = NULL)
+multiplot(..., plotlist = NULL, cols = 1, layout = NULL, file = NULL)
 }
 \arguments{
 \item{...}{ggplot objects}

@@ -4,8 +4,7 @@
 \alias{create_result_dir}
 \title{Create result dir}
 \usage{
-create_result_dir(projectdir = getwd(), subdir = "",
-  showWarnings = TRUE)
+create_result_dir(projectdir = getwd(), subdir = "", showWarnings = TRUE)
 }
 \arguments{
 \item{projectdir}{project directory}

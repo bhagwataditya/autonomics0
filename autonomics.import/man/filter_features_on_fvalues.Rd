@@ -29,5 +29,13 @@ if (require(autonomics.data)){
    object \%>\% filter_features_on_fvalues(fvar    = 'Uniprot accessions',
                                          split   = ';',
                                          fvalues = fvalues)
+   if(is.null(analysis(object))) {
+       analysis(object) <- list(nsamples = nrow(sdata(object)))
+   }
+   analysis(object)$nsamples
+   object \%<>\% filter_features_on_fvalues(fvar    = 'Uniprot accessions',
+                                         split   = ';',
+                                         fvalues = fvalues)
+   analysis(object)$nsamples
 }
 }

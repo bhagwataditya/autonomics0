@@ -4,8 +4,12 @@
 \alias{make_colors}
 \title{Make fitting colors}
 \usage{
-make_colors(x, sep = autonomics.import::guess_sep(x, verbose = FALSE),
-  show = FALSE, verbose = FALSE)
+make_colors(
+  x,
+  sep = autonomics.import::guess_sep(x, verbose = FALSE),
+  show = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{x}{colorvar levels vector}

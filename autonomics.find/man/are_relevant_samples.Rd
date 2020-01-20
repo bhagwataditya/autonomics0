@@ -4,8 +4,11 @@
 \alias{are_relevant_samples}
 \title{Are relevant samples for given contrast}
 \usage{
-are_relevant_samples(object,
-  design = autonomics.import::create_design_matrix(object), contrasts)
+are_relevant_samples(
+  object,
+  design = autonomics.import::create_design_matrix(object),
+  contrasts
+)
 }
 \arguments{
 \item{object}{eset}

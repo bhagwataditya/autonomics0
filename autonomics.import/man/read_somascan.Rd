@@ -5,8 +5,13 @@
 \alias{load_soma}
 \title{Read somascan}
 \usage{
-read_somascan(file, fid_var = "SeqId", sid_var = "SampleId",
-  subgroup_var = "SampleGroup", fname_var = "EntrezGeneSymbol")
+read_somascan(
+  file,
+  fid_var = "SeqId",
+  sid_var = "SampleId",
+  subgroup_var = "SampleGroup",
+  fname_var = "EntrezGeneSymbol"
+)
 
 load_soma(file, ...)
 }

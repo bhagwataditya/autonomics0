@@ -5,11 +5,21 @@
 \alias{gene_accessions_to_pathway_accessions}
 \title{Accession-based mapping/interconversion for multiple ontologies}
 \usage{
-pathway_accessions_to_names(accessions, ontology = c("auto", "interpro",
-  "kegg"), mapping_object = NULL, ..., verbose = FALSE)
+pathway_accessions_to_names(
+  accessions,
+  ontology = c("auto", "interpro", "kegg"),
+  mapping_object = NULL,
+  ...,
+  verbose = FALSE
+)
 
-gene_accessions_to_pathway_accessions(accessions, ontology = c("auto",
-  "kegg"), mapping_object = NULL, ..., verbose = FALSE)
+gene_accessions_to_pathway_accessions(
+  accessions,
+  ontology = c("auto", "kegg"),
+  mapping_object = NULL,
+  ...,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{accessions}{\code{\link{character}} object representing InterPro accessions

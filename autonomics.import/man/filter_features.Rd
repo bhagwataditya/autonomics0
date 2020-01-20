@@ -37,6 +37,18 @@ if (require(autonomics.data)){
 
    autonomics.data::ALL \%>\%
    filter_features_("gene_symbols \%in\% c('LIG4', 'MAPK12', 'MAPK1')", verbose = TRUE)
+
+   file <- 'extdata/stemdiff/maxquant/proteinGroups.txt' \%>\%
+   system.file(package = 'autonomics.data')
+   sumexp <- file \%>\% read_omics(fid_rows   = 2:9783,  fid_cols   = 383,
+                       sid_rows   = 1,       sid_cols   = seq(124, 316, by = 6),
+                       expr_rows  = 2:9783,  expr_cols  = seq(124, 316, by = 6),
+                       fvar_rows  = 1,       fvar_cols  = c(2, 6, 7, 383),
+                       fdata_rows = 2:9783,  fdata_cols = c(2, 6, 7, 383),
+                       transpose  = FALSE)
+   analysis(sumexp)
+   sumexp \%<>\% filter_features_("c('UBA6', 'KRT8') \%in\% `Gene names`")
+   analysis(sumexp)
 }
 }
 }

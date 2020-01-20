@@ -5,8 +5,16 @@
 \alias{multiplot2}
 \title{Combine multiple ggplots}
 \usage{
-combine_plots(..., plotlist = NULL, cols = 1, layout = NULL,
-  file = NULL, return_object = FALSE, width = 7, height = 7)
+combine_plots(
+  ...,
+  plotlist = NULL,
+  cols = 1,
+  layout = NULL,
+  file = NULL,
+  return_object = FALSE,
+  width = 7,
+  height = 7
+)
 
 multiplot2(...)
 }

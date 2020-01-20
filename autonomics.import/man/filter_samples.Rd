@@ -5,9 +5,9 @@
 \alias{filter_samples}
 \title{Filter samples on condition}
 \usage{
-filter_samples_(object, condition, verbose = FALSE)
+filter_samples_(object, condition, verbose = FALSE, record = TRUE)
 
-filter_samples(object, condition, verbose = FALSE)
+filter_samples(object, condition, verbose = FALSE, record = TRUE)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
@@ -15,6 +15,8 @@ filter_samples(object, condition, verbose = FALSE)
 \item{condition}{filter condition}
 
 \item{verbose}{logical}
+
+\item{record}{TRUE (default) or FALSE}
 }
 \value{
 filtered SummarizedExperiment
@@ -26,5 +28,13 @@ Filter samples on condition
 if (require(autonomics.data)){
    filter_samples( autonomics.data::ALL,  sex == 'M')
    filter_samples_(autonomics.data::ALL, "sex == 'M'")
+
+   sumexp <- autonomics.data::ALL
+   if (is.null(analysis(sumexp))) {
+       analysis(sumexp) <- list(nsamples = nrow(sdata(sumexp)))
+   }
+   analysis(sumexp)$nsamples
+   sumexp <- filter_samples_(sumexp, "sex == 'M'")
+   analysis(sumexp)$nsamples
 }
 }

@@ -4,8 +4,13 @@
 \alias{project}
 \title{Project}
 \usage{
-project(object, method = "pca", na.impute = FALSE,
-  implementation = NULL, ndim = 2)
+project(
+  object,
+  method = "pca",
+  na.impute = FALSE,
+  implementation = NULL,
+  ndim = 2
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

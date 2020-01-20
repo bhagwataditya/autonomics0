@@ -4,9 +4,11 @@
 \alias{annotate_uniprot_with_webservice}
 \title{Annotate uniprot ids}
 \usage{
-annotate_uniprot_with_webservice(values,
+annotate_uniprot_with_webservice(
+  values,
   connection = autonomics.annotate::connect_to_uniprot(values),
-  columns = c("SUBCELLULAR-LOCATIONS", "KEGG", "GO-ID", "INTERPRO"))
+  columns = c("SUBCELLULAR-LOCATIONS", "KEGG", "GO-ID", "INTERPRO")
+)
 }
 \arguments{
 \item{values}{uniprot accessions (character vector)}

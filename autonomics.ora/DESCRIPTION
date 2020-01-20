@@ -31,7 +31,7 @@ Imports:
     utils
 License: GPL-3
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.2
 Suggests:
     atkin.2014,
     autonomics.data,
@@ -46,4 +46,3 @@ Suggests:
     org.Xl.eg.db,
     testthat
 biocViews:
-

@@ -202,3 +202,15 @@ NULL
 #' @importFrom autonomics.import  write_features
 #' @export write_features
 NULL
+
+
+#' Extract p, fdr, or effect (coef)
+#'
+#' \code{\link[autonomics.import]{extract_limma_matrix}
+#' @name extract_limma_matrix
+#' @aliases p fdr effect
+#' @importFrom autonomics.import  p fdr effect
+#' @export p
+#' @export fdr
+#' @export effect
+NULL

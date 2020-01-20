@@ -4,8 +4,11 @@
 \alias{matrixify_summarized_evidences}
 \title{Matrixify summarized evidences}
 \usage{
-matrixify_summarized_evidences(summarized_evidences, sample_file,
-  var = "Ratio")
+matrixify_summarized_evidences(
+  summarized_evidences,
+  sample_file,
+  var = "Ratio"
+)
 }
 \arguments{
 \item{summarized_evidences}{data.table with summarized evidences}

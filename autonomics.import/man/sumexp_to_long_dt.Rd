@@ -5,8 +5,13 @@
 \alias{eset_to_long_table}
 \title{Convert sumexp into long datatable}
 \usage{
-sumexp_to_long_dt(object, fid = "feature_id", fvars = character(0),
-  sid = "sample_id", svars = character(0))
+sumexp_to_long_dt(
+  object,
+  fid = "feature_id",
+  fvars = character(0),
+  sid = "sample_id",
+  svars = character(0)
+)
 
 eset_to_long_table(...)
 }

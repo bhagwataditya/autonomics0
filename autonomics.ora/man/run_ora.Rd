@@ -4,8 +4,14 @@
 \alias{run_ora}
 \title{Run over representation analysis}
 \usage{
-run_ora(query, universe, pathway_list, min_set_size = 5,
-  return_only_significant = FALSE, collapse_features_column = TRUE)
+run_ora(
+  query,
+  universe,
+  pathway_list,
+  min_set_size = 5,
+  return_only_significant = FALSE,
+  collapse_features_column = TRUE
+)
 }
 \arguments{
 \item{query}{Character vector of feature IDs in the selection.}

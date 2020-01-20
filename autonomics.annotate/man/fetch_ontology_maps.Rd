@@ -5,9 +5,11 @@
 \alias{fetch_kegg_maps}
 \title{Functions to generate maps for various ontology accession-based mapping operations}
 \usage{
-fetch_interpro_maps(interpro_url = paste0(c("http:/", "ftp.ebi.ac.uk",
-  "pub", "databases", "interpro", "current", "names.dat"), collapse = "/"),
-  verbose = FALSE)
+fetch_interpro_maps(
+  interpro_url = paste0(c("http:/", "ftp.ebi.ac.uk", "pub", "databases", "interpro",
+    "current", "names.dat"), collapse = "/"),
+  verbose = FALSE
+)
 
 fetch_kegg_maps(kegg_geneids, n_request_packet = 10, keep_raw = FALSE)
 }

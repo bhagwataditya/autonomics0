@@ -14,31 +14,51 @@
 \usage{
 plot_sample_densities(object, ...)
 
-\method{plot_sample_densities}{matrix}(object, sdata, ...,
-  title = "Sample densities")
+\method{plot_sample_densities}{matrix}(object, sdata, ..., title = "Sample densities")
 
-\method{plot_sample_densities}{SummarizedExperiment}(object, ...,
-  title = "Sample densities")
+\method{plot_sample_densities}{SummarizedExperiment}(object, ..., title = "Sample densities")
 
 plot_sample_violins(object, ...)
 
-\method{plot_sample_violins}{matrix}(object, sdata, ...,
-  coord_flip = TRUE, xlab = "", ylab = "",
-  title = "Sample violins")
+\method{plot_sample_violins}{matrix}(
+  object,
+  sdata,
+  ...,
+  coord_flip = TRUE,
+  xlab = "",
+  ylab = "",
+  title = "Sample violins"
+)
 
-\method{plot_sample_violins}{SummarizedExperiment}(object, ...,
-  coord_flip = TRUE, xlab = "", ylab = "",
-  title = "Sample violins")
+\method{plot_sample_violins}{SummarizedExperiment}(
+  object,
+  ...,
+  coord_flip = TRUE,
+  xlab = "",
+  ylab = "",
+  title = "Sample violins"
+)
 
 plot_sample_boxplots(object, ...)
 
-\method{plot_sample_boxplots}{matrix}(object, sdata, ...,
-  coord_flip = TRUE, xlab = "", ylab = "",
-  title = "Sample boxplots")
+\method{plot_sample_boxplots}{matrix}(
+  object,
+  sdata,
+  ...,
+  coord_flip = TRUE,
+  xlab = "",
+  ylab = "",
+  title = "Sample boxplots"
+)
 
-\method{plot_sample_boxplots}{SummarizedExperiment}(object, ...,
-  coord_flip = TRUE, xlab = "", ylab = "",
-  title = "Sample boxplots")
+\method{plot_sample_boxplots}{SummarizedExperiment}(
+  object,
+  ...,
+  coord_flip = TRUE,
+  xlab = "",
+  ylab = "",
+  title = "Sample boxplots"
+)
 }
 \arguments{
 \item{object}{matrix, SummarizedExperiment, or list of SummarizedExperiments}

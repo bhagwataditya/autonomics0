@@ -4,8 +4,7 @@
 \alias{print2txt}
 \title{Print dataframe to txt}
 \usage{
-print2txt(a_df, file = "", quote = FALSE, sep = "\\t",
-  row.names = FALSE, ...)
+print2txt(a_df, file = "", quote = FALSE, sep = "\\t", row.names = FALSE, ...)
 }
 \arguments{
 \item{a_df}{A \code{dta.frame}, or similar.}

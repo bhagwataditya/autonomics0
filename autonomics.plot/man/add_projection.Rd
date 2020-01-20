@@ -8,8 +8,13 @@
 \alias{add_pls}
 \title{Add PCA/LDA/PLS/SMA results to object}
 \usage{
-add_projection(object, method = c("pca", "lda", "pls")[1],
-  implementation = NULL, na.impute = FALSE, ndim = 2)
+add_projection(
+  object,
+  method = c("pca", "lda", "pls")[1],
+  implementation = NULL,
+  na.impute = FALSE,
+  ndim = 2
+)
 
 add_pca(object, ...)
 

@@ -4,11 +4,15 @@
 \alias{read_phosphosites}
 \title{Read phosphosites}
 \usage{
-read_phosphosites(file, proteingroups_file = dirname(file) \%>\%
-  paste0("/phospho (STY)Sites.txt"),
-  quantity = guess_maxquant_quantity(file), fvars = phosphosite_fvars,
-  standardize_snames = TRUE, demultiplex_snames = TRUE,
-  verbose = FALSE)
+read_phosphosites(
+  file,
+  proteingroups_file = dirname(file) \%>\% paste0("/phospho (STY)Sites.txt"),
+  quantity = guess_maxquant_quantity(file),
+  fvars = phosphosite_fvars,
+  standardize_snames = TRUE,
+  demultiplex_snames = TRUE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{file}{string: phosphosites filepath}

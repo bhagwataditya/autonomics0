@@ -4,8 +4,7 @@
 \alias{create_prepro_list}
 \title{Create list with preprocessing details}
 \usage{
-create_prepro_list(assay, entity, quantity, software,
-  parameters = list())
+create_prepro_list(assay, entity, quantity, software, parameters = list())
 }
 \arguments{
 \item{assay}{value in SUPPORTED_ASSAYS}

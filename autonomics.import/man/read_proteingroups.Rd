@@ -4,9 +4,14 @@
 \alias{read_proteingroups}
 \title{Read proteingroups}
 \usage{
-read_proteingroups(file, quantity = guess_maxquant_quantity(file),
-  fvars = proteingroups_fvars, standardize_snames = TRUE,
-  demultiplex_snames = TRUE, verbose = TRUE)
+read_proteingroups(
+  file,
+  quantity = guess_maxquant_quantity(file),
+  fvars = proteingroups_fvars,
+  standardize_snames = TRUE,
+  demultiplex_snames = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{file}{character(1). Path to 'proteinGroups.txt'}

@@ -9,13 +9,19 @@
 \usage{
 are_top_features(object, topdef, contrast_name)
 
-are_contrast_features(object, contrast_name,
-  topdef = autonomics.find::default_topdef(object))
+are_contrast_features(
+  object,
+  contrast_name,
+  topdef = autonomics.find::default_topdef(object)
+)
 
 get_top_features(object, topdef, contrast_name)
 
-get_contrast_features(object, contrast_name,
-  topdef = autonomics.find::default_topdef(object))
+get_contrast_features(
+  object,
+  contrast_name,
+  topdef = autonomics.find::default_topdef(object)
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

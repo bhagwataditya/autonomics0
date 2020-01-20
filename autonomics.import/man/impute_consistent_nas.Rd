@@ -5,11 +5,18 @@
 \alias{impute_consistent_nas}
 \title{Impute consistent NA values}
 \usage{
-impute_common_nas(object, imputefun = function(x) impute_around_zero(x),
-  verbose = FALSE)
+impute_common_nas(
+  object,
+  imputefun = function(x) impute_around_zero(x),
+  verbose = FALSE
+)
 
-impute_consistent_nas(object, imputefun = function(x)
-  impute_around_zero(x), svar = "subgroup", verbose = FALSE)
+impute_consistent_nas(
+  object,
+  imputefun = function(x) impute_around_zero(x),
+  svar = "subgroup",
+  verbose = FALSE
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

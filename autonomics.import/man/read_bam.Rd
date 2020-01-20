@@ -4,9 +4,15 @@
 \alias{read_bam}
 \title{Read BAM files}
 \usage{
-read_bam(bamdir, ispaired = FALSE, gtffile = NULL,
-  fvars = c("gene_name", "gene_biotype"), sumexpfile = NULL,
-  nthreads = parallel::detectCores(), ...)
+read_bam(
+  bamdir,
+  ispaired = FALSE,
+  gtffile = NULL,
+  fvars = c("gene_name", "gene_biotype"),
+  sumexpfile = NULL,
+  nthreads = parallel::detectCores(),
+  ...
+)
 }
 \arguments{
 \item{bamdir}{string: path to SAM or BAM file directory (one SAM or BAM file per sample)}

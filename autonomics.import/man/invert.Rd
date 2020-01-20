@@ -10,8 +10,12 @@ invert(x, ...)
 
 \method{invert}{character}(x, sep = guess_sep(x), ...)
 
-\method{invert}{SummarizedExperiment}(x, subgroups = x \%>\%
-  slevels("subgroup"), sep = x \%>\% guess_sep("subgroup"), ...)
+\method{invert}{SummarizedExperiment}(
+  x,
+  subgroups = x \%>\% slevels("subgroup"),
+  sep = x \%>\% guess_sep("subgroup"),
+  ...
+)
 }
 \arguments{
 \item{x}{character(.) or SummarizedExperiment}

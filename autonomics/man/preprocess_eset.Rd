@@ -4,19 +4,26 @@
 \alias{preprocess_eset}
 \title{Preprocess}
 \usage{
-preprocess_eset(object, normalize_on_svar = character(0),
-  invert_subgroups = NULL, channel_frac = "/", subgroup_frac = "_",
-  mode_center = FALSE, displayed_features = NULL,
+preprocess_eset(
+  object,
+  normalize_on_svar = character(0),
+  invert_subgroups = NULL,
+  channel_frac = "/",
+  subgroup_frac = "_",
+  mode_center = FALSE,
+  displayed_features = NULL,
   feature_center = displayed_features,
   normalize_within_samples = FALSE,
   normalize_between_subgroup_samples = FALSE,
   normalize_between_all_samples = FALSE,
   filter_features_nonzero_for_two_samples_in_some_subgroup = FALSE,
-  plot = TRUE, retain_plot_objects = FALSE,
+  plot = TRUE,
+  retain_plot_objects = FALSE,
   color_var = autonomics.plot::default_color_var(object),
   shape_var = autonomics.plot::default_shape_var(object),
   txt_var = autonomics.plot::default_txt_var(object),
-  result_dir = NULL)
+  result_dir = NULL
+)
 }
 \arguments{
 \item{object}{eset}

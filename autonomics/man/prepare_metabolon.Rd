@@ -4,9 +4,13 @@
 \alias{prepare_metabolon}
 \title{Prepare metabolon sumexp for analysis}
 \usage{
-prepare_metabolon(object, log2transform = TRUE,
-  impute_consistent_nas = FALSE, add_kegg_pathways = FALSE,
-  add_smiles = FALSE)
+prepare_metabolon(
+  object,
+  log2transform = TRUE,
+  impute_consistent_nas = FALSE,
+  add_kegg_pathways = FALSE,
+  add_smiles = FALSE
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

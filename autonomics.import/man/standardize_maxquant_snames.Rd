@@ -8,11 +8,19 @@
 \usage{
 standardize_maxquant_snames(x, ...)
 
-\method{standardize_maxquant_snames}{character}(x,
-  quantity = guess_maxquant_quantity(x), verbose = FALSE, ...)
+\method{standardize_maxquant_snames}{character}(
+  x,
+  quantity = guess_maxquant_quantity(x),
+  verbose = FALSE,
+  ...
+)
 
-\method{standardize_maxquant_snames}{SummarizedExperiment}(x,
-  quantity = guess_maxquant_quantity(x), verbose = FALSE, ...)
+\method{standardize_maxquant_snames}{SummarizedExperiment}(
+  x,
+  quantity = guess_maxquant_quantity(x),
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{character(.) or SummarizedExperiment}

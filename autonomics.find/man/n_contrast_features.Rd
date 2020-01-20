@@ -4,8 +4,11 @@
 \alias{n_contrast_features}
 \title{Get number of contrast features}
 \usage{
-n_contrast_features(object, contrast_name,
-  topdef = autonomics.find::default_topdef(object))
+n_contrast_features(
+  object,
+  contrast_name,
+  topdef = autonomics.find::default_topdef(object)
+)
 }
 \arguments{
 \item{object}{SummarizedExperiment}

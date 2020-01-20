@@ -7,14 +7,17 @@
 \usage{
 plot_top_features(...)
 
-plot_contrast_features(object,
+plot_contrast_features(
+  object,
   contrast = autonomics.find::default_contrasts(object)[1],
   design = autonomics.import::create_design_matrix(object),
   topdef = autonomics.find::default_topdef(object),
   geom = autonomics.plot::default_feature_plots(object)[1],
   nplot = autonomics.find::default_nplot(object),
   fvars = autonomics.plot::default_fvars(object),
-  color_var = autonomics.plot::default_color_var(object), ...)
+  color_var = autonomics.plot::default_color_var(object),
+  ...
+)
 }
 \arguments{
 \item{...}{passed to autonomics.plot::plot_feature_xxx()}

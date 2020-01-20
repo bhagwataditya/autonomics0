@@ -43,7 +43,7 @@ Imports:
     tidyr,
     utils,
     xml2
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Suggests: 
     autonomics.data,
     alnoubi.2017,

@@ -4,10 +4,14 @@
 \alias{preprocess_somascan}
 \title{Normalize somascan data}
 \usage{
-preprocess_somascan(object, plot, result_dir = NULL,
+preprocess_somascan(
+  object,
+  plot,
+  result_dir = NULL,
   color_var = autonomics.plot::default_color_var(object),
   shape_var = autonomics.plot::default_shape_var(object),
-  txt_var = autonomics.plot::default_txt_var(object))
+  txt_var = autonomics.plot::default_txt_var(object)
+)
 }
 \arguments{
 \item{object}{eset}
