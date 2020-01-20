@@ -202,3 +202,15 @@ NULL
 #' @importFrom autonomics.import  write_features
 #' @export write_features
 NULL
+
+
+#' Extract limma matrix
+#'
+#' \code{\link[autonomics.import]{extract_limma_matrix}}
+#' @name extract_limma_matrix
+#' @importFrom autonomics.import  effect  p  fdr
+#' @export effect
+#' @export p
+#' @export fdr
+NULL
+
