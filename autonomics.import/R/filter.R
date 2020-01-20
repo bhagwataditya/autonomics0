@@ -187,7 +187,7 @@ filter_features_on_fvalues <- function(object, fvar, split, fvalues){
     idx <- object %>% is_fvalue_feature(fvar, split, fvalues)
     object %<>% magrittr::extract(idx, )
     if (!is.null(analysis(object))) {
-        analysis(object)$nsamples %<>%
+        analysis(object)$nfeatures %<>%
             c(structure(
                 sum(idx),
                 names = sprintf("c('%s') %%in%% `%s`",
