@@ -208,6 +208,7 @@ NULL
 #'
 #' \code{\link[autonomics.import]{extract_limma_matrix}}
 #' @name extract_limma_matrix
+#' @aliases p effect fdr
 #' @importFrom autonomics.import  effect  p  fdr
 #' @export effect
 #' @export p

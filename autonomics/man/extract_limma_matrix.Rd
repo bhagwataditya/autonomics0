@@ -2,6 +2,9 @@
 % Please edit documentation in R/02_autonomics_import.R
 \name{extract_limma_matrix}
 \alias{extract_limma_matrix}
+\alias{p}
+\alias{effect}
+\alias{fdr}
 \title{Extract limma matrix}
 \description{
 \code{\link[autonomics.import]{extract_limma_matrix}}
