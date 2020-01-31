@@ -18,14 +18,20 @@ check_version_compatibility <- function(){
     'ggplot2' %in% utils::installed.packages() &&
     utils::packageVersion('ggplot2') > package_version('2.2.1')) {
     warning("'autonomics' is currently incompatible with 'ggplot2' > v2.2.1. Downgrading.")
-    remotes::install_version('ggplot2', version = '2.2.1')
+    remotes::install_version(
+       'ggplot2',
+       version = '2.2.1',
+       repos = repos = union(getOption("repos"), c(MRAN = "https://mran.microsoft.com")))
   }
   
   if (
     'ggstance' %in% utils::installed.packages() &&
     utils::packageVersion('ggstance') > package_version('0.3')) {
     warning("'autonomics' is currently incompatible with 'ggstance' > v0.3 (which depends on 'ggplot2' v3.0). Downgrading.")
-    remotes::install_version('ggstance', version = '0.3')
+    remotes::install_version(
+       'ggstance',
+       version = '0.3',
+       repos = repos = union(getOption("repos"), c(MRAN = "https://mran.microsoft.com")))
   } 
   
    #install.packages('assertive.reflection')
