@@ -21,7 +21,7 @@ check_version_compatibility <- function(){
     remotes::install_version(
        'ggplot2',
        version = '2.2.1',
-       repos = repos = union(getOption("repos"), c(MRAN = "https://mran.microsoft.com")))
+       repos = union(getOption("repos"), c(MRAN = "https://mran.microsoft.com")))
   }
   
   if (
@@ -31,7 +31,7 @@ check_version_compatibility <- function(){
     remotes::install_version(
        'ggstance',
        version = '0.3',
-       repos = repos = union(getOption("repos"), c(MRAN = "https://mran.microsoft.com")))
+       repos = union(getOption("repos"), c(MRAN = "https://mran.microsoft.com")))
   } 
   
    #install.packages('assertive.reflection')
