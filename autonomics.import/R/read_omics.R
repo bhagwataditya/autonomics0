@@ -2,8 +2,13 @@
 # GENERIC
 #=================================================
 
+is_excel_file <- function(file){
+    stringi::stri_detect_fixed(
+            tools::file_ext(file), 'xls', case_insensitive = TRUE)
+}
+
 nrows <- function(x, sheet=1){
-    if (tools::file_ext(x) %in% c('xls', 'xlsx')){
+    if (is_excel_file(x)){
         x %>% readxl::read_excel(sheet = sheet, .name_repair = 'minimal', col_names = FALSE) %>%  nrow()
     } else {
         x %>% readLines(warn=FALSE) %>% length()
@@ -12,10 +17,37 @@ nrows <- function(x, sheet=1){
 
 
 ncols <- function(x, sheet=1){
-    if (tools::file_ext(x) %in% c('xls', 'xlsx')){
+    if (is_excel_file(x)){
         x %>% readxl::read_excel(sheet=sheet, .name_repair = 'minimal', col_names = FALSE) %>% ncol()
     } else {
         x %>% utils::count.fields(quote = "", sep = '\t') %>% max()
+    }
+}
+
+
+
+#' Is this a fixed column file?
+#' @param file string: file name
+#' @return TRUE or FALSE
+#' @examples
+#' # SOMASCAN
+#' #---------
+#' #file <- file.path(
+#' #    '~/wcmq/atkin.hypo/atkin.hypoglycemia/extdata/soma/',
+#' #    'WCQ-18-007.hybNorm.plateScale.medNorm.calibrate.20181004.original.adat')
+#' #is_fixed_column_file(file)
+#'
+#' # METABOLON
+#' #----------
+#' file <- system.file('extdata/glutaminase/glutaminase.xlsx',
+#'                      package = 'autonomics.data')
+#' is_fixed_column_file(file)
+#' @export
+is_fixed_column_file <- function(file){
+    if (is_excel_file(file)){ TRUE
+    } else {
+        fields <- utils::count.fields(file, quote = "", sep = '\t')
+        all(fields==fields[1])
     }
 }
 
@@ -84,17 +116,17 @@ extract_rectangle.character <- function(
     col1 <- min(cols); coln <- max(cols)
 
     # Read file
-    dt <- if (tools::file_ext(x) %in% c('xls', 'xlsx')){
-        x %>%
-            readxl::read_excel(sheet       = sheet,
+    dt <- if (is_excel_file(x)){
+            readxl::read_excel(x,
+                               sheet       = sheet,
                                col_names   = FALSE,
                                range       = sprintf('R%dC%d:R%dC%d', row1, col1, rown, coln),
                                .name_repair = 'minimal') %>%
             data.table::data.table()
 
     } else {
-        x %>%
-            data.table::fread(na.strings = "",
+            data.table::fread(x,
+                              na.strings = "",
                               header     = FALSE,
                               integer64  = 'numeric',
                               skip       = row1-1,
@@ -235,31 +267,27 @@ read_omics <- function(
     assertive.files::assert_all_are_existing_files(file)
     assertive.types::assert_is_a_bool(transpose)
 
-    # Read
+    # Read in one go if fixed col file
     if (verbose) autonomics.support::cmessage(
         '\t\tRead %s %s',
         if (sheet==1) '' else paste0("sheet '", sheet, "' of"), file)
-    fixed_no_of_cols <- utils::count.fields(file, quote = "", sep = '\t') %>%
-        (function(x)all(x==x[1]))
-    x <- if (fixed_no_of_cols) {
-            extract_rectangle.character(file, sheet=sheet)
+    x <- if (is_fixed_column_file(file)){
+            x <- extract_rectangle.character(file, sheet=sheet)
         } else {
-            file}
+            file
+        }
 
     # Extract exprs
-    fids1  <- x %>%
-        extract_rectangle(
-            rows = fid_rows,  cols = fid_cols,  transpose = transpose,
-            drop = TRUE,  sheet = sheet)
-    sids1  <- x %>%
-        extract_rectangle(
-            rows = sid_rows,  cols = sid_cols,  transpose = transpose,
-            drop = TRUE,  sheet = sheet)
-    exprs1 <- x %>%
-        extract_rectangle(
-            rows = expr_rows, cols = expr_cols, transpose = transpose,
-            drop = FALSE, sheet = sheet) %>%
-        (function(y){class(y) <- 'numeric'; y})
+    fids1  <- extract_rectangle(x,
+                rows = fid_rows,  cols = fid_cols,  transpose = transpose,
+                drop = TRUE,  sheet = sheet)
+    sids1  <- extract_rectangle(x,
+                rows = sid_rows,  cols = sid_cols,  transpose = transpose,
+                drop = TRUE,  sheet = sheet)
+    exprs1 <- extract_rectangle(x,
+                rows = expr_rows, cols = expr_cols, transpose = transpose,
+                drop = FALSE, sheet = sheet) %>%
+            (function(y){class(y) <- 'numeric'; y})
 
     # Extract feature annotations
     #    Leave rownames(fdata1) empty: fids1 may contain non-valid values
@@ -787,6 +815,13 @@ load_soma <- function(file, ...){
 # METABOLON
 #======================================================
 
+find_origscale_sheet <- function(file){
+    readxl::excel_sheets(file) %>%
+    magrittr::extract(stringi::stri_detect_fixed(., 'OrigScale')) %>%
+    magrittr::extract2(1)
+}
+
+
 #' Read metabolon
 #' @param file          string: path to metabolon xlsx file
 #' @param sheet         number/string: xls sheet number or name
@@ -806,9 +841,9 @@ load_soma <- function(file, ...){
 #' @export
 read_metabolon <- function(
     file,
-    sheet        = 2,
-    fid_var      = 'COMP_ID',
-    sid_var      = 'CLIENT_IDENTIFIER',
+    sheet        = find_origscale_sheet(file),
+    fid_var      = '(COMP|COMP_ID)', #'COMP_ID',
+    sid_var      = '(CLIENT_IDENTIFIER|Client ID)', #'CLIENT_IDENTIFIER',
     subgroup_var = 'Group',
     fname_var    = 'BIOCHEMICAL'
 ){
@@ -821,27 +856,36 @@ read_metabolon <- function(
     svar_cols <- which(!is.na(d_f %>% extract_dt_row(1))) %>% magrittr::extract(1)
     fvar_cols <- fdata_cols <- 1:svar_cols
     svar_rows <- sdata_rows <- 1:fvar_rows
+    fvar_names <- d_f %>% extract_dt_row(fvar_rows) %>% magrittr::extract(1:svar_cols)
+    svar_names <- d_f %>% extract_dt_col(svar_cols) %>% magrittr::extract(1:fvar_rows)
 
+    fid_var <- fvar_names %>% extract(stringi::stri_detect_regex(., fid_var))
+    sid_var <- svar_names %>% extract(stringi::stri_detect_regex(., sid_var))
     fid_rows  <- fdata_rows <- expr_rows <- (fvar_rows+1):nrow(d_f)
-    sid_cols  <- sdata_cols <- expr_cols <- (svar_cols+1):ncol(d_f)
-    fid_cols  <-  d_f %>% extract_dt_row(fvar_rows) %>% magrittr::extract(1:svar_cols) %>% magrittr::equals(fid_var) %>% which()
-    sid_rows  <-  d_f %>% extract_dt_col(svar_cols) %>% magrittr::extract(1:fvar_rows) %>% magrittr::equals(sid_var) %>% which()
+    sid_cols  <- sdata_cols <- expr_cols <- (svar_cols+1):ncol(d_f) # fid_var <- 'COMP'
 
-    object <- file %>% read_omics(sheet      = sheet,
-                                  fid_rows   = fid_rows,      fid_cols   = fid_cols,
-                                  sid_rows   = sid_rows,      sid_cols   = sid_cols,
-                                  expr_rows  = expr_rows,     expr_cols  = expr_cols,
-                                  fvar_rows  = fvar_rows,     fvar_cols  = fvar_cols,
-                                  svar_rows  = svar_rows,     svar_cols  = svar_cols,
-                                  fdata_rows = fdata_rows,    fdata_cols = fdata_cols,
-                                  sdata_rows = svar_rows,     sdata_cols = sdata_cols,
-                                  transpose  = FALSE,
-                                  verbose    = TRUE)
+    fid_cols  <-  fvar_names %>% magrittr::equals(fid_var) %>% which()
+    sid_rows  <-  svar_names %>% magrittr::is_in(sid_var) %>% which() %>% magrittr::extract(1)
+
+    object <- read_omics(file,
+                        sheet      = sheet,
+                        fid_rows   = fid_rows,      fid_cols   = fid_cols,
+                        sid_rows   = sid_rows,      sid_cols   = sid_cols,
+                        expr_rows  = expr_rows,     expr_cols  = expr_cols,
+                        fvar_rows  = fvar_rows,     fvar_cols  = fvar_cols,
+                        svar_rows  = svar_rows,     svar_cols  = svar_cols,
+                        fdata_rows = fdata_rows,    fdata_cols = fdata_cols,
+                        sdata_rows = svar_rows,     sdata_cols = sdata_cols,
+                        transpose  = FALSE,
+                        verbose    = TRUE)
 
     # sdata
-    subgroup_var <- svars(object) %>% magrittr::extract(stringi::stri_detect_fixed(., subgroup_var))
-    sdata(object) %<>% (function(y){ y$subgroup <- y[[subgroup_var]]
-    y %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
+    is_subgroup_col <- stringi::stri_detect_regex(svars(object), subgroup_var)
+    subgroup_var <- if (any(is_subgroup_col)){  svars(object)[is_subgroup_col]
+                    } else {                    sid_var }
+    sdata(object) %<>% (function(y){
+                            y$subgroup <- y[[subgroup_var]]
+                            y %>% autonomics.support::pull_columns(c('sample_id', 'subgroup'))})
     # fdata
     assertive.sets::assert_is_subset(fname_var, fvars(object))
     fdata(object) %<>% (function(y){ y$feature_name <- y[[fname_var]]

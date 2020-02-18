@@ -7,9 +7,9 @@
 \usage{
 read_metabolon(
   file,
-  sheet = 2,
-  fid_var = "COMP_ID",
-  sid_var = "CLIENT_IDENTIFIER",
+  sheet = find_origscale_sheet(file),
+  fid_var = "(COMP|COMP_ID)",
+  sid_var = "(CLIENT_IDENTIFIER|Client ID)",
   subgroup_var = "Group",
   fname_var = "BIOCHEMICAL"
 )

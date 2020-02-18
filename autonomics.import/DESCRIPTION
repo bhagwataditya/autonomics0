@@ -41,6 +41,7 @@ Imports:
     rtracklayer,
     rlang,
     R.utils,
+    stats,
     stringi, 
     S4Vectors,
     SummarizedExperiment,
