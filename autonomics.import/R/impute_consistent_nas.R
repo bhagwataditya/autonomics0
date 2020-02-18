@@ -146,36 +146,39 @@ collapse_words <- function(x, collapsor = 'and'){
 #' @param x exprs matrix
 #' @return exprs matrix
 #' @examples
-#' require(magrittr)
-#' x <- matrix(c(20, 21, 22,
-#'               30, 31, 32,
-#'               NA, NA, NA,
-#'               40, NA, 41,
-#'               NA, NA, NA,
-#'               NA, 50, NA), ncol=3, byrow=TRUE)
-#' x %>% impute_around_zero()
-#' object <- SummarizedExperiment::SummarizedExperiment(
-#'   assays = list(exprs = x))
-#' object %>% autonomics.import::impute_common_nas(
-#'   imputefun = impute_around_zero) %>%
-#'   autonomics.import::exprs()
-#' object$subgroup <- rep('EV', 3)
-#' object %>% autonomics.import::impute_consistent_nas(
-#'   imputefun = impute_around_zero) %>%
-#'   autonomics.import::exprs()
+#'
+#' # Example data
+#' #-------------
+#' x <- matrix(c(20, 21, 22, 23,
+#'               30, 31, 32, 33,
+#'               NA, NA, NA, NA,
+#'               40, 41, NA, NA,
+#'               NA, NA, NA, NA,
+#'               50, 51, NA, NA), ncol=4, byrow=TRUE)
+#' object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs=x))
+#' object$subgroup <- c('EV', 'EV', 'MS', 'MS')
+#'
+#'# Impute
+#'#-------
+#' x
+#' impute_around_zero(x)
+#'
+#' exprs(object)
+#' exprs(impute_consistent_nas(object, imputefun = impute_around_zero))
+#' exprs(impute_common_nas(object, imputefun = impute_around_zero))
 #' @importFrom magrittr %>% %<>%
 #' @export
 impute_around_zero <- function(x){
-   meansd <- x %>%
-      matrixStats::rowSds() %>%
-      mean(na.rm = TRUE)
+   meansd <- matrixStats::rowSds(x) %>%
+            mean(na.rm = TRUE)
    is_common_na_feature <- x %>% is.na() %>% matrixStats::rowAlls()
-   x[is_common_na_feature, ] %<>% apply(
-      1,
-      function(y) impute_row(y, meansd)) %>% t()
+   imputed_values <- x[is_common_na_feature, , drop=FALSE]       %>%
+                     apply(1, function(y) impute_row(y, meansd)) %>%
+                     t()
+   x[is_common_na_feature, ] <- imputed_values
    x
 }
 
 impute_row <- function(x, sd){
-   abs(rnorm(length(x), sd = sd * 2))
+   abs(stats::rnorm(length(x), sd = sd * 2))
 }

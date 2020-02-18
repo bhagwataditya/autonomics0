@@ -16,21 +16,24 @@ exprs matrix
 Impute around zero
 }
 \examples{
-require(magrittr)
-x <- matrix(c(20, 21, 22,
-              30, 31, 32,
-              NA, NA, NA,
-              40, NA, 41,
-              NA, NA, NA,
-              NA, 50, NA), ncol=3, byrow=TRUE)
-x \%>\% impute_around_zero()
-object <- SummarizedExperiment::SummarizedExperiment(
-  assays = list(exprs = x))
-object \%>\% autonomics.import::impute_common_nas(
-  imputefun = impute_around_zero) \%>\%
-  autonomics.import::exprs()
-object$subgroup <- rep('EV', 3)
-object \%>\% autonomics.import::impute_consistent_nas(
-  imputefun = impute_around_zero) \%>\%
-  autonomics.import::exprs()
+
+# Example data
+#-------------
+x <- matrix(c(20, 21, 22, 23,
+              30, 31, 32, 33,
+              NA, NA, NA, NA,
+              40, 41, NA, NA,
+              NA, NA, NA, NA,
+              50, 51, NA, NA), ncol=4, byrow=TRUE)
+object <- SummarizedExperiment::SummarizedExperiment(assays = list(exprs=x))
+object$subgroup <- c('EV', 'EV', 'MS', 'MS')
+
+# Impute
+#-------
+x
+impute_around_zero(x)
+
+exprs(object)
+exprs(impute_consistent_nas(object, imputefun = impute_around_zero))
+exprs(impute_common_nas(object, imputefun = impute_around_zero))
 }
