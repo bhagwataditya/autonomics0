@@ -680,7 +680,7 @@ prepare_proteingroups <- function(
    filter_complete_nondetects  = TRUE,
    invert_subgroups            = character(0),
    log2transform               = TRUE,
-   impute_consistent_nas       = TRUE,
+   impute_consistent_nas       = stringi::stri_detect_fixed(autonomics.import::guess_maxquant_quantity(object), "Intensity", case_insensitive = TRUE),
    deconvolution_fastafile     = NULL,
    verbose                     = TRUE, 
    plot                        = TRUE
