@@ -31,7 +31,8 @@ plot_projected_samples(
   mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
   title = NULL,
   na.impute = FALSE,
-  legend.position = "right"
+  legend.position = "right",
+  plot = TRUE
 )
 
 plot_pca_samples(
@@ -55,7 +56,8 @@ plot_pca_samples(
   mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
   title = NULL,
   na.impute = FALSE,
-  legend.position = "right"
+  legend.position = "right",
+  plot = TRUE
 )
 
 plot_sma_samples(
@@ -79,7 +81,8 @@ plot_sma_samples(
   mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
   title = NULL,
   na.impute = FALSE,
-  legend.position = "right"
+  legend.position = "right",
+  plot = TRUE
 )
 
 plot_lda_samples(
@@ -103,7 +106,8 @@ plot_lda_samples(
   mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
   title = NULL,
   na.impute = FALSE,
-  legend.position = "right"
+  legend.position = "right",
+  plot = TRUE
 )
 
 plot_pls_samples(
@@ -128,7 +132,8 @@ plot_pls_samples(
   mention_method = ifelse(is.null(facet_var), TRUE, FALSE),
   title = NULL,
   na.impute = FALSE,
-  legend.position = "right"
+  legend.position = "right",
+  plot = TRUE
 )
 }
 \arguments{
@@ -175,6 +180,8 @@ plot_pls_samples(
 \item{na.impute}{TRUE or FALSE}
 
 \item{legend.position}{character}
+
+\item{plot}{TRUE (default) or FALSE}
 }
 \description{
 Plot PCA/LDA/PLS/SMA sample scores

@@ -440,6 +440,7 @@ make_projected_samples_df <- function(
 #' @param title             title
 #' @param na.impute         TRUE or FALSE
 #' @param legend.position   character
+#' @param plot              TRUE (default) or FALSE
 #' @examples
 #' if (require(autonomics.data)){
 #'    require(magrittr)
@@ -492,7 +493,8 @@ plot_projected_samples <- function(
    mention_method    = ifelse(is.null(facet_var), TRUE, FALSE),
    title             = NULL,
    na.impute         = FALSE,
-   legend.position   = 'right'
+   legend.position   = 'right',
+   plot              = TRUE
 ){
 
 # Check prerequisites -----------------------------------------------------
@@ -702,7 +704,7 @@ plot_projected_samples <- function(
       #                      global = TRUE,
       #                      just = "left",
       #                      x = grid::unit(0, "npc"))
-      grid::grid.draw(gp)
+      if (plot) grid::grid.draw(gp)
       invisible(gp)
    } else {
       p
@@ -779,7 +781,8 @@ plot_pca_samples <- function(
    mention_method    = ifelse(is.null(facet_var), TRUE, FALSE),
    title             = NULL,
    na.impute         = FALSE,
-   legend.position   = 'right'
+   legend.position   = 'right',
+   plot              = TRUE
 ){
    plot_projected_samples( object,
                            ...,
@@ -802,7 +805,8 @@ plot_pca_samples <- function(
                            mention_method    = mention_method,
                            title             = title,
                            na.impute         = na.impute,
-                           legend.position   = legend.position)
+                           legend.position   = legend.position,
+                           plot              = plot)
 }
 
 
@@ -828,7 +832,8 @@ plot_sma_samples <- function(
    mention_method    = ifelse(is.null(facet_var), TRUE, FALSE),
    title             = NULL,
    na.impute         = FALSE,
-   legend.position   = 'right'
+   legend.position   = 'right',
+   plot              = TRUE
 ){
    plot_projected_samples( object,
                            ...,
@@ -851,7 +856,8 @@ plot_sma_samples <- function(
                            mention_method    = mention_method,
                            title             = title,
                            na.impute         = na.impute,
-                           legend.position   = legend.position)
+                           legend.position   = legend.position,
+                           plot              = plot)
 }
 
 
@@ -877,7 +883,8 @@ plot_lda_samples <- function(
    mention_method    = ifelse(is.null(facet_var), TRUE, FALSE),
    title             = NULL,
    na.impute         = FALSE,
-   legend.position   = 'right'
+   legend.position   = 'right',
+   plot              = TRUE
 ){
    plot_projected_samples( object,
                            ...,
@@ -900,7 +907,8 @@ plot_lda_samples <- function(
                            mention_method    = mention_method,
                            title             = title,
                            na.impute         = na.impute,
-                           legend.position   = legend.position)
+                           legend.position   = legend.position,
+                           plot              = plot)
 }
 
 
@@ -927,7 +935,8 @@ plot_pls_samples <- function(
    mention_method    = ifelse(is.null(facet_var), TRUE, FALSE),
    title             = NULL,
    na.impute         = FALSE,
-   legend.position   = 'right'
+   legend.position   = 'right',
+   plot              = TRUE
 ){
    plot_projected_samples( object,
                            ...,
@@ -950,7 +959,8 @@ plot_pls_samples <- function(
                            mention_method    = mention_method,
                            title             = title,
                            na.impute         = na.impute,
-                           legend.position   = legend.position)
+                           legend.position   = legend.position,
+                           plot              = plot)
 }
 
 
