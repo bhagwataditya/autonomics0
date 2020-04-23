@@ -8,9 +8,21 @@
 \usage{
 guess_subgroup_values(x, ...)
 
-\method{guess_subgroup_values}{character}(x, sep = x \%>\% guess_sep(), verbose = FALSE, ...)
+\method{guess_subgroup_values}{character}(
+  x,
+  sep = x \%>\% guess_sep(),
+  invert = FALSE,
+  verbose = FALSE,
+  ...
+)
 
-\method{guess_subgroup_values}{SummarizedExperiment}(x, sep = x \%>\% guess_sep(), verbose = FALSE, ...)
+\method{guess_subgroup_values}{SummarizedExperiment}(
+  x,
+  sep = x \%>\% guess_sep(),
+  invert = FALSE,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{charactervector, SummarizedExperiment}
@@ -18,6 +30,8 @@ guess_subgroup_values(x, ...)
 \item{...}{used for proper S3 method dispatch}
 
 \item{sep}{character(1)}
+
+\item{invert}{FALSE (default) or TRUE: whether to guess "non-subgroup" component}
 
 \item{verbose}{logical(1)}
 }
@@ -38,8 +52,10 @@ require(magrittr)
    # Sep: subgroup = head components of x
       x <- c("UT_10h_R1", "UT_10h_R2", "UT_10h_R3")
       x \%>\% guess_subgroup_values()
+      x \%>\% guess_subgroup_values(invert = TRUE)
 
       x <- c("EM00_STD.R1", "EM01_STD.R1", "EM01_EM00.R1")
       x \%>\% guess_subgroup_values()
+      x \%>\% guess_subgroup_values(invert = TRUE)
 
 }

@@ -113,11 +113,29 @@ subgroup_sep <- function(...){
 }
 
 
+#=======================================================================
 
-#=================================================================================
+extract_first_components <- function(x, sep){
+   x                                     %>% 
+   stringi::stri_split_fixed(sep)        %>%
+   vapply(function(y) y                  %>%
+   magrittr::extract(1:(length(y)-1))    %>%
+   paste0(collapse = sep), character(1))
+}
+
+extract_last_component <- function(x, sep){
+   x                                     %>% 
+   stringi::stri_split_fixed(sep)        %>%
+   vapply(function(y) y                  %>%
+   magrittr::extract(length(y))          %>%
+   paste0(collapse = sep), character(1))
+}
+
+
 #' Guess subgroup values
 #' @param x             charactervector, SummarizedExperiment
 #' @param sep           character(1)
+#' @param invert        FALSE (default) or TRUE: whether to guess "non-subgroup" component
 #' @param verbose       logical(1)
 #' @param ...           used for proper S3 method dispatch
 #' @return character(n)
@@ -132,9 +150,11 @@ subgroup_sep <- function(...){
 #'    # Sep: subgroup = head components of x
 #'       x <- c("UT_10h_R1", "UT_10h_R2", "UT_10h_R3")
 #'       x %>% guess_subgroup_values()
+#'       x %>% guess_subgroup_values(invert = TRUE)
 #'
 #'       x <- c("EM00_STD.R1", "EM01_STD.R1", "EM01_EM00.R1")
 #'       x %>% guess_subgroup_values()
+#'       x %>% guess_subgroup_values(invert = TRUE)
 #'
 #' @export
 guess_subgroup_values <- function (x, ...) {
@@ -147,15 +167,14 @@ guess_subgroup_values <- function (x, ...) {
 guess_subgroup_values.character <- function(
    x,
    sep     = x %>% guess_sep(),
+   invert  = FALSE,
    verbose = FALSE,
    ...
 ){
    # Guess
-   subgroup_values <- if (is.null(sep)){ x
-                      } else {           x %>% stringi::stri_split_fixed(sep) %>%
-                                               vapply(function(y) y %>%
-                                                                  magrittr::extract(1:(length(y)-1)) %>%
-                                                                  paste0(collapse = sep), character(1))
+   subgroup_values <- if (is.null(sep)){  x
+                      } else if (invert){ extract_last_component(x, sep)
+                      } else {            extract_first_components(x, sep)
                       }
    # Inform
    if (verbose)   autonomics.support::cmessage('\t\tGuess subgroup values: %s => %s', x[1], subgroup_values[1])
@@ -169,8 +188,9 @@ guess_subgroup_values.character <- function(
 #' @export
 guess_subgroup_values.SummarizedExperiment <- function(
    x,
-   sep          = x %>% guess_sep(),
-   verbose      = FALSE,
+   sep      = x %>% guess_sep(),
+   invert   = FALSE,
+   verbose  = FALSE,
    ...
 ){
 
@@ -181,8 +201,7 @@ guess_subgroup_values.SummarizedExperiment <- function(
    }
 
    # guess from sampleid values
-   x %>% sampleid_values() %>%
-         guess_subgroup_values(verbose = verbose)
+   x %>% sampleid_values() %>% guess_subgroup_values(sep = sep, invert = invert, verbose = verbose)
 }
 
 

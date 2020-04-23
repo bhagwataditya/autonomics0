@@ -610,8 +610,7 @@ read_counts <- function(
                                   transpose  = FALSE,
                                   verbose    = TRUE)
 
-    sdata(object)$subgroup <- object %>% guess_subgroup_values(verbose = TRUE)
-
+    sdata(object)$subgroup  <- object %>% guess_subgroup_values(verbose = TRUE)
     if (length(fname_var)>0){
         assertive.sets::assert_is_subset(fname_var, fvars(object))
         fdata(object) %<>% (function(x){x$feature_name <- x[[fname_var]];
@@ -1266,7 +1265,8 @@ read_proteingroups <- function(
     # Clean sdata
     if (standardize_snames) object %<>% standardize_maxquant_snames(verbose = verbose)
     if (demultiplex_snames) object %<>% demultiplex_snames(verbose = verbose)
-    object$subgroup <- object$sample_id %>% guess_subgroup_values(verbose = verbose)
+    object$subgroup  <- object$sample_id %>% guess_subgroup_values(verbose = verbose)
+    object$replicate <- object$sample_id %>% guess_subgroup_values(invert = TRUE, verbose = FALSE)
     #object$block    <- object$sample_id %>% guess_subject_values( verbose = TRUE)
 
     # Clean fdata
