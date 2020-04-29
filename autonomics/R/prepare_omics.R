@@ -448,6 +448,7 @@ prepare_metabolon <- function(
 #' @param fastafile          path to fastafile
 #' @param fastafields        character vector: fields to load from fastafile
 #' @param drop_isoform_info  logical: whether to drop isoform info
+#' @param verbose            logical: whether to report back or not
 #' @return deconvoluted and annotated SummarizedExperiment
 #' @examples
 #' require(magrittr)
@@ -471,14 +472,15 @@ deconvolute_proteingroups <- function(
    object,
    fastafile,
    fastafields = c('GENES', 'PROTEIN-NAMES', 'EXISTENCE', 'REVIEWED'),
-   drop_isoform_info = FALSE
+   drop_isoform_info = FALSE,
+   verbose = TRUE
 ){
    # Satisfy CHECK
    EXISTENCE <- GENES <- IS.FRAGMENT <- ISOFORM <- N <- NGENE <- NISOFORMS <- NPERACCESSION <- NULL
    `PROTEIN-NAMES` <- REVIEWED <- `Uniprot accessions` <- ngene <- nprotein <- nseq <- .SD <- NULL
 
    # Load fasta annotations
-   autonomics.support::cmessage('\t\tLoad fasta file')
+   if (verbose) autonomics.support::cmessage('\t\tLoad fasta file')
    fasta_annotations <- fastafile %>% autonomics.annotate::load_uniprot_fasta_annotations(fastafields)
 
    # Uncollapse
@@ -499,8 +501,8 @@ deconvolute_proteingroups <- function(
       magrittr::extract(ISOFORM %in% setdiff(ISOFORM, fasta_annotations$UNIPROTKB)) %>%
       magrittr::extract(, .SD[1], by = 'feature_id') %>%
       nrow()
-   autonomics.support::cmessage('\t\tDeconvolute %d/%d proteingroups with sequences from fastafile',
-                                nrow(object) - nunmapped, nrow(object))
+   if (verbose) autonomics.support::cmessage('\t\tDeconvolute %d/%d proteingroups with sequences from fastafile',
+                                             nrow(object) - nunmapped, nrow(object))
    fdata1 %<>% merge(fasta_annotations, by.x = 'Uniprot accessions', by.y = 'UNIPROTKB', sort = FALSE)
    report_n <- function(dt, prefix='', suffix=''){
       n <- dt %>% magrittr::extract(, .SD[, list(nseq = .N,
@@ -512,66 +514,66 @@ deconvolute_proteingroups <- function(
                                   nsingleprotein = sum(nprotein==1),
                                   nsingleseq     = sum(nseq==1)))
       autonomics.support::cmessage('\t\t\t%s%d proteingroups -> %d singlegene -> %d singleprotein -> %d singleseq%s',
-                                   stringi::stri_pad_right(prefix, width = 60), n$ngroups,          n$nsinglegene,   n$nsingleprotein,   n$nsingleseq, suffix)
+                                                stringi::stri_pad_right(prefix, width = 60), n$ngroups,          n$nsinglegene,   n$nsingleprotein,   n$nsingleseq, suffix)
    }
-   message('')
-   fdata1 %>% report_n(prefix = 'All proteingroups')
+   if (verbose) message('')
+   if (verbose) fdata1 %>% report_n(prefix = 'All proteingroups')
 
    # Prefer best existence
    fdata1 %<>% magrittr::extract(, .SD[EXISTENCE == min(EXISTENCE)], by = 'feature_id')
-   fdata1 %>% report_n(prefix = 'Per group: drop inferior existences')
+   if (verbose) fdata1 %>% report_n(prefix = 'Per group: drop inferior existences')
 
    # Drop trembl entries from swissprot groups
    fdata1 %<>% magrittr::extract(, .SD[REVIEWED == max(REVIEWED)], by = 'feature_id')
    swissprot <- fdata1[REVIEWED==1]
    trembl    <- fdata1[REVIEWED==0]
-   fdata1 %>% report_n(prefix = 'Per group: drop trembl when swissprot available')
+   if (verbose) fdata1 %>% report_n(prefix = 'Per group: drop trembl when swissprot available')
 
    # trembl groups
    #--------------
    if (nrow(trembl)>0){
-      message('')
-      trembl  %>% report_n(prefix = 'Trembl groups')
+      if (verbose) message('')
+      if (verbose) trembl  %>% report_n(prefix = 'Trembl groups')
 
       # Drop fragments when full sequences available
       trembl  %>% magrittr::extract(, IS.FRAGMENT := 0)
       trembl  %>% magrittr::extract(, IS.FRAGMENT:= `PROTEIN-NAMES` %>% stringi::stri_detect_fixed('(Fragment)') %>% as.numeric())
       trembl %<>% magrittr::extract(, .SD[IS.FRAGMENT == min(IS.FRAGMENT)], by = 'feature_id')
       trembl[, IS.FRAGMENT:=NULL]
-      trembl  %>% report_n(prefix = 'Per group: drop fragments when full available')
+      if (verbose) trembl  %>% report_n(prefix = 'Per group: drop fragments when full available')
 
       # Use first sequence per gene
       trembl  %>% magrittr::extract(, N     := .N,                    by = 'feature_id')
       trembl  %>% magrittr::extract(, NGENE := length(unique(GENES)), by = 'feature_id')
       trembl %<>% magrittr::extract(, .SD[1],                         by = c('feature_id', 'GENES'))
-      trembl  %>% report_n(prefix = 'Per group/gene: use first accession')
+      if (verbose) trembl  %>% report_n(prefix = 'Per group/gene: use first accession')
    }
 
    # swissprot groups
    #-----------------
    if (nrow(swissprot)>0){
-      message('')
-      swissprot  %>% report_n(prefix = 'Swissprot groups')
+      if (verbose) message('')
+      if (verbose) swissprot  %>% report_n(prefix = 'Swissprot groups')
 
       # swissprot groups: collapse similar isoforms (shared accession)
       swissprot  %>% magrittr::extract(, ISOFORM := ISOFORM %>% paste0(collapse = ';'), by = c('feature_id', 'Uniprot accessions'))
       swissprot %<>% unique()
-      swissprot  %>% report_n(prefix = 'Per group/accession: collapse spliceforms')
+      if (verbose) swissprot  %>% report_n(prefix = 'Per group/accession: collapse spliceforms')
 
       # swissprot groups: collapse dissimilar isoforms: retain accession with maximum isoforms
       swissprot  %>% magrittr::extract(, NPERACCESSION := ISOFORM %>% stringi::stri_count_fixed(';'), by = c('feature_id', 'GENES'))
       swissprot  %>% magrittr::extract(, ISOFORM       := ISOFORM %>% paste0(collapse = ';'),         by = c('feature_id', 'GENES'))
       swissprot  %>% magrittr::extract(, `PROTEIN-NAMES` %>% autonomics.support::commonify_strings(), by = c('feature_id', 'GENES'))
       swissprot %<>% magrittr::extract(, .SD[NPERACCESSION==max(NPERACCESSION)],                      by = c('feature_id', 'GENES'))
-      swissprot  %>% report_n(prefix = 'Per group/gene: use spliceform with most accessions')
+      if (verbose) swissprot  %>% report_n(prefix = 'Per group/gene: use spliceform with most accessions')
       swissprot %<>% magrittr::extract(, .SD[1],                                                      by = c('feature_id', 'GENES'))
-      swissprot  %>% report_n(prefix = 'Per group/gene: use first spliceform')
+      if (verbose) swissprot  %>% report_n(prefix = 'Per group/gene: use first spliceform')
    }
 
    # paralogs
    #---------
    # Collapse paralogs: choose gene with most isoforms
-   message('')
+   if (verbose) message('')
    swissprot[, NPERACCESSION:=NULL]
    trembl[, N:=NULL]
    trembl[, NGENE:=NULL]
@@ -579,21 +581,21 @@ deconvolute_proteingroups <- function(
    monologs <- fdata1[, .SD[length(unique(GENES))==1], by = c('feature_id')]
    paralogs <- fdata1[, .SD[length(unique(GENES))>1], by = c('feature_id')]
    if (nrow(paralogs)>0){
-      paralogs  %>% report_n(prefix = 'Paralog groups')
+      if (verbose) paralogs  %>% report_n(prefix = 'Paralog groups')
       paralogs  %>% magrittr::extract(,  NISOFORMS := 1+ISOFORM %>% stringi::stri_count_fixed(';'))
       paralogs  %>% magrittr::extract(,  GENES          := GENES           %>% paste0(collapse = ';'),                  by = 'feature_id')
       paralogs  %>% magrittr::extract(,  ISOFORM        := ISOFORM         %>% paste0(collapse = ';'),                  by = 'feature_id')
       paralogs  %>% magrittr::extract(, `PROTEIN-NAMES` := `PROTEIN-NAMES` %>% autonomics.support::commonify_strings(), by = 'feature_id')
       paralogs %<>% magrittr::extract(, .SD[NISOFORMS == max(NISOFORMS)], by = 'feature_id')
-      paralogs  %>% report_n(prefix = 'Per group: use paralog with most spliceforms')
+      if (verbose) paralogs  %>% report_n(prefix = 'Per group: use paralog with most spliceforms')
       paralogs %<>% magrittr::extract(, .SD[1], by = 'feature_id')
-      paralogs  %>% report_n(prefix = 'Per group: use first paralog')
+      if (verbose) paralogs  %>% report_n(prefix = 'Per group: use first paralog')
       paralogs  %>% magrittr::extract(, NISOFORMS := NULL)
    }
    fdata1 <- rbind(monologs, paralogs)
 
-   message('')
-   fdata1 %>% report_n(prefix = 'All groups (deconvoluted)')
+   if (verbose) message('')
+   if (verbose) fdata1 %>% report_n(prefix = 'All groups (deconvoluted)')
 
    # Merge back
    nullify_fvars <- function(object, fvars){

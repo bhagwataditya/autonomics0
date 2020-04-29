@@ -8,7 +8,8 @@ deconvolute_proteingroups(
   object,
   fastafile,
   fastafields = c("GENES", "PROTEIN-NAMES", "EXISTENCE", "REVIEWED"),
-  drop_isoform_info = FALSE
+  drop_isoform_info = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ deconvolute_proteingroups(
 \item{fastafields}{character vector: fields to load from fastafile}
 
 \item{drop_isoform_info}{logical: whether to drop isoform info}
+
+\item{verbose}{logical: whether to report back or not}
 }
 \value{
 deconvoluted and annotated SummarizedExperiment
