@@ -9,13 +9,15 @@ factorify(avector, reverse = FALSE)
 \arguments{
 \item{avector}{An atomic vector.}
 
-\item{reverse}{A logical value. Should factor levels be in reverse order of
-appearance.}
+\item{reverse}{FALSE (default) or TRUE: reverse order factor levels?}
 }
 \value{
-A factor.
+factor vector
 }
 \description{
 Creates a factor from a vector, where the levels are in (possibly reverse)
 order of appearance in the vector, rather than being alphabetically sorted.
+}
+\examples{
+factorify(c('x', 'z', 'a'))
 }

@@ -9,18 +9,20 @@ uniquify(x, method = "make.unique.spaces", verbose = TRUE)
 \arguments{
 \item{x}{character or factor vector}
 
-\item{method}{'uniquify'}
+\item{method}{'make.unique' or 'make.unique.spaces'}
 
-\item{verbose}{logical}
+\item{verbose}{TRUE (default) or FALSE}
+}
+\value{
+character vector
 }
 \description{
 Make vector components unique by appending spaces
 }
 \examples{
-require(magrittr)
 x <- c('A', 'B', 'C', 'A', 'D')
-x \%>\% autonomics.support::uniquify('make.unique')
-x \%>\% autonomics.support::uniquify('make.unique.spaces')
+uniquify(x, 'make.unique')
+uniquify(x, 'make.unique.spaces')
 }
 \seealso{
 \code{\link[base]{make.unique}}

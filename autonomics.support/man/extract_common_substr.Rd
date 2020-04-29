@@ -12,7 +12,7 @@ extract_common_substr(a, b)
 \item{b}{second string}
 }
 \value{
-character(1)
+string
 }
 \description{
 Extract common substring
@@ -21,6 +21,7 @@ Extract common substring
 # Sequences
   a <- "heart-specific Fatty acid binding protein"
   b <- "Fatty acid binding protein, isoform 3"
+  extract_common_substr(a, b)
   
   a <- "Small nuclear ribonucleoprotein-associated proteins B and B'" 
   b <- "Small nuclear ribonucleoprotein-associated protein N"

@@ -22,6 +22,13 @@ merged dataframe
 Convenient left_join function that preserves row names
 and avoids warning messages when by values are of different type.
 }
+\examples{
+x <- data.frame(organism = c('Homo sapiens', 'Mus musculus'), 
+        commonname   = c('human', 'mouse'), row.names = c('Hs', 'Mm'))
+y <- data.frame(organism = c('Homo sapiens', 'Mus musculus'),
+        chromosomes = c(23, 20), row.names = c('Hs', 'Mm'))
+left_join_keeping_rownames(x, y, by = 'organism')
+}
 \seealso{
 dplyr::left_join
 }

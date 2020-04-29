@@ -13,7 +13,7 @@ is_odd(x)
 \item{x}{integer}
 }
 \value{
-logical
+TRUE or FALSE
 }
 \description{
 Is even/odd?

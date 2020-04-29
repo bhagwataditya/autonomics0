@@ -24,5 +24,5 @@ df <- data.frame(
    relevance = c(NA_character_, NA_character_),
    version   = c('NA', 'NA'), 
    type      = c('proteincoding', 'proteincoding'))
-df \%>\% autonomics.support::rm_na_columns()
+df \%>\% rm_na_columns()
 }

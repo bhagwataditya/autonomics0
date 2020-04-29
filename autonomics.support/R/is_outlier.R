@@ -1,9 +1,9 @@
 #' Identify outliers in vector
-#' @param x numeric
-#' @return logical
+#' @param x numeric vector
+#' @return logical vector
 #' @examples 
 #' x <- c(1:25,  200)
-#' autonomics.support::is_outlier(x)
+#' is_outlier(x)
 #' @importFrom magrittr %>% 
 #' @export
 is_outlier <- function(x){

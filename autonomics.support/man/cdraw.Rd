@@ -12,3 +12,8 @@ cdraw(x)
 \description{
 Convenient grid.draw
 }
+\examples{
+my_circle <- grid::circleGrob(x = 0.5, y = 0.5, r = 0.5,
+                        gp = grid::gpar(col = "gray", lty = 3))
+cdraw(my_circle)
+}

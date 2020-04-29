@@ -9,11 +9,13 @@ is_max(x)
 \arguments{
 \item{x}{numeric vector}
 }
+\value{
+logical vector
+}
 \description{
 Is maximal
 }
 \examples{
-require(magrittr)
 x <- c(A=1,B=3,C=2,D=3, E=NA)
-x \%>\% is_max()
+is_max(x)
 }

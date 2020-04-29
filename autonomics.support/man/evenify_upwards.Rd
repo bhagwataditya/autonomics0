@@ -9,6 +9,12 @@ evenify_upwards(x)
 \arguments{
 \item{x}{integer}
 }
+\value{
+integer
+}
 \description{
 Evenify upwards
+}
+\examples{
+evenify_upwards(3)
 }

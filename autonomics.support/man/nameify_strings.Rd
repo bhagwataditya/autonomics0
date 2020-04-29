@@ -9,17 +9,15 @@ nameify_strings(x, verbose = TRUE)
 \arguments{
 \item{x}{character vector}
 
-\item{verbose}{character}
+\item{verbose}{TRUE or FALSE}
 }
 \value{
-validified subgroups
+character vector
 }
 \description{
 Update character vector values so that they can serve as R variable names
 }
 \examples{
-require(magrittr)
 x <- c('266S', '270A', 'DM')
-x \%>\% autonomics.support::nameify_strings()
-require(magrittr)
+nameify_strings(x)
 }

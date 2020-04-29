@@ -18,3 +18,6 @@ compactified dataframe
 Transform numeric variables into character variables in scientific notation
 Limit length of character variables
 }
+\examples{
+characterify(data.frame(a = 1.09736, b = 4.902903))
+}

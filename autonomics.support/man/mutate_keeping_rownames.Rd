@@ -17,3 +17,8 @@ data.frame
 \description{
 Mutate while preserving rownames
 }
+\examples{
+.data <- data.frame(organism = c('Homo sapiens', 'Mus musculus'), 
+        commonname   = c('human', 'mouse'), row.names = c('Hs', 'Mm'))
+.data \%>\% mutate_keeping_rownames(genus = rownames(.))
+}

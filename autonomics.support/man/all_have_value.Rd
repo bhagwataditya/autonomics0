@@ -12,7 +12,7 @@ all_have_value(x, y)
 \item{y}{scalar}
 }
 \value{
-logical(1)
+TRUE or FALSE
 }
 \description{
 All have value

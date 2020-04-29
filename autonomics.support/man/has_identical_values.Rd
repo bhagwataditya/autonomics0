@@ -10,13 +10,12 @@ has_identical_values(x)
 \item{x}{vector}
 }
 \value{
-logical(1)
+TRUE or FALSE
 }
 \description{
 All elements of vector are identical
 }
 \examples{
-require(magrittr)
 x <- c(2,2,1,2)
-x \%>\% has_identical_values()
+has_identical_values(x)
 }

@@ -16,5 +16,5 @@ Dedupe varnames
 require(magrittr)
 x <- cbind(data.frame(a=1:3, b=1:3, c=1:3), data.frame(a=4:6))
 x
-x \%>\% autonomics.support::dedupe_varnames()
+x \%>\% dedupe_varnames()
 }

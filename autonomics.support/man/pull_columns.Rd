@@ -7,11 +7,11 @@
 pull_columns(df, first_cols, verbose = TRUE)
 }
 \arguments{
-\item{df}{dataframe}
+\item{df}{data.frame}
 
-\item{first_cols}{columns that need to be pulled to the front}
+\item{first_cols}{character vector: columns to be pulled to the front}
 
-\item{verbose}{logical}
+\item{verbose}{TRUE (default) or FALSE}
 }
 \value{
 dataframe with re-ordered columns

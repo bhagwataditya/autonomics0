@@ -22,5 +22,5 @@ Has even/odd length?
 has_even_length(1:2)
 has_odd_length(1:2)
 has_even_length(1:3)
-has_even_length(1:3)
+has_odd_length(1:3)
 }

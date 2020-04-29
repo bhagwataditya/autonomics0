@@ -7,15 +7,15 @@
 is_outlier(x)
 }
 \arguments{
-\item{x}{numeric}
+\item{x}{numeric vector}
 }
 \value{
-logical
+logical vector
 }
 \description{
 Identify outliers in vector
 }
 \examples{
 x <- c(1:25,  200)
-autonomics.support::is_outlier(x)
+is_outlier(x)
 }

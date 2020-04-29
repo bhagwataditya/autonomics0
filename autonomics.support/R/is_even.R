@@ -1,6 +1,6 @@
 #' Is even/odd?
 #' @param x integer
-#' @return logical
+#' @return TRUE or FALSE
 #' @examples
 #' is_even(13)
 #' is_even(12)
@@ -8,16 +8,13 @@
 #' is_odd(12)
 #' @importFrom magrittr %>% 
 #' @export
-is_even <- function(x){
-  x %% 2 %>% magrittr::equals(0)
-}
+is_even <- function(x)   (x %% 2) == 0
+
 
 #' @rdname is_even
-#' @importFrom magrittr %>% 
 #' @export
-is_odd <- function(x){
-  x %>% is_even() %>% magrittr::not()
-}
+is_odd <- function(x)    !is_even(x)
+
 
 #' Has even/odd length?
 #' @param x vector
@@ -26,23 +23,20 @@ is_odd <- function(x){
 #' has_even_length(1:2)
 #' has_odd_length(1:2)
 #' has_even_length(1:3)
-#' has_even_length(1:3)
-#' @importFrom magrittr %>% 
+#' has_odd_length(1:3)
 #' @export
-has_even_length <- function(x){
-  length(x) %>% is_even()
-}
+has_even_length <- function(x)   is_even(length(x))
+
 
 #' @rdname has_even_length
-#' @importFrom magrittr %>% 
 #' @export
-has_odd_length <- function(x){
-  length(x) %>% is_odd()
-}
+has_odd_length <- function(x)   is_odd(length(x))
+
 
 #' Evenify upwards
 #' @param x integer
+#' @return integer
+#' @examples 
+#' evenify_upwards(3)
 #' @export
-evenify_upwards <- function(x){
-  if (is_odd(x)) x+1 else x
-}
+evenify_upwards <- function(x)   if (is_odd(x)) x+1 else x

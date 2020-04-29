@@ -2,18 +2,20 @@
 % Please edit documentation in R/get_unique_tails.R
 \name{get_unique_tails}
 \alias{get_unique_tails}
-\title{Get unique unique tails}
+\title{Get unique tails}
 \usage{
 get_unique_tails(x)
 }
 \arguments{
 \item{x}{character vector}
 }
+\value{
+character vector
+}
 \description{
-Get unique unique tails
+Get unique tails
 }
 \examples{
-require(magrittr)
 x <- c("E_1", "E_2", "E_3")
-x \%>\% get_unique_tails()
+get_unique_tails(x)
 }

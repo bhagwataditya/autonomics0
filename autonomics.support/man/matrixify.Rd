@@ -15,3 +15,8 @@ matrix
 \description{
 Matrixify datatable or dataframe
 }
+\examples{
+df <- data.frame(organims = c('Homo sapiens', 'Mus musculus'), 
+                chromosomes = c(23, 20))
+matrixify(df)
+}

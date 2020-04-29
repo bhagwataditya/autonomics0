@@ -9,11 +9,13 @@ extract_max(x)
 \arguments{
 \item{x}{numeric vector}
 }
+\value{
+subvector
+}
 \description{
 Extract portion of vector that contains maximum values
 }
 \examples{
-require(magrittr) 
 x <- c(A=1,B=3,C=2,D=3, E=NA)
-x \%>\% autonomics.support::extract_max()
+extract_max(x)
 }

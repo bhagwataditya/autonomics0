@@ -13,31 +13,25 @@ commonify_strings(x)
 Commonify strings
 }
 \examples{
-require(magrittr)
-
 # NO DIFFERENCES
-x <- c('Retrotransposon Gag-like protein 8B',
-       'Retrotransposon Gag-like protein 8B')
-x \%>\% commonify_strings()
-
+require(magrittr)
+   x <- c( 'Retrotransposon Gag-like protein 8B',
+           'Retrotransposon Gag-like protein 8B')
+   x \%>\% commonify_strings()
 # TAILS DIFFER
-x <- c('Histone H2B type 1-K',
-       'Histone H2B type 1-C/E/F/G/I')
-x \%>\% commonify_strings()
-
+   x <- c( 'Histone H2B type 1-K',
+           'Histone H2B type 1-C/E/F/G/I')
+   x \%>\% commonify_strings()
+   x <- c("Small nuclear ribonucleoprotein-associated proteins B and B'",
+          "Small nuclear ribonucleoprotein-associated protein N")
+   x \%>\% commonify_strings()
 # MORE COMPLEX DIFFERENCES
-x <- c('Fatty acid binding protein, isoform 3',
-       'Fatty acid binding protein', 
-       'heart-specific Fatty acid binding protein',
-       'heart-specific Fatty acid binding protein, isoform 3')
-x \%>\% commonify_strings()
-
+   x <- c( 'Fatty acid binding protein, isoform 3',
+           'Fatty acid binding protein', 
+           'heart-specific Fatty acid binding protein',
+           'heart-specific Fatty acid binding protein, isoform 3')
+   x \%>\% commonify_strings()
 # NOTHING IN COMMON
-x <- c('ABC1', 'DEF2')
-x \%>\% commonify_strings()
-
-x <- c("Small nuclear ribonucleoprotein-associated proteins B and B'",
-       "Small nuclear ribonucleoprotein-associated protein N")
-x \%>\% commonify_strings()
-
+   x <- c('ABC1', 'DEF2')
+   x \%>\% commonify_strings()
 }

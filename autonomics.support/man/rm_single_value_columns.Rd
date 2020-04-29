@@ -23,5 +23,5 @@ df <- data.frame(
    name      = c('alpha-1-B glycoprotein', 'alpha-2-macroglobulin'), 
    relevance = c(NA_character_, NA_character_),
    type      = c('proteincoding', 'proteincoding'))
-df \%>\% autonomics.support::rm_single_value_columns()
+df \%>\% rm_single_value_columns()
 }

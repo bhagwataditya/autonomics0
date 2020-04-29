@@ -11,12 +11,15 @@ load_data(x, package = NULL)
 
 \item{package}{package name (character)}
 }
+\value{
+object
+}
 \description{
 Programmatic equivalent of data(.)
 }
 \examples{
 if (require(autonomics.data)){
-   load_data('billing2016', package = 'autonomics.data')
+   load_data('car90', package = 'rpart')
 }
 }
 \references{
