@@ -18,6 +18,11 @@
 #'       autonomics.find::create_contrast_matrix(
 #'          c(EM0.8_0 = 'EM0.8 - EM0.0'))
 #' }
+#' if (require(autonomics.data)){
+#'     object <- autonomics.data::glutaminase
+#'     autonomics.import::create_design_matrix(object)
+#'     autonomics.find::create_contrast_matrix(object)
+#' }
 #' @importFrom magrittr  %>%
 #' @export
 create_contrast_matrix <- function(design, contrast_defs = colnames(design)){
