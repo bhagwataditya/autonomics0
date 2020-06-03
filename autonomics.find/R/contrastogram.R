@@ -54,16 +54,24 @@ aggregate_conc_contrasts_across_time <- function(conc_contrast_matrix){
     aggregate_contrasts(conc_contrast_matrix, 1)
 }
 
-create_subgroup_dt <- function(object){
+split_values <- function(x){
+    sep <- autonomics.import::guess_sep(x)
+    dt <- data.table::data.table(x = x)
+    dt[, data.table::tstrsplit(x, sep) ]
+}
+
+split_subgroup_values <- function(object){
+    subgroupvalues <- autonomics.import::subgroup_values(object)
+    cbind(subgroup = subgroupvalues, split_values(subgroupvalues))
+}
+
+split_subgroup_levels <- function(object){
     subgrouplevels <- autonomics.import::subgroup_levels(object)
-    sep <- autonomics.import::guess_sep(subgrouplevels)
-    dt <- data.table::data.table(subgroup = subgrouplevels)
-    dt %<>% cbind(dt[, data.table::tstrsplit(subgroup, sep) ])
-    dt
+    cbind(subgroup = subgrouplevels, split_values(subgrouplevels))
 }
 
 create_subgroup_matrix <- function(object){
-    dt <- create_subgroup_dt(object)
+    dt <- split_subgroup_levels(object)
     subgroup_matrix <- as.matrix(data.table::dcast(
         dt, V1 ~ V2, value.var = 'subgroup'), rownames = 'V1')
     subgroup_matrix
@@ -106,33 +114,38 @@ add_limma2 <- function(object, contrastdefs = diff_contrasts(object)){
 
 #' Plot contrastogram
 #' @param object SummarizedExperiment
+#' @param directed TRUE or FALSE: whether to distinguish up and downregulations
+#' @param subgroup_colors named color vector (names = subgroups)
 #' @examples 
 #' if (require(autonomics.data)){
 #'     object <- autonomics.data::glutaminase
 #'     plot_contrastogram(object)
+#'     plot_contrastogram(object, directed = FALSE)
 #' }
-plot_contrastogram <- function(object, subgroup_colors = default_color_values2(object)){
-    
+plot_contrastogram <- function(
+    object, directed = TRUE, subgroup_colors = default_color_values2(object), 
+    sparse = FALSE
+){
     # Perform limma
     object %<>% add_limma2()
-    contrastogram_matrices <- create_contrastogram_matrices(object)
-    connections <- contrastogram_matrices$connections
-    colors <- contrastogram_matrices$colors
+    contrastogram_matrices <- compute_connections(
+        object, directed = directed, subgroup_colors = subgroup_colors)
+    connection_sizes  <- contrastogram_matrices$connection_sizes
+    connection_colors <- contrastogram_matrices$connection_colors
     
-        # 
-        widths <- scales::rescale(connections, c(0.01,30))
-        colors[connections/nrow(object)<0.20] <- "0"
+        widths <- scales::rescale(connection_sizes, c(0.01,30))
+        if (sparse) connection_colors[connection_sizes/nrow(object)<0.50] <- "0"
         
     # Plot diagram
-    dt <- create_subgroup_dt(object)
+    dt <- split_subgroup_levels(object)
     nrow <- dt[, data.table::uniqueN(V2)]
     nperrow <- dt[, .N, by = 'V1'][, N]
     #dir.create('~/importomicscache/contrastogram')
-    #pdf('~/importomicscache/contrastogram/contrastogram.pdf', width = 9, height = 9)
-    diagram::plotmat(connections, nperrow, relsize = 1, box.size = 0.05, 
-        name = rownames(connections), box.col = subgroup_colors, 
-        box.type = 'square', arr.lwd = widths, # sqrt(connections)
-        arr.lcol = colors, arr.col = colors) #, arr.lcol = log2(1+diagram_matrix))
+    #pdf('~/importomicscache/contrastogram/directed_contrastogram.pdf', width = 9, height = 9)
+    diagram::plotmat(connection_sizes, nperrow, relsize = 1, box.size = 0.05, 
+        name = rownames(connection_sizes), box.col = subgroup_colors, 
+        box.type = 'square', arr.lwd = widths, # sqrt(connection_sizes)
+        arr.lcol = connection_colors, arr.col = connection_colors) #, arr.lcol = log2(1+diagram_matrix))
     #dev.off()
 }
 
@@ -141,18 +154,25 @@ default_color_values2 <- function(object){
     autonomics.plot::default_color_values(object)[autonomics.import::subgroup_levels(object)]
 }
 
-create_contrastogram_matrices <- function(
+compute_connections <- function(
     object, 
+    directed = FALSE,
     subgroup_colors = default_color_values2(object)
 ){
     
     # subgroup matrix, difference contrasts, limma
     pvalues <- autonomics.import::limma(object)[, , 'p']
-    nsignificant <- apply(pvalues, 2, function(x) sum(x<0.05, na.rm=TRUE))
+    effects <- autonomics.import::limma(object)[, , 'effect']
+    is_significant <-  pvalues < 0.05
+    is_up          <- (pvalues < 0.05) & (effects > 0)
+    is_down        <- (pvalues < 0.05) & (effects < 0)
     
+    n <- apply(if (directed) is_up else is_significant, 2,sum, na.rm = TRUE)
+    ndown <- apply(is_down, 2, sum, na.rm = TRUE)
+                      
     # Create diagram
     subgrouplevels <- autonomics.import::subgroup_levels(object)
-    connections <- colors <- matrix(
+    connection_sizes <- connection_colors <- matrix(
         0,
         nrow = length(subgrouplevels),
         ncol = length(subgrouplevels), 
@@ -164,18 +184,30 @@ create_contrastogram_matrices <- function(
         for (j in 2:ncol(subgroup_matrix)){
             from <- subgroup_matrix[i, j-1]
             to   <- subgroup_matrix[i, j]
-            connections[to, from] <- nsignificant[[paste0(to, '__', from)]]
-            colors[to, from] <- subgroup_colors[[to]]}}
+            connection_sizes[to, from]         <- n[[paste0(to, '__', from)]]
+            connection_colors[to, from] <- subgroup_colors[[to]]
+            if (directed){
+                connection_sizes[from, to] <- ndown[[paste0(to, '__', from)]]
+                connection_colors[from, to] <- subgroup_colors[[to]]
+            }
+        }
+    }
     
     # Add conc contrasts to diagram
     for (j in 1:ncol(subgroup_matrix)){
         for (i in 2:ncol(subgroup_matrix)){
             from <- subgroup_matrix[i-1, j]
             to   <- subgroup_matrix[i, j]
-            connections[to, from] <- nsignificant[[paste0(to, '__', from)]]
-            colors[to, from] <- subgroup_colors[[to]]}}
+            connection_sizes[to, from]         <- n[[paste0(to, '__', from)]]
+            connection_colors[to, from] <- subgroup_colors[[to]]
+            if (directed){
+                connection_sizes[from, to] <- ndown[[paste0(to, '__', from)]]
+                connection_colors[from, to] <- subgroup_colors[[to]]
+            }
+        }
+    }
     
     # Return
-    list(connections = connections, colors = colors)
+    list(connection_sizes = connection_sizes, connection_colors = connection_colors)
 }
 
