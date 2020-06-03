@@ -18,9 +18,12 @@ character(1)
 Create arrow diagram
 }
 \examples{
+require(magrittr)
 if (require(autonomics.data)){
-   object <- autonomics.data::stemdiff.proteinratios
-   object$subgroup
+    object <- autonomics.data::glutaminase
+    object$subgroup
+    object \%<>\% add_limma()
+    head(dimnames(autonomics.import::limma(object)))
    
    topdef <- 'fdr < 0.05'
    cat(create_arrow_diagram(object, topdef))
