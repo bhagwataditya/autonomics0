@@ -21,3 +21,7 @@ value
 Orders a vector and returns n'th ordered value.
 When vector length is smaller than n, returns last value.
 }
+\examples{
+nmax(c(1,2,3,4,5), 2)
+nmin(c(1,2,3,4,5), 2)
+}

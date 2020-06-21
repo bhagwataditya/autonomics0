@@ -4,7 +4,9 @@
 \name{FEATURE_ID_TYPES}
 \alias{FEATURE_ID_TYPES}
 \title{Feature identifer types}
-\format{An object of class \code{character} of length 2.}
+\format{
+An object of class \code{character} of length 2.
+}
 \usage{
 FEATURE_ID_TYPES
 }

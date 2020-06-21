@@ -4,10 +4,15 @@
 \alias{create_cor_plot_dt}
 \title{Create correlation plot data.table}
 \usage{
-create_cor_plot_dt(cor_dt, eset1, eset2,
+create_cor_plot_dt(
+  cor_dt,
+  eset1,
+  eset2,
   fvars1 = autonomics.integrate::default_corplot_fvars(eset1),
   fvars2 = autonomics.integrate::default_corplot_fvars(eset2),
-  color_var = "subgroup", shape_var = NULL)
+  color_var = "subgroup",
+  shape_var = NULL
+)
 }
 \arguments{
 \item{cor_dt}{correlation data.table}

@@ -4,7 +4,9 @@
 \name{SUPPORTED_ASSAYS}
 \alias{SUPPORTED_ASSAYS}
 \title{Supported assays}
-\format{An object of class \code{character} of length 5.}
+\format{
+An object of class \code{character} of length 5.
+}
 \usage{
 SUPPORTED_ASSAYS
 }

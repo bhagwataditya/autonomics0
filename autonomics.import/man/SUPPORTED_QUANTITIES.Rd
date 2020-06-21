@@ -4,7 +4,9 @@
 \name{SUPPORTED_QUANTITIES}
 \alias{SUPPORTED_QUANTITIES}
 \title{Supported quantities}
-\format{An object of class \code{character} of length 9.}
+\format{
+An object of class \code{character} of length 9.
+}
 \usage{
 SUPPORTED_QUANTITIES
 }

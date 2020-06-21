@@ -4,7 +4,9 @@
 \name{proteingroups_fvars}
 \alias{proteingroups_fvars}
 \title{proteingroups fvars}
-\format{An object of class \code{character} of length 8.}
+\format{
+An object of class \code{character} of length 8.
+}
 \usage{
 proteingroups_fvars
 }

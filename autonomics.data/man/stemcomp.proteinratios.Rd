@@ -4,7 +4,9 @@
 \name{stemcomp.proteinratios}
 \alias{stemcomp.proteinratios}
 \title{Billing et al. (2016) stem cell comparison: protein ratios (sample versus internal standard)}
-\format{An object of class \code{SummarizedExperiment} with 7876 rows and 9 columns.}
+\format{
+An object of class \code{SummarizedExperiment} with 7876 rows and 9 columns.
+}
 \usage{
 stemcomp.proteinratios
 }

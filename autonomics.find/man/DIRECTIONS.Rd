@@ -4,7 +4,9 @@
 \name{DIRECTIONS}
 \alias{DIRECTIONS}
 \title{DIRECTIONS}
-\format{An object of class \code{character} of length 3.}
+\format{
+An object of class \code{character} of length 3.
+}
 \usage{
 DIRECTIONS
 }

@@ -54,7 +54,7 @@ Plot Venn/Euler diagram
 \examples{
 x <- list(A = c('apple', 'pear'), B = c('pear', 'orange'))
 filename <- NULL
-plot_venn(x)
+p <- plot_venn(x)
 plot_venn(x, euler = TRUE)
 filename <- tempfile()
 plot_venn(x, filename = filename)

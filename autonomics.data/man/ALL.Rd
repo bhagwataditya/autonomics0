@@ -4,7 +4,9 @@
 \name{ALL}
 \alias{ALL}
 \title{Ritz laboratory's ALL data}
-\format{An object of class \code{SummarizedExperiment} with 8585 rows and 125 columns.}
+\format{
+An object of class \code{SummarizedExperiment} with 8585 rows and 125 columns.
+}
 \usage{
 ALL
 }

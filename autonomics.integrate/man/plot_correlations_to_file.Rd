@@ -4,11 +4,21 @@
 \alias{plot_correlations_to_file}
 \title{Plot correlations}
 \usage{
-plot_correlations_to_file(cor_dt, eset1, eset2, file,
+plot_correlations_to_file(
+  cor_dt,
+  eset1,
+  eset2,
+  file,
   fvars1 = autonomics.integrate::default_corplot_fvars(eset1),
   fvars2 = autonomics.integrate::default_corplot_fvars(eset2),
-  color_var = "subgroup", shape_var = NULL, xlab = NULL, ylab = NULL,
-  nrow = 3, ncol = 6, max_pages = Inf)
+  color_var = "subgroup",
+  shape_var = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  nrow = 3,
+  ncol = 6,
+  max_pages = Inf
+)
 }
 \arguments{
 \item{cor_dt}{correlation datable, as returned by autonomics.integrate::correlate_features}

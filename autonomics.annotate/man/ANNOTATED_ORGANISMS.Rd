@@ -4,7 +4,9 @@
 \name{ANNOTATED_ORGANISMS}
 \alias{ANNOTATED_ORGANISMS}
 \title{Annotated organisms}
-\format{An object of class \code{list} of length 6.}
+\format{
+An object of class \code{list} of length 6.
+}
 \usage{
 ANNOTATED_ORGANISMS
 }

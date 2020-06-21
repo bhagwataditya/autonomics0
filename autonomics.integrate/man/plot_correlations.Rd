@@ -4,11 +4,18 @@
 \alias{plot_correlations}
 \title{Plot single page with correlation plots}
 \usage{
-plot_correlations(cor_dt, eset1, eset2,
+plot_correlations(
+  cor_dt,
+  eset1,
+  eset2,
   fvars1 = autonomics.integrate::default_corplot_fvars(eset1),
   fvars2 = autonomics.integrate::default_corplot_fvars(eset2),
-  color_var = "subgroup", shape_var = NULL, xlab = NULL, ylab = NULL,
-  ncol = 3)
+  color_var = "subgroup",
+  shape_var = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  ncol = 3
+)
 }
 \arguments{
 \item{cor_dt}{correlation datatable}

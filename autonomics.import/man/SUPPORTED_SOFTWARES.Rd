@@ -4,7 +4,9 @@
 \name{SUPPORTED_SOFTWARES}
 \alias{SUPPORTED_SOFTWARES}
 \title{Supported softwares}
-\format{An object of class \code{character} of length 5.}
+\format{
+An object of class \code{character} of length 5.
+}
 \usage{
 SUPPORTED_SOFTWARES
 }

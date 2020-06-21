@@ -26,7 +26,8 @@ Writes a data frame-like object to a tab delimited text file.
 \examples{
 require(magrittr)
 my_file <- tempfile() \%T>\% message()
-data.frame(a=1, b=2, c=3) \%>\% print2txt(file = my_file)
+a_df <- data.frame(a=1, b=2, c=3)
+print2txt(a_df, file = my_file)
 }
 \seealso{
 \code{\link[data.table]{fwrite}}

@@ -4,8 +4,13 @@
 \alias{annotate_correlations}
 \title{Annotate correlations}
 \usage{
-annotate_correlations(cor_dt, eset1, eset2, fvars1 = character(0),
-  fvars2 = character(0))
+annotate_correlations(
+  cor_dt,
+  eset1,
+  eset2,
+  fvars1 = character(0),
+  fvars2 = character(0)
+)
 }
 \arguments{
 \item{cor_dt}{correlation datatable returned by correlate_features}

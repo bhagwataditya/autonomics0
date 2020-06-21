@@ -4,7 +4,9 @@
 \name{phosphosite_fvars}
 \alias{phosphosite_fvars}
 \title{phosphosites fvars}
-\format{An object of class \code{character} of length 4.}
+\format{
+An object of class \code{character} of length 4.
+}
 \usage{
 phosphosite_fvars
 }

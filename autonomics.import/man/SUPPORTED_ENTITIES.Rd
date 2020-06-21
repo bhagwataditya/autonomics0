@@ -4,7 +4,9 @@
 \name{SUPPORTED_ENTITIES}
 \alias{SUPPORTED_ENTITIES}
 \title{Supported entities}
-\format{An object of class \code{character} of length 5.}
+\format{
+An object of class \code{character} of length 5.
+}
 \usage{
 SUPPORTED_ENTITIES
 }

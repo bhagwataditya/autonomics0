@@ -4,7 +4,9 @@
 \name{stemcomp.soma}
 \alias{stemcomp.soma}
 \title{Billing et al. (2016) stem cell comparison: somascan intensities}
-\format{An object of class \code{SummarizedExperiment} with 1128 rows and 11 columns.}
+\format{
+An object of class \code{SummarizedExperiment} with 1128 rows and 11 columns.
+}
 \usage{
 stemcomp.soma
 }

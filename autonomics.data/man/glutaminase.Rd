@@ -4,7 +4,9 @@
 \name{glutaminase}
 \alias{glutaminase}
 \title{Halama et al. (2018) glutaminase inhibitor dataset}
-\format{An object of class \code{SummarizedExperiment} with 391 rows and 96 columns.}
+\format{
+An object of class \code{SummarizedExperiment} with 391 rows and 96 columns.
+}
 \usage{
 glutaminase
 }

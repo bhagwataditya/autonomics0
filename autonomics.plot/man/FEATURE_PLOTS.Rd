@@ -4,7 +4,9 @@
 \name{FEATURE_PLOTS}
 \alias{FEATURE_PLOTS}
 \title{FEATURE_PLOTS}
-\format{An object of class \code{character} of length 5.}
+\format{
+An object of class \code{character} of length 5.
+}
 \usage{
 FEATURE_PLOTS
 }

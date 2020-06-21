@@ -4,8 +4,14 @@
 \alias{write_correlations}
 \title{Write correlations to file}
 \usage{
-write_correlations(cor.dt, eset1, eset2, file, fvars1 = character(0),
-  fvars2 = character(0))
+write_correlations(
+  cor.dt,
+  eset1,
+  eset2,
+  file,
+  fvars1 = character(0),
+  fvars2 = character(0)
+)
 }
 \arguments{
 \item{cor.dt}{correlation datable}

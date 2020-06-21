@@ -8,7 +8,15 @@
 \alias{GO_COLLECTIONS}
 \alias{GENE_SET_COLLECTIONS}
 \title{Constants in autonomics.ora}
-\format{An object of class \code{list} of length 7.}
+\format{
+An object of class \code{list} of length 7.
+
+An object of class \code{character} of length 6.
+
+An object of class \code{character} of length 3.
+
+An object of class \code{character} of length 4.
+}
 \usage{
 ANNOTATED_ORGANISMS
 

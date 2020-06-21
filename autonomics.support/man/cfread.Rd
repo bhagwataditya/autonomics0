@@ -2,37 +2,37 @@
 % Please edit documentation in R/read.R
 \name{cfread}
 \alias{cfread}
-\title{convenient fread}
+\title{Convenient fread}
 \usage{
 cfread(file, verbose = FALSE, integer64 = "numeric", data.table = TRUE, ...)
 }
 \arguments{
-\item{file}{Either the file name to read (containing no \\n character), a 
-shell command that preprocesses the file (e.g. fread("grep blah filename")) 
-or the input itself as a string (containing at least one \\n). Passed to 
-\code{\link[data.table]{fread}}.}
+\item{file}{passed to \code{\link[data.table]{fread}(input = file)}}
 
-\item{verbose}{Be chatty and report timings? Passed to 
-\code{\link[data.table]{fread}}.}
+\item{verbose}{FALSE (default) or TRUE. 
+Passed to \code{\link[data.table]{fread}(input = file)}}
 
-\item{integer64}{What to read columns detected as containing integers larger 
-than 2^31 as. Passed to \code{\link[data.table]{fread}}.}
+\item{integer64}{'numeric' (default) or 'integer64': passed to data.table::fread}
 
-\item{data.table}{\code{TRUE} returns a \code{data.table}. \code{FALSE} 
-returns a \code{data.frame}. Passed to \code{\link[data.table]{fread}}.}
+\item{data.table}{\code{TRUE} or \code{FALSE}: whether to return as
+\code{data.table} (rather than data.frame)}
 
 \item{...}{Passed to \code{\link[data.table]{fread}}.}
 }
 \description{
-Convenience wrapper to \code{\link[data.table]{fread}} with preset arguments, making the fread operation:
-\itemize{
-   \item reliable:   integer64 are read as 'numeric'
-   \item convenient: data frame returned rather than a data.table
-   \item silent:     verbose set to FALSE and warnings are suppressed
-}
+Convenient \code{\link[data.table]{fread}} wrapper which sets 
+integer64 to 'numeric' to prevent issues with
 }
 \details{
-The integer64 = 'numeric' specification is required to read integers as regular integers rather than
-64 bit integers. The problem with 64 it integers is that the numbers display incorrectly when the package 
-bit64 is not loaded. And the package bit64 itself had some issues, at least in earlier versions.
+Convenience wrapper to \code{\link[data.table]{fread}} with preset arguments, 
+making the fread operation:
+\itemize{
+   \item reliable:   integer64 are read as 'numeric'
+   \item silent:     verbose set to FALSE and warnings are suppressed
+}
+
+The integer64 = 'numeric' specification is required to read integers as 
+regular integers rather than 64 bit integers. The problem with 64 bit 
+integers is that the numbers display incorrectly when the package 
+bit64 is not loaded.
 }
