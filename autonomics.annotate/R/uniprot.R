@@ -381,19 +381,19 @@ load_uniprot_fasta_annotations <- function(
 
    # Load (relevant portion of) fasta
    fasta <- seqinr::read.fasta(fastafile)
-   all_accessions <- fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2)
+   all_accessions <- fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 2)
 
    # Extract annotations
-   dt <- data.table::data.table(UNIPROTKB  =  fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 2),
+   dt <- data.table::data.table(UNIPROTKB  =  fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 2),
                                 annotation = fasta  %>% vapply(attr, character(1), 'Annot') %>% unname())
 
    # REVIEWED
    autonomics.support::cmessage('\t\t\tExtract REVIEWED: 0=trembl, 1=swissprot')
-   dt %>% magrittr::extract(, REVIEWED := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 1) %>% magrittr::equals('sp') %>% as.numeric())
+   dt %>% magrittr::extract(, REVIEWED := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 1) %>% magrittr::equals('sp') %>% as.numeric())
 
    # ENTRYNAME
    autonomics.support::cmessage('\t\t\tExtract ENTRYNAME')
-   dt %>% magrittr::extract(, ENTRYNAME := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(extract, character(1), 3))
+   dt %>% magrittr::extract(, ENTRYNAME := fasta %>% names() %>% stringi::stri_split_fixed('|') %>% vapply(magrittr::extract, character(1), 3))
 
    # VERSION
    pattern <- ' SV=[0-9]'
