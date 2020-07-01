@@ -1,5 +1,3 @@
-devtools::load_all('../autonomics.import')
-
 #' Create contrasts for t-based clustering
 create_cluster_contrasts <- function(object){
    dt <- split_subgroup_levels(object)
