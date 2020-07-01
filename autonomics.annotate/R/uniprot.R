@@ -434,6 +434,7 @@ load_uniprot_fasta_annotations <- function(
    dt %<>% magrittr::extract(, c('UNIPROTKB', fastafields), with = FALSE)
 
    # Return
+   class(dt) <- c("fasta_data.table", class(dt))
    return(dt)
 }
 
