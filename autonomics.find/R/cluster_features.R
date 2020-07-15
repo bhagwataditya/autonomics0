@@ -1,4 +1,3 @@
-devtools::load_all('../autonomics.import')
 
 #' Create contrasts for t-based clustering
 create_cluster_contrasts <- function(object){
@@ -133,27 +132,44 @@ add_clustering <- function(object){
    object
 }
 
-# 
-# par(mfrow = c(2,2),     # 2x2 layout
-#    oma = c(0, 0, 0, 0), # bottom, left, top, right space
-#    mar = c(2, 2, 2, 2), # space for one row of text at ticks and to separate plots
-#    mgp = c(2, 1, 0),    # axis label at 2 rows distance, tick labels at 1 row
-#    xpd = NA)
-# plot_contrastogram(fsplit(object, 'cluster')[[2]], sparse = TRUE)
-# plot_contrastogram(fsplit(object, 'cluster')[[3]], sparse = TRUE)
-# plot_contrastogram(fsplit(object, 'cluster')[[5]], sparse = TRUE)
-# plot_contrastogram(fsplit(object, 'cluster')[[9]], sparse = TRUE)
-# 
-# 
-# heatmap_order <- autonomics.import::fdata(object)$cluster_order
-# plotobject <- object[heatmap_order, ]
-# autonomics.import::exprs(plotobject) %<>% t() %>% scale() %>% t()
-# 
-# ggplot2::ggplot(autonomics.import::sumexp_to_long_dt(plotobject[1:10, ])) + 
-# ggplot2::geom_density(ggplot2::aes(x=value, color = feature_id))
-# 
-# ggplot2::ggplot(autonomics.import::sumexp_to_long_dt(plotobject)) + 
-# ggplot2::geom_density(ggplot2::aes(x=value, color = sample_id)) + 
-# ggplot2::guides(color = FALSE)
+
+###############################
+
+plot_feature_violins <- function(object, title){
+   ggplot2::ggplot(autonomics.import::sumexp_to_long_dt(object[1:10, ])) +
+   ggplot2::geom_violin(ggplot2::aes(x = 'feature_id', y=value, fill = feature_id)) + 
+   ggplot2::ggtitle(title) + 
+   ggplot2::guides(fill = FALSE) + 
+   ggplot2::xlab(NULL) + 
+   ggplot2::theme(axis.text.x=ggplot2::element_blank())
+   
+}
+
+# object1 <- autonomics.data::glutaminase # original
+# object2 <- autonomics.data::glutaminase # zscore
+# autonomics.import::exprs(object2) %<>% t() %>% scale() %>% t()
+# object3 <- autonomics.data::glutaminase # invnorm
+# autonomics.import::exprs(object3) %<>% t() %>% apply(2, autonomics.preprocess:::transform_to_fitting_normal) %>% t()
+# object4 <- autonomics.data::glutaminase # quantnorm
+# autonomics.import::exprs(object4) %<>% t() %>% limma::normalizeBetweenArrays() %>% t()
+
+# autonomics.plot::multiplot(
+#    plotlist = list(plot_feature_violins(object1, title = "Original"),
+#                    plot_feature_violins(object2, title = "Z-scoring"),
+#                    plot_feature_violins(object3, title = "Inverse Normal Transformation"),
+#                    plot_feature_violins(object4, title = "Quantile normalization")), cols = 2)
+
+plot_overlayed_feature_distributions <- function(object){
+   autonomics.import::exprs(object) %<>% t() %>% scale() %>% t()
+   ggplot2::ggplot(autonomics.import::sumexp_to_long_dt(object[1:10, ])) +
+   ggplot2::geom_density(ggplot2::aes(x=value, fill = feature_id))
+   
+   ggplot2::ggplot(autonomics.import::sumexp_to_long_dt(object)) +
+   ggplot2::geom_density(ggplot2::aes(x=value, color = sample_id)) +
+   ggplot2::guides(color = FALSE)
+}
+
+
+
 
 
