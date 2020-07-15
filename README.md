@@ -5,29 +5,18 @@ Make omics data analysis flow :-).
 
 # Install
 
-    # Set CRAN mirror to be used
-    local({r <- getOption("repos")
-           r["CRAN"] <- "https://cloud.r-project.org" 
-           options(repos=r)
-    })    
-
-    # Install Bioconductor packages
-    install.packages('BiocManager')
-    BiocManager::install('SummarizedExperiment', update = FALSE)   # required to install autonomics.data
-    BiocManager::install('mixOmics',             update = FALSE)   # CRAN -> BioC, requires explicit installation
-    
-    # Install autonomics (drop ref = 'dev' to install older autonomics stable)
     install.packages('remotes')
-    remotes::install_github('bhagwataditya/autonomics/autonomics.data',       ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.support',    ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.annotate',   ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.import',     ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess', ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.plot',       ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.find',       ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics.ora',        ref = 'dev', upgrade = FALSE)
-    remotes::install_github('bhagwataditya/autonomics/autonomics',            ref = 'dev', upgrade = FALSE)
-
+    remotes::install_github('bhagwataditya/autonomics/autonomics.data',       repos = BiocManager::repositories(), dependencies = TRUE, upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.support',    repos = BiocManager::repositories(), dependencies = TRUE, upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.annotate',   repos = BiocManager::repositories(), dependencies = TRUE, upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.import',     repos = BiocManager::repositories(), dependencies = TRUE, upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.preprocess', repos = BiocManager::repositories(), dependencies = TRUE, upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.plot',       repos = BiocManager::repositories(), dependencies = TRUE, upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.find',       repos = BiocManager::repositories(), dependencies = TRUE, upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.ora',        repos = BiocManager::repositories(), dependencies = TRUE, upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics.integrate',  repos = BiocManager::repositories(), dependencies = TRUE, upgrade = FALSE)
+    remotes::install_github('bhagwataditya/autonomics/autonomics',            repos = BiocManager::repositories(), dependencies = TRUE, upgrade = FALSE)
+    
 ## Read and prepare
 
     # METABOLON
