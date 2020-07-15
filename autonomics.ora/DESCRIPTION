@@ -31,7 +31,7 @@ Imports:
     utils
 License: GPL-3
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Suggests:
     atkin.2014,
     autonomics.data,

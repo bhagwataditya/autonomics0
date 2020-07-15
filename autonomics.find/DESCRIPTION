@@ -44,4 +44,4 @@ Suggests:
    subramanian.2016,
    statmod, 
    testthat
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
