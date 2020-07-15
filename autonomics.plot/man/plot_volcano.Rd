@@ -4,13 +4,7 @@
 \alias{plot_volcano}
 \title{Plot volcano}
 \usage{
-plot_volcano(
-  object,
-  ntop = 3,
-  label = "fname",
-  nrow = NULL,
-  legend_position = NULL
-)
+plot_volcano(object, ntop = 3, nrow = NULL, legend_position = NULL)
 }
 \arguments{
 \item{object}{SummarizedExperiment}
