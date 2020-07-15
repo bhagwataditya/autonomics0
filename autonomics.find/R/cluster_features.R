@@ -1,4 +1,3 @@
-
 #' Create contrasts for t-based clustering
 create_cluster_contrasts <- function(object){
    dt <- split_subgroup_levels(object)
