@@ -112,7 +112,7 @@ install_autonomics <- function(ref ="HEAD"){
    # Install autonomics (THE ORDER OF SUBDIRS MATTERS)
    install_git_multiple_subdirs(repo = "bhagwataditya/autonomics",
      subdirs = c("autonomics.data", "autonomics.support",
-       "autonomics.annotate", "autonomics.import", "autonomics.preprocess",
+       "autonomics.preprocess", "autonomics.annotate", "autonomics.import",
        "autonomics.plot", "autonomics.explore", "autonomics.find",
        "autonomics.ora", "autonomics.integrate", "autonomics"),
      remote_type = "github", ref = ref)
