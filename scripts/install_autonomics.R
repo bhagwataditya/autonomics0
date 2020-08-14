@@ -49,7 +49,7 @@ check_version_compatibility <- function(){
 }
 
 install_git_multiple_subdirs <- function(
-  repo, subdirs, host = NULL,
+  repo, subdirs, host = NULL, ref = "HEAD",
   remote_type = c("bitbucket", "git", "github", "gitlab"),
   repos = BiocManager::repositories()) {
   remote_type <- match.arg(remote_type)
@@ -62,11 +62,11 @@ install_git_multiple_subdirs <- function(
     github = "api.github.com",
     gitlab = "gitlab.com")
   remote <- switch(remote_type,
-                   bitbucket = remotes:::bitbucket_remote(repo = repo, host = host),
+                   bitbucket = remotes:::bitbucket_remote(repo = repo, host = host, ref = ref),
                    git = remotes:::git_remote(
-                     url = utils::URLencode(paste(host, repo, sep = "/")), git = "external"),
-                   github = remotes:::github_remote(repo, host = host),
-                   gitlab = remotes:::gitlab_remote(repo, host = host))
+                     url = utils::URLencode(paste(host, repo, sep = "/")), git = "external", ref = ref),
+                   github = remotes:::github_remote(repo, host = host, ref = ref),
+                   gitlab = remotes:::gitlab_remote(repo, host = host, ref = ref))
   bundle <- remotes:::remote_download(remote)
   bundle_is_tarball <- grepl(pattern = "\\.tar\\.gz$", x = bundle)
   on.exit(unlink(bundle, recursive = TRUE), add = TRUE)
@@ -93,7 +93,7 @@ install_git_multiple_subdirs <- function(
   }
 }
 
-install_autonomics <- function(){
+install_autonomics <- function(ref ="HEAD"){
    
    # remotes
    install_if_not_available('remotes')
@@ -115,9 +115,9 @@ install_autonomics <- function(){
        "autonomics.annotate", "autonomics.import", "autonomics.preprocess",
        "autonomics.plot", "autonomics.explore", "autonomics.find",
        "autonomics.ora", "autonomics.integrate", "autonomics"),
-     remote_type = "github")
+     remote_type = "github", ref = ref)
    
    check_version_compatibility()
 }
 
-install_autonomics()
+install_autonomics(ref = "prod")
