@@ -33,7 +33,9 @@ plot_features(
   width = NULL,
   height = NULL,
   theme = ggplot2::theme_bw(),
-  legend.position = "right"
+  legend.position = "right",
+  nrow = NULL,
+  ncol = NULL
 )
 
 plot_feature_bars(...)
@@ -94,6 +96,10 @@ plot_feature_boxes(...)
 \item{theme}{ggplot2::theme}
 
 \item{legend.position}{position of legend}
+
+\item{nrow}{numbe: passed to facet_wrap}
+
+\item{ncol}{number: passed to facet_wrap}
 
 \item{...}{only for backward compatibility to deprecated functions}
 }

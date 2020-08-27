@@ -356,6 +356,8 @@ feature_plot_labeller <- function(plot_df){
 #' @param height           numeric
 #' @param theme            ggplot2::theme
 #' @param legend.position  position of legend
+#' @param nrow  numbe: passed to facet_wrap
+#' @param ncol  number: passed to facet_wrap
 #' @param ...              only for backward compatibility to deprecated functions
 #' @examples
 #' if (require(autonomics.data)){
@@ -404,7 +406,9 @@ plot_features <- function(
    width           = NULL,
    height          = NULL,
    theme           = ggplot2::theme_bw(),
-   legend.position = 'right'
+   legend.position = 'right',
+   nrow            = NULL,
+   ncol            = NULL
 ){
    # Set theme
    old_theme <- ggplot2::theme_get()
@@ -446,8 +450,8 @@ plot_features <- function(
       p <- ggplot2::ggplot(plot_df)
 
       # Add annotation and facet wrap
-      if (is.null(facet_var)){ p <- p + ggplot2::facet_wrap(~ feature_facet, scales = scales, labeller = feature_plot_labeller)
-      } else {                 p <- p + ggplot2::facet_grid(make_facet_grid_formula(fvars, facet_var), scales = 'free_y', switch = 'y') +
+      if (is.null(facet_var)){ p <- p + ggplot2::facet_wrap(~ feature_facet, scales = scales, labeller = feature_plot_labeller, nrow = nrow, ncol = ncol)
+      } else {                 p <- p + ggplot2::facet_grid(make_facet_grid_formula(fvars, facet_var), scales = 'free_y', switch = 'y', nrow = nrow, ncol = ncol) +
                                ggplot2::theme(strip.text.y = ggplot2::element_text(angle=180))}
       p %<>% add_annotation(title = title, xlab = xlab, ylab = ylab, x_text_angle = x_text_angle)
 
