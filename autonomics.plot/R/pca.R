@@ -275,9 +275,9 @@ pls <- function(object, implementation = NULL, ndim = 2, ...){
       var      <- round(100*pls_out$explained_variance$X)
 
       # Rename
-      colnames(samples)  %<>% stringi::stri_replace_first_fixed('comp ', 'pls')
-      colnames(features) %<>% stringi::stri_replace_first_fixed('comp ', 'pls')
-      names(var)         %<>% stringi::stri_replace_first_fixed('comp ', 'pls')
+      colnames(samples)  %<>% stringi::stri_replace_first_fixed('comp', 'pls')
+      colnames(features) %<>% stringi::stri_replace_first_fixed('comp', 'pls')
+      names(var)         %<>% stringi::stri_replace_first_fixed('comp', 'pls')
 
    }
 
@@ -986,27 +986,28 @@ get_pca_var <- function(method, dim){
 order_on_feature_loadings <- function(object, method, dim, na.impute){
    pca_var <- get_pca_var(method, dim)
    loadings <- autonomics.import::fdata(object) %>% magrittr::extract2(pca_var)
-   idx <- order(loadings, na.last = NA)
+   idx <- order(abs(loadings), na.last = NA, decreasing = TRUE)
    object[idx, ]
 }
 
-#' Extract top and bottom of sumexp
-#' @param object  SummarizedExperiment
-#' @param n       number of top features to be selected
-#' @return sumex with top n/2 and bottom n/2 rows
-#' @importFrom magrittr   %>%
-#' @export
-extract_top_and_bottom <- function(object, n = 16){
-
-   nfeature <- nrow(object)
-   n1 <- ceiling(n/2)
-   n2 <- n - n1
-
-   top <- seq(1, n1)
-   bottom <- seq(nfeature-n2+1, nfeature) # opposite direction
-
-   object %>% magrittr::extract(c(top, bottom), )
-}
+# For this to work the "abs" should be removed in order_on_feature_loadings
+# Extract top and bottom of sumexp
+# @param object  SummarizedExperiment
+# @param n       number of top features to be selected
+# @return sumex with top n/2 and bottom n/2 rows
+# @importFrom magrittr   %>%
+# @export
+# extract_top_and_bottom <- function(object, n = 16){
+#
+#    nfeature <- nrow(object)
+#    n1 <- ceiling(n/2)
+#    n2 <- n - n1
+#
+#    top <- seq(1, n1)
+#    bottom <- seq(nfeature-n2+1, nfeature) # opposite direction
+#
+#    object %>% magrittr::extract(c(top, bottom), )
+# }
 
 #' Plot PCA/PLS/LDA/SMA features
 #'
@@ -1075,7 +1076,7 @@ plot_projection_features <- function(
 
    # Order on projection and write to file
    object %<>% order_on_feature_loadings(method = method, dim = dim, na.impute = na.impute) %>%
-               extract_top_and_bottom(n=n)
+               head(n=n)
 
    # plot
    object %>% plot_features(geom = geom, fvars = fvars, title = title, ...)
