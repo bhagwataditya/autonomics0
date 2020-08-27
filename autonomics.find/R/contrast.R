@@ -2,8 +2,11 @@
 #' 
 #' Create time contrasts from a subgroup matrix (nconc x ntime)
 #' 
-#' @param subgroup_matrix subgroup matrix: nconc x ntime
+#' @param subgroup_matrix subgroup matrix (nconc x ntime)
 #' @return      contrast matrix: nconc x (ntime-1)
+#' @examples 
+#' (subgroup_matrix <- create_subgroup_matrix(autonomics.data::glutaminase))
+#' create_time_contrasts(subgroup_matrix)
 #' @noRd
 create_time_contrasts <- function(subgroup_matrix, symbol = ' - '){
     contrastmat <- matrix(
@@ -24,6 +27,9 @@ create_time_contrasts <- function(subgroup_matrix, symbol = ' - '){
 #' 
 #' @param subgroup_matrix subgroup matrix: nconc x ntime
 #' @return      contrast matrix: (nconc-1) x ntime
+#' @examples 
+#' (subgroup_matrix <- create_subgroup_matrix(autonomics.data::glutaminase))
+#' create_conc_contrasts(subgroup_matrix)
 #' @noRd
 create_conc_contrasts <- function(subgroup_matrix, symbol = ' - '){
     contrastmat <- matrix(
@@ -39,6 +45,12 @@ create_conc_contrasts <- function(subgroup_matrix, symbol = ' - '){
 
 #' Aggregate time contrasts across conc (or vice versa)
 #' @param contrastmat contrast matrix
+#' @examples 
+#' (x <- create_subgroup_matrix(autonomics.data::glutaminase))
+#' aggregate_contrasts(create_conc_contrasts(x), 1) # some conc across t
+#' aggregate_contrasts(create_conc_contrasts(x), 2) # concentrations at t
+#' aggregate_contrasts(create_time_contrasts(x), 2) # some time across conc
+#' aggregate_contrasts(create_time_contrasts(x), 1) # times at conc
 aggregate_contrasts <- function(contrastmat, dim){
     apply(contrastmat, 
           dim, 
@@ -122,6 +134,7 @@ add_limma2 <- function(object, contrastdefs = diff_contrasts(object)){
 #'     plot_contrastogram(object)
 #'     plot_contrastogram(object, directed = FALSE)
 #' }
+#' @export
 plot_contrastogram <- function(
     object, directed = TRUE, subgroup_colors = default_color_values2(object), 
     sparse = FALSE
@@ -148,7 +161,6 @@ plot_contrastogram <- function(
         arr.lcol = connection_colors, arr.col = connection_colors) #, arr.lcol = log2(1+diagram_matrix))
     #dev.off()
 }
-
 
 default_color_values2 <- function(object){
     autonomics.plot::default_color_values(object)[autonomics.import::subgroup_levels(object)]

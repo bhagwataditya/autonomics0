@@ -75,7 +75,7 @@ default_contrasts <- function(object){
    # Reference contrasts for intensity esets
    } else {
       autonomics.support::cmessage('\tGenerate contrasts to reference level')
-      contrasts <- object %>% autonomics.find::make_ref_contrasts()
+      contrasts <- diff_contrasts(object)
    }
 
    # Return
