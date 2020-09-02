@@ -124,7 +124,7 @@ add_limma <- function(
       autonomics.import::fdata(object)$F      <- fit$F
       autonomics.import::fdata(object)$F.p    <- fit$F.p
       autonomics.import::fdata(object)$F.fdr  <- stats::p.adjust(fit$F.p, 'fdr')
-      autonomics.import::fdata(object)$F.bonf <- stats::p.adjust(fit$F.p, 'bonfrerroni')
+      autonomics.import::fdata(object)$F.bonf <- stats::p.adjust(fit$F.p, 'bonferroni')
    }
 
    # Return
