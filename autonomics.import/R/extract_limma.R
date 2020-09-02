@@ -1,6 +1,6 @@
 #' Extract limma matrix from object
 #' @param object SummarizedExperiment
-#' @param quantity 'value', p', 'fdr', 'bonf'
+#' @param quantity 'effect', 'p', 'fdr', 'bonf'
 #' @return matrix (nfeature x ncontrast)
 #' @examples
 #' if (require(autonomics.data)){
