@@ -33,6 +33,8 @@ This returns a list with components:
    \item {bonf}   matrix (ngene x ncontrast): bonf values (moderated t test)
    \item {F}      vector (ngene)            : F    values (moderated F test)
    \item {F.p}    vector (ngene)            : p    values (moderated F test)
+   \item {F.fdr}  vector (ngene)            : fdr  values (moderated F test)
+   \item {F.bonf} vector (ngene)            : bonf values (moderated F test)
 }
 }
 \examples{

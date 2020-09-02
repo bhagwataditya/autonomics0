@@ -13,6 +13,8 @@
 #'    \item {bonf}   matrix (ngene x ncontrast): bonf values (moderated t test)
 #'    \item {F}      vector (ngene)            : F    values (moderated F test)
 #'    \item {F.p}    vector (ngene)            : p    values (moderated F test)
+#'    \item {F.fdr}  vector (ngene)            : fdr  values (moderated F test)
+#'    \item {F.bonf} vector (ngene)            : bonf values (moderated F test)
 #' }
 #' 
 #' @param object        SummarizedExperiment
@@ -119,8 +121,10 @@ add_limma <- function(
       S4Vectors::metadata(object)$limma[, , 'fdr' ] <- fit$p.value %>% apply(2, stats::p.adjust, 'fdr')
       S4Vectors::metadata(object)$limma[, , 'bonf'] <- fit$p.value %>% apply(2, stats::p.adjust, 'bonferroni')
       
-      autonomics.import::fdata(object)$F   <- fit$F
-      autonomics.import::fdata(object)$F.p <- fit$F.p
+      autonomics.import::fdata(object)$F      <- fit$F
+      autonomics.import::fdata(object)$F.p    <- fit$F.p
+      autonomics.import::fdata(object)$F.fdr  <- stats::p.adjust(fit$F.p, 'fdr')
+      autonomics.import::fdata(object)$F.bonf <- stats::p.adjust(fit$F.p, 'bonfrerroni')
    }
 
    # Return
