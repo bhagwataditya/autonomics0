@@ -110,7 +110,7 @@ install_autonomics <- function(ref ="HEAD"){
    install_if_not_available(c('GO.db', 'PANTHER.db'))
 
    # Install autonomics (THE ORDER OF SUBDIRS MATTERS)
-   install_git_multiple_subdirs(repo = "bhagwataditya/autonomics",
+   install_git_multiple_subdirs(repo = "bhagwataditya/autonomics0",
      subdirs = c("autonomics.data", "autonomics.support",
        "autonomics.preprocess", "autonomics.annotate", "autonomics.import",
        "autonomics.plot", "autonomics.explore", "autonomics.find",
